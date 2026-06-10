@@ -81,6 +81,42 @@ def render_pdf_template(pdf_path: Path, dpi: int = 300) -> Image.Image:
     return img
 
 
+def fit_cover(image: Image.Image, width: int, height: int) -> Image.Image:
+    """Scale and center-crop to fill a fixed rectangle (consistent across all postcards)."""
+    iw, ih = image.size
+    scale = max(width / iw, height / ih)
+    new_w = max(1, int(iw * scale))
+    new_h = max(1, int(ih * scale))
+    resized = image.resize((new_w, new_h), Image.Resampling.LANCZOS)
+    left = (new_w - width) // 2
+    top = (new_h - height) // 2
+    return resized.crop((left, top, left + width, top + height))
+
+
+def remove_legacy_postcard_variants(slug: str) -> None:
+    """Drop old portrait/legacy/back files so only the PDF-template front remains."""
+    candidates = [
+        OUT_DIR / f"{slug}.png",
+        OUT_DIR / f"{slug}-back.png",
+        BACK_DIR / f"{slug}-back.png",
+        BACK_DIR / f"{slug}-landscape-back.png",
+    ]
+    for path in candidates:
+        if path.exists():
+            path.unlink()
+            print(f"Removed legacy {path.relative_to(ROOT)}")
+
+
+def preview_slugs() -> list[str]:
+    previews_dir = ROOT / "previews"
+    if not previews_dir.exists():
+        return []
+    return sorted(
+        p.name
+        for p in previews_dir.iterdir()
+        if p.is_dir() and (p / "index.html").exists()
+    )
+
 def paste_in_rect(base: Image.Image, overlay: Image.Image, rect: tuple[int, int, int, int]) -> None:
     x0, y0, x1, y1 = rect
     zone_w, zone_h = x1 - x0, y1 - y0
@@ -104,7 +140,6 @@ def draw_postcard_from_template(
     dpi = int(config.get("dpi", 300))
     img = render_pdf_template(pdf_path, dpi=dpi)
     draw = ImageDraw.Draw(img)
-    accent, _accent_dark = parse_preview_colors(row["slug"])
 
     preview_rect = tuple(config["preview_rect_px"])
     x0, y0, x1, y1 = preview_rect
@@ -112,23 +147,17 @@ def draw_postcard_from_template(
     draw.rectangle(preview_rect, fill="#ffffff")
 
     if preview_shot is None:
-        preview_shot = Image.new("RGB", (1280, 700), "#e2e8f0")
+        preview_shot = Image.new("RGB", (zone_w, zone_h), "#e2e8f0")
         placeholder_draw = ImageDraw.Draw(preview_shot)
         placeholder_draw.text(
-            (80, 300),
+            (40, zone_h // 2 - 20),
             f"{row['name']} — website preview",
             fill="#64748b",
-            font=load_font(48, bold=True),
+            font=load_font(40, bold=True),
         )
 
-    preview_frame = build_browser_preview(
-        preview_shot,
-        row["name"],
-        zone_w,
-        accent,
-        max_frame_height=zone_h,
-    )
-    paste_in_rect(img, preview_frame, preview_rect)
+    fitted = fit_cover(preview_shot.convert("RGB"), zone_w, zone_h)
+    img.paste(fitted, (x0, y0))
 
     qr_rect = tuple(config["qr_rect_px"])
     qx0, qy0, qx1, qy1 = qr_rect
@@ -846,6 +875,11 @@ def main() -> None:
         "--install-template",
         help="Copy PDF from this path into postcards/templates/ (one-time import from Downloads)",
     )
+    parser.add_argument(
+        "--from-previews",
+        action="store_true",
+        help="Generate template postcards for every slug under previews/ (uses CSV rows when available)",
+    )
     args = parser.parse_args()
 
     if args.install_template:
@@ -869,12 +903,30 @@ def main() -> None:
     with Path(args.csv).open(newline="", encoding="utf-8") as fh:
         rows = list(csv.DictReader(fh))
 
+    if args.from_previews:
+        by_slug: dict[str, dict] = {}
+        csv_paths = [Path(args.csv), ROOT / "data" / "trade-templates-demo.csv"]
+        for csv_path in csv_paths:
+            if not csv_path.exists():
+                continue
+            with csv_path.open(newline="", encoding="utf-8") as fh:
+                for r in csv.DictReader(fh):
+                    by_slug[r["slug"]] = r
+        rows = []
+        for slug in preview_slugs():
+            if slug in by_slug:
+                rows.append(by_slug[slug])
+            else:
+                rows.append({"slug": slug, "name": slug.replace("-", " ").title()})
+
     if args.slug:
         rows = [r for r in rows if r["slug"] == args.slug]
 
     pdf_path, template_config = template if template else (None, None)
 
     for row in rows:
+        if template is not None:
+            remove_legacy_postcard_variants(row["slug"])
         base_url = branding.get("github_pages_base", "https://YOUR_GITHUB_USERNAME.github.io/oc-web-previews")
         connect_url = f"{base_url.rstrip('/')}/landing/connect.html?biz={row['slug']}"
 
