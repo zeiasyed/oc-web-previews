@@ -1,10 +1,11 @@
 {
   "name": "plumber",
-  "description": "Final Plumber Postcard — 7×5 landscape @ 300 DPI",
+  "description": "Final Plumber Postcard v3 — 7×5 landscape @ 300 DPI",
   "landscape": true,
   "dpi": 300,
-  "preview_rect_px": [54, 181, 1729, 1012],
-  "qr_rect_px": [88, 1096, 350, 1358],
-  "address_rect_px": [1329, 1075, 2021, 1458],
+  "preview_frame_rect_px": [54, 181, 1729, 1012],
+  "preview_rect_px": [57, 184, 1725, 1008],
+  "qr_rect_px": [87, 1096, 349, 1357],
+  "address_rect_px": [1328, 1075, 2022, 1459],
   "stamp_rect_px": [1686, 55, 2064, 433]
 }

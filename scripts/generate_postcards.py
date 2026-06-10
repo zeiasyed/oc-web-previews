@@ -150,13 +150,13 @@ def draw_postcard_from_template(
     dpi = int(config.get("dpi", 300))
     img = render_pdf_template(pdf_path, dpi=dpi)
     draw = ImageDraw.Draw(img)
-    # Cover PDF stroke lines around dynamic zones (1.5pt borders + antialiasing at 300 DPI).
     zone_bleed = 4
 
     preview_rect = tuple(config["preview_rect_px"])
+    frame_rect = tuple(config.get("preview_frame_rect_px", preview_rect))
     x0, y0, x1, y1 = preview_rect
     zone_w, zone_h = x1 - x0, y1 - y0
-    draw.rectangle(expand_rect(preview_rect, zone_bleed), fill="#ffffff")
+    draw.rectangle(expand_rect(frame_rect, zone_bleed), fill="#ffffff")
 
     if preview_shot is None:
         preview_shot = Image.new("RGB", (zone_w, zone_h), "#e2e8f0")
@@ -168,7 +168,7 @@ def draw_postcard_from_template(
             font=load_font(40, bold=True),
         )
 
-    paste_bleed = 3
+    paste_bleed = 2
     fitted = fit_cover(
         preview_shot.convert("RGB"),
         zone_w + paste_bleed * 2,
@@ -176,20 +176,20 @@ def draw_postcard_from_template(
         overscan=1.0,
     )
     img.paste(fitted, (x0 - paste_bleed, y0 - paste_bleed))
-    # Redraw the template frame over the seam between PDF stroke and pasted preview.
     stroke_px = max(2, round(1.5 * dpi / 72))
-    draw.rectangle(preview_rect, outline="#000000", width=stroke_px)
+    draw.rectangle(frame_rect, outline="#000000", width=stroke_px)
 
     qr_rect = tuple(config["qr_rect_px"])
     qx0, qy0, qx1, qy1 = qr_rect
     qr_size = min(qx1 - qx0, qy1 - qy0)
-    draw.rectangle(expand_rect(qr_rect, zone_bleed + 4), fill="#ffffff")
+    # Wipe only the QR placeholder — stay clear of the blue "Scan to see…" pill to the right.
+    draw.rectangle(expand_rect(qr_rect, 3), fill="#ffffff")
 
     base_url = branding.get("github_pages_base", "https://YOUR_GITHUB_USERNAME.github.io/oc-web-previews")
     connect_url = f"{base_url.rstrip('/')}/landing/connect.html?biz={row['slug']}"
-    qr = qr_image(connect_url, qr_size - 4)
+    qr = qr_image(connect_url, qr_size - 2)
     qr_canvas = Image.new("RGB", (qr_size, qr_size), "#ffffff")
-    qr_canvas.paste(qr, (2, 2))
+    qr_canvas.paste(qr, (1, 1))
     qr_x = qx0 + (qx1 - qx0 - qr_size) // 2
     qr_y = qy0 + (qy1 - qy0 - qr_size) // 2
     img.paste(qr_canvas, (qr_x, qr_y))
