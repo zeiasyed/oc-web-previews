@@ -1,0 +1,12 @@
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <strong>{{ business.name }}</strong>
+        <p>{{ business.address }}</p>
+        {% if business.phone %}<p>{{ business.phone }}</p>{% endif %}
+      </div>
+      <p class="preview-note">
+        <a href="../../landing/connect.html?biz={{ business.slug }}">Preview by {{ brand_name }}</a>
+      </p>
+    </div>
+  </footer>

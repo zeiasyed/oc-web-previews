@@ -1,0 +1,4 @@
+{
+  "places_api_key": "",
+  "notes": "Optional. Get a key at https://console.cloud.google.com/ — enable Places API (New). Copy this file to google.json and paste your key. Free tier includes ~$200/month credit."
+}

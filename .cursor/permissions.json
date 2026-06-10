@@ -1,0 +1,14 @@
+{
+  "approvalMode": "unrestricted",
+  "terminalAllowlist": ["*"],
+  "mcpAllowlist": ["*"],
+  "autoRun": {
+    "allow_instructions": [
+      "Auto-approve all project work: python scripts, run_trades.ps1, postcard generation, git, gh, http.server, cloudflared.",
+      "Auto-approve fetches and file edits in this repo without prompting."
+    ],
+    "block_instructions": [
+      "Only ask for git push --force to main or master."
+    ]
+  }
+}

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trade Templates Gallery</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      margin: 0;
+      background: #0f172a;
+      color: #e2e8f0;
+      line-height: 1.5;
+    }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
+    h1 { font-size: 2rem; margin: 0 0 0.5rem; }
+    .intro { color: #94a3b8; margin-bottom: 2.5rem; max-width: 42rem; }
+    .grid { display: grid; gap: 1.5rem; }
+    .card {
+      background: #1e293b;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #334155;
+    }
+    .card-header { padding: 1.25rem 1.5rem 0.75rem; }
+    .card-header h2 { margin: 0; font-size: 1.35rem; }
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 999px;
+      margin-bottom: 0.5rem;
+    }
+    .plumber { background: #0c4a6e; color: #7dd3fc; }
+    .hvac { background: #1e3a8a; color: #86efac; }
+    .roofer { background: #7c2d12; color: #fdba74; }
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0 1.5rem 1.5rem;
+    }
+    .links a {
+      color: #e2e8f0;
+      background: #334155;
+      padding: 0.45rem 0.85rem;
+      border-radius: 999px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    .links a.primary { background: #3b82f6; color: white; }
+    .links a:hover { filter: brightness(1.1); }
+    .preview-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      display: block;
+      border-bottom: 1px solid #334155;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Trade Website Templates</h1>
+    <p class="intro">Three category templates for the 50-trade outreach project. Each uses only public business info (name, city, address, phone) plus trade-specific stock images and generic blog content.</p>
+
+    <div class="grid">
+      <article class="card">
+        <img class="preview-img" src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=800&q=80" alt="Plumber template">
+        <div class="card-header">
+          <span class="badge plumber">Plumber</span>
+          <h2>A &amp; I Professional Services</h2>
+          <p style="color:#94a3b8;margin:0.35rem 0 0">Fullerton, CA · real business from trades-50.csv</p>
+        </div>
+        <div class="links">
+          <a class="primary" href="previews/a-i-professional-services-fullerton/index.html">Home</a>
+          <a href="previews/a-i-professional-services-fullerton/services.html">Services</a>
+          <a href="previews/a-i-professional-services-fullerton/about.html">About</a>
+          <a href="previews/a-i-professional-services-fullerton/blog.html">Tips &amp; Guides</a>
+          <a href="previews/a-i-professional-services-fullerton/contact.html">Contact</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <img class="preview-img" src="https://images.unsplash.com/photo-1758798157512-f0a864c696c9?w=800&q=80" alt="HVAC template">
+        <div class="card-header">
+          <span class="badge hvac">HVAC</span>
+          <h2>Pacific Coast HVAC</h2>
+          <p style="color:#94a3b8;margin:0.35rem 0 0">Irvine, CA · demo template preview</p>
+        </div>
+        <div class="links">
+          <a class="primary" href="previews/pacific-coast-hvac-demo/index.html">Home</a>
+          <a href="previews/pacific-coast-hvac-demo/services.html">Services</a>
+          <a href="previews/pacific-coast-hvac-demo/about.html">About</a>
+          <a href="previews/pacific-coast-hvac-demo/blog.html">Tips &amp; Guides</a>
+          <a href="previews/pacific-coast-hvac-demo/contact.html">Contact</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <img class="preview-img" src="https://images.unsplash.com/photo-1763665814605-a6489a3bf2a0?w=800&q=80" alt="Roofer template">
+        <div class="card-header">
+          <span class="badge roofer">Roofer</span>
+          <h2>Summit Roofing Co</h2>
+          <p style="color:#94a3b8;margin:0.35rem 0 0">Anaheim, CA · demo template preview</p>
+        </div>
+        <div class="links">
+          <a class="primary" href="previews/summit-roofing-demo/index.html">Home</a>
+          <a href="previews/summit-roofing-demo/services.html">Services</a>
+          <a href="previews/summit-roofing-demo/about.html">About</a>
+          <a href="previews/summit-roofing-demo/blog.html">Tips &amp; Guides</a>
+          <a href="previews/summit-roofing-demo/contact.html">Contact</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ business.name }} | {{ industry_label }}</title>
+  <meta name="description" content="{{ tagline }}">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+{% include '_preview_bar.html.j2' %}
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="logo">{{ business.name }}</div>
+      <nav>
+        <a href="index.html" class="active">Home</a>
+        <a href="services.html">Services</a>
+        <a href="about.html">About</a>
+        {% if is_trade %}<a href="blog.html">Tips &amp; Guides</a>{% endif %}
+        <a href="contact.html" class="btn btn-small">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero{% if is_trade %} hero-trade{% endif %}">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          {% if hero_badge %}<p class="hero-badge">{{ hero_badge }}</p>{% endif %}
+          <p class="eyebrow">{{ industry_label }}</p>
+          <h1>{{ business.name }}</h1>
+          <p class="lead">{{ tagline }}</p>
+          {% if trust_badges %}
+          <ul class="trust-badges">
+            {% for badge in trust_badges %}
+            <li>{{ badge }}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+          <div class="hero-actions">
+            <a href="contact.html" class="btn">Get a Free Estimate</a>
+            {% if business.phone %}
+            <a href="tel:{{ business.phone_raw }}" class="btn btn-outline">{{ business.phone }}</a>
+            {% endif %}
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="{{ hero_image }}" alt="{{ business.name }} — {{ industry_label }}">
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow-dark">What we do</p>
+          <h2>{% if is_trade %}Professional {{ industry_label|lower }}{% else %}Services you can count on{% endif %}</h2>
+          <p class="section-intro">Serving {{ business.city }} and communities across Southern California.</p>
+        </div>
+
+        {% if is_trade %}
+        <div class="service-grid">
+          {% for service in services %}
+          <article class="service-tile">
+            {% if service.image_secondary %}
+            <div class="service-tile-images-duo">
+              <img src="{{ service.image }}" alt="{{ service.title }} fixture" class="service-tile-image">
+              <img src="{{ service.image_secondary }}" alt="{{ service.title }} pipes" class="service-tile-image">
+            </div>
+            {% elif service.image %}
+            <img src="{{ service.image }}" alt="{{ service.title }}" class="service-tile-image">
+            {% endif %}
+            <div class="service-tile-body">
+              <h3>{{ service.title }}</h3>
+              <p>{{ service.description }}</p>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div class="split">
+          <div>
+            <ul class="service-list">
+              {% for service in services %}
+              <li>{{ service.title if service.title is defined else service }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="card">
+            <img src="{{ section_image }}" alt="Service photo" class="card-image">
+            <p>Serving {{ business.city }} and all of Orange County with dependable, local service.</p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <section class="section section-muted">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow-dark">Why choose us</p>
+          <h2>Why local customers choose {{ business.name }}</h2>
+        </div>
+        <div class="features">
+          {% for feature in features %}
+          <article>
+            <h3>{{ feature.title }}</h3>
+            <p>{{ feature.description }}</p>
+          </article>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+
+    {% if is_trade and blog_posts %}
+    <section class="section">
+      <div class="container">
+        <div class="section-heading split-heading">
+          <div>
+            <p class="eyebrow-dark">Homeowner tips</p>
+            <h2>Helpful guides from our team</h2>
+            <p class="section-intro">Practical advice to help you maintain your home and know when to call a pro.</p>
+          </div>
+          <a href="blog.html" class="btn btn-outline-dark">View all articles</a>
+        </div>
+        <div class="blog-grid">
+          {% for post in blog_posts %}
+          <article class="blog-card">
+            <img src="{{ post.image }}" alt="" class="blog-card-image">
+            <div class="blog-card-body">
+              <p class="blog-date">{{ post.date }}</p>
+              <h3>{{ post.title }}</h3>
+              <p>{{ post.excerpt }}</p>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+    {% endif %}
+
+    <section class="cta-banner">
+      <div class="container cta-inner">
+        <div>
+          <h2>{{ cta_headline }}</h2>
+          <p>{{ cta_text }}</p>
+        </div>
+        <div class="cta-actions">
+          <a href="contact.html" class="btn btn-light">Contact Us</a>
+          {% if business.phone %}
+          <a href="tel:{{ business.phone_raw }}" class="btn btn-outline-light">{{ business.phone }}</a>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+  </main>
+
+{% include '_footer.html.j2' %}
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "plumber",
+  "description": "Final Plumber Postcard — 7×5 landscape @ 300 DPI",
+  "landscape": true,
+  "dpi": 300,
+  "preview_rect_px": [54, 181, 1702, 999],
+  "qr_rect_px": [87, 1120, 349, 1381],
+  "address_rect_px": [1285, 1020, 1980, 1404],
+  "stamp_rect_px": [1686, 35, 2064, 414]
+}

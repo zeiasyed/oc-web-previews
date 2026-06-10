@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tips &amp; Guides | {{ business.name }}</title>
+  <meta name="description" content="Homeowner tips and guides from {{ business.name }} — {{ industry_label }} advice for {{ business.city }}.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+{% include '_preview_bar.html.j2' %}
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="logo">{{ business.name }}</div>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="services.html">Services</a>
+        <a href="about.html">About</a>
+        <a href="blog.html" class="active">Tips &amp; Guides</a>
+        <a href="contact.html" class="btn btn-small">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <p class="eyebrow-dark">{{ industry_label }}</p>
+        <h1>Tips &amp; Guides</h1>
+        <p class="lead">Helpful articles for homeowners in {{ business.city }} — when to call a pro, how to prevent problems, and what to expect.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container blog-list">
+        {% for post in blog_posts %}
+        <article class="blog-article">
+          <img src="{{ post.image }}" alt="" class="blog-article-image">
+          <div class="blog-article-body">
+            <p class="blog-date">{{ post.date }}</p>
+            <h2>{{ post.title }}</h2>
+            <p>{{ post.excerpt }}</p>
+            <p class="blog-disclaimer muted">Sample educational content for preview purposes. A live site can include full articles, seasonal updates, and local tips.</p>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+    </section>
+
+    <section class="cta-banner">
+      <div class="container cta-inner">
+        <div>
+          <h2>Have a question about your home?</h2>
+          <p>{{ business.name }} is here to help {{ business.city }} homeowners with honest advice and professional service.</p>
+        </div>
+        <div class="cta-actions">
+          <a href="contact.html" class="btn btn-light">Get in Touch</a>
+          {% if business.phone %}
+          <a href="tel:{{ business.phone_raw }}" class="btn btn-outline-light">{{ business.phone }}</a>
+          {% endif %}
+        </div>
+      </div>
+    </section>
+  </main>
+
+{% include '_footer.html.j2' %}
+</body>
+</html>

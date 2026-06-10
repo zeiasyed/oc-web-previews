@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure Payment | Solena Digital</title>
+  <link rel="stylesheet" href="assets/landing.css?v=14">
+</head>
+<body class="page-payment">
+  <main class="wrap wrap-payment">
+    <div class="landing-shell">
+      <header class="landing-topbar">
+        <a class="landing-brand" id="nav-brand" href="connect.html">
+          <img src="assets/solena-digital-logo-header.png?v=4" alt="Solena Digital" class="landing-brand-logo">
+        </a>
+        <nav class="landing-steps" aria-label="Progress">
+          <a class="step" id="nav-connect" href="connect.html">Preview</a>
+          <a class="step" id="nav-pricing" href="pricing.html">Pricing</a>
+          <a class="step" id="nav-register" href="register.html">Register</a>
+          <a class="step active" href="#">Payment</a>
+        </nav>
+      </header>
+
+      <section class="card card-payment card-hero">
+        <div class="page-header">
+          <p class="eyebrow">Secure checkout</p>
+          <h1>Complete your payment</h1>
+          <p class="lead">You're one step away from going live. Review your order, then pay securely through Stripe.</p>
+        </div>
+
+        <div class="reassurance-strip">
+          <span class="reassurance-pill">30-day money-back guarantee</span>
+          <span class="reassurance-pill">Cancel anytime — 30 days' notice</span>
+        </div>
+
+        <div id="missing-registration" class="checkout-alert hidden">
+          <p><strong>Registration not found.</strong> Please complete the registration form first.</p>
+          <a id="goto-register" class="btn" href="register.html">Go to registration</a>
+        </div>
+
+        <div id="checkout-content" class="checkout-layout hidden">
+          <div class="checkout-summary">
+            <h2>Order summary</h2>
+
+            <div class="summary-business">
+              <p class="sidebar-label">Your business</p>
+              <p class="summary-business-name" id="pay-business-name">—</p>
+              <p class="muted" id="pay-business-slug"></p>
+            </div>
+
+            <div class="summary-contact">
+              <p class="sidebar-label">Registered contact</p>
+              <p id="pay-contact-name" class="summary-contact-line"></p>
+              <p id="pay-contact-email" class="summary-contact-line muted"></p>
+              <p id="pay-contact-phone" class="summary-contact-line muted"></p>
+              <a id="edit-registration" class="text-link" href="register.html">Edit registration</a>
+            </div>
+
+            <table class="summary-table" aria-label="Order line items">
+              <tbody>
+                <tr>
+                  <td id="pay-plan-line">Solena Digital — Monthly plan</td>
+                  <td>$300.00</td>
+                </tr>
+                <tr class="summary-discount">
+                  <td>Website build <span class="price-was-inline">$2,450</span></td>
+                  <td class="price-free">$0.00</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td><strong>Due today</strong></td>
+                  <td><strong id="pay-total">$300.00</strong></td>
+                </tr>
+              </tfoot>
+            </table>
+
+            <p class="summary-billing-note muted">Then $300/month, billed monthly. No long-term contract.</p>
+
+            <ul class="summary-includes">
+              <li>Website, hosting &amp; maintenance</li>
+              <li>SEO, Google Maps &amp; local marketing</li>
+              <li>2 blogs/week + 2 site updates/month</li>
+              <li>Call tracking, lead tracking &amp; reports</li>
+            </ul>
+          </div>
+
+          <div class="checkout-payment">
+            <div class="payment-card">
+              <div class="payment-card-header">
+                <h2>Secure payment</h2>
+                <span class="stripe-badge">Powered by Stripe</span>
+              </div>
+
+              <div class="payment-due">
+                <p class="payment-due-label">Amount due today</p>
+                <p class="payment-due-amount">$300<span>.00</span></p>
+              </div>
+
+              <p class="payment-desc muted">You'll be redirected to Stripe's secure checkout to enter your card details. We never see or store your card number on this site.</p>
+
+              <label class="checkbox-label payment-auth">
+                <input type="checkbox" id="authorize-billing" required>
+                I authorize Solena Digital to charge $300 today and $300/month thereafter until I cancel with 30 days' notice.
+              </label>
+
+              <button type="button" class="btn btn-full" id="pay-now" disabled>
+                Pay $300 &amp; start my plan
+              </button>
+
+              <p id="payment-status" class="form-status" role="status" aria-live="polite"></p>
+
+              <div id="stripe-setup-note" class="checkout-alert checkout-alert-info hidden">
+                <p><strong>Stripe not configured yet.</strong> Add your <code>stripe_payment_link</code> in <code>config/branding.json</code>, then run <code>python scripts/sync_branding.py</code>.</p>
+              </div>
+            </div>
+
+            <div class="sidebar-card sidebar-human payment-human">
+              <p class="sidebar-label">Not ready to pay online?</p>
+              <h3>Talk to us first</h3>
+              <p class="muted">Request a call back — no payment required. We'll walk you through everything.</p>
+              <a id="callback-link" class="btn btn-full" href="register.html">Call me back instead</a>
+            </div>
+
+            <div class="payment-trust">
+              <div class="guarantee-item">
+                <span class="guarantee-icon">✓</span>
+                <div>
+                  <strong>30-day money-back guarantee</strong>
+                  <p class="muted">Full refund if you're not satisfied in the first 30 days.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="disclaimer">Payments are processed by Stripe. Solena Digital does not store card details.</p>
+      </section>
+    </div>
+  </main>
+
+  <script src="assets/branding.js"></script>
+  <script src="assets/branding-ui.js"></script>
+  <script src="assets/businesses.js"></script>
+  <script src="assets/landing-nav.js"></script>
+  <script src="assets/payment.js"></script>
+</body>
+</html>

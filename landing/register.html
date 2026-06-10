@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Started | Solena Digital</title>
+  <link rel="stylesheet" href="assets/landing.css?v=14">
+</head>
+<body class="page-register">
+  <main class="wrap wrap-register">
+    <div class="landing-shell">
+      <header class="landing-topbar">
+        <a class="landing-brand" id="nav-brand" href="connect.html">
+          <img src="assets/solena-digital-logo-header.png?v=4" alt="Solena Digital" class="landing-brand-logo">
+        </a>
+        <nav class="landing-steps" aria-label="Progress">
+          <a class="step" id="nav-connect" href="connect.html">Preview</a>
+          <a class="step" id="nav-pricing" href="pricing.html">Pricing</a>
+          <a class="step active" href="#">Register</a>
+          <a class="step" id="nav-payment" href="payment.html">Payment</a>
+        </nav>
+      </header>
+
+      <section class="card card-register card-hero">
+        <div class="page-header">
+          <img class="page-brand-logo" data-brand-logo src="assets/solena-digital-logo-header.png?v=4" alt="Solena Digital">
+          <h1>Get started</h1>
+          <p class="lead">Register online in minutes — or ask us to call you. Either way, you're covered by our 30-day guarantee.</p>
+        </div>
+
+        <div class="reassurance-strip">
+          <span class="reassurance-pill">30-day money-back guarantee</span>
+          <span class="reassurance-pill">No long-term contract</span>
+        </div>
+
+        <div class="register-layout">
+          <div class="register-main">
+            <form id="register-form" class="register-form" novalidate>
+              <input type="hidden" name="form_type" value="registration">
+              <input type="hidden" name="business_slug" id="reg-business-slug">
+              <input type="hidden" name="business_name" id="reg-business-name">
+              <input type="hidden" name="_subject" id="reg-subject">
+
+              <div class="form-section">
+                <div class="form-section-header">
+                  <span class="form-step">1</span>
+                  <h2>Your business</h2>
+                </div>
+                <label>Business name
+                  <input type="text" name="business" id="reg-business-display" required>
+                </label>
+                <div class="form-row">
+                  <label>Your name
+                    <input type="text" name="contact_name" required autocomplete="name">
+                  </label>
+                  <label>Phone
+                    <input type="tel" name="phone" required autocomplete="tel">
+                  </label>
+                </div>
+                <label>Email
+                  <input type="email" name="email" required autocomplete="email">
+                </label>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-header">
+                  <span class="form-step">2</span>
+                  <h2>Plan &amp; payment</h2>
+                </div>
+                <div class="plan-recap">
+                  <div class="plan-recap-item">
+                    <p class="plan-recap-label">Monthly plan</p>
+                    <p class="plan-recap-price">$300<span>/mo</span></p>
+                  </div>
+                  <div class="plan-recap-item">
+                    <p class="plan-recap-label">Website build</p>
+                    <p class="plan-recap-deal"><span class="price-was">$2,450</span> <span class="price-free">$0</span></p>
+                  </div>
+                </div>
+                <p class="payment-note">Payment is on the next step — secure checkout through Stripe.</p>
+              </div>
+
+              <div class="form-section">
+                <div class="form-section-header">
+                  <span class="form-step">3</span>
+                  <h2>User agreement</h2>
+                </div>
+                <div class="terms-box-scroll" tabindex="0" aria-label="User agreement">
+                  <p><strong>Solena Digital — Service Agreement (Summary)</strong></p>
+                  <p>By registering, you agree to the following terms for website design, hosting, marketing, and related services provided by Solena Digital.</p>
+                  <p><strong>Service.</strong> Solena Digital will provide website hosting, maintenance, security monitoring, SEO and local search optimization, content creation (including blog posts), marketing services, call and lead tracking, monthly performance reporting, and up to two website content updates per month, as described on our pricing page.</p>
+                  <p><strong>Term &amp; billing.</strong> Service is provided on a month-to-month basis at $300 per month, billed in advance. There is no long-term contract. You may cancel at any time with thirty (30) days' written notice.</p>
+                  <p><strong>Guarantee.</strong> If you are not satisfied within the first thirty (30) days of service, you may request a full refund of fees paid during that period.</p>
+                  <p><strong>Your responsibilities.</strong> You agree to provide accurate business information, respond to reasonable requests for content approval, and maintain lawful use of the website and marketing materials.</p>
+                  <p><strong>SEO disclaimer.</strong> Search engine rankings depend on many factors outside our control. We do not guarantee specific placement or timelines; improved visibility may take up to six months or longer.</p>
+                  <p><strong>Content &amp; intellectual property.</strong> Upon full payment, you own your business content. Solena Digital retains rights to templates, tools, and proprietary systems used to deliver the service.</p>
+                  <p><strong>Limitation of liability.</strong> Our liability is limited to fees paid in the three months preceding any claim. Services are provided "as is" to the extent permitted by law.</p>
+                  <p><strong>Governing law.</strong> This agreement is governed by the laws of the State of Texas.</p>
+                  <p class="muted">This summary is provided for convenience. Solena Digital may provide a full agreement for signature before launch.</p>
+                </div>
+                <label class="checkbox-label">
+                  <input type="checkbox" name="agree_terms" id="agree-terms" required>
+                  I have read and agree to the user agreement
+                </label>
+              </div>
+
+              <button type="submit" class="btn btn-success btn-full" id="register-submit">Continue to secure payment →</button>
+              <p id="register-status" class="form-status" role="status" aria-live="polite"></p>
+            </form>
+          </div>
+
+          <aside class="register-sidebar">
+            <div class="sidebar-card sidebar-business" id="business-card">
+              <p class="sidebar-label">Your preview site</p>
+              <p class="sidebar-business-name" id="sidebar-business-name">—</p>
+              <p class="muted" id="sidebar-business-slug"></p>
+            </div>
+
+            <div class="sidebar-card sidebar-human" id="callback">
+              <p class="sidebar-label">Prefer a human?</p>
+              <h3>Request a call back</h3>
+              <p class="muted">Tell us to call you — we'll reach out personally. No payment required.</p>
+
+              <form id="callback-form" class="callback-form">
+                <input type="hidden" name="form_type" value="call_me_back">
+                <input type="hidden" name="business_slug" id="cb-business-slug">
+                <input type="hidden" name="business_name" id="cb-business-name">
+                <input type="hidden" name="_subject" id="cb-subject">
+                <label>Your name
+                  <input type="text" name="contact_name" required>
+                </label>
+                <label>Phone
+                  <input type="tel" name="phone" required>
+                </label>
+                <label>Best time to call <span class="optional">(optional)</span>
+                  <input type="text" name="best_time" placeholder="e.g. Weekday mornings">
+                </label>
+                <button type="submit" class="btn btn-full" id="callback-submit">Call me back</button>
+                <p id="callback-status" class="form-status" role="status" aria-live="polite"></p>
+              </form>
+            </div>
+
+            <div class="sidebar-card sidebar-guarantee">
+              <div class="guarantee-item">
+                <span class="guarantee-icon">✓</span>
+                <div>
+                  <strong>30-day money-back guarantee</strong>
+                  <p class="muted">Try us risk-free. Not happy in the first 30 days? Full refund.</p>
+                </div>
+              </div>
+              <div class="guarantee-item">
+                <span class="guarantee-icon">✓</span>
+                <div>
+                  <strong>No long-term commitment</strong>
+                  <p class="muted">Month-to-month. Cancel anytime with 30 days' notice.</p>
+                </div>
+              </div>
+            </div>
+
+            <a id="pricing-back" class="text-link" href="pricing.html">← Back to pricing</a>
+          </aside>
+        </div>
+
+        <p class="disclaimer">Preview sites are demonstrations only until you complete registration and payment.</p>
+      </section>
+    </div>
+  </main>
+
+  <script src="assets/branding.js"></script>
+  <script src="assets/branding-ui.js"></script>
+  <script src="assets/businesses.js"></script>
+  <script src="assets/landing-nav.js"></script>
+  <script src="assets/register.js"></script>
+</body>
+</html>

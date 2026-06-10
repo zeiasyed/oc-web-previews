@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Postcards — Plumber & Roofer</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      margin: 0;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.5;
+    }
+    .wrap { max-width: 960px; margin: 0 auto; padding: 2rem 1.25rem 3rem; }
+    h1 { margin: 0 0 0.25rem; font-size: 1.75rem; }
+    .intro { color: #64748b; margin-bottom: 2rem; }
+    .card {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+    .card h2 { margin: 0 0 0.75rem; font-size: 1.2rem; }
+    .links { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .links a {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .front { background: #1e6f9f; color: white; }
+    .back { background: #e2e8f0; color: #0f172a; }
+    .front:hover { filter: brightness(1.08); }
+    .back:hover { background: #cbd5e1; }
+    .preview {
+      margin-top: 1rem;
+      width: 100%;
+      max-width: 560px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      display: block;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      padding: 0.2rem 0.5rem;
+      border-radius: 999px;
+      margin-bottom: 0.5rem;
+    }
+    .plumber { background: #e0f2fe; color: #0369a1; }
+    .roofer { background: #ffedd5; color: #c2410c; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Trade Postcards</h1>
+    <p class="intro">7×5 print-ready @ 300 DPI — generated from <code>postcards/templates/plumber-postcard.pdf</code>. Click to open full size.</p>
+
+    <article class="card">
+      <span class="badge plumber">Plumber</span>
+      <h2>A &amp; I Professional Services</h2>
+      <div class="links">
+        <a class="front" href="png/a-i-professional-services-fullerton-landscape.png" target="_blank">Open front</a>
+        <a class="back" href="png/back/a-i-professional-services-fullerton-landscape-back.png" target="_blank">Open back</a>
+      </div>
+      <a href="png/a-i-professional-services-fullerton-landscape.png" target="_blank">
+        <img class="preview" src="png/a-i-professional-services-fullerton-landscape.png" alt="Plumber postcard front">
+      </a>
+    </article>
+
+    <article class="card">
+      <span class="badge roofer">Roofer</span>
+      <h2>Summit Roofing Co</h2>
+      <div class="links">
+        <a class="front" href="png/summit-roofing-demo-landscape.png" target="_blank">Open front</a>
+        <a class="back" href="png/back/summit-roofing-demo-landscape-back.png" target="_blank">Open back</a>
+      </div>
+      <a href="png/summit-roofing-demo-landscape.png" target="_blank">
+        <img class="preview" src="png/summit-roofing-demo-landscape.png" alt="Roofer postcard front">
+      </a>
+    </article>
+  </div>
+</body>
+</html>

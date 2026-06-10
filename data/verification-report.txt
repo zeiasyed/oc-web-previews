@@ -1,0 +1,63 @@
+Verified 200 businesses in trades-200.csv
+  approved:              143
+  rejected_has_website:  57
+  needs_manual_review:   0
+
+Manual review links:
+  AAA Preferred Plumbing Inc: https://maps.google.com/?cid=4607313696116500521&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  All Purpose Plumbing: https://maps.google.com/?cid=4168261990603567962&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Always Plumbing & Drain Cleaning: https://maps.google.com/?cid=4386626656384628656&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Aqua Dynamics Plumbing Company: https://maps.google.com/?cid=1273802720760095289&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Black Cat Plumbing Co: https://maps.google.com/?cid=3404962241800567580&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Brightwater Services Inc: https://maps.google.com/?cid=17078207249166064992&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Bubbles Plumbing & Electrical: https://maps.google.com/?cid=13495552368329894270&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  CJ Plumbing And Hydro Jetting: https://maps.google.com/?cid=2181465194317962492&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Cali Plumber San Marcos: https://maps.google.com/?cid=7954704839135397144&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  CaliBar Plumbing: https://maps.google.com/?cid=7412611912586117944&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Call Plumbing Oceanside: https://maps.google.com/?cid=9033458178710398999&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Central OC Plumbing: https://maps.google.com/?cid=3460798401115969837&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Central Plumbing INC: https://maps.google.com/?cid=15062723393206225638&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  ClearFlow Plumbing Fountain Valley: https://maps.google.com/?cid=426403217319579294&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  DISCOUNT PLUMBING: https://maps.google.com/?cid=3572775477317994514&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Dynasty Plumbing: https://maps.google.com/?cid=3003482421122548695&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  El Monte Plumbing Rooter & Drains Anytime: https://maps.google.com/?cid=3897731071791234019&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Elite Fullerton Plumbing Solutions: https://maps.google.com/?cid=6475278931142563238&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  EverFlow Plumbing Newport Beach: https://maps.google.com/?cid=7891772478190330215&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Excellent Garden Grove Plumbing Services: https://maps.google.com/?cid=3251463181971383562&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Fierce Plumbing Inc: https://maps.google.com/?cid=15646218341599011038&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Five Star Plumber Simi Valley: https://maps.google.com/?cid=2653441259078572842&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Golden Plumber Buena Park: https://maps.google.com/?cid=13257242110301642350&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  High Speed Plumbing: https://maps.google.com/?cid=13769574587738924532&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  High Speed Plumbing of Arcadia: https://maps.google.com/?cid=14211664843135305404&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  High Speed Plumbing of Fullerton: https://maps.google.com/?cid=14050928333166601407&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Icon Plumbing: https://maps.google.com/?cid=670492354872510090&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Jacot Plumbing, Inc.: https://maps.google.com/?cid=9007254173370262896&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  John Murray Plumbing: https://maps.google.com/?cid=1208971525518447482&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  John's Plumbing & Rooter: https://maps.google.com/?cid=16098224267098402231&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Jumping Jack Plumbing: https://maps.google.com/?cid=10159945063283203242&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Kevin Shaw Plumbing, Inc.: https://maps.google.com/?cid=15933735042287320999&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Los Angeles Plumbing: https://maps.google.com/?cid=2433901908104807401&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Master Pro Restoration & Plumbing: https://maps.google.com/?cid=3949070828130770760&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  My Dad's Plumbing: https://maps.google.com/?cid=7110081274653786437&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Night Owl Plumbing & Rooter: https://maps.google.com/?cid=9181260620300112945&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  One Stop Water Heater Solutions: https://maps.google.com/?cid=17537970574099874286&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Packard Plumbing: https://maps.google.com/?cid=11272489316159708553&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Palafox plumbing: https://maps.google.com/?cid=1303039925027962998&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Pieper Plumbing: https://maps.google.com/?cid=4189532431530780611&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Pipe Plumbing and Drain Cleaning: https://maps.google.com/?cid=3249179761114913139&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Plumb Force: https://maps.google.com/?cid=3433012030333402547&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Plumberland Emergency Plumbing Land Commerce: https://maps.google.com/?cid=3543326260937546590&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Plumbers Hub LLC: https://maps.google.com/?cid=3146078329806500144&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Plumbing Wholesale Outlet: https://maps.google.com/?cid=17474435689318063557&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Plumbing by Tony: https://maps.google.com/?cid=7414443243000639719&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Prime Plumber Thousand Oaks: https://maps.google.com/?cid=1388859585039854720&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  PrimeFix Plumbing Cerritos CA: https://maps.google.com/?cid=4952127469275486338&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Priority Plumbing Solutions: https://maps.google.com/?cid=7858533115496605537&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Pro Plumber Redondo Beach: https://maps.google.com/?cid=9343831828235332606&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Pro Plumbing Experts Mission Viejo: https://maps.google.com/?cid=1804070685902625369&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  RR Plumbing in Minutes: https://maps.google.com/?cid=9355850311837271478&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Rasco Plumbing & Rooter: https://maps.google.com/?cid=5369893368137650714&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Ready Oceanside Plumber: https://maps.google.com/?cid=12310790647622007934&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Real Plumbing: https://maps.google.com/?cid=3637660828052188333&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Responsive Plumber Ventura: https://maps.google.com/?cid=10516772596857936693&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA
+  Riverline Plumbing: https://maps.google.com/?cid=9548815966424449471&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA

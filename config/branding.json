@@ -1,0 +1,33 @@
+{
+  "brand_name": "Solena Digital",
+  "tagline": "Website & Marketing Agency",
+  "logo_path": "landing/assets/solena-digital-logo.png",
+  "logo_url": "assets/solena-digital-logo.png",
+  "logo_header_url": "assets/solena-digital-logo-header.png",
+  "phone": "9094547744",
+  "phone_display": "909-454-7744",
+  "email": "info@solena-digital.com",
+  "email_display": "info@solena-digital.com",
+  "calendly_url": "https://calendly.com/REPLACE_ME",
+  "sms_number": "9094547744",
+  "return_address": {
+    "line1": "123 Main Street",
+    "line2": "Orange, CA 92868"
+  },
+  "github_pages_base": "https://fixtures-colleges-newfoundland-angel.trycloudflare.com",
+  "offer_bullets": [
+    "Get more calls from Google",
+    "Look more professional online",
+    "Ongoing marketing to bring in new customers",
+    "We handle everything - hosting, unlimited changes, maintenance"
+  ],
+  "postcard_template_pdf": "postcards/templates/plumber-postcard.pdf",
+  "postcard_template_config": "postcards/templates/plumber-postcard.json",
+  "postcard_headline": "I rebuilt your website to get you more calls.",
+  "postcard_qr_label": "Scan to see your new site:",
+  "postcard_website_url": "www.solena-digital.com",
+  "formspree_endpoint": "",
+  "formspree_register_endpoint": "",
+  "formspree_callback_endpoint": "",
+  "stripe_payment_link": "https://buy.stripe.com/test_cNi6oH4sO3cs5gff4F8k800"
+}

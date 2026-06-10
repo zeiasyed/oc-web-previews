@@ -1,0 +1,4 @@
+scripts/__pycache__/
+*.pyc
+config/google.json
+data/discovered_raw.json

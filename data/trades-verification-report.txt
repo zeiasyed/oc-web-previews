@@ -1,0 +1,210 @@
+Target: 200 trade businesses with no website
+Approved: 200 -> trades-200.csv
+  plumber: 200
+  hvac: 0
+  roofer: 0
+Rejected: 613
+Review: 0
+Pool size was: 3871
+
+Approved:
+  [plumber] 24/7 Plumbers and Rooters Inc — Glendale
+  [plumber] 24/7 Pro-Rooter/Plumbing — Compton
+  [plumber] 626 Plumbing — Covina
+  [plumber] 911 Plumbing & Drain Rescue Inc. — Escondido
+  [plumber] A & J Plumbing & Water Heater Repair LLC — Carson
+  [plumber] A Plumbing Lake Elsinore Services — Lake Elsinore
+  [plumber] A Rivas Plumbing — San Clemente
+  [plumber] A&B Plumbing — Norwalk
+  [plumber] A-1 Plumbing Sewer & Drain Experts — El Cajon
+  [plumber] AAA Goforth Plumbing — Ramona
+  [plumber] AAA Preferred Plumbing Inc — Culver City
+  [plumber] ALTA Plumbing LLC — Fullerton
+  [plumber] Absolute Plumbing And Rooting, Inc. — Ventura
+  [plumber] Aliso Viejo Plumbing — Aliso Viejo
+  [plumber] All American Team Inc — Temecula
+  [plumber] All Clear Covina Plumber — Covina
+  [plumber] All Fullerton Plumber & Drain — Fullerton
+  [plumber] All Plumbing & Drain — San Juan Capistrano
+  [plumber] All Plumbing Fallbrook Services — Fallbrook
+  [plumber] All Plumbing Whittier Services — Whittier
+  [plumber] All Purpose Plumbing — Redlands
+  [plumber] All Seasons Plumbing — NO PALM SPRINGS
+  [plumber] All Time Plumbing — Cathedral City
+  [plumber] Alpha Plumbers Fullerton — Fullerton
+  [plumber] Always Plumbing & Drain Cleaning — Laguna Hills
+  [plumber] Always Ready Plumbing services 24 hours — Highland
+  [plumber] Amazing Plumbing — Cypress
+  [plumber] Americas plumber Llc — Escondido
+  [plumber] Apex Norwalk Plumber — Norwalk
+  [plumber] Aqua Dynamics Plumbing Company — Lawndale
+  [plumber] Aqua Garden Grove Plumbing Co — Garden Grove
+  [plumber] Arc Plumbing — Hawthorne
+  [plumber] B.R. MOORE PLUMBING | Reliable Plumber with 32 Years Experience | Senior & Army Discount — Banning
+  [plumber] Backflow Secured, LLC — Hacienda Heights
+  [plumber] Beach Plumbing And Drain — Redondo Beach
+  [plumber] Big Dalton Canyon Plumbing of Glendora — Glendora
+  [plumber] Black Cat Plumbing Co — Los Angeles
+  [plumber] Blue Diamond Water Heater Repair — Camarillo
+  [plumber] Booth's Pump Services — Ramona
+  [plumber] Brightwater Services Inc — Palm Desert
+  [plumber] Bt Plumbing Co — Simi Valley
+  [plumber] Bubbles Plumbing & Electrical — Pasadena
+  [plumber] Byers Plumbing — Lake Elsinore
+  [plumber] CA ROOTER AND PLUMBING — West Covina
+  [plumber] CJ Plumbing And Hydro Jetting — Hacienda Heights
+  [plumber] Cali Plumber San Marcos — San Marcos
+  [plumber] CaliBar Plumbing — Costa Mesa
+  [plumber] Call Plumbing Oceanside — Oceanside
+  [plumber] Capistrano Plumbing — San Juan Capistrano
+  [plumber] Carlos Plumbing — Inglewood
+  [plumber] Carlos the Plumber — Dana Point
+  [plumber] Carlsbad Plumbing Pros — Carlsbad
+  [plumber] Central OC Plumbing — Westminster
+  [plumber] Central Plumbing INC — Grover Beach
+  [plumber] Century Rooter Service And Plumbing — Monrovia
+  [plumber] Chihuahua Plumbing — National City
+  [plumber] City Plumbing Service Inc. — Whittier
+  [plumber] ClearFlow Plumbing Fountain Valley — Fountain Valley
+  [plumber] Clearwater Plumbing Inc - Plumbing Contractor, Drain Repair and Sewer Contractor La Mirada, CA — La Mirada
+  [plumber] Conejo Plumbing Solutions — Camarillo
+  [plumber] Coronado Plumbing & Drain Service — Ramona
+  [plumber] Cova Plumbing& Rooter — Inglewood
+  [plumber] Coyote Creek Plumbing of Buena Park — Buena Park
+  [plumber] DISCOUNT PLUMBING — Victorville
+  [plumber] Dan Gruetzmacher Plumbing — Goleta
+  [plumber] Danru Plumbing & Rooter — Upland
+  [plumber] David Brothers Plumbing LLC — Lake Forest
+  [plumber] Day Knight Plumbing — Poway
+  [plumber] Done Plumbing & Drain — Santee
+  [plumber] Downey Plumbing Masters — Downey
+  [plumber] Dynamic Plumbers Inglewood — Inglewood
+  [plumber] Dynasty Plumbing — Yucaipa
+  [plumber] E & G Plumbing — Hemet
+  [plumber] E-Z Plumbing — Colton
+  [plumber] Eaton Family Plumbers — Diamond Bar
+  [plumber] El Cajon Plumbing — El Cajon
+  [plumber] El Monte Plumbing Co — El Monte
+  [plumber] El Monte Plumbing Rooter & Drains Anytime — El Monte
+  [plumber] Elite Fullerton Plumbing Solutions — Fullerton
+  [plumber] Escondido Plumbing & Drain Co — Escondido
+  [plumber] Ethan Brothers Plumbing & Gas — San Marcos
+  [plumber] EverFlow Plumbing Newport Beach — Newport Beach
+  [plumber] Excel Plumbing Garden Grove Services — Garden Grove
+  [plumber] Excellent Garden Grove Plumbing Services — Garden Grove
+  [plumber] Expert Plumber Fullerton CA — Fullerton
+  [plumber] Express Plumbing Rowland Heights Pros — Rowland Heights
+  [plumber] Fierce Plumbing Inc — Chino
+  [plumber] Five Star Plumber Simi Valley — Simi Valley
+  [plumber] Frankie's Plumbing & Repipe — Apple Valley
+  [plumber] Gilbert Plumbing Inc — Hawthorne
+  [plumber] Golden Plumber Buena Park — Buena Park
+  [plumber] Gordon's Best Plumbing — Arcadia
+  [plumber] Green Garden Plumber's — Laguna Niguel
+  [plumber] Grow Plumbing — Manhattan Beach
+  [plumber] Guzman Plumbing — El Monte
+  [plumber] H'S Plumbing & Sewer Vista — Vista
+  [plumber] HDZ Plumbing & Sewer, Inc. — Hawthorne
+  [plumber] Handy Hoff Plumbing Services — Simi Valley
+  [plumber] Harrison Brothers Plumbing — Arcadia
+  [plumber] High Speed Plumbing — Pomona
+  [plumber] High Speed Plumbing of Arcadia — Arcadia
+  [plumber] High Speed Plumbing of Fullerton — Fullerton
+  [plumber] House Calls Plumbing — Bellflower
+  [plumber] Huntington Beach Plumbing — Huntington Beach
+  [plumber] Huntington Plumbing & Drain Company — Huntington Beach
+  [plumber] Icon Plumbing — Escondido
+  [plumber] Irvine Plumbing & Drain — Irvine
+  [plumber] J & A Plumbing — Imperial
+  [plumber] J. Diaz plumbing — Pomona
+  [plumber] JD PLUMBING SERVICES — Perris
+  [plumber] Jacot Plumbing, Inc. — Garden Grove
+  [plumber] John Murray Plumbing — Canyon Country
+  [plumber] John Riordan Plumbing Inc🔧 — Culver City
+  [plumber] John's Plumbing & Rooter — Hesperia
+  [plumber] Johnny's Plumbing and Drain — Goleta
+  [plumber] John’sSon's Plumbing Service — Monrovia
+  [plumber] Joseph A.Davidson Plumbing — Culver City
+  [plumber] Jumping Jack Plumbing — Victorville
+  [plumber] Justin Jackson's plumbing services — Arroyo Grande
+  [plumber] Kevin Shaw Plumbing, Inc. — Monrovia
+  [plumber] La Habra Plumber's — La Habra
+  [plumber] Lake Plumbing & Leak Detection — Lakeside
+  [plumber] Lang's Plumbing & Rooter, LLC — West Covina
+  [plumber] Le Plumbing Encinitas — Encinitas
+  [plumber] Lincoln Industries Plumbing — Culver City
+  [plumber] Los Angeles Plumbing — Lancaster
+  [plumber] Los Angeles Plumbing Pros — Los Angeles
+  [plumber] Mann Plumbing — Santee
+  [plumber] Master Plumbers Inglewood — Inglewood
+  [plumber] Master Pro Restoration & Plumbing — El Centro
+  [plumber] Monrovia Canyon Plumbing — Monrovia
+  [plumber] Monster Rooter — Rosamond
+  [plumber] Morrow Plumbing — Lake Elsinore
+  [plumber] Mr G Plumbing — Indio
+  [plumber] Mr. Harris Plumbing and Handyman Services — Hawthorne
+  [plumber] Murphy and Son's Plumbing — Yorba Linda
+  [plumber] My Dad's Plumbing — San Dimas
+  [plumber] My Plumber — Victorville
+  [plumber] Nick Allen Plumbing — San Clemente
+  [plumber] Night Owl Plumbing & Rooter — Santa Ana
+  [plumber] OC Plumbing — Brea
+  [plumber] Oceanside Plumbing And Drain — Oceanside
+  [plumber] On Time Rooter And Plumbing — Pico Rivera
+  [plumber] One Stop Water Heater Solutions — Bellflower
+  [plumber] Osborne Co — Moreno Valley
+  [plumber] PDM Plumbing Services — Cathedral City
+  [plumber] PDS Plumbing Drain And Services — Calexico
+  [plumber] Packard Plumbing — San Marcos
+  [plumber] Palafox plumbing — Hawthorne
+  [plumber] Palmdale Plumbers & Drain Pro — Palmdale
+  [plumber] Pieper Plumbing — Fallbrook
+  [plumber] Pipe Plumbing and Drain Cleaning — Aliso Viejo
+  [plumber] Plumb Force — Chino
+  [plumber] Plumb Geeks — Apple Valley
+  [plumber] Plumber & Toilet Unclogging Pros National City — National City
+  [plumber] Plumber Downey, Downey Plumbing, Best-1 — Downey
+  [plumber] Plumber South Gate, Rescue Plumbing — South Gate
+  [plumber] Plumberland Emergency Plumbing Land Commerce — Commerce
+  [plumber] Plumbers Hub LLC — Ontario
+  [plumber] Plumbing 4 All Plumbers Downey — Downey
+  [plumber] Plumbing Costa Mesa & Drain Clean — Costa Mesa
+  [plumber] Plumbing Master — Baldwin Park
+  [plumber] Plumbing On Time — Fountain Valley
+  [plumber] Plumbing Wholesale Outlet — Monrovia
+  [plumber] Plumbing by Tony — Huntington Beach
+  [plumber] Pomona Plumbing & Drain — Pomona
+  [plumber] Poseidon Plumbing — Irvine
+  [plumber] Postiff Plumbing and Drains — Huntington Beach
+  [plumber] Prime Plumber Thousand Oaks — Thousand Oaks
+  [plumber] Prime Plumber Yorba Linda — Yorba Linda
+  [plumber] Prime Plumbers Whittier — Whittier
+  [plumber] PrimeFix Plumbing Cerritos CA — Cerritos
+  [plumber] Priority Plumbers Costa Mesa — Costa Mesa
+  [plumber] Priority Plumbing Solutions — Lancaster
+  [plumber] Pro Plumber Downey Services — Downey
+  [plumber] Pro Plumber Fullerton — Fullerton
+  [plumber] Pro Plumber Redondo Beach — Redondo Beach
+  [plumber] Pro Plumbing Experts Mission Viejo — Mission Viejo
+  [plumber] Pro Plumbing Laguna Hills — Laguna Woods
+  [plumber] Pro-Tech Plumbing Co — Downey
+  [plumber] Qik Plumbing Laguna Niguel — Laguna Niguel
+  [plumber] Qik Plumbing San Juan Capistrano — San Juan Capistrano
+  [plumber] Qual Plumbing & Sewer — La Mesa
+  [plumber] Quick Fix Plumbers Glendale — Glendale
+  [plumber] R. Garcia Plumbing — El Monte
+  [plumber] RC & Son Plumbing — El Centro
+  [plumber] RMPPLUMBING — Beaumont
+  [plumber] RR Plumbing in Minutes — Hesperia
+  [plumber] Randy & Sons Plumbers — Redlands
+  [plumber] Rapid Garden Grove Plumbing Pros — Garden Grove
+  [plumber] Rasco Plumbing & Rooter — Santa Ana
+  [plumber] Rbg Plumbing — Hawthorne
+  [plumber] Ready Oceanside Plumber — Oceanside
+  [plumber] Real Plumbing — Glendale
+  [plumber] Redondo beach, JRS Plumbing — Redondo Beach
+  [plumber] Regal Plumbers Buena Park — Buena Park
+  [plumber] Reliable Handyman Services — Costa Mesa
+  [plumber] Responsive Plumber Ventura — Ventura
+  [plumber] Rite Palmdale Plumbers & Drain Clean — Palmdale
+  [plumber] Riverline Plumbing — Eastvale

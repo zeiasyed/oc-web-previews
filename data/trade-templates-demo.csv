@@ -1,0 +1,4 @@
+name,slug,industry,trade,address,city,phone,website_listed,no_website_reason,source,status,verification_status,verification_notes,google_maps_url
+Pacific Coast HVAC,pacific-coast-hvac-demo,home_services,hvac,"1234 Main St, Irvine, CA 92618",Irvine,(714) 555-0142,,no_website_listed,demo,approved,approved,Demo template preview,, 
+Summit Roofing Co,summit-roofing-demo,home_services,roofer,"890 Oak Ave, Anaheim, CA 92805",Anaheim,(714) 555-0198,,no_website_listed,demo,approved,approved,Demo template preview,,
+A & I Professional Services,a-i-professional-services-fullerton,home_services,plumber,"146 Thompson Ave, Fullerton, CA, 92833",Fullerton,+1 714-348-1255,,no_website_listed,openstreetmap,approved,approved,Real business — template preview,,
