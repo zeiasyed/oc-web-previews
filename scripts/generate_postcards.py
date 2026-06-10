@@ -81,16 +81,26 @@ def render_pdf_template(pdf_path: Path, dpi: int = 300) -> Image.Image:
     return img
 
 
-def fit_cover(image: Image.Image, width: int, height: int) -> Image.Image:
+def expand_rect(rect: tuple[int, int, int, int], pad: int) -> tuple[int, int, int, int]:
+    x0, y0, x1, y1 = rect
+    return (x0 - pad, y0 - pad, x1 + pad, y1 + pad)
+
+
+def fit_cover(image: Image.Image, width: int, height: int, *, overscan: float = 1.0) -> Image.Image:
     """Scale and center-crop to fill a fixed rectangle (consistent across all postcards)."""
+    target_w = max(1, int(width * overscan))
+    target_h = max(1, int(height * overscan))
     iw, ih = image.size
-    scale = max(width / iw, height / ih)
+    scale = max(target_w / iw, target_h / ih)
     new_w = max(1, int(iw * scale))
     new_h = max(1, int(ih * scale))
     resized = image.resize((new_w, new_h), Image.Resampling.LANCZOS)
-    left = (new_w - width) // 2
-    top = (new_h - height) // 2
-    return resized.crop((left, top, left + width, top + height))
+    left = (new_w - target_w) // 2
+    top = (new_h - target_h) // 2
+    cropped = resized.crop((left, top, left + target_w, top + target_h))
+    if cropped.size == (width, height):
+        return cropped
+    return cropped.resize((width, height), Image.Resampling.LANCZOS)
 
 
 def remove_legacy_postcard_variants(slug: str) -> None:
@@ -140,11 +150,13 @@ def draw_postcard_from_template(
     dpi = int(config.get("dpi", 300))
     img = render_pdf_template(pdf_path, dpi=dpi)
     draw = ImageDraw.Draw(img)
+    # Cover PDF stroke lines around dynamic zones (1.5pt borders + antialiasing at 300 DPI).
+    zone_bleed = 4
 
     preview_rect = tuple(config["preview_rect_px"])
     x0, y0, x1, y1 = preview_rect
     zone_w, zone_h = x1 - x0, y1 - y0
-    draw.rectangle(preview_rect, fill="#ffffff")
+    draw.rectangle(expand_rect(preview_rect, zone_bleed), fill="#ffffff")
 
     if preview_shot is None:
         preview_shot = Image.new("RGB", (zone_w, zone_h), "#e2e8f0")
@@ -156,20 +168,31 @@ def draw_postcard_from_template(
             font=load_font(40, bold=True),
         )
 
-    fitted = fit_cover(preview_shot.convert("RGB"), zone_w, zone_h)
-    img.paste(fitted, (x0, y0))
+    paste_bleed = 3
+    fitted = fit_cover(
+        preview_shot.convert("RGB"),
+        zone_w + paste_bleed * 2,
+        zone_h + paste_bleed * 2,
+        overscan=1.0,
+    )
+    img.paste(fitted, (x0 - paste_bleed, y0 - paste_bleed))
+    # Redraw the template frame over the seam between PDF stroke and pasted preview.
+    stroke_px = max(2, round(1.5 * dpi / 72))
+    draw.rectangle(preview_rect, outline="#000000", width=stroke_px)
 
     qr_rect = tuple(config["qr_rect_px"])
     qx0, qy0, qx1, qy1 = qr_rect
     qr_size = min(qx1 - qx0, qy1 - qy0)
-    draw.rectangle(qr_rect, fill="#ffffff")
+    draw.rectangle(expand_rect(qr_rect, zone_bleed + 4), fill="#ffffff")
 
     base_url = branding.get("github_pages_base", "https://YOUR_GITHUB_USERNAME.github.io/oc-web-previews")
     connect_url = f"{base_url.rstrip('/')}/landing/connect.html?biz={row['slug']}"
-    qr = qr_image(connect_url, qr_size)
+    qr = qr_image(connect_url, qr_size - 4)
+    qr_canvas = Image.new("RGB", (qr_size, qr_size), "#ffffff")
+    qr_canvas.paste(qr, (2, 2))
     qr_x = qx0 + (qx1 - qx0 - qr_size) // 2
     qr_y = qy0 + (qy1 - qy0 - qr_size) // 2
-    img.paste(qr, (qr_x, qr_y))
+    img.paste(qr_canvas, (qr_x, qr_y))
 
     return img
 
@@ -299,11 +322,20 @@ def parse_preview_colors(slug: str) -> tuple[str, str]:
 
 
 def qr_image(url: str, size: int) -> Image.Image:
-    qr = qrcode.QRCode(box_size=10, border=1)
+    """Render a crisp QR code with integer module scaling (no seam lines)."""
+    qr = qrcode.QRCode(box_size=1, border=1)
     qr.add_data(url)
     qr.make(fit=True)
     img = qr.make_image(fill_color="#0f172a", back_color="white").convert("RGB")
-    return img.resize((size, size), Image.Resampling.NEAREST)
+    modules = img.size[0]
+    scale = max(1, size // modules)
+    exact = modules * scale
+    img = img.resize((exact, exact), Image.Resampling.NEAREST)
+    if exact == size:
+        return img
+    canvas = Image.new("RGB", (size, size), "white")
+    canvas.paste(img, ((size - exact) // 2, (size - exact) // 2))
+    return canvas
 
 
 def capture_site_preview(slug: str, capture_width: int | None = None) -> Image.Image | None:
