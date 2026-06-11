@@ -154,17 +154,20 @@ def draw_postcard_from_template(
     pdf_path: Path,
     config: dict,
 ) -> Image.Image:
-    dpi = int(config.get("dpi", 300))
-    img = render_pdf_template(pdf_path, dpi=dpi)
+    """Composite a plumber preview screenshot and QR onto the print PDF."""
+    img = render_pdf_template(pdf_path, dpi=int(config.get("dpi", 300)))
     draw = ImageDraw.Draw(img)
 
-    paste_rect = tuple(
+    website_rect = tuple(
         config.get(
-            "preview_paste_rect_px",
-            config.get("preview_rect_px", config["preview_frame_rect_px"]),
+            "website_rect_px",
+            config.get(
+                "preview_paste_rect_px",
+                config.get("preview_rect_px", (175, 180, 2525, 1285)),
+            ),
         )
     )
-    x0, y0, x1, y1 = paste_rect
+    x0, y0, x1, y1 = website_rect
     zone_w, zone_h = x1 - x0, y1 - y0
 
     if preview_shot is None:
@@ -177,22 +180,23 @@ def draw_postcard_from_template(
             font=load_font(40, bold=True),
         )
     elif preview_shot.size != (zone_w, zone_h):
-        preview_shot = fit_cover(preview_shot.convert("RGB"), zone_w, zone_h, overscan=1.0)
+        preview_shot = fit_cover(preview_shot.convert("RGB"), zone_w, zone_h)
 
-    # Replace only the sample website inside the frame — keep PDF headline, frame, and footer art.
-    draw.rectangle(paste_rect, fill="#ffffff")
+    # Replace the baked-in sample website only. Headline + footer art stay from the PDF.
+    draw.rectangle(website_rect, fill="#ffffff")
     img.paste(preview_shot.convert("RGB"), (x0, y0))
 
     qr_rect = tuple(config["qr_rect_px"])
     qx0, qy0, qx1, qy1 = qr_rect
     qr_size = min(qx1 - qx0, qy1 - qy0)
-    qr_inner = qr_size - 12
+    qr_inner = max(64, qr_size - 12)
 
     base_url = branding.get("github_pages_base", "https://YOUR_GITHUB_USERNAME.github.io/oc-web-previews")
     connect_url = f"{base_url.rstrip('/')}/landing/connect.html?biz={row['slug']}"
     qr = qr_image(connect_url, qr_inner)
     qr_canvas = Image.new("RGB", (qr_size, qr_size), "#ffffff")
-    qr_canvas.paste(qr, ((qr_size - qr_inner) // 2, (qr_size - qr_inner) // 2))
+    inset = (qr_size - qr_inner) // 2
+    qr_canvas.paste(qr, (inset, inset))
     img.paste(qr_canvas, (qx0, qy0))
 
     return img
@@ -990,12 +994,15 @@ def main() -> None:
             print(f"Capturing preview for {row['slug']}...")
             target_size = None
             if template_config:
-                paste_rect = template_config.get(
-                    "preview_paste_rect_px",
-                    template_config.get("preview_rect_px"),
+                website_rect = template_config.get(
+                    "website_rect_px",
+                    template_config.get(
+                        "preview_paste_rect_px",
+                        template_config.get("preview_rect_px"),
+                    ),
                 )
-                if paste_rect:
-                    x0, y0, x1, y1 = paste_rect
+                if website_rect:
+                    x0, y0, x1, y1 = website_rect
                     target_size = (x1 - x0, y1 - y0)
             preview_shot = capture_site_preview(
                 row["slug"],

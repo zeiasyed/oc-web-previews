@@ -1,12 +1,23 @@
 {
   "name": "plumber",
-  "description": "Ready for print v2 Final FRONT (9×6 landscape @ 300 DPI, front only)",
+  "description": "Ready for print v2 Final FRONT \u2014 9\u00d76 landscape @ 300 DPI (front only)",
   "source_pdf": "Ready for print v2 Final FRONT Plumber Postcard (9 x 6 in) (1).pdf",
-  "landscape": true,
   "dpi": 300,
-  "size_inches": [9, 6],
-  "preview_frame_rect_px": [175, 95, 2525, 1285],
-  "preview_rect_px": [175, 175, 2525, 1285],
-  "preview_paste_rect_px": [175, 175, 2525, 1285],
-  "qr_rect_px": [95, 1410, 395, 1710]
+  "size_inches": [
+    9,
+    6
+  ],
+  "landscape": true,
+  "website_rect_px": [
+    175,
+    180,
+    2525,
+    1285
+  ],
+  "qr_rect_px": [
+    100,
+    1410,
+    400,
+    1710
+  ]
 }
