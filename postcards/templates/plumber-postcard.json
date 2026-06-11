@@ -1,6 +1,7 @@
 {
   "name": "plumber",
-  "description": "Ready for print v2 — 9×6 landscape @ 300 DPI (front only)",
+  "description": "Ready for print v2 Final FRONT (9×6 landscape @ 300 DPI, front only)",
+  "source_pdf": "Ready for print v2 Final FRONT Plumber Postcard (9 x 6 in) (1).pdf",
   "landscape": true,
   "dpi": 300,
   "size_inches": [9, 6],
