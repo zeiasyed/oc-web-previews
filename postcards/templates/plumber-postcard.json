@@ -5,6 +5,6 @@
   "dpi": 300,
   "size_inches": [9, 6],
   "preview_frame_rect_px": [175, 95, 2525, 1285],
-  "preview_rect_px": [175, 168, 2525, 1285],
+  "preview_paste_rect_px": [175, 170, 2525, 1285],
   "qr_rect_px": [95, 1410, 395, 1710]
 }
