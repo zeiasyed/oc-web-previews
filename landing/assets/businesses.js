@@ -1486,5 +1486,12 @@ window.BUSINESSES = [
     "industry": "home_services",
     "preview_path": "previews/bartsch-services-inc-the-woodlands/index.html",
     "trade": "plumber"
+  },
+  {
+    "slug": "zeia-plumber-inc-yorba-linda",
+    "name": "Zeia Plumber Inc.",
+    "industry": "home_services",
+    "preview_path": "previews/zeia-plumber-inc-yorba-linda/index.html",
+    "trade": "plumber"
   }
 ];
