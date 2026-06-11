@@ -1,0 +1,557 @@
+{
+  "total": 200,
+  "valid": 140,
+  "valid_with_flags": 59,
+  "possible_not_valid": 1,
+  "invalid": 0,
+  "by_line_type": {
+    "landline_or_mobile": 199,
+    "unparsed": 1
+  },
+  "flagged_records": [
+    {
+      "company_name": "J & M PLUMBING INC",
+      "city": "LEAGUE CITY",
+      "phone": "(713) 875-7956",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "AQUA FLOW PLUMBING",
+      "city": "MABANK",
+      "phone": "(903) 880-8090",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "GOOD FLOW PLUMBING & CONSTRUCTION",
+      "city": "MIDLAND",
+      "phone": "(432) 934-2497",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "ARGYLE MECHANICAL SERVICES DBA SERVICEPROZ",
+      "city": "GLADEWATER",
+      "phone": "(903) 237-8281",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Longview, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "SUPERIOR PLUMBING INC",
+      "city": "ODESSA",
+      "phone": "(432) 550-0123",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Odessa, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "EAST TEXAS PLUMBING CO",
+      "city": "ATHENS",
+      "phone": "(903) 675-9319",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Athens, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "7M PLUMBING LLC",
+      "city": "ABILENE",
+      "phone": "(325) 725-4105",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "RONS PLUMBING LLC",
+      "city": "SULPHUR SPRINGS",
+      "phone": "(903) 438-6328",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Sulphur Springs, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "TASK COMMERCIAL PLUMBING",
+      "city": "SHIRO",
+      "phone": "(281) 682-8953",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "AMERICAN CLASSIC PLUMBING INC",
+      "city": "KINGSLAND",
+      "phone": "(806) 702-0701",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "BAR-B PLUMBING CO INC",
+      "city": "KEMPNER",
+      "phone": "(254) 547-2493",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Copperas Cove, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "ROBERT RUSSELL PLUMBING, INC.",
+      "city": "MUENSTER",
+      "phone": "(940) 759-4155",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Muenster, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "INNERLINE PLUMBING",
+      "city": "RICHLAND",
+      "phone": "(817) 851-6826",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "MSC EARTHWORK, LLC",
+      "city": "CARMINE",
+      "phone": "(210) 219-2714",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "San Antonio, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "ATTABOY PLUMBING CO",
+      "city": "DIANA",
+      "phone": "(903) 738-4000",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "BUDDY P PLUMBING LLC",
+      "city": "BROOKSHIRE",
+      "phone": "(281) 934-8161",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Brookshire, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "HARDIN COUNTY PLUMBING SERVICES, LLC.",
+      "city": "KOUNTZE",
+      "phone": "(409) 246-4740",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Kountze, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "LARSON PLUMBING & UTILITY CO",
+      "city": "ODEM",
+      "phone": "(381) 887-6234",
+      "phone_validation_status": "possible_not_valid",
+      "phone_line_type": "",
+      "phone_region": "",
+      "phone_flags": "possible_not_valid;non_tx_area_code;invalid_area_code_381;po_box_address"
+    },
+    {
+      "company_name": "BARKER PLUMBING",
+      "city": "HILLSBORO",
+      "phone": "(254) 582-9879",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Hillsboro, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "DAN'S ALL AMERICAN PLUMBING LLC",
+      "city": "KIRBYVILLE",
+      "phone": "(409) 423-5773",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Kirbyville, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "SON-SHINE PLUMBING",
+      "city": "LOUISE",
+      "phone": "(361) 827-8042",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "CLOPTON'S LAND HOME IMPROVEMENTS LLC",
+      "city": "LEXINGTON",
+      "phone": "(979) 716-4646",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "T'S PLUMBING CO",
+      "city": "ALPINE",
+      "phone": "(432) 386-3291",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "M&M PLUMBING",
+      "city": "DEL RIO",
+      "phone": "(830) 734-6520",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "GRAVES PLUMBING",
+      "city": "CARTHAGE",
+      "phone": "(903) 237-9252",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Longview, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "BOB JAY'S OF PERRYTON INC",
+      "city": "PERRYTON",
+      "phone": "(806) 435-5080",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Perryton, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "BRUSH COUNTRY PLUMBING LLC",
+      "city": "ORANGE GROVE",
+      "phone": "(361) 232-6343",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "BARNWELL INDUSTRIES",
+      "city": "QUEEN CITY",
+      "phone": "(903) 796-4867",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Atlanta, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "HARPS PLUMBING",
+      "city": "MATAGORDA",
+      "phone": "(281) 342-8972",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "SAMPSON PLUMBING",
+      "city": "FRED",
+      "phone": "(409) 429-3517",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "MILLER PLUMBING SERVICES LLC",
+      "city": "BUFFALO",
+      "phone": "(512) 945-8538",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "DIAMOND H PLUMBING",
+      "city": "MT ENTERPRISE",
+      "phone": "(936) 305-1508",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "COLLINS & SON'S PLUMBING",
+      "city": "CISCO",
+      "phone": "(254) 433-6120",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "TAYLOR PLUMBING COMPANY",
+      "city": "MADISONVILLE",
+      "phone": "(936) 348-3800",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Madisonville, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "TIMOTHY WOOTEN WATER CONDITIONING",
+      "city": "STANTON",
+      "phone": "(432) 488-8294",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "GUADALUPE GARCIA JR",
+      "city": "UVALDE",
+      "phone": "(830) 325-4167",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "ROSE PLUMBING & SEPTIC SYSTEMS LLC",
+      "city": "LAMESA",
+      "phone": "(806) 872-3502",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Lamesa, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "ASHMORE PLUMBING",
+      "city": "HAMILTON",
+      "phone": "(254) 784-3662",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "CRAFT PLUMBING AND CONSTRUCTION LLC",
+      "city": "BLANCO",
+      "phone": "(830) 554-0565",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "PLUMB KRAZY PLUMBING",
+      "city": "CENTER",
+      "phone": "(936) 591-0190",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Center, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "BARTON PLUMBING",
+      "city": "CANADIAN",
+      "phone": "(806) 323-2444",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Canadian, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "4 J'S PLUMBING",
+      "city": "MARQUEZ",
+      "phone": "(936) 203-6135",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "DANNY HRNCIRIK ELECTRIC",
+      "city": "SEYMOUR",
+      "phone": "(940) 889-8843",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Seymour, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "CHOLLETT PLUMBING LLC",
+      "city": "SNOOK",
+      "phone": "(979) 324-7836",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "ANASTAS PLUMBING INC.",
+      "city": "MASON",
+      "phone": "(512) 801-0438",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "PELL PLUMBING",
+      "city": "GLEN ROSE",
+      "phone": "(530) 414-1446",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "California",
+      "phone_flags": "non_tx_area_code;po_box_address"
+    },
+    {
+      "company_name": "TP PLUMBING",
+      "city": "HOLLIDAY",
+      "phone": "(940) 851-9905",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Wichita Falls, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "REEL PLUMBING LLC",
+      "city": "COOPER",
+      "phone": "(903) 782-1782",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "LARRY LUCE PLUMBING",
+      "city": "GRAPELAND",
+      "phone": "(903) 373-3097",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "POST HEATING & AIR",
+      "city": "POST",
+      "phone": "(806) 495-2591",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Post, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "ABETTER PLUMBER",
+      "city": "JUNCTION",
+      "phone": "(281) 360-1111",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Kingwood, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "BLUE SKY PLUMBING CORPORATION",
+      "city": "LORENZO",
+      "phone": "(806) 543-5325",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "PENNINGTON MECHANICAL LLC",
+      "city": "WHEELER",
+      "phone": "(214) 529-7127",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "PK'S PLUMBING HEATING & AC INC",
+      "city": "AFTON",
+      "phone": "(806) 689-2025",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "BARMORE ENTERPRISES INC",
+      "city": "PECOS",
+      "phone": "(432) 447-2513",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Pecos, TX",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "DIAMOND D MECHANICAL INC",
+      "city": "ROBERT LEE",
+      "phone": "(325) 453-4437",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "MIKES PLUMBING",
+      "city": "ROUND ROCK",
+      "phone": "(512) 636-4160",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "UNION PLUMBING",
+      "city": "EL PASO",
+      "phone": "(915) 422-5292",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "CASS STINSON PLUMBING LLC",
+      "city": "PALMER",
+      "phone": "(469) 371-9298",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "Texas",
+      "phone_flags": "po_box_address"
+    },
+    {
+      "company_name": "AGGIELAND PLUMBING",
+      "city": "COLLEGE STATION",
+      "phone": "(979) 693-3053",
+      "phone_validation_status": "valid_with_flags",
+      "phone_line_type": "landline_or_mobile",
+      "phone_region": "College Station, TX",
+      "phone_flags": "po_box_address"
+    }
+  ],
+  "files": {
+    "validated_csv": "tx-plumbers-200-validated.csv",
+    "report_json": "tx-plumbers-phone-validation.json"
+  }
+}

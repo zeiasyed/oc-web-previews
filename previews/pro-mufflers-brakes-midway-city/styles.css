@@ -398,7 +398,7 @@ nav a.active { color: var(--primary); }
   z-index: 100;
   background: #0f172a;
   color: #e2e8f0;
-  border-top: 3px solid var(--accent);
+  border-top: 3px solid #059669;
   box-shadow: 0 -8px 30px rgba(15, 23, 42, 0.18);
 }
 .preview-bar-inner {
@@ -410,7 +410,7 @@ nav a.active { color: var(--primary); }
 }
 .preview-bar-text { margin: 0; font-size: 0.95rem; }
 .btn-preview {
-  background: var(--accent);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: var(--white) !important;
   padding: 0.65rem 1.1rem;
   border-radius: 999px;

@@ -258,13 +258,15 @@ h1 {
 
 #callback-submit,
 #callback-link {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
-  box-shadow: 0 8px 20px rgba(26, 122, 184, 0.28) !important;
+  background: linear-gradient(135deg, #fef9c3 0%, #fde68a 100%) !important;
+  color: #713f12 !important;
+  box-shadow: 0 8px 20px rgba(234, 179, 8, 0.18) !important;
 }
 
 #callback-submit:hover,
 #callback-link:hover {
-  box-shadow: 0 12px 28px rgba(26, 122, 184, 0.34) !important;
+  box-shadow: 0 12px 28px rgba(234, 179, 8, 0.26) !important;
+  filter: brightness(1.02);
 }
 
 .actions {

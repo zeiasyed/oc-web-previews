@@ -1,0 +1,943 @@
+{
+  "summary": {
+    "total": 200,
+    "verified": 38,
+    "partial_match": 30,
+    "conflict": 87,
+    "no_google_listing": 45,
+    "error": 0
+  },
+  "confidence": {
+    "high": 38,
+    "medium": 30,
+    "low": 132
+  },
+  "phone_match_yes": 44,
+  "manual_review": [
+    {
+      "company_name": "IC PLUMBING LLC",
+      "city": "CARROLLTON",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=IC+PLUMBING+LLC+1800+E.BELTLINE+RD+TX"
+    },
+    {
+      "company_name": "HERNANDEZ PLUMBING & SEWER INC",
+      "city": "SAN ANTONIO",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (210) 912-5119 vs Google (951) 235-9548; Address differs; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=14128243594091060589&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "JAMES BRADFORD PLUMBING",
+      "city": "DEL VALLE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (512) 247-4045 vs Google (505) 473-7148; Address differs; prefer Google street address; Google website: https://www.jamesplumbingandheating.com/?utm_campaign=gmb; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=4375208171494900994&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "VICTORY PLUMBING COMPANY",
+      "city": "HUTTO",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (512) 990-7200 vs Google (410) 877-4307; Address differs; prefer Google street address; Google website: https://www.victoryplumbingservicesllc.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=16674471825594358577&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "M. ROCHA PLUMBING",
+      "city": "EL PASO",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (915) 920-1549 vs Google (979) 279-9548; Address differs; prefer Google street address; Google website: https://rochaplumbingllc.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=13547270002361827604&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "OMG BUILDERS, LLC.",
+      "city": "CONROE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Google listing has no phone; keeping TSBPE phone; Address differs; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=10930305586779167629&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "FONSECA PLUMBING",
+      "city": "MISSOURI CITY",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=FONSECA+PLUMBING+3206+OYSTER+COVE+DR.+TX"
+    },
+    {
+      "company_name": "MOLINA PLUMBING",
+      "city": "CORPUS CHRISTI",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=MOLINA+PLUMBING+3842+APOLLO+TX"
+    },
+    {
+      "company_name": "PAISLEY PLUMBING",
+      "city": "WIMBERLEY",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (512) 618-1890 vs Google (714) 999-9991; Address differs; prefer Google street address; Google website: http://getmyplumber.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=18255593800589667406&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "MIMS PLUMBING",
+      "city": "BULVERDE",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=MIMS+PLUMBING+30581+PANTHER+DR.+TX"
+    },
+    {
+      "company_name": "PLUMBER BOY OF TX",
+      "city": "TEMPLE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (254) 238-1174 vs Google (830) 214-4133; Address differs; prefer Google street address; Google website: https://www.cowboyplumbingtx.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=1044712612378044985&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "SITE MECHANICAL LLC",
+      "city": "SPRINGTOWN",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=SITE+MECHANICAL+LLC+341+PALO+ALTO+DRIVE+TX"
+    },
+    {
+      "company_name": "J & M PLUMBING INC",
+      "city": "LEAGUE CITY",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (713) 875-7956 vs Google (714) 953-3136; TSBPE PO box; prefer Google street address; Google website: https://www.jmplumbers.com/?utm_source=google&utm_medium=local&utm_campaign=1&utm_content=primary; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=4297701073699625794&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "AQUA FLOW PLUMBING",
+      "city": "MABANK",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=AQUA+FLOW+PLUMBING+P+O+BOX+2073+TX"
+    },
+    {
+      "company_name": "PRO STAR PLUMBING",
+      "city": "QUINLAN",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (214) 364-8881 vs Google (929) 229-2781; Address differs; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=12181022506763470779&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "GOOD FLOW PLUMBING & CONSTRUCTION",
+      "city": "MIDLAND",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=GOOD+FLOW+PLUMBING+%26+CONSTRUCTION+P+O+BOX+50976+TX"
+    },
+    {
+      "company_name": "WILFORD FORSGREN PLUMBING",
+      "city": "WICHITA FALLS",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (940) 733-1387 vs Google (714) 955-4844; Address differs; prefer Google street address; Google website: https://orangecoastplumbing.net/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=9111805885634737071&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "CT TEXAS PLUMBING LLC",
+      "city": "SCHERTZ",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=CT+TEXAS+PLUMBING+LLC+401+MAPLE+DR+TX"
+    },
+    {
+      "company_name": "RSW PLUMBING & CONSTRUCTION LLC",
+      "city": "CANYON",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=RSW+PLUMBING+%26+CONSTRUCTION+LLC+21974+FM+1062+TX"
+    },
+    {
+      "company_name": "AM PM PLUMBING",
+      "city": "HARLINGEN",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (956) 425-0006 vs Google (951) 553-3882; Address differs; prefer Google street address; Google website: http://www.ampmplumbingopen.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=153949127539420813&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "SAN TEX PLUMBING",
+      "city": "RHOME",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (817) 770-6711 vs Google (210) 667-1023; Address differs; prefer Google street address; Google website: http://www.santexplumbing.com/contact.html; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=13908183236036466697&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "JAY HARKINS CO DBA HARKINS CO",
+      "city": "ELGIN",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (512) 281-5577 vs Google (518) 828-1433; Address differs; prefer Google street address; Google website: https://www.thomasharkinsplumbing.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=4754804634934016337&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "SUPERIOR PLUMBING INC",
+      "city": "ODESSA",
+      "crossref_status": "conflict",
+      "crossref_notes": "Google listing has no phone; keeping TSBPE phone; TSBPE PO box; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=6658507028700821157&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "AGGIES PLUMBING",
+      "city": "PORT ARTHUR",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (409) 960-2543 vs Google (970) 226-9979; Address differs; prefer Google street address; Google website: http://www.aggieplumbing.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=14231441398285083017&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "QUALITY PLUMBING & SERVICE INC",
+      "city": "LAREDO",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (956) 725-2335 vs Google (909) 212-4319; Address differs; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=14612169237001742301&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "SIERRA PLUMBING",
+      "city": "SAN ANGELO",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (325) 655-6747 vs Google (909) 868-8396; Address differs; prefer Google street address; Google website: http://www.sierraplumbingpro.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=13986134560345176073&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "4T CONSTRUCTION",
+      "city": "BURNET",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (512) 748-9250 vs Google (701) 690-9797; Address differs; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=18387288943348142898&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "R & S PLUMBING",
+      "city": "WILLS POINT",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (903) 873-4673 vs Google (866) 509-7187; Address differs; prefer Google street address; Google website: http://www.rspsol.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=13783877447308282687&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "EAST TEXAS PLUMBING CO",
+      "city": "ATHENS",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (903) 675-9319 vs Google (409) 832-4154; TSBPE PO box; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=5343428176083735286&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "VCSV LLC DBA VIC'S PLUMBING",
+      "city": "VICTORIA",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (361) 676-2935 vs Google (805) 643-4565; Address differs; prefer Google street address; Google website: http://www.vicssupply.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=10183584241187831339&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "SA'S BEST PLUMBING",
+      "city": "MICO",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (210) 421-7756 vs Google (951) 520-8557; Address differs; prefer Google street address; Google website: http://www.bestserviceplumber.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=4593956903857750472&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "7M PLUMBING LLC",
+      "city": "ABILENE",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=7M+PLUMBING+LLC+P+O+BOX+4059+TX"
+    },
+    {
+      "company_name": "RAD PLUMBING LLC",
+      "city": "NEW BOSTON",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (940) 600-7496 vs Google (318) 664-7633; Address differs; prefer Google street address; Google website: http://www.radplumbers.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=5503711398518957741&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "DOUBLE L PLUMBING",
+      "city": "GRANBURY",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (817) 279-9303 vs Google (817) 444-3100; Address differs; prefer Google street address; Google website: https://doublelplumbingservice.com/?utm_source=gmba&utm_medium=organic; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=17157466669189513896&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "ROUP PLUMBING LLC",
+      "city": "DALLAS",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (469) 826-3315 vs Google (972) 285-3967; Address differs; prefer Google street address; Google website: https://www.prplumbingtx.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=2529683785041489731&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "MIKE CAMPOS PLUMBING SERVICES",
+      "city": "FLORESVILLE",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=MIKE+CAMPOS+PLUMBING+SERVICES+504+BLARNEY+RD+TX"
+    },
+    {
+      "company_name": "RONS PLUMBING LLC",
+      "city": "SULPHUR SPRINGS",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=RONS+PLUMBING+LLC+P.+O.+BOX+248+TX"
+    },
+    {
+      "company_name": "BYNARD MALONE PLUMBING LLC",
+      "city": "PARIS",
+      "crossref_status": "conflict",
+      "crossref_notes": "Google listing has no phone; keeping TSBPE phone; Address matches TSBPE and Google; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=8766409438965483348&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "TASK COMMERCIAL PLUMBING",
+      "city": "SHIRO",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=TASK+COMMERCIAL+PLUMBING+P+O+BOX+81+TX"
+    },
+    {
+      "company_name": "AMERICAN CLASSIC PLUMBING INC",
+      "city": "KINGSLAND",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (806) 702-0701 vs Google (951) 676-2410; TSBPE PO box; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=7469827578962843067&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "FREE FLOW PLUMBING LLC",
+      "city": "NEW WAVERLY",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (936) 232-0433 vs Google (334) 659-7122; Address differs; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=9506049464629763834&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "INNERLINE PLUMBING",
+      "city": "RICHLAND",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=INNERLINE+PLUMBING+PO+BOX+132+TX"
+    },
+    {
+      "company_name": "NORTH TEXAS PRECISE PLUMBING LLC",
+      "city": "LEONARD",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (972) 762-7347 vs Google (254) 913-3634; Address differs; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=16370987733115292473&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "GREENWAVE PLUMBING INC",
+      "city": "LOCKHART",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=GREENWAVE+PLUMBING+INC+2233+BORCHERT+LOOP+TX"
+    },
+    {
+      "company_name": "HINOTE PLUMBING INC",
+      "city": "ORANGE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (409) 882-4140 vs Google (405) 251-2127; Address differs; prefer Google street address; Google website: https://slableak.us/?utm_source=google-gbp&utm_medium=organic&utm_campaign=*129*hi-tech-plumbing-edmond; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=6567200595243872398&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "MSC EARTHWORK, LLC",
+      "city": "CARMINE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (210) 219-2714 vs Google (281) 232-7777; TSBPE PO box; prefer Google street address; Google website: http://www.mscearthwork.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=14393158890549149244&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "ATTABOY PLUMBING CO",
+      "city": "DIANA",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=ATTABOY+PLUMBING+CO+P.O.+BOX+414+TX"
+    },
+    {
+      "company_name": "BUDDY P PLUMBING LLC",
+      "city": "BROOKSHIRE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (281) 934-8161 vs Google (760) 410-9922; TSBPE PO box; prefer Google street address; Google website: https://buddyplumbingsandiego.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=12126552572189081128&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "FORD PLUMBING & SEPTIC",
+      "city": "WINNSBORO",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (903) 342-7774 vs Google (310) 361-4084; Address differs; prefer Google street address; Google website: https://www.fordsplumbingandheating.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=16426232582349048050&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "R-1 PLUMBING LLC",
+      "city": "DAYTON",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=R-1+PLUMBING+LLC+387+CR+4891+TX"
+    },
+    {
+      "company_name": "LARSON PLUMBING & UTILITY CO",
+      "city": "ODEM",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (381) 887-6234 vs Google (715) 514-4222; TSBPE PO box; prefer Google street address; Google website: https://www.larsonplumbingservices.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=6511375292888375987&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "BARKER PLUMBING",
+      "city": "HILLSBORO",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (254) 582-9879 vs Google (714) 667-7800; TSBPE PO box; prefer Google street address; Google website: https://www.barkerandsonsplumbing.com/?utm_source=google&utm_medium=gmb&utm_campaign=GMB%20Anaheim; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=13929163884753613580&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "ACE PLUMBINGADRIANA & MARTIN GUTIERREZ ENTERPRISES INC",
+      "city": "ROCKDALE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (512) 446-5152 vs Google (424) 249-8661; Address differs; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=13058694399310519893&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "TEXAS HILL COUNTRY PLUMBING LLC",
+      "city": "BANDERA",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=TEXAS+HILL+COUNTRY+PLUMBING+LLC+3610+ENGLISH+CROSSING+ROAD+TX"
+    },
+    {
+      "company_name": "PRO MECHANICAL OF TEXAS/DBA-SHEETZ PRO MECHANICAL",
+      "city": "STEPHENVILLE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (254) 965-3000 vs Google (325) 356-3375; Address differs; prefer Google street address; Google website: https://www.facebook.com/promechanicaloftexas; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=1604363102384825313&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "SON-SHINE PLUMBING",
+      "city": "LOUISE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (361) 827-8042 vs Google (657) 695-0563; TSBPE PO box; prefer Google street address; Google website: http://www.dialonesonshine.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=10693581758759817421&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "CLOPTON'S LAND HOME IMPROVEMENTS LLC",
+      "city": "LEXINGTON",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=CLOPTON%27S+LAND+HOME+IMPROVEMENTS+LLC+PO+BOX+612+P.O.+BOX+612+TX"
+    },
+    {
+      "company_name": "TOBYAH ENTERPRISES INC DBA T&T PLUMBING",
+      "city": "CLYDE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (325) 721-4723 vs Google (951) 340-0911; Address differs; prefer Google street address; Google website: http://www.ttenterprises.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=15405973589466594625&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "HORNE PIPE & SUPPLY INC DBA CHAMBERS PLUMBING",
+      "city": "BROWNWOOD",
+      "crossref_status": "conflict",
+      "crossref_notes": "Google listing has no phone; keeping TSBPE phone; Address matches TSBPE and Google; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=12269180396186173057&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "VICTOR'S PLUMBING LLC",
+      "city": "HEREFORD",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=VICTOR%27S+PLUMBING+LLC+229++SOUTH+MAIN+TX"
+    },
+    {
+      "company_name": "T'S PLUMBING CO",
+      "city": "ALPINE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (432) 386-3291 vs Google (918) 371-2832; TSBPE PO box; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=12255169288115119800&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "1ST CLASSIC PLUMBING LLC",
+      "city": "KOPPERL",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (817) 578-5328 vs Google (214) 227-9554; Address differs; prefer Google street address; Google website: https://www.1stclassplumbing.com/?utm_source=google&utm_medium=organic&utm_campaign=gbp; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=4022163479991490563&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "M&M PLUMBING",
+      "city": "DEL RIO",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (830) 734-6520 vs Google (619) 517-0279; TSBPE PO box; prefer Google street address; Google website: https://mandmplumbingpro.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=14141176636481629790&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "NJM PLUMBING CO LLC",
+      "city": "PALESTINE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (903) 729-2323 vs Google (316) 491-3612; Address differs; prefer Google street address; Google website: http://jmplumbingict.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=13271431442826622695&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "RISINGER PLUMBING",
+      "city": "LEVELAND",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (806) 523-2222 vs Google (806) 272-6772; Address differs; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=10088120631052418243&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "NATIVI CONTRACTORS DIRECT CONNECT",
+      "city": "GORDON",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (817) 304-2722 vs Google (770) 872-7980; Address differs; prefer Google street address; Google website: http://directconnect247.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=7689632568795303510&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "GRAVES PLUMBING",
+      "city": "CARTHAGE",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=GRAVES+PLUMBING+PO+BOX+170+TX"
+    },
+    {
+      "company_name": "BRUSH COUNTRY PLUMBING LLC",
+      "city": "ORANGE GROVE",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=BRUSH+COUNTRY+PLUMBING+LLC+P+O+BOX+2635+TX"
+    },
+    {
+      "company_name": "BARNWELL INDUSTRIES",
+      "city": "QUEEN CITY",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=BARNWELL+INDUSTRIES+P.+O.+BOX+375+TX"
+    },
+    {
+      "company_name": "SAMPSON PLUMBING",
+      "city": "FRED",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=SAMPSON+PLUMBING+P.+O.+BOX+179+TX"
+    },
+    {
+      "company_name": "MILLER PLUMBING SERVICES LLC",
+      "city": "BUFFALO",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (512) 945-8538 vs Google (580) 243-4840; TSBPE PO box; prefer Google street address; Google website: https://mpselkcity.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=17327594761382066796&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "P3 PLUMBING, LLC",
+      "city": "GONZALES",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (361) 258-1339 vs Google (623) 500-6886; Address differs; prefer Google street address; Google website: http://p3plumbingaz.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=31321974073475586&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "BALLARD PLUMBING",
+      "city": "DUMAS",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (806) 935-7575 vs Google (909) 882-1748; Address differs; prefer Google street address; Google website: https://www.ballardplumbingandair.com/?utm_campaign=Google+My+Business&utm_source=GMB&utm_medium=organic&utm_content=Website; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=7528050244242863756&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "DIAMOND H PLUMBING",
+      "city": "MT ENTERPRISE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (936) 305-1508 vs Google (800) 674-9440; TSBPE PO box; prefer Google street address; Google website: http://diamondhouse-plumbing.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=17837278787398188256&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "WARE PLUMBING",
+      "city": "SNYDER",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (325) 436-9174 vs Google (903) 796-2259; Address differs; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=14120179072321108147&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "T C PLUMBING",
+      "city": "ANDREWS",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (432) 556-9412 vs Google (973) 376-6296; Keeping TSBPE address (PO box or no Google street address); Google website: http://www.tcplumbingandheating.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=16561569769709216919&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "NETWORK PLUMBING LLC",
+      "city": "SWEETWATER",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (325) 933-4269 vs Google (714) 566-0850; Address differs; prefer Google street address; Google website: http://www.plumberonthego.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=7611691649049700444&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "DL PLUMBING",
+      "city": "KINGSVILLE",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=DL+PLUMBING+1202+E.+HUISACHE+TX"
+    },
+    {
+      "company_name": "URBAN UTILITIES LLC",
+      "city": "LEESBURG",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=URBAN+UTILITIES+LLC+562+CR+2417+TX"
+    },
+    {
+      "company_name": "COLLINS & SON'S PLUMBING",
+      "city": "CISCO",
+      "crossref_status": "conflict",
+      "crossref_notes": "Google listing has no phone; keeping TSBPE phone; TSBPE PO box; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=4670667253775205068&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "TAYLOR PLUMBING COMPANY",
+      "city": "MADISONVILLE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (936) 348-3800 vs Google (847) 279-8581; TSBPE PO box; prefer Google street address; Google website: http://www.taylorplumbing.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=17262672723627997041&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "TIMOTHY WOOTEN WATER CONDITIONING",
+      "city": "STANTON",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=TIMOTHY+WOOTEN+WATER+CONDITIONING+PO+BOX+1163+TX"
+    },
+    {
+      "company_name": "WRIGHT CHOICE PLUMBING",
+      "city": "CUERO",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (361) 243-6980 vs Google (336) 991-0670; Address differs; prefer Google street address; Google website: https://callwrightchoiceplumbing.com/?utm_source=GBPlisting&utm_medium=organic; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=10130272109541847769&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "GUADALUPE GARCIA JR",
+      "city": "UVALDE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (830) 325-4167 vs Google (714) 395-3249; TSBPE PO box; prefer Google street address; Google website: http://www.jsplumbingoc.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=3870950859413166733&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "ROSE PLUMBING & SEPTIC SYSTEMS LLC",
+      "city": "LAMESA",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=ROSE+PLUMBING+%26+SEPTIC+SYSTEMS+LLC+PO+BOX+1204+TX"
+    },
+    {
+      "company_name": "DANIEL HINOJOSA DBA HINOJOSA PLUMBING",
+      "city": "KENEDY",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (830) 623-0586 vs Google (657) 345-2676; Address differs; prefer Google street address; Google website: http://proplumberinyorbalindaco.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=11401597200936187138&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "CRAFT PLUMBING AND CONSTRUCTION LLC",
+      "city": "BLANCO",
+      "crossref_status": "conflict",
+      "crossref_notes": "Google listing has no phone; keeping TSBPE phone; TSBPE PO box; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=4720642204415000508&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "MARTINEZ PLUMBING & CONSTRUCTION",
+      "city": "JACKSBORO",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (940) 282-9532 vs Google (714) 504-2826; Address differs; prefer Google street address; Google website: http://www.martinplumbingcompany.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=12921240083711298171&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "DBA: BOB'S PLUMBING",
+      "city": "PAMPA",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (806) 669-1940 vs Google (818) 468-7802; Address differs; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=6910941171983197643&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "PLUMB KRAZY PLUMBING",
+      "city": "CENTER",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (936) 591-0190 vs Google (877) 628-7473; TSBPE PO box; prefer Google street address; Google website: https://www.plumbkrazyplumbing.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=12840250084457481798&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "BARTON PLUMBING",
+      "city": "CANADIAN",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=BARTON+PLUMBING+PO+BOX+697+TX"
+    },
+    {
+      "company_name": "4 J'S PLUMBING",
+      "city": "MARQUEZ",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (936) 203-6135 vs Google (714) 395-3249; TSBPE PO box; prefer Google street address; Google website: http://www.jsplumbingoc.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=3870950859413166733&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "HAAK PLUMBING",
+      "city": "CHILTON",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (254) 883-0298 vs Google (714) 970-5885; Address differs; prefer Google street address; Google website: https://www.aaatlasplumbing.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=8907558248450149390&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "PHELPS PLBG HTG & AC",
+      "city": "HOWARDWICK",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (806) 662-7126 vs Google (231) 832-3257; Address differs; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=9134090994126143043&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "C & S PLUMBING SERVICES INC",
+      "city": "LEAKEY",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (830) 279-4766 vs Google (936) 449-0078; Address differs; prefer Google street address; Google website: https://www.cnsplumbingservices.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=11905730602616012873&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "STATE-WYED PLUMBING, LLC",
+      "city": "SCROGGINS",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=STATE-WYED+PLUMBING%2C+LLC+1059+COUNTY+ROAD+SE+4385+TX"
+    },
+    {
+      "company_name": "CHOLLETT PLUMBING LLC",
+      "city": "SNOOK",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=CHOLLETT+PLUMBING+LLC+PO+BOX+476+TX"
+    },
+    {
+      "company_name": "BYRON'S PLUMBING SERVICES INC",
+      "city": "SUGAR LAND",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (281) 565-9173 vs Google (609) 522-7452; Address differs; prefer Google street address; Google website: https://www.byronsplumbingandheating.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=10237697338537629002&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "CARSON QUALITY HEAT & AIR LLC",
+      "city": "CLARKSVILLE",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=CARSON+QUALITY+HEAT+%26+AIR+LLC+7864+TX-37+TX"
+    },
+    {
+      "company_name": "G BAR H INC DBA WESTERN PLUMBING & HEATING",
+      "city": "ROCHELLE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (325) 463-5504 vs Google (714) 930-1813; Address differs; prefer Google street address; Google website: https://westernrooter.com/regions/brea/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=15054385104545325876&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "HVAC MECHANICAL SERVICES OF  TEXAS LTD DBA HUNTON SERVICES",
+      "city": "BEACH CITY",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (832) 262-3057 vs Google (936) 274-8413; Address differs; prefer Google street address; Google website: http://www.huntonservices.com/?utm_campaign=gmb; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=4490861420759571184&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "ANASTAS PLUMBING INC.",
+      "city": "MASON",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=ANASTAS+PLUMBING+INC.+P.O.+BOX+1911+TX"
+    },
+    {
+      "company_name": "PELL PLUMBING",
+      "city": "GLEN ROSE",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=PELL+PLUMBING+P.O+BOX+358+TX"
+    },
+    {
+      "company_name": "TP PLUMBING",
+      "city": "HOLLIDAY",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=TP+PLUMBING+PO+BOX++546+TX"
+    },
+    {
+      "company_name": "THE J B ALLEN CO INC",
+      "city": "CRYSTAL CITY",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (830) 374-3618 vs Google (909) 592-8487; Address differs; prefer Google street address; Google website: https://www.jbplumb.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=10883305169852959184&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "ULTIMATE PLUMBING",
+      "city": "BROWNFIELD",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (806) 891-5636 vs Google (813) 296-2010; Address differs; prefer Google street address; Google website: https://ultimateplumbingsolutions.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=15832065959947740036&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "REEL PLUMBING LLC",
+      "city": "COOPER",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=REEL+PLUMBING+LLC+P.+O.+BOX+282+TX"
+    },
+    {
+      "company_name": "LARRY LUCE PLUMBING",
+      "city": "GRAPELAND",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=LARRY+LUCE+PLUMBING+PO+BOX+492+TX"
+    },
+    {
+      "company_name": "YOUNG PLUMBING LLC",
+      "city": "PORT LAVACA",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (361) 552-6733 vs Google (610) 867-5682; Address differs; prefer Google street address; Google website: http://www.youngplumbingllc.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=3349949959283151360&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "HOLMES PLUMBING",
+      "city": "FLOYDADA",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=HOLMES+PLUMBING+1432+CR+242+TX"
+    },
+    {
+      "company_name": "POST HEATING & AIR",
+      "city": "POST",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=POST+HEATING+%26+AIR+P+O+BOX+429+TX"
+    },
+    {
+      "company_name": "ABETTER PLUMBER",
+      "city": "JUNCTION",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (281) 360-1111 vs Google (503) 437-1213; TSBPE PO box; prefer Google street address; Google website: http://www.abetterplumbingcompany.org/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=8058805889282802016&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "BLUE SKY PLUMBING CORPORATION",
+      "city": "LORENZO",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (806) 543-5325 vs Google (303) 238-5900; TSBPE PO box; prefer Google street address; Google website: https://www.blueskyplumbing.com/wheat-ridge/?utm_souce=Google&utm_medium=GMB&utm_campaign=GBP-BlueSky-Wheat%20Ridge; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=3032333373286629470&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "TOLEDO PLUMBING",
+      "city": "SAN AUGUSTINE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (409) 275-9567 vs Google (201) 933-0122; Address differs; prefer Google street address; Google website: https://toledoplumbingandheating.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=708877855797007307&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "PENNINGTON MECHANICAL LLC",
+      "city": "WHEELER",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (214) 529-7127 vs Google (214) 288-8021; TSBPE PO box; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=2446620554775438231&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "PK'S PLUMBING HEATING & AC INC",
+      "city": "AFTON",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=PK%27S+PLUMBING+HEATING+%26+AC+INC+P.O.+BOX+38+TX"
+    },
+    {
+      "company_name": "TRIPLE C MECHANICAL",
+      "city": "LITTLEFIELD",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (806) 264-0544 vs Google (804) 732-5419; Address differs; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=1774564373656973595&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "DIAMOND D MECHANICAL INC",
+      "city": "ROBERT LEE",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (325) 453-4437 vs Google (806) 585-6660; TSBPE PO box; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=12693490441986552139&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "J DEE MECHANICAL",
+      "city": "COLORADO CITY",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=J+DEE+MECHANICAL+945+TX"
+    },
+    {
+      "company_name": "REDMON PLUMBING",
+      "city": "MONAHANS",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (432) 556-0159 vs Google (254) 547-3089; Address differs; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=17120071801931506308&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "FRANK SMITH PLUMBING",
+      "city": "DALLAS",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (214) 912-2768 vs Google (972) 445-9105; Address differs; prefer Google street address; Google website: https://www.smithplumbingdfw.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=3952660009753840358&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "CENTEX ELITE PLUMBING LLC",
+      "city": "AUSTIN",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (512) 284-6859 vs Google (254) 368-5181; Address differs; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=17812982011770680119&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "MIKES PLUMBING",
+      "city": "ROUND ROCK",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=MIKES+PLUMBING+PO+BOX+6402+TX"
+    },
+    {
+      "company_name": "UNION PLUMBING",
+      "city": "EL PASO",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (915) 422-5292 vs Google (714) 978-0582; TSBPE PO box; prefer Google street address; Google website: http://www.ualocal582.org/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=1028516540600665424&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "KING'S PLUMBING",
+      "city": "MERCEDES",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (956) 565-6444 vs Google (702) 234-2345; Address differs; prefer Google street address; Google website: http://plumbingkingsllc.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=2317751135037233818&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "LONE STAR PLUMBING COMPANY",
+      "city": "LUBBOCK",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (806) 239-8449 vs Google (806) 831-5708; Address differs; prefer Google street address; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=9366009214795514264&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "SALTA PLUMBING, LLC DBA CABLES PLUMBING",
+      "city": "BURLESON",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=SALTA+PLUMBING%2C+LLC+DBA+CABLES+PLUMBING+3916+HERITAGE+CT+TX"
+    },
+    {
+      "company_name": "CASS STINSON PLUMBING LLC",
+      "city": "PALMER",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (469) 371-9298 vs Google (270) 906-9004; TSBPE PO box; prefer Google street address; Google website: https://stinsonplumbingwky.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=3287784831138968273&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "METRO PLUMBING",
+      "city": "CORPUS CHRISTI",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (361) 510-5375 vs Google (310) 667-7303; Address differs; prefer Google street address; Google website: http://metroplumbinglosangeles.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=9455996822419247643&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    },
+    {
+      "company_name": "MECHELL CONTRACTING LLC",
+      "city": "WEST",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=MECHELL+CONTRACTING+LLC+201++HCR+2234+TX"
+    },
+    {
+      "company_name": "AGGIELAND PLUMBING",
+      "city": "COLLEGE STATION",
+      "crossref_status": "no_google_listing",
+      "crossref_notes": "Google Places: no matching listing found",
+      "google_maps_url": "https://www.google.com/maps/search/?api=1&query=AGGIELAND+PLUMBING+P.+O.+BOX+11371+TX"
+    },
+    {
+      "company_name": "MAG PLUMBING AND SERVICES",
+      "city": "SAN MARCOS",
+      "crossref_status": "conflict",
+      "crossref_notes": "Phone mismatch: TSBPE (512) 353-4024 vs Google (616) 868-0087; Address differs; prefer Google street address; Google website: https://magplbg.com/; Manual review recommended",
+      "google_maps_url": "https://maps.google.com/?cid=2565610118346674274&g_mp=Cidnb29nbGUubWFwcy5wbGFjZXMudjEuUGxhY2VzLlNlYXJjaFRleHQQAhgEIAA"
+    }
+  ],
+  "output_csv": "C:\\Users\\zeias\\Documents\\Website Development\\oc-web-previews\\landing\\data\\tx-plumbers-200-crossref.csv"
+}
