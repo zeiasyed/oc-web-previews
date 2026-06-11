@@ -147,23 +147,6 @@ def paste_cover_rect(base: Image.Image, overlay: Image.Image, rect: tuple[int, i
     base.paste(fitted, (x0, y0))
 
 
-def draw_template_headline(draw: ImageDraw.ImageDraw, branding: dict, canvas_width: int) -> None:
-    headline = branding.get("postcard_headline") or HEADLINE
-    pill_w, pill_h = 1320, 58
-    x0 = (canvas_width - pill_w) // 2
-    y0 = 100
-    x1, y1 = x0 + pill_w, y0 + pill_h
-    draw.rounded_rectangle((x0, y0, x1, y1), radius=pill_h // 2, fill="#1a4468")
-    font = load_font(36, bold=True)
-    text_w = draw.textlength(headline, font=font)
-    draw.text(
-        ((canvas_width - text_w) / 2, y0 + 11),
-        headline,
-        fill="#ffde59",
-        font=font,
-    )
-
-
 def draw_postcard_from_template(
     row: dict,
     branding: dict,
@@ -175,15 +158,14 @@ def draw_postcard_from_template(
     img = render_pdf_template(pdf_path, dpi=dpi)
     draw = ImageDraw.Draw(img)
 
-    frame_rect = tuple(config.get("preview_frame_rect_px", config["preview_paste_rect_px"]))
     paste_rect = tuple(
-        config.get("preview_paste_rect_px", config.get("preview_rect_px", frame_rect))
+        config.get(
+            "preview_paste_rect_px",
+            config.get("preview_rect_px", config["preview_frame_rect_px"]),
+        )
     )
     x0, y0, x1, y1 = paste_rect
     zone_w, zone_h = x1 - x0, y1 - y0
-
-    # Strip the PDF sample website completely — footer/QR art below the frame stays intact.
-    draw.rectangle(frame_rect, fill="#ffffff")
 
     if preview_shot is None:
         preview_shot = Image.new("RGB", (zone_w, zone_h), "#e2e8f0")
@@ -197,13 +179,14 @@ def draw_postcard_from_template(
     elif preview_shot.size != (zone_w, zone_h):
         preview_shot = fit_cover(preview_shot.convert("RGB"), zone_w, zone_h, overscan=1.0)
 
+    # Replace only the sample website inside the frame — keep PDF headline, frame, and footer art.
+    draw.rectangle(paste_rect, fill="#ffffff")
     img.paste(preview_shot.convert("RGB"), (x0, y0))
-    draw_template_headline(draw, branding, img.width)
 
     qr_rect = tuple(config["qr_rect_px"])
     qx0, qy0, qx1, qy1 = qr_rect
     qr_size = min(qx1 - qx0, qy1 - qy0)
-    qr_inner = qr_size - 16
+    qr_inner = qr_size - 12
 
     base_url = branding.get("github_pages_base", "https://YOUR_GITHUB_USERNAME.github.io/oc-web-previews")
     connect_url = f"{base_url.rstrip('/')}/landing/connect.html?biz={row['slug']}"
