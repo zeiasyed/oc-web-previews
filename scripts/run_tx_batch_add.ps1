@@ -13,4 +13,5 @@ python scripts/generate_site.py --csv $NewCsv
 python scripts/sync_branding.py
 python scripts/generate_postcards.py --csv $NewCsv
 python scripts/build_tx_index.py --csv $MasterCsv
+python scripts/build_postcard_gallery.py --csv $MasterCsv
 & "$PSScriptRoot\publish_to_github.ps1" "Add TX plumber batch: $Limit more sites and postcards ($MasterCsv)"
