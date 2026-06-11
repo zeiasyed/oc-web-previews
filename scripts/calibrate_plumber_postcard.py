@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
-"""Calibrate plumber postcard overlay zones from the source PDF."""
+"""Extract static print assets from the plumber postcard PDF."""
 
 from __future__ import annotations
 
 import json
-import sys
 from pathlib import Path
 
 import fitz
@@ -16,7 +15,15 @@ DEFAULT_SOURCE = Path(
 )
 TEMPLATE_PDF = ROOT / "postcards" / "templates" / "plumber-postcard.pdf"
 TEMPLATE_JSON = ROOT / "postcards" / "templates" / "plumber-postcard.json"
+ASSETS_DIR = ROOT / "postcards" / "templates" / "assets"
 DPI = 300
+
+# Measured from Ready for print v2 Final FRONT @ 300 DPI.
+HEADLINE_PILL_RECT = [480, 85, 2210, 175]
+WEBSITE_RECT = [0, 175, 2700, 1375]
+FOOTER_RECT = [0, 1380, 2700, 1800]
+QR_RECT = [100, 1410, 400, 1710]
+QR_CLEAR_RECT = [70, 1395, 430, 1730]
 
 
 def render_pdf(pdf_path: Path) -> Image.Image:
@@ -29,63 +36,53 @@ def render_pdf(pdf_path: Path) -> Image.Image:
     return img
 
 
-def detect_zones(img: Image.Image) -> dict:
-    """Return overlay zones for the v2 9×6 plumber postcard (hand-verified)."""
-    w, h = img.size
-    return {
-        "website_rect_px": [175, 180, 2525, 1285],
-        "qr_rect_px": [100, 1410, 400, 1710],
-        "canvas_px": [w, h],
-    }
-
-
-def write_config(zones: dict, source_name: str) -> None:
-    config = {
-        "name": "plumber",
-        "description": "Ready for print v2 Final FRONT — 9×6 landscape @ 300 DPI (front only)",
-        "source_pdf": source_name,
-        "dpi": DPI,
-        "size_inches": [9, 6],
-        "landscape": True,
-        **zones,
-    }
-    TEMPLATE_JSON.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
-
-
-def main() -> None:
-    source = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_SOURCE
-    if not source.exists():
-        raise SystemExit(f"Source PDF not found: {source}")
-
+def extract_assets(source: Path) -> None:
     TEMPLATE_PDF.parent.mkdir(parents=True, exist_ok=True)
+    ASSETS_DIR.mkdir(parents=True, exist_ok=True)
     if source.resolve() != TEMPLATE_PDF.resolve():
         TEMPLATE_PDF.write_bytes(source.read_bytes())
 
-    img = render_pdf(TEMPLATE_PDF)
-    zones = detect_zones(img)
+    base = render_pdf(TEMPLATE_PDF)
 
-    # Visual QA overlay.
-    debug = img.copy()
-    draw = ImageDraw.Draw(debug)
-    draw.rectangle(zones["website_rect_px"], outline="lime", width=6)
-    draw.rectangle(zones["qr_rect_px"], outline="red", width=6)
-    debug_path = TEMPLATE_PDF.parent / "_calibration-check.png"
-    debug.save(debug_path)
+    base.crop(HEADLINE_PILL_RECT).save(ASSETS_DIR / "headline-pill.png")
 
-    write_config(
-        {
-            "website_rect_px": zones["website_rect_px"],
-            "qr_rect_px": zones["qr_rect_px"],
-        },
-        source.name,
+    footer = base.crop(FOOTER_RECT)
+    footer_draw = ImageDraw.Draw(footer)
+    fx0, fy0, _, _ = FOOTER_RECT
+    qx0, qy0, qx1, qy1 = QR_CLEAR_RECT
+    footer_draw.rectangle(
+        (qx0 - fx0, qy0 - fy0, qx1 - fx0, qy1 - fy0),
+        fill="#ffffff",
     )
+    footer.save(ASSETS_DIR / "footer.png")
+
+    config = {
+        "name": "plumber",
+        "description": "Ready for print v2 Final FRONT — layer composited @ 300 DPI",
+        "source_pdf": source.name,
+        "compose_mode": "layers",
+        "dpi": DPI,
+        "size_inches": [9, 6],
+        "landscape": True,
+        "headline_pill_rect_px": HEADLINE_PILL_RECT,
+        "headline_paste_y": 90,
+        "website_rect_px": WEBSITE_RECT,
+        "footer_rect_px": FOOTER_RECT,
+        "qr_rect_px": QR_RECT,
+        "qr_clear_rect_px": QR_CLEAR_RECT,
+        "assets_dir": "postcards/templates/assets",
+    }
+    TEMPLATE_JSON.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
 
     print(f"Installed {TEMPLATE_PDF.relative_to(ROOT)}")
+    print(f"Extracted assets -> {ASSETS_DIR.relative_to(ROOT)}")
     print(f"Wrote {TEMPLATE_JSON.relative_to(ROOT)}")
-    print(f"Wrote {debug_path.relative_to(ROOT)}")
-    print("website_rect_px", zones["website_rect_px"])
-    print("qr_rect_px", zones["qr_rect_px"])
 
 
 if __name__ == "__main__":
-    main()
+    import sys
+
+    source = Path(sys.argv[1]) if len(sys.argv) > 1 else DEFAULT_SOURCE
+    if not source.exists():
+        raise SystemExit(f"Source PDF not found: {source}")
+    extract_assets(source)

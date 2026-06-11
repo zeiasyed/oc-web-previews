@@ -7,6 +7,7 @@ import csv
 import json
 import re
 import shutil
+import sys
 from io import BytesIO
 from pathlib import Path
 
@@ -15,6 +16,11 @@ import qrcode
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
+SCRIPTS_DIR = ROOT / "scripts"
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+from postcard_compose import compose_plumber_postcard  # noqa: E402
+
 CONFIG_PATH = ROOT / "config" / "branding.json"
 OUT_DIR = ROOT / "postcards" / "png"
 BACK_DIR = ROOT / "postcards" / "png" / "back"
@@ -154,10 +160,7 @@ def draw_postcard_from_template(
     pdf_path: Path,
     config: dict,
 ) -> Image.Image:
-    """Composite a plumber preview screenshot and QR onto the print PDF."""
-    img = render_pdf_template(pdf_path, dpi=int(config.get("dpi", 300)))
-    draw = ImageDraw.Draw(img)
-
+    """Build postcard from extracted layers (default) or legacy PDF overlay."""
     website_rect = tuple(
         config.get(
             "website_rect_px",
@@ -182,10 +185,6 @@ def draw_postcard_from_template(
     elif preview_shot.size != (zone_w, zone_h):
         preview_shot = fit_cover(preview_shot.convert("RGB"), zone_w, zone_h)
 
-    # Replace the baked-in sample website only. Headline + footer art stay from the PDF.
-    draw.rectangle(website_rect, fill="#ffffff")
-    img.paste(preview_shot.convert("RGB"), (x0, y0))
-
     qr_rect = tuple(config["qr_rect_px"])
     qx0, qy0, qx1, qy1 = qr_rect
     qr_size = min(qx1 - qx0, qy1 - qy0)
@@ -197,8 +196,15 @@ def draw_postcard_from_template(
     qr_canvas = Image.new("RGB", (qr_size, qr_size), "#ffffff")
     inset = (qr_size - qr_inner) // 2
     qr_canvas.paste(qr, (inset, inset))
-    img.paste(qr_canvas, (qx0, qy0))
 
+    if config.get("compose_mode") in ("layers", "programmatic"):
+        return compose_plumber_postcard(preview_shot, qr_canvas, config, branding=branding)
+
+    img = render_pdf_template(pdf_path, dpi=int(config.get("dpi", 300)))
+    draw = ImageDraw.Draw(img)
+    draw.rectangle(website_rect, fill="#ffffff")
+    img.paste(preview_shot.convert("RGB"), (x0, y0))
+    img.paste(qr_canvas, (qx0, qy0))
     return img
 
 
@@ -379,12 +385,14 @@ def capture_site_preview(
                     const hero = document.querySelector('section.hero');
                     if (!header || !hero) return { x: 0, y: 0, width: viewportWidth, height: 520 };
                     const top = header.getBoundingClientRect().top;
-                    const bottom = hero.getBoundingClientRect().bottom;
+                    const heroStyle = window.getComputedStyle(hero);
+                    const padBottom = parseFloat(heroStyle.paddingBottom) || 0;
+                    const bottom = hero.getBoundingClientRect().bottom - padBottom + 8;
                     return {
                         x: 0,
                         y: Math.max(0, Math.floor(top)),
                         width: viewportWidth,
-                        height: Math.ceil(bottom - top) + 4,
+                        height: Math.max(1, Math.ceil(bottom - top)),
                     };
                 }""",
                 viewport_width,
