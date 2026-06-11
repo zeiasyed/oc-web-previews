@@ -64,8 +64,28 @@ def to_pipeline_row(row: dict) -> dict:
     }
 
 
-def load_candidates(source_paths: list[Path]) -> list[dict]:
-    seen: set[str] = set()
+def load_slugs_from_csvs(paths: list[Path]) -> set[str]:
+    slugs: set[str] = set()
+    for path in paths:
+        if not path.exists():
+            continue
+        with path.open(newline="", encoding="utf-8") as fh:
+            for row in csv.DictReader(fh):
+                slug = (row.get("slug") or "").strip()
+                if slug:
+                    slugs.add(slug)
+    return slugs
+
+
+def load_pipeline_rows(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    with path.open(newline="", encoding="utf-8") as fh:
+        return list(csv.DictReader(fh))
+
+
+def load_candidates(source_paths: list[Path], *, exclude_slugs: set[str]) -> list[dict]:
+    seen: set[str] = set(exclude_slugs)
     candidates: list[dict] = []
     for path in source_paths:
         if not path.exists():
@@ -95,10 +115,21 @@ def main() -> None:
         action="append",
         help="Source CSV (repeatable). Defaults to curated no-website lists.",
     )
+    parser.add_argument(
+        "--exclude",
+        action="append",
+        help="Pipeline CSV whose slugs to skip (repeatable). Use for already-shipped batches.",
+    )
+    parser.add_argument(
+        "--master-out",
+        help="Optional combined CSV: rows from --exclude files first, then this batch.",
+    )
     args = parser.parse_args()
 
     sources = [Path(p) for p in args.source] if args.source else DEFAULT_SOURCES
-    candidates = load_candidates(sources)
+    exclude_paths = [Path(p) for p in args.exclude] if args.exclude else []
+    exclude_slugs = load_slugs_from_csvs(exclude_paths)
+    candidates = load_candidates(sources, exclude_slugs=exclude_slugs)
     candidates.sort(key=lambda r: (r.get("city") or "", r.get("company_name") or r.get("name") or ""))
     selected = candidates[: args.limit]
     if len(selected) < args.limit:
@@ -112,7 +143,29 @@ def main() -> None:
         writer.writeheader()
         writer.writerows(pipeline_rows)
 
-    print(f"Wrote {out_path.relative_to(ROOT)} ({len(pipeline_rows)} plumbers)")
+    if args.master_out:
+        master_path = Path(args.master_out)
+        master_rows: list[dict] = []
+        seen_master: set[str] = set()
+        for path in exclude_paths:
+            for row in load_pipeline_rows(path):
+                slug = row.get("slug", "")
+                if slug and slug not in seen_master:
+                    seen_master.add(slug)
+                    master_rows.append(row)
+        for row in pipeline_rows:
+            if row["slug"] not in seen_master:
+                seen_master.add(row["slug"])
+                master_rows.append(row)
+        with master_path.open("w", newline="", encoding="utf-8") as fh:
+            writer = csv.DictWriter(fh, fieldnames=PIPELINE_FIELDS)
+            writer.writeheader()
+            writer.writerows(master_rows)
+        print(f"Wrote {master_path.resolve().relative_to(ROOT.resolve())} ({len(master_rows)} plumbers total)")
+
+    if exclude_slugs:
+        print(f"Excluded {len(exclude_slugs)} slug(s) from prior batches")
+    print(f"Wrote {out_path.resolve().relative_to(ROOT.resolve())} ({len(pipeline_rows)} plumbers)")
     for row in pipeline_rows[:5]:
         print(f"  - {row['name']} ({row['city']}, TX)")
     if len(pipeline_rows) > 5:
