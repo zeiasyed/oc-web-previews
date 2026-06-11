@@ -140,6 +140,13 @@ def paste_in_rect(base: Image.Image, overlay: Image.Image, rect: tuple[int, int,
     base.paste(overlay, (paste_x, paste_y))
 
 
+def paste_cover_rect(base: Image.Image, overlay: Image.Image, rect: tuple[int, int, int, int]) -> None:
+    x0, y0, x1, y1 = rect
+    zone_w, zone_h = x1 - x0, y1 - y0
+    fitted = fit_cover(overlay.convert("RGB"), zone_w, zone_h, overscan=1.0)
+    base.paste(fitted, (x0, y0))
+
+
 def draw_postcard_from_template(
     row: dict,
     branding: dict,
@@ -165,24 +172,22 @@ def draw_postcard_from_template(
             font=load_font(40, bold=True),
         )
 
-    # Clear only the inner screenshot window — not the PDF browser chrome above it.
+    # Replace the full baked-in sample site (header + hero), not just the hero band.
     draw.rectangle(expand_rect(preview_rect, 2), fill="#ffffff")
-    fitted = fit_cover(preview_shot.convert("RGB"), zone_w, zone_h, overscan=1.0)
-    img.paste(fitted, (x0, y0))
+    paste_cover_rect(img, preview_shot, preview_rect)
 
     qr_rect = tuple(config["qr_rect_px"])
     qx0, qy0, qx1, qy1 = qr_rect
     qr_size = min(qx1 - qx0, qy1 - qy0)
-    # Cover the template placeholder QR without bleeding into the "Scan to see…" pill.
-    draw.rectangle((qx0 - 4, qy0 - 4, qx1 + 2, qy1 + 4), fill="#ffffff")
+    draw.rectangle((qx0, qy0, qx1, qy1), fill="#ffffff")
 
     base_url = branding.get("github_pages_base", "https://YOUR_GITHUB_USERNAME.github.io/oc-web-previews")
     connect_url = f"{base_url.rstrip('/')}/landing/connect.html?biz={row['slug']}"
-    qr = qr_image(connect_url, qr_size - 4)
-    qr_canvas = Image.new("RGB", (qr_size, qr_size), "#ffffff")
-    qr_canvas.paste(qr, (2, 2))
-    qr_x = qx0 + (qx1 - qx0 - qr_size) // 2
-    qr_y = qy0 + (qy1 - qy0 - qr_size) // 2
+    qr = qr_image(connect_url, qr_size - 8)
+    qr_canvas = Image.new("RGB", (qr_size - 8, qr_size - 8), "#ffffff")
+    qr_canvas.paste(qr, (0, 0))
+    qr_x = qx0 + (qx1 - qx0 - qr_canvas.width) // 2
+    qr_y = qy0 + (qy1 - qy0 - qr_canvas.height) // 2
     img.paste(qr_canvas, (qr_x, qr_y))
 
     return img
