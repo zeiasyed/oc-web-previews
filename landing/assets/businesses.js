@@ -1,93 +1,5 @@
 window.BUSINESSES = [
   {
-    "slug": "a-i-professional-services-fullerton",
-    "name": "A & I Professional Services",
-    "industry": "home_services",
-    "preview_path": "previews/a-i-professional-services-fullerton/index.html",
-    "trade": "plumber"
-  },
-  {
-    "slug": "watch-tech-lake-forest",
-    "name": "Watch-Tech",
-    "industry": "home_services",
-    "preview_path": "previews/watch-tech-lake-forest/index.html"
-  },
-  {
-    "slug": "pro-mufflers-brakes-midway-city",
-    "name": "Pro Mufflers & Brakes",
-    "industry": "auto",
-    "preview_path": "previews/pro-mufflers-brakes-midway-city/index.html"
-  },
-  {
-    "slug": "reco-construction-westminster",
-    "name": "RECO Construction",
-    "industry": "home_services",
-    "preview_path": "previews/reco-construction-westminster/index.html"
-  },
-  {
-    "slug": "my-l-j-insurance-services-lake-forest",
-    "name": "My L&J Insurance Services",
-    "industry": "professional",
-    "preview_path": "previews/my-l-j-insurance-services-lake-forest/index.html"
-  },
-  {
-    "slug": "r-nh-t-cali-garden-grove",
-    "name": "R\u1ebb Nh\u1ea5t Cali",
-    "industry": "home_services",
-    "preview_path": "previews/r-nh-t-cali-garden-grove/index.html"
-  },
-  {
-    "slug": "nu-trend-homes-costa-mesa",
-    "name": "Nu Trend Homes",
-    "industry": "professional",
-    "preview_path": "previews/nu-trend-homes-costa-mesa/index.html"
-  },
-  {
-    "slug": "quality-building-maintenance-inc-garden-grove",
-    "name": "Quality Building Maintenance, Inc.",
-    "industry": "professional",
-    "preview_path": "previews/quality-building-maintenance-inc-garden-grove/index.html"
-  },
-  {
-    "slug": "gutierrez-nguyen-law-center-westminster",
-    "name": "Gutierrez & Nguyen Law Center",
-    "industry": "professional",
-    "preview_path": "previews/gutierrez-nguyen-law-center-westminster/index.html"
-  },
-  {
-    "slug": "karen-schipani-tedrahn-mft-fullerton",
-    "name": "Karen Schipani - Tedrahn, MFT",
-    "industry": "professional",
-    "preview_path": "previews/karen-schipani-tedrahn-mft-fullerton/index.html"
-  },
-  {
-    "slug": "rainbow-auto-center-garden-grove",
-    "name": "Rainbow Auto Center",
-    "industry": "auto",
-    "preview_path": "previews/rainbow-auto-center-garden-grove/index.html"
-  },
-  {
-    "slug": "equity-plumbing-north-tustin",
-    "name": "Equity Plumbing",
-    "industry": "home_services",
-    "preview_path": "previews/equity-plumbing-north-tustin/index.html",
-    "trade": "plumber"
-  },
-  {
-    "slug": "plumbers-in-oakdale-ca-anaheim",
-    "name": "Plumbers in Oakdale, CA",
-    "industry": "home_services",
-    "preview_path": "previews/plumbers-in-oakdale-ca-anaheim/index.html",
-    "trade": "plumber"
-  },
-  {
-    "slug": "stillman-plumbing-co-oakdale-ca-anaheim",
-    "name": "Stillman Plumbing Co. Oakdale, CA,",
-    "industry": "home_services",
-    "preview_path": "previews/stillman-plumbing-co-oakdale-ca-anaheim/index.html",
-    "trade": "plumber"
-  },
-  {
     "slug": "donnie-underwood-plumbing-abilene",
     "name": "Donnie Underwood Plumbing",
     "industry": "home_services",
@@ -1485,13 +1397,6 @@ window.BUSINESSES = [
     "name": "BARTSCH SERVICES INC",
     "industry": "home_services",
     "preview_path": "previews/bartsch-services-inc-the-woodlands/index.html",
-    "trade": "plumber"
-  },
-  {
-    "slug": "zeia-plumber-inc-yorba-linda",
-    "name": "Zeia Plumber Inc.",
-    "industry": "home_services",
-    "preview_path": "previews/zeia-plumber-inc-yorba-linda/index.html",
     "trade": "plumber"
   }
 ];
