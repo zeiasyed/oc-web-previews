@@ -6,5 +6,6 @@
   "size_inches": [9, 6],
   "landscape": true,
   "website_rect_px": [175, 180, 2525, 1285],
-  "qr_rect_px": [100, 1410, 400, 1710]
+  "qr_rect_px": [100, 1410, 400, 1710],
+  "headline_overlap_px": 14
 }

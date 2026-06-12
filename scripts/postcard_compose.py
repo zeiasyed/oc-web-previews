@@ -12,13 +12,15 @@ ROOT = Path(__file__).resolve().parents[1]
 CANVAS = (2700, 1800)
 WEBSITE_RECT = (175, 180, 2525, 1285)
 QR_RECT = (100, 1410, 400, 1710)
-HEADLINE_OVERLAP_PX = 32  # pill sits partly over the top of the website frame
+# How far the pill dips below the frame's top edge (covers the black border + a sliver of header)
+HEADLINE_OVERLAP_PX = 14
 
 BLUE_DARK = "#2d5c87"
 YELLOW = "#ffde59"
 TEXT_DARK = "#0f172a"
 TEXT_MUTED = "#475569"
 BORDER = "#000000"
+HEADLINE_PILL_PATH = ROOT / "postcards" / "templates" / "headline-pill.png"
 
 
 def load_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
@@ -59,40 +61,58 @@ def trim_bottom_whitespace(image: Image.Image, *, max_scan: int = 40, threshold:
     return rgb if cut <= 0 else rgb.crop((0, 0, w, h - cut))
 
 
-def _headline_pill_box(text: str, canvas_w: int, frame_top: int, overlap_px: int) -> tuple[int, int, int, int]:
-    font = load_font(52, bold=True)
-    pad_x, pad_y = 56, 22
-    text_w = int(ImageDraw.Draw(Image.new("RGB", (1, 1))).textlength(text, font=font))
-    pill_w = text_w + pad_x * 2
-    pill_h = font.size + pad_y * 2 if hasattr(font, "size") else 90
-    pill_x = (canvas_w - pill_w) // 2
-    pill_y = frame_top - pill_h + overlap_px
-    return pill_x, pill_y, pill_w, pill_h
+def ensure_headline_pill_asset() -> Path:
+    """One-time extract of the headline pill from the print PDF (exact design match)."""
+    HEADLINE_PILL_PATH.parent.mkdir(parents=True, exist_ok=True)
+    if HEADLINE_PILL_PATH.exists():
+        return HEADLINE_PILL_PATH
+
+    import fitz
+
+    pdf = ROOT / "postcards" / "templates" / "plumber-postcard.pdf"
+    if not pdf.exists():
+        raise FileNotFoundError(f"Missing template PDF for headline extract: {pdf}")
+
+    doc = fitz.open(str(pdf))
+    pix = doc[0].get_pixmap(matrix=fitz.Matrix(300 / 72, 300 / 72), alpha=False)
+    page = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
+    doc.close()
+
+    crop = page.crop((480, 85, 2210, 175))
+    rgba = crop.convert("RGBA")
+    pixels = rgba.load()
+    w, h = rgba.size
+    for y in range(h):
+        for x in range(w):
+            r, g, b, a = pixels[x, y]
+            is_blue = r < 80 and g < 120 and b > 100
+            is_yellow = r > 200 and g > 180 and b < 120
+            if is_blue or is_yellow:
+                pixels[x, y] = (r, g, b, 255)
+            else:
+                pixels[x, y] = (r, g, b, 0)
+
+    rgba.save(HEADLINE_PILL_PATH, "PNG")
+    return HEADLINE_PILL_PATH
+
+
+def _load_headline_pill() -> Image.Image:
+    path = ensure_headline_pill_asset()
+    return Image.open(path).convert("RGBA")
 
 
 def _draw_headline_pill(
     canvas: Image.Image,
-    text: str,
-    canvas_w: int,
     frame_top: int,
     *,
     overlap_px: int = HEADLINE_OVERLAP_PX,
 ) -> None:
-    font = load_font(52, bold=True)
-    pad_x, pad_y = 56, 22
-    pill_x, pill_y, pill_w, pill_h = _headline_pill_box(text, canvas_w, frame_top, overlap_px)
-    draw = ImageDraw.Draw(canvas)
-    draw.rounded_rectangle(
-        (pill_x, pill_y, pill_x + pill_w, pill_y + pill_h),
-        radius=pill_h // 2,
-        fill=BLUE_DARK,
-    )
-    draw.text(
-        (pill_x + pad_x, pill_y + pad_y - 2),
-        text,
-        fill=YELLOW,
-        font=font,
-    )
+    pill = _load_headline_pill()
+    pill_w, pill_h = pill.size
+    pill_x = (canvas.width - pill_w) // 2
+    # Bottom of pill dips overlap_px below the frame top edge.
+    pill_y = frame_top + overlap_px - pill_h
+    canvas.paste(pill, (pill_x, pill_y), pill)
 
 
 def _draw_website_frame(canvas: Image.Image, preview: Image.Image, rect: tuple[int, int, int, int]) -> None:
@@ -170,17 +190,15 @@ def compose_plumber_postcard(
     assets_dir: Path | None = None,
 ) -> Image.Image:
     """Draw a complete 9×6 postcard from scratch."""
-    _ = assets_dir  # unused — no PDF assets
-    branding = branding or {}
+    _ = assets_dir, branding
     canvas_w, canvas_h = CANVAS
     website_rect = tuple(config.get("website_rect_px", WEBSITE_RECT))
     qr_rect = tuple(config.get("qr_rect_px", QR_RECT))
+    overlap_px = int(config.get("headline_overlap_px", HEADLINE_OVERLAP_PX))
 
     canvas = Image.new("RGB", (canvas_w, canvas_h), "#ffffff")
-
-    headline = branding.get("postcard_headline", "I rebuilt your website to get you more calls.")
     _draw_website_frame(canvas, preview_shot, website_rect)
-    _draw_headline_pill(canvas, headline, canvas_w, website_rect[1])
-    _draw_footer(canvas, branding, qr_image, qr_rect)
+    _draw_headline_pill(canvas, website_rect[1], overlap_px=overlap_px)
+    _draw_footer(canvas, branding or {}, qr_image, qr_rect)
 
     return canvas
