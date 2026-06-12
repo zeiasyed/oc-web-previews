@@ -37,15 +37,25 @@
   "frame_border_px": 3,
   "draw_frame_border": false,
   "qr_rect_px": [
-    100,
-    1410,
-    400,
-    1710
+    98,
+    1418,
+    398,
+    1722
   ],
   "qr_clear_rect_px": [
-    70,
-    1395,
-    430,
-    1730
-  ]
+    98,
+    1418,
+    398,
+    1722
+  ],
+  "scan_pill_rect_px": [
+    82,
+    1402,
+    1200,
+    1738
+  ],
+  "scan_pill_color": "#2d5c87",
+  "scan_pill_border_px": 4,
+  "scan_pill_font_px": 46,
+  "scan_pill_text_color": "#334155"
 }

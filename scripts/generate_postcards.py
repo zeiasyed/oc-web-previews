@@ -197,7 +197,7 @@ def draw_postcard_from_template(
     inset = (qr_size - qr_inner) // 2
     qr_canvas.paste(qr, (inset, inset))
 
-    return compose_from_pdf(pdf_path, preview_shot, qr_canvas, config)
+    return compose_from_pdf(pdf_path, preview_shot, qr_canvas, config, branding=branding)
 
 
 def ensure_template_in_repo(source_pdf: Path | None) -> None:

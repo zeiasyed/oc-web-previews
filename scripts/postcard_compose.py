@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import fitz
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -18,6 +18,17 @@ def render_pdf(pdf_path: Path, dpi: int = 300) -> Image.Image:
     img = Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
     doc.close()
     return img
+
+
+def load_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.ImageFont:
+    candidates = [
+        "C:/Windows/Fonts/segoeuib.ttf" if bold else "C:/Windows/Fonts/segoeui.ttf",
+        "C:/Windows/Fonts/arialbd.ttf" if bold else "C:/Windows/Fonts/arial.ttf",
+    ]
+    for path in candidates:
+        if Path(path).exists():
+            return ImageFont.truetype(path, size=size)
+    return ImageFont.load_default()
 
 
 def fit_cover(image: Image.Image, width: int, height: int) -> Image.Image:
@@ -53,15 +64,66 @@ def load_base_canvas(pdf_path: Path, config: dict) -> Image.Image:
     if base_rel:
         base_path = ROOT / base_rel
         if base_path.exists():
-            return Image.open(base_path).convert("RGB").copy()
+            return Image.open(base_path).copy()
 
     canvas = render_pdf(pdf_path, dpi=int(config.get("dpi", 300)))
     draw = ImageDraw.Draw(canvas)
-    wipe_rect = tuple(config.get("wipe_rect_px", config["website_rect_px"]))
-    draw.rectangle(wipe_rect, fill="#ffffff")
-    qr_clear = tuple(config.get("qr_clear_rect_px", config["qr_rect_px"]))
-    draw.rectangle(qr_clear, fill="#ffffff")
+    draw.rectangle(tuple(config.get("wipe_rect_px", config["website_rect_px"])), fill="#ffffff")
+    scan_pill = config.get("scan_pill_rect_px")
+    if scan_pill:
+        draw.rectangle(tuple(scan_pill), fill="#ffffff")
+    else:
+        draw.rectangle(tuple(config.get("qr_clear_rect_px", config["qr_rect_px"])), fill="#ffffff")
     return canvas
+
+
+def _draw_scan_pill(
+    canvas: Image.Image,
+    qr_image: Image.Image,
+    config: dict,
+    branding: dict | None,
+) -> None:
+    scan_pill = config.get("scan_pill_rect_px")
+    if not scan_pill:
+        qr_rect = tuple(config["qr_rect_px"])
+        qx0, qy0, qx1, qy1 = qr_rect
+        qr_size = min(qx1 - qx0, qy1 - qy0)
+        qr = qr_image.convert("RGB")
+        if qr.size != (qr_size, qr_size):
+            qr = qr.resize((qr_size, qr_size), Image.Resampling.NEAREST)
+        canvas.paste(qr, (qx0, qy0))
+        return
+
+    draw = ImageDraw.Draw(canvas)
+    px0, py0, px1, py1 = tuple(scan_pill)
+    draw.rectangle((px0, py0, px1, py1), fill="#ffffff")
+
+    qr_rect = tuple(config["qr_rect_px"])
+    qx0, qy0, qx1, qy1 = qr_rect
+    qr_size = min(qx1 - qx0, qy1 - qy0)
+    qr = qr_image.convert("RGB")
+    if qr.size != (qr_size, qr_size):
+        qr = qr.resize((qr_size, qr_size), Image.Resampling.NEAREST)
+    canvas.paste(qr, (qx0, qy0))
+
+    label = (branding or {}).get("postcard_qr_label", "Scan to see your new site").rstrip(":")
+    font = load_font(int(config.get("scan_pill_font_px", 46)), bold=True)
+    text_h = font.size if hasattr(font, "size") else 46
+    text_x = qx1 + 36
+    text_y = py0 + ((py1 - py0) - text_h) // 2 - 2
+    text_color = config.get("scan_pill_text_color", "#334155")
+    draw.text((text_x, text_y), label, fill=text_color, font=font)
+
+    color = config.get("scan_pill_color", "#2d5c87")
+    width = int(config.get("scan_pill_border_px", 4))
+    pill_h = py1 - py0
+    inset = width // 2 + 1
+    draw.rounded_rectangle(
+        (px0 + inset, py0 + inset, px1 - inset, py1 - inset),
+        radius=max(1, (pill_h - 2 * inset) // 2),
+        outline=color,
+        width=width,
+    )
 
 
 def compose_from_pdf(
@@ -69,12 +131,10 @@ def compose_from_pdf(
     preview_shot: Image.Image,
     qr_image: Image.Image,
     config: dict,
+    *,
+    branding: dict | None = None,
 ) -> Image.Image:
-    """
-    PDF supplies headline, frame chrome, and footer art.
-    We replace the entire baked-in website mockup (including side margins)
-    and the sample QR code.
-    """
+    """PDF supplies headline + footer contact info; we replace mockup website + scan pill."""
     canvas = load_base_canvas(pdf_path, config)
     draw = ImageDraw.Draw(canvas)
 
@@ -89,12 +149,6 @@ def compose_from_pdf(
     if config.get("draw_frame_border", False):
         draw.rectangle(frame_rect, outline="#000000", width=int(config.get("frame_border_px", 3)))
 
-    qr_rect = tuple(config["qr_rect_px"])
-    qx0, qy0, qx1, qy1 = qr_rect
-    qr_size = min(qx1 - qx0, qy1 - qy0)
-    qr = qr_image.convert("RGB")
-    if qr.size != (qr_size, qr_size):
-        qr = qr.resize((qr_size, qr_size), Image.Resampling.NEAREST)
-    canvas.paste(qr, (qx0, qy0))
+    _draw_scan_pill(canvas, qr_image, config, branding)
 
     return canvas

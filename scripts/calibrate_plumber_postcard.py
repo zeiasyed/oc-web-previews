@@ -24,8 +24,13 @@ WIPE_RECT = [120, 180, 2580, 1375]
 # Screenshot sits inside the inner frame only.
 PASTE_RECT = [175, 180, 2525, 1285]
 FRAME_RECT = [175, 180, 2525, 1285]
-QR_RECT = [100, 1410, 400, 1710]
-QR_CLEAR_RECT = [70, 1395, 430, 1730]
+QR_RECT = [98, 1418, 398, 1722]
+# Only clear the sample QR — keep the scan pill art from the PDF.
+QR_CLEAR_RECT = [98, 1418, 398, 1722]
+# Full pill around QR + "Scan to see your new site" (closed on all sides).
+SCAN_PILL_RECT = [82, 1402, 1200, 1738]
+SCAN_PILL_COLOR = "#2d5c87"
+SCAN_PILL_BORDER_PX = 4
 
 
 def render_pdf(pdf_path: Path) -> Image.Image:
@@ -42,7 +47,7 @@ def build_base_png(page: Image.Image) -> Image.Image:
     base = page.copy()
     draw = ImageDraw.Draw(base)
     draw.rectangle(WIPE_RECT, fill="#ffffff")
-    draw.rectangle(QR_CLEAR_RECT, fill="#ffffff")
+    draw.rectangle(SCAN_PILL_RECT, fill="#ffffff")
     return base
 
 
@@ -72,6 +77,11 @@ def install_template(source: Path) -> None:
         "draw_frame_border": False,
         "qr_rect_px": QR_RECT,
         "qr_clear_rect_px": QR_CLEAR_RECT,
+        "scan_pill_rect_px": SCAN_PILL_RECT,
+        "scan_pill_color": SCAN_PILL_COLOR,
+        "scan_pill_border_px": SCAN_PILL_BORDER_PX,
+        "scan_pill_font_px": 46,
+        "scan_pill_text_color": "#334155",
     }
     TEMPLATE_JSON.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
 
@@ -82,6 +92,12 @@ def install_template(source: Path) -> None:
     overlay.rectangle(FRAME_RECT, outline="#000000", width=2)
     overlay.rectangle(QR_CLEAR_RECT, outline="#ff0000", width=4)
     overlay.rectangle(QR_RECT, outline="#ff8800", width=3)
+    overlay.rounded_rectangle(
+        SCAN_PILL_RECT,
+        radius=(SCAN_PILL_RECT[3] - SCAN_PILL_RECT[1]) // 2,
+        outline="#9900ff",
+        width=3,
+    )
     check.save(CALIBRATION_PNG)
 
     print(f"Installed {TEMPLATE_PDF.relative_to(ROOT)}")
