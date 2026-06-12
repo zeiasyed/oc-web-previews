@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CANVAS = (2700, 1800)
 WEBSITE_RECT = (175, 180, 2525, 1285)
 QR_RECT = (100, 1410, 400, 1710)
+HEADLINE_OVERLAP_PX = 32  # pill sits partly over the top of the website frame
 
 BLUE_DARK = "#2d5c87"
 YELLOW = "#ffde59"
@@ -58,14 +59,29 @@ def trim_bottom_whitespace(image: Image.Image, *, max_scan: int = 40, threshold:
     return rgb if cut <= 0 else rgb.crop((0, 0, w, h - cut))
 
 
-def _draw_headline_pill(draw: ImageDraw.ImageDraw, text: str, canvas_w: int) -> None:
+def _headline_pill_box(text: str, canvas_w: int, frame_top: int, overlap_px: int) -> tuple[int, int, int, int]:
     font = load_font(52, bold=True)
     pad_x, pad_y = 56, 22
-    text_w = int(draw.textlength(text, font=font))
+    text_w = int(ImageDraw.Draw(Image.new("RGB", (1, 1))).textlength(text, font=font))
     pill_w = text_w + pad_x * 2
     pill_h = font.size + pad_y * 2 if hasattr(font, "size") else 90
     pill_x = (canvas_w - pill_w) // 2
-    pill_y = 95
+    pill_y = frame_top - pill_h + overlap_px
+    return pill_x, pill_y, pill_w, pill_h
+
+
+def _draw_headline_pill(
+    canvas: Image.Image,
+    text: str,
+    canvas_w: int,
+    frame_top: int,
+    *,
+    overlap_px: int = HEADLINE_OVERLAP_PX,
+) -> None:
+    font = load_font(52, bold=True)
+    pad_x, pad_y = 56, 22
+    pill_x, pill_y, pill_w, pill_h = _headline_pill_box(text, canvas_w, frame_top, overlap_px)
+    draw = ImageDraw.Draw(canvas)
     draw.rounded_rectangle(
         (pill_x, pill_y, pill_x + pill_w, pill_y + pill_h),
         radius=pill_h // 2,
@@ -161,11 +177,10 @@ def compose_plumber_postcard(
     qr_rect = tuple(config.get("qr_rect_px", QR_RECT))
 
     canvas = Image.new("RGB", (canvas_w, canvas_h), "#ffffff")
-    draw = ImageDraw.Draw(canvas)
 
     headline = branding.get("postcard_headline", "I rebuilt your website to get you more calls.")
-    _draw_headline_pill(draw, headline, canvas_w)
     _draw_website_frame(canvas, preview_shot, website_rect)
+    _draw_headline_pill(canvas, headline, canvas_w, website_rect[1])
     _draw_footer(canvas, branding, qr_image, qr_rect)
 
     return canvas
