@@ -24,12 +24,10 @@ WIPE_RECT = [120, 180, 2580, 1375]
 # Screenshot sits inside the inner frame only.
 PASTE_RECT = [175, 180, 2525, 1285]
 FRAME_RECT = [175, 180, 2525, 1285]
-QR_RECT = [191, 1418, 491, 1722]
-QR_CLEAR_RECT = [191, 1418, 491, 1722]
-# Left edge aligned with website frame (x=175).
-SCAN_PILL_RECT = [175, 1402, 1293, 1738]
-# Extra wipe below pill removes PDF ghost line (double-border artifact).
-SCAN_PILL_CLEAR_RECT = [170, 1398, 1310, 1755]
+QR_RECT = [130, 1425, 430, 1725]
+QR_CLEAR_RECT = [130, 1425, 430, 1725]
+SCAN_PILL_RECT = [116, 1419, 1188, 1742]
+SCAN_PILL_CLEAR_RECT = [105, 1395, 1195, 1750]
 SCAN_PILL_COLOR = "#2d5c87"
 SCAN_PILL_BORDER_PX = 4
 
@@ -63,7 +61,9 @@ def install_template(source: Path) -> None:
 
     config = {
         "name": "plumber",
-        "description": "Ready for print v2 Final FRONT Plumber Postcard (9 x 6 in)",
+        "status": "final",
+        "finalized": "2026-06-10",
+        "description": "FINAL — Ready for print v2 Final FRONT Plumber Postcard (9 x 6 in)",
         "source_pdf": source.name,
         "compose_mode": "pdf",
         "dpi": DPI,
