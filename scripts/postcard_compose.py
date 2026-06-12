@@ -77,6 +77,32 @@ def load_base_canvas(pdf_path: Path, config: dict) -> Image.Image:
     return canvas
 
 
+def _draw_flat_left_pill_outline(
+    draw: ImageDraw.ImageDraw,
+    rect: tuple[int, int, int, int],
+    *,
+    color: str,
+    width: int,
+) -> None:
+    """Pill outline with a square left edge and rounded right cap (matches print PDF)."""
+    x0, y0, x1, y1 = rect
+    h = y1 - y0
+    radius = max(1, h // 2)
+    cap_x = x1 - radius
+    mid_y = (y0 + y1) // 2
+
+    draw.line([(x0, y0), (cap_x, y0)], fill=color, width=width)
+    draw.line([(x0, y1), (cap_x, y1)], fill=color, width=width)
+    draw.line([(x0, y0), (x0, y1)], fill=color, width=width)
+    draw.arc(
+        (cap_x - radius, mid_y - radius, cap_x + radius, mid_y + radius),
+        start=270,
+        end=90,
+        fill=color,
+        width=width,
+    )
+
+
 def _draw_scan_pill(
     canvas: Image.Image,
     qr_image: Image.Image,
@@ -116,12 +142,11 @@ def _draw_scan_pill(
 
     color = config.get("scan_pill_color", "#2d5c87")
     width = int(config.get("scan_pill_border_px", 4))
-    pill_h = py1 - py0
     inset = width // 2 + 1
-    draw.rounded_rectangle(
+    _draw_flat_left_pill_outline(
+        draw,
         (px0 + inset, py0 + inset, px1 - inset, py1 - inset),
-        radius=max(1, (pill_h - 2 * inset) // 2),
-        outline=color,
+        color=color,
         width=width,
     )
 

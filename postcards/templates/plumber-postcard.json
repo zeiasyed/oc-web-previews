@@ -56,6 +56,7 @@
   ],
   "scan_pill_color": "#2d5c87",
   "scan_pill_border_px": 4,
+  "scan_pill_style": "flat_left",
   "scan_pill_font_px": 46,
   "scan_pill_text_color": "#334155"
 }

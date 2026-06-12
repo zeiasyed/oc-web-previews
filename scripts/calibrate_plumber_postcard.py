@@ -80,6 +80,7 @@ def install_template(source: Path) -> None:
         "scan_pill_rect_px": SCAN_PILL_RECT,
         "scan_pill_color": SCAN_PILL_COLOR,
         "scan_pill_border_px": SCAN_PILL_BORDER_PX,
+        "scan_pill_style": "flat_left",
         "scan_pill_font_px": 46,
         "scan_pill_text_color": "#334155",
     }
