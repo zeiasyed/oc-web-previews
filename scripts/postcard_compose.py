@@ -86,7 +86,7 @@ def compose_from_pdf(
     canvas.paste(fitted, (x0, y0))
 
     frame_rect = tuple(config.get("frame_rect_px", paste_rect))
-    if config.get("draw_frame_border", True):
+    if config.get("draw_frame_border", False):
         draw.rectangle(frame_rect, outline="#000000", width=int(config.get("frame_border_px", 3)))
 
     qr_rect = tuple(config["qr_rect_px"])

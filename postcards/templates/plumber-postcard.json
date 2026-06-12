@@ -35,6 +35,7 @@
     1285
   ],
   "frame_border_px": 3,
+  "draw_frame_border": false,
   "qr_rect_px": [
     100,
     1410,

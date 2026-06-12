@@ -69,6 +69,7 @@ def install_template(source: Path) -> None:
         "website_rect_px": PASTE_RECT,
         "frame_rect_px": FRAME_RECT,
         "frame_border_px": 3,
+        "draw_frame_border": False,
         "qr_rect_px": QR_RECT,
         "qr_clear_rect_px": QR_CLEAR_RECT,
     }
