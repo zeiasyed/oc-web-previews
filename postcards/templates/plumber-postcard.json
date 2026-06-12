@@ -1,11 +1,37 @@
 {
   "name": "plumber",
-  "description": "9×6 landscape — fully programmatic, no PDF compositing",
-  "compose_mode": "programmatic",
+  "description": "Ready for print v2 Final FRONT Plumber Postcard (9 x 6 in)",
+  "source_pdf": "Ready for print v2 Final FRONT Plumber Postcard (9 x 6 in) (1).pdf",
+  "compose_mode": "pdf",
   "dpi": 300,
-  "size_inches": [9, 6],
+  "size_inches": [
+    9,
+    6
+  ],
   "landscape": true,
-  "website_rect_px": [175, 180, 2525, 1285],
-  "qr_rect_px": [100, 1410, 400, 1710],
-  "headline_overlap_px": 14
+  "website_rect_px": [
+    175,
+    180,
+    2525,
+    1285
+  ],
+  "frame_rect_px": [
+    175,
+    180,
+    2525,
+    1285
+  ],
+  "frame_border_px": 3,
+  "qr_rect_px": [
+    100,
+    1410,
+    400,
+    1710
+  ],
+  "qr_clear_rect_px": [
+    70,
+    1395,
+    430,
+    1730
+  ]
 }

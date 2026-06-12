@@ -19,7 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 SCRIPTS_DIR = ROOT / "scripts"
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
-from postcard_compose import compose_plumber_postcard  # noqa: E402
+from postcard_compose import compose_from_pdf  # noqa: E402
 
 CONFIG_PATH = ROOT / "config" / "branding.json"
 OUT_DIR = ROOT / "postcards" / "png"
@@ -160,7 +160,7 @@ def draw_postcard_from_template(
     pdf_path: Path,
     config: dict,
 ) -> Image.Image:
-    """Build postcard from extracted layers (default) or legacy PDF overlay."""
+    """Composite preview screenshot + QR onto the print PDF template."""
     website_rect = tuple(
         config.get(
             "website_rect_px",
@@ -197,15 +197,7 @@ def draw_postcard_from_template(
     inset = (qr_size - qr_inner) // 2
     qr_canvas.paste(qr, (inset, inset))
 
-    if config.get("compose_mode") in ("layers", "programmatic"):
-        return compose_plumber_postcard(preview_shot, qr_canvas, config, branding=branding)
-
-    img = render_pdf_template(pdf_path, dpi=int(config.get("dpi", 300)))
-    draw = ImageDraw.Draw(img)
-    draw.rectangle(website_rect, fill="#ffffff")
-    img.paste(preview_shot.convert("RGB"), (x0, y0))
-    img.paste(qr_canvas, (qx0, qy0))
-    return img
+    return compose_from_pdf(pdf_path, preview_shot, qr_canvas, config)
 
 
 def ensure_template_in_repo(source_pdf: Path | None) -> None:
