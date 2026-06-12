@@ -39,7 +39,7 @@ HEADLINE = "Your business deserves to be found online — we made you a new webs
 QR_LABEL = "Scan to see your site"
 DEFAULT_ACCENT = "#1e6f9f"
 DEFAULT_ACCENT_DARK = "#155a80"
-PREVIEW_CAPTURE_WIDTH = 1280
+PREVIEW_CAPTURE_WIDTH = 1120  # matches .container max-width — keeps logo/headline on the left
 STAMP_WIDTH = 270
 STAMP_HEIGHT = 315
 
@@ -92,8 +92,15 @@ def expand_rect(rect: tuple[int, int, int, int], pad: int) -> tuple[int, int, in
     return (x0 - pad, y0 - pad, x1 + pad, y1 + pad)
 
 
-def fit_cover(image: Image.Image, width: int, height: int, *, overscan: float = 1.0) -> Image.Image:
-    """Scale and center-crop to fill a fixed rectangle (consistent across all postcards)."""
+def fit_cover(
+    image: Image.Image,
+    width: int,
+    height: int,
+    *,
+    overscan: float = 1.0,
+    anchor: str = "top-left",
+) -> Image.Image:
+    """Scale and crop to fill a fixed rectangle (top-left anchor for site previews)."""
     target_w = max(1, int(width * overscan))
     target_h = max(1, int(height * overscan))
     iw, ih = image.size
@@ -101,12 +108,24 @@ def fit_cover(image: Image.Image, width: int, height: int, *, overscan: float = 
     new_w = max(1, int(iw * scale))
     new_h = max(1, int(ih * scale))
     resized = image.resize((new_w, new_h), Image.Resampling.LANCZOS)
-    left = (new_w - target_w) // 2
-    top = (new_h - target_h) // 2
-    cropped = resized.crop((left, top, left + target_w, top + target_h))
+
+    if anchor == "center":
+        left = (new_w - target_w) // 2
+        top = (new_h - target_h) // 2
+    else:
+        left = 0
+        top = 0
+
+    right = min(new_w, left + target_w)
+    bottom = min(new_h, top + target_h)
+    cropped = resized.crop((left, top, right, bottom))
     if cropped.size == (width, height):
         return cropped
-    return cropped.resize((width, height), Image.Resampling.LANCZOS)
+    if cropped.size == (target_w, target_h) and (target_w, target_h) != (width, height):
+        return cropped.resize((width, height), Image.Resampling.LANCZOS)
+    out = Image.new("RGB", (width, height), "#ffffff")
+    out.paste(cropped, (0, 0))
+    return out
 
 
 def remove_legacy_postcard_variants(slug: str) -> None:
@@ -357,8 +376,6 @@ def capture_site_preview(
         return None
 
     viewport_width = capture_width or PREVIEW_CAPTURE_WIDTH
-    if target_size:
-        viewport_width = max(viewport_width, target_size[0])
 
     url = preview_path.as_uri()
     try:
@@ -392,8 +409,6 @@ def capture_site_preview(
             shot = page.screenshot(clip=clip)
             browser.close()
         image = Image.open(BytesIO(shot)).convert("RGB")
-        if target_size:
-            image = fit_cover(image, target_size[0], target_size[1], overscan=1.0)
         return image
     except Exception as exc:
         print(f"  Preview screenshot failed for {slug}: {exc}")
@@ -1007,11 +1022,7 @@ def main() -> None:
                 if website_rect:
                     x0, y0, x1, y1 = website_rect
                     target_size = (x1 - x0, y1 - y0)
-            preview_shot = capture_site_preview(
-                row["slug"],
-                capture_width=target_size[0] if target_size else PREVIEW_CAPTURE_WIDTH,
-                target_size=target_size,
-            )
+            preview_shot = capture_site_preview(row["slug"])
 
         suffix = "-landscape" if args.landscape else ""
         if template is not None:

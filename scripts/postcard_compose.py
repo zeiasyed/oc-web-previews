@@ -31,16 +31,40 @@ def load_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFo
     return ImageFont.load_default()
 
 
-def fit_cover(image: Image.Image, width: int, height: int) -> Image.Image:
+def fit_cover(
+    image: Image.Image,
+    width: int,
+    height: int,
+    *,
+    anchor: str = "top-left",
+) -> Image.Image:
+    """Scale and crop to fill a fixed rectangle.
+
+    Website previews use top-left anchoring so logos and headlines on the left
+    are preserved instead of center-cropped away.
+    """
     target_w, target_h = max(1, width), max(1, height)
     iw, ih = image.size
     scale = max(target_w / iw, target_h / ih)
     new_w = max(1, int(iw * scale))
     new_h = max(1, int(ih * scale))
     resized = image.resize((new_w, new_h), Image.Resampling.LANCZOS)
-    left = (new_w - target_w) // 2
-    top = (new_h - target_h) // 2
-    return resized.crop((left, top, left + target_w, top + target_h))
+
+    if anchor == "center":
+        left = (new_w - target_w) // 2
+        top = (new_h - target_h) // 2
+    else:
+        left = 0
+        top = 0
+
+    right = min(new_w, left + target_w)
+    bottom = min(new_h, top + target_h)
+    cropped = resized.crop((left, top, right, bottom))
+    if cropped.size == (target_w, target_h):
+        return cropped
+    out = Image.new("RGB", (target_w, target_h), "#ffffff")
+    out.paste(cropped, (0, 0))
+    return out
 
 
 def trim_bottom_whitespace(image: Image.Image, *, max_scan: int = 40, threshold: int = 245) -> Image.Image:
