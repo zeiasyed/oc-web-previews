@@ -31,6 +31,29 @@ def load_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFo
     return ImageFont.load_default()
 
 
+def fit_width_top(
+    image: Image.Image,
+    width: int,
+    height: int,
+    *,
+    bg: str = "#ffffff",
+) -> Image.Image:
+    """Scale to full target width; align top; crop or pad bottom only (never sides)."""
+    rgb = image.convert("RGB")
+    iw, ih = rgb.size
+    if iw <= 0 or ih <= 0:
+        return Image.new("RGB", (width, height), bg)
+
+    scale = width / iw
+    new_h = max(1, int(round(ih * scale)))
+    resized = rgb.resize((width, new_h), Image.Resampling.LANCZOS)
+    if new_h >= height:
+        return resized.crop((0, 0, width, height))
+    out = Image.new("RGB", (width, height), bg)
+    out.paste(resized, (0, 0))
+    return out
+
+
 def fit_cover(
     image: Image.Image,
     width: int,
@@ -221,7 +244,7 @@ def compose_from_pdf(
     x0, y0, x1, y1 = paste_rect
     zone_w, zone_h = x1 - x0, y1 - y0
 
-    fitted = fit_cover(trim_bottom_whitespace(preview_shot.convert("RGB")), zone_w, zone_h)
+    fitted = fit_width_top(preview_shot.convert("RGB"), zone_w, zone_h)
     canvas.paste(fitted, (x0, y0))
 
     frame_rect = tuple(config.get("frame_rect_px", paste_rect))

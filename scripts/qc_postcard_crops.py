@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Automated QC for postcard website mockup left-edge clipping."""
+"""Automated QC for postcard website mockup edge clipping (left and right)."""
 
 from __future__ import annotations
 
@@ -17,15 +17,18 @@ DEFAULT_CONFIG = ROOT / "postcards" / "templates" / "plumber-postcard.json"
 PNG_DIR = ROOT / "postcards" / "png"
 REPORT_PATH = ROOT / "data" / "postcard-qc-report.json"
 
-# Header + upper hero bands where logo/headline clipping is visible.
 HEADER_BAND_END = 0.12
-HERO_BAND_END = 0.45
-LEFT_GUTTER_PX = 14
-LOGO_ZONE_START = 28
-LOGO_ZONE_END = 72
+HERO_BAND_END = 0.50
+LEFT_GUTTER_PX = 12
+RIGHT_GUTTER_PX = 12
+LOGO_ZONE_START = 20
+LOGO_ZONE_END = 80
+NAV_ZONE_START_FRAC = 0.55
 MAX_HEADER_TEXT_START = 220
-FAIL_LEFT_DENSITY = 0.06
-FAIL_EDGE_VS_LOGO = 1.35
+MIN_HEADER_TEXT_START = 0
+MIN_RIGHT_MARGIN_PX = 18
+MAX_RIGHT_CONTENT_X_FRAC = 0.992
+FAIL_EDGE_DENSITY = 0.05
 
 
 def load_paste_rect(config_path: Path) -> tuple[int, int, int, int]:
@@ -58,91 +61,114 @@ def _dark_density(rgb: Image.Image, x0: int, x1: int, y0: int, y1: int, *, thres
     return dark / total
 
 
-def _min_bright_x(rgb: Image.Image, y0: int, y1: int, *, thresh: float = 238) -> int | None:
+def _bright_density(rgb: Image.Image, x0: int, x1: int, y0: int, y1: int, *, thresh: float = 238) -> float:
     w, h = rgb.size
+    x0 = max(0, min(x0, w))
+    x1 = max(x0 + 1, min(x1, w))
     y0 = max(0, min(y0, h))
     y1 = max(y0 + 1, min(y1, h))
+    bright = 0
+    total = (x1 - x0) * (y1 - y0)
     px = rgb.load()
-    for x in range(w):
-        for y in range(y0, y1):
+    for y in range(y0, y1):
+        for x in range(x0, x1):
             if _luminance(px[x, y]) > thresh:
-                return x
-    return None
+                bright += 1
+    return bright / total
 
 
-def _min_content_x(rgb: Image.Image, y0: int, y1: int, *, thresh: float = 185) -> int | None:
+def _extreme_x(
+    rgb: Image.Image,
+    y0: int,
+    y1: int,
+    *,
+    mode: str,
+    thresh: float,
+) -> tuple[int | None, int | None]:
     w, h = rgb.size
     y0 = max(0, min(y0, h))
     y1 = max(y0 + 1, min(y1, h))
     px = rgb.load()
-    for x in range(w):
-        for y in range(y0, y1):
-            if _luminance(px[x, y]) < thresh:
-                return x
-    return None
+    min_x: int | None = None
+    max_x: int | None = None
+    for y in range(y0, y1):
+        for x in range(w):
+            lum = _luminance(px[x, y])
+            hit = lum < thresh if mode == "dark" else lum > thresh
+            if not hit:
+                continue
+            min_x = x if min_x is None else min(min_x, x)
+            max_x = x if max_x is None else max(max_x, x)
+    return min_x, max_x
 
 
-def score_left_clipping(crop: Image.Image) -> dict:
+def score_edge_clipping(crop: Image.Image) -> dict:
     rgb = crop.convert("RGB")
     w, h = rgb.size
     header_y1 = max(1, int(h * HEADER_BAND_END))
     hero_y1 = max(header_y1 + 1, int(h * HERO_BAND_END))
-    header_text_x = _min_content_x(rgb, 0, header_y1)
-    hero_text_x = _min_bright_x(rgb, header_y1, hero_y1)
 
-    bands = {
-        "header": (0, header_y1),
-        "hero": (header_y1, hero_y1),
-    }
-    metrics: dict[str, float | int | None] = {
-        "header_text_min_x": header_text_x,
-        "hero_text_min_x": hero_text_x,
-    }
-    worst = 0.0
+    header_dark_min, header_dark_max = _extreme_x(rgb, 0, header_y1, mode="dark", thresh=185)
+    hero_bright_min, hero_bright_max = _extreme_x(rgb, header_y1, hero_y1, mode="bright", thresh=238)
+    hero_dark_min, hero_dark_max = _extreme_x(rgb, header_y1, hero_y1, mode="dark", thresh=120)
 
-    for name, (y0, y1) in bands.items():
-        gutter = _dark_density(rgb, 0, min(LEFT_GUTTER_PX, w), y0, y1)
-        logo = _dark_density(
-            rgb,
-            min(LOGO_ZONE_START, w),
-            min(LOGO_ZONE_END, w),
-            y0,
-            y1,
-        )
-        metrics[f"{name}_left_gutter"] = round(gutter, 4)
-        metrics[f"{name}_logo_zone"] = round(logo, 4)
-        if logo > 0.01:
-            ratio = gutter / logo
-        else:
-            ratio = gutter * 10
-        metrics[f"{name}_edge_ratio"] = round(ratio, 4)
-        worst = max(worst, gutter, ratio if logo > 0.01 else 0)
+    metrics: dict[str, int | float | None] = {
+        "header_dark_min_x": header_dark_min,
+        "header_dark_max_x": header_dark_max,
+        "hero_bright_min_x": hero_bright_min,
+        "hero_bright_max_x": hero_bright_max,
+        "hero_dark_max_x": hero_dark_max,
+    }
+
+    header_left = _dark_density(rgb, 0, min(LEFT_GUTTER_PX, w), 0, header_y1)
+    header_right = _dark_density(rgb, max(0, w - RIGHT_GUTTER_PX), w, 0, header_y1)
+    nav_zone = _dark_density(rgb, int(w * NAV_ZONE_START_FRAC), max(0, w - 40), 0, header_y1)
+    hero_right_bright = _bright_density(rgb, max(0, w - RIGHT_GUTTER_PX), w, header_y1, hero_y1)
+    metrics["header_left_gutter"] = round(header_left, 4)
+    metrics["header_right_gutter"] = round(header_right, 4)
+    metrics["header_nav_zone"] = round(nav_zone, 4)
+    metrics["hero_right_bright"] = round(hero_right_bright, 4)
 
     failed = False
     reasons: list[str] = []
-    for name in ("header", "hero"):
-        gutter = metrics[f"{name}_left_gutter"]
-        logo = metrics[f"{name}_logo_zone"]
-        ratio = metrics[f"{name}_edge_ratio"]
-        if gutter >= FAIL_LEFT_DENSITY and logo >= 0.02 and ratio >= FAIL_EDGE_VS_LOGO:
-            failed = True
-            reasons.append(f"{name}: left gutter {gutter:.1%} vs logo zone {logo:.1%}")
-        elif gutter >= FAIL_LEFT_DENSITY * 2 and logo < 0.02:
-            failed = True
-            reasons.append(f"{name}: heavy edge content ({gutter:.1%}) with no logo margin")
 
-    if header_text_x is not None and header_text_x > MAX_HEADER_TEXT_START:
+    if header_dark_min is not None and header_dark_min > MAX_HEADER_TEXT_START:
         failed = True
-        reasons.append(f"header text starts too far right (x={header_text_x})")
-    if hero_text_x is not None and hero_text_x > MAX_HEADER_TEXT_START * 1.5:
+        reasons.append(f"header content starts too far right (x={header_dark_min})")
+
+    if header_dark_min is not None and header_dark_min <= MIN_HEADER_TEXT_START:
+        if header_left >= FAIL_EDGE_DENSITY:
+            failed = True
+            reasons.append(f"header clipped at left (gutter density {header_left:.1%})")
+
+    if header_dark_max is not None and header_dark_max >= w - MIN_RIGHT_MARGIN_PX:
         failed = True
-        reasons.append(f"hero text starts too far right (x={hero_text_x})")
+        reasons.append(f"header clipped at right (content to x={header_dark_max}, width={w})")
+
+    if nav_zone >= 0.02 and header_dark_max is not None and header_dark_max >= int(w * MAX_RIGHT_CONTENT_X_FRAC):
+        failed = True
+        reasons.append("header nav/buttons cut off at right edge")
+
+    if header_right >= FAIL_EDGE_DENSITY and nav_zone >= 0.02:
+        failed = True
+        reasons.append(f"header right gutter shows clipped nav ({header_right:.1%})")
+
+    if hero_bright_min is not None and hero_bright_min > MAX_HEADER_TEXT_START * 1.8:
+        failed = True
+        reasons.append(f"hero headline starts too far right (x={hero_bright_min})")
+
+    score = max(
+        header_left,
+        header_right,
+        hero_right_bright,
+        (header_dark_max or 0) / max(1, w),
+    )
 
     return {
         "failed": failed,
         "reasons": reasons,
         "metrics": metrics,
-        "score": round(worst, 4),
+        "score": round(score, 4),
     }
 
 
@@ -158,13 +184,13 @@ def check_postcard(
     with Image.open(png_path) as img:
         x0, y0, x1, y1 = paste_rect
         crop = img.crop((x0, y0, x1, y1))
-        result = score_left_clipping(crop)
+        result = score_edge_clipping(crop)
 
-    return {"slug": slug, "png": str(png_path.relative_to(ROOT)), **result}
+    return {"slug": slug, **result}
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="QC postcard mockups for left-edge clipping")
+    parser = argparse.ArgumentParser(description="QC postcard mockups for left/right edge clipping")
     parser.add_argument("--csv", default=str(DEFAULT_CSV))
     parser.add_argument("--config", default=str(DEFAULT_CONFIG))
     parser.add_argument("--png-dir", default=str(PNG_DIR))
@@ -178,10 +204,7 @@ def main() -> None:
     if args.slug:
         rows = [r for r in rows if r["slug"] == args.slug]
 
-    results = [
-        check_postcard(r["slug"], paste_rect, Path(args.png_dir))
-        for r in rows
-    ]
+    results = [check_postcard(r["slug"], paste_rect, Path(args.png_dir)) for r in rows]
     failed = [r for r in results if r["failed"]]
 
     report = {
@@ -195,13 +218,13 @@ def main() -> None:
 
     print(f"QC: {report['passed']}/{report['total']} passed")
     if failed:
-        print(f"FAIL: {len(failed)} postcard(s) with left-edge clipping risk")
-        for item in failed[:20]:
+        print(f"FAIL: {len(failed)} postcard(s) with edge clipping")
+        for item in failed[:25]:
             print(f"  - {item['slug']}: {', '.join(item.get('reasons') or ['unknown'])}")
-        if len(failed) > 20:
-            print(f"  ... and {len(failed) - 20} more (see {args.report})")
+        if len(failed) > 25:
+            print(f"  ... and {len(failed) - 25} more (see {args.report})")
     else:
-        print("All postcards passed left-edge QC")
+        print("All postcards passed edge QC")
 
     if args.fail_on_issues and failed:
         sys.exit(1)

@@ -364,7 +364,7 @@ def capture_site_preview(
     slug: str,
     capture_width: int | None = None,
     *,
-    target_size: tuple[int, int] | None = None,
+    target_aspect: float | None = None,
 ) -> Image.Image | None:
     preview_path = ROOT / "previews" / slug / "index.html"
     if not preview_path.exists():
@@ -389,22 +389,27 @@ def capture_site_preview(
                 }"""
             )
             clip = page.evaluate(
-                """(viewportWidth) => {
+                """([viewportWidth, aspect]) => {
                     const header = document.querySelector('header.site-header');
-                    const hero = document.querySelector('section.hero');
-                    if (!header || !hero) return { x: 0, y: 0, width: viewportWidth, height: 520 };
-                    const top = header.getBoundingClientRect().top;
-                    const heroStyle = window.getComputedStyle(hero);
-                    const padBottom = parseFloat(heroStyle.paddingBottom) || 0;
-                    const bottom = hero.getBoundingClientRect().bottom - padBottom + 8;
-                    return {
-                        x: 0,
-                        y: Math.max(0, Math.floor(top)),
-                        width: viewportWidth,
-                        height: Math.max(1, Math.ceil(bottom - top)),
-                    };
+                    const top = header ? Math.max(0, Math.floor(header.getBoundingClientRect().top)) : 0;
+                    let height;
+                    if (aspect && aspect > 0) {
+                        height = Math.max(1, Math.round(viewportWidth * aspect));
+                    } else {
+                        const hero = document.querySelector('section.hero');
+                        if (!header || !hero) {
+                            return { x: 0, y: top, width: viewportWidth, height: 520 };
+                        }
+                        const heroStyle = window.getComputedStyle(hero);
+                        const padBottom = parseFloat(heroStyle.paddingBottom) || 0;
+                        height = Math.max(
+                            1,
+                            Math.ceil(hero.getBoundingClientRect().bottom - padBottom + 8 - top),
+                        );
+                    }
+                    return { x: 0, y: top, width: viewportWidth, height };
                 }""",
-                viewport_width,
+                [viewport_width, target_aspect or 0],
             )
             shot = page.screenshot(clip=clip)
             browser.close()
@@ -1007,7 +1012,7 @@ def main() -> None:
         preview_shot = None
         if not args.no_screenshot:
             print(f"Capturing preview for {row['slug']}...")
-            target_size = None
+            target_aspect = None
             if template_config:
                 website_rect = template_config.get(
                     "paste_rect_px",
@@ -1021,8 +1026,10 @@ def main() -> None:
                 )
                 if website_rect:
                     x0, y0, x1, y1 = website_rect
-                    target_size = (x1 - x0, y1 - y0)
-            preview_shot = capture_site_preview(row["slug"])
+                    zone_w, zone_h = x1 - x0, y1 - y0
+                    if zone_w > 0:
+                        target_aspect = zone_h / zone_w
+            preview_shot = capture_site_preview(row["slug"], target_aspect=target_aspect)
 
         suffix = "-landscape" if args.landscape else ""
         if template is not None:
