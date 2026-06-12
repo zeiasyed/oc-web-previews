@@ -71,7 +71,8 @@ def load_base_canvas(pdf_path: Path, config: dict) -> Image.Image:
     draw.rectangle(tuple(config.get("wipe_rect_px", config["website_rect_px"])), fill="#ffffff")
     scan_pill = config.get("scan_pill_rect_px")
     if scan_pill:
-        draw.rectangle(tuple(scan_pill), fill="#ffffff")
+        clear = tuple(config.get("scan_pill_clear_rect_px", scan_pill))
+        draw.rectangle(clear, fill="#ffffff")
     else:
         draw.rectangle(tuple(config.get("qr_clear_rect_px", config["qr_rect_px"])), fill="#ffffff")
     return canvas
@@ -92,12 +93,12 @@ def _draw_flat_left_pill_outline(
     mid_y = (y0 + y1) // 2
 
     draw.line([(x0, y0), (cap_x, y0)], fill=color, width=width)
-    draw.line([(x0, y1), (cap_x, y1)], fill=color, width=width)
+    draw.line([(x0, y1 - 1), (cap_x, y1 - 1)], fill=color, width=width)
     draw.line([(x0, y0), (x0, y1)], fill=color, width=width)
     draw.arc(
         (cap_x - radius, mid_y - radius, cap_x + radius, mid_y + radius),
         start=270,
-        end=90,
+        end=89,
         fill=color,
         width=width,
     )
@@ -122,7 +123,8 @@ def _draw_scan_pill(
 
     draw = ImageDraw.Draw(canvas)
     px0, py0, px1, py1 = tuple(scan_pill)
-    draw.rectangle((px0, py0, px1, py1), fill="#ffffff")
+    clear = tuple(config.get("scan_pill_clear_rect_px", scan_pill))
+    draw.rectangle(clear, fill="#ffffff")
 
     qr_rect = tuple(config["qr_rect_px"])
     qx0, qy0, qx1, qy1 = qr_rect

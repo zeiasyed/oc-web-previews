@@ -24,11 +24,12 @@ WIPE_RECT = [120, 180, 2580, 1375]
 # Screenshot sits inside the inner frame only.
 PASTE_RECT = [175, 180, 2525, 1285]
 FRAME_RECT = [175, 180, 2525, 1285]
-QR_RECT = [98, 1418, 398, 1722]
-# Only clear the sample QR — keep the scan pill art from the PDF.
-QR_CLEAR_RECT = [98, 1418, 398, 1722]
-# Full pill around QR + "Scan to see your new site" (closed on all sides).
-SCAN_PILL_RECT = [82, 1402, 1200, 1738]
+QR_RECT = [191, 1418, 491, 1722]
+QR_CLEAR_RECT = [191, 1418, 491, 1722]
+# Left edge aligned with website frame (x=175).
+SCAN_PILL_RECT = [175, 1402, 1293, 1738]
+# Extra wipe below pill removes PDF ghost line (double-border artifact).
+SCAN_PILL_CLEAR_RECT = [170, 1398, 1310, 1755]
 SCAN_PILL_COLOR = "#2d5c87"
 SCAN_PILL_BORDER_PX = 4
 
@@ -47,7 +48,7 @@ def build_base_png(page: Image.Image) -> Image.Image:
     base = page.copy()
     draw = ImageDraw.Draw(base)
     draw.rectangle(WIPE_RECT, fill="#ffffff")
-    draw.rectangle(SCAN_PILL_RECT, fill="#ffffff")
+    draw.rectangle(SCAN_PILL_CLEAR_RECT, fill="#ffffff")
     return base
 
 
@@ -78,6 +79,7 @@ def install_template(source: Path) -> None:
         "qr_rect_px": QR_RECT,
         "qr_clear_rect_px": QR_CLEAR_RECT,
         "scan_pill_rect_px": SCAN_PILL_RECT,
+        "scan_pill_clear_rect_px": SCAN_PILL_CLEAR_RECT,
         "scan_pill_color": SCAN_PILL_COLOR,
         "scan_pill_border_px": SCAN_PILL_BORDER_PX,
         "scan_pill_style": "flat_left",
