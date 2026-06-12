@@ -35,8 +35,23 @@ def read_businesses(csv_path: Path) -> list[dict]:
         return list(csv.DictReader(fh))
 
 
-def format_template(value: str, *, name: str, city: str) -> str:
-    return value.format(name=name, city=city)
+def format_template(value: str, *, name: str, city: str, region: str = "Southern California") -> str:
+    return value.format(name=name, city=city, region=region)
+
+
+def resolve_service_region(row: dict) -> str:
+    region = (row.get("region") or "").strip().lower()
+    if region in ("texas", "tx"):
+        return "Texas"
+    address = row.get("address") or ""
+    match = re.search(r",\s*([A-Z]{2})\s+\d", address)
+    if match:
+        state = match.group(1)
+        if state == "TX":
+            return "Texas"
+        if state == "CA":
+            return "Southern California"
+    return "Southern California"
 
 
 def normalize_services(config: dict) -> list[dict]:
@@ -50,7 +65,7 @@ def normalize_services(config: dict) -> list[dict]:
     return normalized
 
 
-def normalize_features(config: dict, *, name: str, city: str) -> list[dict]:
+def normalize_features(config: dict, *, name: str, city: str, region: str) -> list[dict]:
     defaults = [
         {
             "title": "Local & responsive",
@@ -69,7 +84,7 @@ def normalize_features(config: dict, *, name: str, city: str) -> list[dict]:
     return [
         {
             "title": feature["title"],
-            "description": format_template(feature["description"], name=name, city=city),
+            "description": format_template(feature["description"], name=name, city=city, region=region),
         }
         for feature in features
     ]
@@ -88,10 +103,11 @@ def build_context(row: dict, branding: dict) -> dict:
     config = INDUSTRY_CONFIG.get(category, INDUSTRY_CONFIG["home_services"])
     name = row["name"]
     city = row.get("city") or "Orange County"
+    service_region = resolve_service_region(row)
     phone_raw, phone_display = normalize_phone(row.get("phone") or "")
 
     services = normalize_services(config)
-    features = normalize_features(config, name=name, city=city)
+    features = normalize_features(config, name=name, city=city, region=service_region)
     blog_posts = config.get("blog_posts") or []
     is_trade = category in ("plumber", "hvac", "roofer")
 
@@ -107,8 +123,9 @@ def build_context(row: dict, branding: dict) -> dict:
         "category": category,
         "is_trade": is_trade,
         "industry_label": INDUSTRY_LABELS.get(category, "Local Business"),
-        "tagline": format_template(config["tagline_template"], name=name, city=city),
-        "about_text": format_template(config["about_template"], name=name, city=city),
+        "tagline": format_template(config["tagline_template"], name=name, city=city, region=service_region),
+        "about_text": format_template(config["about_template"], name=name, city=city, region=service_region),
+        "service_region": service_region,
         "services": services,
         "features": features,
         "blog_posts": blog_posts,
@@ -120,6 +137,7 @@ def build_context(row: dict, branding: dict) -> dict:
             config.get("cta_headline") or "Ready to get started in {city}?",
             name=name,
             city=city,
+            region=service_region,
         ),
         "cta_text": config.get("cta_text") or "Contact us today for a free estimate.",
         "theme": config["theme"],

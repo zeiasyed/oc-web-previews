@@ -147,7 +147,7 @@ INDUSTRY_CONFIG = {
         ],
         "cta_headline": "Need a plumber in {city}?",
         "cta_text": "Call today for a free estimate. Emergency service available.",
-        "tagline_template": "Trusted plumbing professionals serving {city} and surrounding Southern California communities.",
+        "tagline_template": "Trusted plumbing professionals serving {city} and surrounding {region} communities.",
         "about_template": (
             "{name} is a local plumbing company dedicated to reliable repairs, clean installations, "
             "and honest service for homeowners and businesses in {city}. From emergency leaks to "
