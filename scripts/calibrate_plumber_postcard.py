@@ -21,8 +21,8 @@ DPI = 300
 
 # Full baked mockup bounds @ 300 DPI (outer chrome, side bars, bottom gradient).
 WIPE_RECT = [120, 180, 2580, 1375]
-# Screenshot covers the entire wiped mockup area — no leftover sample chrome.
-PASTE_RECT = [120, 180, 2580, 1375]
+# Screenshot sits inside the inner frame only.
+PASTE_RECT = [175, 180, 2525, 1285]
 FRAME_RECT = [175, 180, 2525, 1285]
 QR_RECT = [100, 1410, 400, 1710]
 QR_CLEAR_RECT = [70, 1395, 430, 1730]
@@ -71,6 +71,7 @@ def install_template(source: Path) -> None:
         "frame_border_px": 3,
         "qr_rect_px": QR_RECT,
         "qr_clear_rect_px": QR_CLEAR_RECT,
+        "chrome_color_rgb": [42, 83, 121],
     }
     TEMPLATE_JSON.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
 
