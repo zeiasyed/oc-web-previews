@@ -78,19 +78,7 @@ def compose_from_pdf(
     canvas = load_base_canvas(pdf_path, config)
     draw = ImageDraw.Draw(canvas)
 
-    chrome_color = tuple(config.get("chrome_color_rgb", (42, 83, 121)))
-    wipe_rect = tuple(config.get("wipe_rect_px", config["website_rect_px"]))
     paste_rect = tuple(config.get("paste_rect_px", config["website_rect_px"]))
-    wx0, wy0, wx1, wy1 = wipe_rect
-    px0, py0, px1, py1 = paste_rect
-    if (wx0, wy0, wx1, wy1) != (px0, py0, px1, py1):
-        if px0 > wx0:
-            draw.rectangle((wx0, wy0, px0, wy1), fill=chrome_color)
-        if wx1 > px1:
-            draw.rectangle((px1, wy0, wx1, wy1), fill=chrome_color)
-        if wy1 > py1:
-            draw.rectangle((wx0, py1, wx1, wy1), fill=chrome_color)
-
     x0, y0, x1, y1 = paste_rect
     zone_w, zone_h = x1 - x0, y1 - y0
 
