@@ -58,24 +58,51 @@ def trim_bottom_whitespace(image: Image.Image, *, max_scan: int = 40, threshold:
     return rgb if cut <= 0 else rgb.crop((0, 0, w, h - cut))
 
 
+def expand_rect(rect: tuple[int, int, int, int], pad: int) -> tuple[int, int, int, int]:
+    x0, y0, x1, y1 = rect
+    return (x0 - pad, y0 - pad, x1 + pad, y1 + pad)
+
+
 def load_base_canvas(pdf_path: Path, config: dict) -> Image.Image:
     """Use pre-cleaned base PNG when available; otherwise wipe sample art from PDF."""
+    clear_pad = int(config.get("scan_pill_clear_pad_px", 6))
+    scan_clear = expand_rect(
+        tuple(config.get("scan_pill_clear_rect_px", config["qr_rect_px"])),
+        clear_pad,
+    )
+
     base_rel = config.get("base_png")
     if base_rel:
         base_path = ROOT / base_rel
         if base_path.exists():
-            return Image.open(base_path).copy()
+            canvas = Image.open(base_path).copy()
+            draw = ImageDraw.Draw(canvas)
+            draw.rectangle(scan_clear, fill="#ffffff")
+            return canvas
 
     canvas = render_pdf(pdf_path, dpi=int(config.get("dpi", 300)))
     draw = ImageDraw.Draw(canvas)
     draw.rectangle(tuple(config.get("wipe_rect_px", config["website_rect_px"])), fill="#ffffff")
-    scan_pill = config.get("scan_pill_rect_px")
-    if scan_pill:
-        clear = tuple(config.get("scan_pill_clear_rect_px", scan_pill))
-        draw.rectangle(clear, fill="#ffffff")
-    else:
-        draw.rectangle(tuple(config.get("qr_clear_rect_px", config["qr_rect_px"])), fill="#ffffff")
+    draw.rectangle(scan_clear, fill="#ffffff")
     return canvas
+
+
+def rebuild_base_png(pdf_path: Path, config: dict, out_path: Path | None = None) -> Path:
+    """Write a cleaned template PNG with sample website + scan pill removed."""
+    base_rel = config.get("base_png")
+    dest = out_path or (ROOT / base_rel if base_rel else ROOT / "postcards/templates/plumber-postcard-base.png")
+    clear_pad = int(config.get("scan_pill_clear_pad_px", 6))
+    scan_clear = expand_rect(
+        tuple(config.get("scan_pill_clear_rect_px", config["qr_rect_px"])),
+        clear_pad,
+    )
+    canvas = render_pdf(pdf_path, dpi=int(config.get("dpi", 300)))
+    draw = ImageDraw.Draw(canvas)
+    draw.rectangle(tuple(config.get("wipe_rect_px", config["website_rect_px"])), fill="#ffffff")
+    draw.rectangle(scan_clear, fill="#ffffff")
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    canvas.save(dest, "PNG")
+    return dest
 
 
 def _draw_flat_left_pill_outline(
@@ -123,7 +150,8 @@ def _draw_scan_pill(
 
     draw = ImageDraw.Draw(canvas)
     px0, py0, px1, py1 = tuple(scan_pill)
-    clear = tuple(config.get("scan_pill_clear_rect_px", scan_pill))
+    clear_pad = int(config.get("scan_pill_clear_pad_px", 6))
+    clear = expand_rect(tuple(config.get("scan_pill_clear_rect_px", scan_pill)), clear_pad)
     draw.rectangle(clear, fill="#ffffff")
 
     qr_rect = tuple(config["qr_rect_px"])

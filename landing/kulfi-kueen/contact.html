@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact | Kulfi Kueen</title>
+  <meta name="description" content="Contact Kulfi Kueen in Orange County, CA. Call, message, or place an order for artisan kulfi pickup.">
+  <meta name="theme-color" content="#e91e8c">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="images/logo.png" type="image/png">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <img class="brand-logo" src="images/logo.png" alt="Kulfi Kueen logo" width="52" height="52">
+        <span class="brand-text">Kulfi Kueen<span>Orange County, CA</span></span>
+      </a>
+      <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="nav-menu">
+        <span></span><span></span><span></span>
+      </button>
+      <nav class="nav-menu" id="nav-menu" aria-label="Main">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About Mary</a></li>
+          <li><a href="menu.html">Flavors</a></li>
+          <li><a href="order.html">Order</a></li>
+          <li><a href="testimonials.html">Reviews</a></li>
+          <li><a href="catering.html">Catering</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="contact.html" class="active">Contact</a></li>
+        </ul>
+      </nav>
+      <a class="header-cta" href="order.html">Order Kulfi</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <h1>Get in Touch</h1>
+        <p>Questions, catering inquiries, or just want to say salaam? We'd love to hear from you.</p>
+      </div>
+    </section>
+
+    <section class="section section--white">
+      <div class="container">
+        <div class="contact-grid">
+          <article class="contact-card">
+            <div class="icon">📞</div>
+            <h3>Call or Text</h3>
+            <p><a href="tel:+16104283887" data-phone-href><span data-phone>610-428-3887</span></a></p>
+          </article>
+          <article class="contact-card">
+            <div class="icon">📍</div>
+            <h3>Location</h3>
+            <p>Orange County, CA<br><small>Pickup details sent after order</small></p>
+          </article>
+          <article class="contact-card">
+            <div class="icon">🍦</div>
+            <h3>Order Kulfi</h3>
+            <p><a href="order.html">Place an order online →</a></p>
+          </article>
+        </div>
+
+        <div class="form-card">
+          <h2 style="font-family:var(--font-display);text-align:center;margin:0 0 1.25rem;">Send a Message</h2>
+          <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+            <input type="hidden" name="_subject" value="Kulfi Kueen Contact Message">
+            <input type="hidden" name="form_type" value="contact">
+
+            <div class="form-grid form-grid--2">
+              <div>
+                <label for="c-name">Name *</label>
+                <input type="text" id="c-name" name="name" required>
+              </div>
+              <div>
+                <label for="c-email">Email *</label>
+                <input type="email" id="c-email" name="email" required>
+              </div>
+            </div>
+
+            <div style="margin-top:1rem;">
+              <label for="c-subject">Subject</label>
+              <select id="c-subject" name="subject">
+                <option value="general">General Question</option>
+                <option value="order">Order Help</option>
+                <option value="catering">Catering / Wholesale</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div style="margin-top:1rem;">
+              <label for="c-message">Message *</label>
+              <textarea id="c-message" name="message" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width:100%;margin-top:1.25rem;">Send Message</button>
+            <p id="contact-status" class="form-status" hidden role="status"></p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom" style="border:none;padding:0;">
+        <p>&copy; <span id="year"></span> Kulfi Kueen. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

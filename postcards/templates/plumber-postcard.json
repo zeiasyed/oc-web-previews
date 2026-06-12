@@ -37,28 +37,28 @@
   "frame_border_px": 3,
   "draw_frame_border": false,
   "qr_rect_px": [
-    191,
-    1418,
-    491,
-    1722
+    130,
+    1425,
+    430,
+    1725
   ],
   "qr_clear_rect_px": [
-    191,
-    1418,
-    491,
-    1722
+    105,
+    1395,
+    560,
+    1750
   ],
   "scan_pill_rect_px": [
-    175,
-    1402,
-    1293,
-    1738
+    116,
+    1419,
+    1188,
+    1742
   ],
   "scan_pill_clear_rect_px": [
-    170,
-    1398,
-    1310,
-    1755
+    105,
+    1395,
+    1195,
+    1750
   ],
   "scan_pill_color": "#2d5c87",
   "scan_pill_border_px": 4,
