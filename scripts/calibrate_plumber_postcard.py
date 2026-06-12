@@ -15,11 +15,14 @@ DEFAULT_SOURCE = Path(
 )
 TEMPLATE_PDF = ROOT / "postcards" / "templates" / "plumber-postcard.pdf"
 TEMPLATE_JSON = ROOT / "postcards" / "templates" / "plumber-postcard.json"
+BASE_PNG = ROOT / "postcards" / "templates" / "plumber-postcard-base.png"
 CALIBRATION_PNG = ROOT / "postcards" / "templates" / "_calibration-check.png"
 DPI = 300
 
-# Ready for print v2 Final FRONT Plumber Postcard (9 x 6 in) @ 300 DPI
-WEBSITE_RECT = [175, 180, 2525, 1285]
+# Full baked mockup bounds @ 300 DPI (outer chrome, side bars, bottom gradient).
+WIPE_RECT = [120, 180, 2580, 1375]
+# Screenshot covers the entire wiped mockup area — no leftover sample chrome.
+PASTE_RECT = [120, 180, 2580, 1375]
 FRAME_RECT = [175, 180, 2525, 1285]
 QR_RECT = [100, 1410, 400, 1710]
 QR_CLEAR_RECT = [70, 1395, 430, 1730]
@@ -35,10 +38,22 @@ def render_pdf(pdf_path: Path) -> Image.Image:
     return img
 
 
+def build_base_png(page: Image.Image) -> Image.Image:
+    base = page.copy()
+    draw = ImageDraw.Draw(base)
+    draw.rectangle(WIPE_RECT, fill="#ffffff")
+    draw.rectangle(QR_CLEAR_RECT, fill="#ffffff")
+    return base
+
+
 def install_template(source: Path) -> None:
     TEMPLATE_PDF.parent.mkdir(parents=True, exist_ok=True)
     if source.resolve() != TEMPLATE_PDF.resolve():
         TEMPLATE_PDF.write_bytes(source.read_bytes())
+
+    page = render_pdf(TEMPLATE_PDF)
+    base = build_base_png(page)
+    base.save(BASE_PNG)
 
     config = {
         "name": "plumber",
@@ -48,7 +63,10 @@ def install_template(source: Path) -> None:
         "dpi": DPI,
         "size_inches": [9, 6],
         "landscape": True,
-        "website_rect_px": WEBSITE_RECT,
+        "base_png": "postcards/templates/plumber-postcard-base.png",
+        "wipe_rect_px": WIPE_RECT,
+        "paste_rect_px": PASTE_RECT,
+        "website_rect_px": PASTE_RECT,
         "frame_rect_px": FRAME_RECT,
         "frame_border_px": 3,
         "qr_rect_px": QR_RECT,
@@ -56,14 +74,17 @@ def install_template(source: Path) -> None:
     }
     TEMPLATE_JSON.write_text(json.dumps(config, indent=2) + "\n", encoding="utf-8")
 
-    check = render_pdf(TEMPLATE_PDF).copy()
+    check = page.copy()
     overlay = ImageDraw.Draw(check)
-    overlay.rectangle(WEBSITE_RECT, outline="#00cc44", width=4)
+    overlay.rectangle(WIPE_RECT, outline="#00cc44", width=4)
+    overlay.rectangle(PASTE_RECT, outline="#0088ff", width=3)
+    overlay.rectangle(FRAME_RECT, outline="#000000", width=2)
     overlay.rectangle(QR_CLEAR_RECT, outline="#ff0000", width=4)
     overlay.rectangle(QR_RECT, outline="#ff8800", width=3)
     check.save(CALIBRATION_PNG)
 
     print(f"Installed {TEMPLATE_PDF.relative_to(ROOT)}")
+    print(f"Wrote {BASE_PNG.relative_to(ROOT)}")
     print(f"Wrote {TEMPLATE_JSON.relative_to(ROOT)}")
     print(f"Wrote {CALIBRATION_PNG.relative_to(ROOT)}")
 

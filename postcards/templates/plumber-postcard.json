@@ -9,11 +9,24 @@
     6
   ],
   "landscape": true,
-  "website_rect_px": [
-    175,
+  "base_png": "postcards/templates/plumber-postcard-base.png",
+  "wipe_rect_px": [
+    120,
     180,
-    2525,
-    1285
+    2580,
+    1375
+  ],
+  "paste_rect_px": [
+    120,
+    180,
+    2580,
+    1375
+  ],
+  "website_rect_px": [
+    120,
+    180,
+    2580,
+    1375
   ],
   "frame_rect_px": [
     175,

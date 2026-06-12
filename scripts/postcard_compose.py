@@ -47,6 +47,23 @@ def trim_bottom_whitespace(image: Image.Image, *, max_scan: int = 40, threshold:
     return rgb if cut <= 0 else rgb.crop((0, 0, w, h - cut))
 
 
+def load_base_canvas(pdf_path: Path, config: dict) -> Image.Image:
+    """Use pre-cleaned base PNG when available; otherwise wipe sample art from PDF."""
+    base_rel = config.get("base_png")
+    if base_rel:
+        base_path = ROOT / base_rel
+        if base_path.exists():
+            return Image.open(base_path).convert("RGB").copy()
+
+    canvas = render_pdf(pdf_path, dpi=int(config.get("dpi", 300)))
+    draw = ImageDraw.Draw(canvas)
+    wipe_rect = tuple(config.get("wipe_rect_px", config["website_rect_px"]))
+    draw.rectangle(wipe_rect, fill="#ffffff")
+    qr_clear = tuple(config.get("qr_clear_rect_px", config["qr_rect_px"]))
+    draw.rectangle(qr_clear, fill="#ffffff")
+    return canvas
+
+
 def compose_from_pdf(
     pdf_path: Path,
     preview_shot: Image.Image,
@@ -54,25 +71,22 @@ def compose_from_pdf(
     config: dict,
 ) -> Image.Image:
     """
-    Use the print PDF as the complete design.
-    Only replace:
-      - the sample website inside the frame
-      - the sample QR code in the footer
+    PDF supplies headline, frame chrome, and footer art.
+    We replace the entire baked-in website mockup (including side margins)
+    and the sample QR code.
     """
-    dpi = int(config.get("dpi", 300))
-    canvas = render_pdf(pdf_path, dpi=dpi)
+    canvas = load_base_canvas(pdf_path, config)
     draw = ImageDraw.Draw(canvas)
 
-    website_rect = tuple(config["website_rect_px"])
-    x0, y0, x1, y1 = website_rect
+    paste_rect = tuple(config.get("paste_rect_px", config["website_rect_px"]))
+    x0, y0, x1, y1 = paste_rect
     zone_w, zone_h = x1 - x0, y1 - y0
 
-    draw.rectangle(website_rect, fill="#ffffff")
     fitted = fit_cover(trim_bottom_whitespace(preview_shot.convert("RGB")), zone_w, zone_h)
     canvas.paste(fitted, (x0, y0))
 
-    qr_clear = tuple(config.get("qr_clear_rect_px", config["qr_rect_px"]))
-    draw.rectangle(qr_clear, fill="#ffffff")
+    frame_rect = tuple(config.get("frame_rect_px", paste_rect))
+    draw.rectangle(frame_rect, outline="#000000", width=int(config.get("frame_border_px", 3)))
 
     qr_rect = tuple(config["qr_rect_px"])
     qx0, qy0, qx1, qy1 = qr_rect

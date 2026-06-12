@@ -995,10 +995,13 @@ def main() -> None:
             target_size = None
             if template_config:
                 website_rect = template_config.get(
-                    "website_rect_px",
+                    "paste_rect_px",
                     template_config.get(
-                        "preview_paste_rect_px",
-                        template_config.get("preview_rect_px"),
+                        "website_rect_px",
+                        template_config.get(
+                            "preview_paste_rect_px",
+                            template_config.get("preview_rect_px"),
+                        ),
                     ),
                 )
                 if website_rect:
