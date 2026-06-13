@@ -36,7 +36,8 @@
   }
 
   function apiBase() {
-    return ($("api-base").value || "").replace(/\/$/, "");
+    const input = ($("api-base").value || "").replace(/\/$/, "");
+    return input || window.location.origin.replace(/\/$/, "");
   }
 
   async function api(path, options = {}) {

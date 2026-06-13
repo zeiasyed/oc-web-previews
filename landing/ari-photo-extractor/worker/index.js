@@ -82,6 +82,9 @@ export default {
     const path = url.pathname;
 
     try {
+      const staticResponse = serveStatic(path);
+      if (staticResponse) return staticResponse;
+
       if (path === "/health") return json({ ok: true, service: "ari-photo-extractor-api" });
 
       if (path === "/api/login" && request.method === "POST") {

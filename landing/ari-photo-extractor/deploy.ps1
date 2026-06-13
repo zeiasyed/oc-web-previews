@@ -1,6 +1,6 @@
 #Requires -Version 5.1
 param(
-  [string]$ShopPassword = "AriPhoto2026",
+  [string]$ShopPassword = "renu123",
   [string]$EncryptionKey = "ari-photo-extractor-key-32charsxx"
 )
 
@@ -39,13 +39,44 @@ function Build-WorkerBundle {
   $crypto = Get-Content (Join-Path $WorkerRoot "crypto.js") -Raw
   $ari = Get-Content (Join-Path $WorkerRoot "ari-firebase.js") -Raw
   $index = Get-Content (Join-Path $WorkerRoot "index.js") -Raw
+  $html = Get-Content (Join-Path $AppRoot "index.html") -Raw
+  $css = Get-Content (Join-Path $AppRoot "styles.css") -Raw
+  $js = Get-Content (Join-Path $AppRoot "app.js") -Raw
 
   $crypto = $crypto -replace 'export async function ', 'async function '
   $ari = $ari -replace 'export async function ', 'async function '
   $index = $index -replace 'import \{ encryptText, decryptText \} from "\./crypto\.js";\r?\n', ''
   $index = $index -replace 'import \{ fetchAriInvoices, listAriClients \} from "\./ari-firebase\.js";\r?\n', ''
 
-  return ($crypto + "`n`n" + $ari + "`n`n" + $index)
+  $htmlB64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($html))
+  $cssB64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($css))
+  $jsB64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($js))
+
+  $static = @"
+const APP_B64 = {
+  "index.html": "$htmlB64",
+  "styles.css": "$cssB64",
+  "app.js": "$jsB64",
+};
+
+function serveStatic(pathname) {
+  let file = pathname;
+  if (file === "/" || file === "") file = "/index.html";
+  file = file.replace(/^\//, "");
+  const encoded = APP_B64[file];
+  if (!encoded) return null;
+  const text = atob(encoded);
+  const type = file.endsWith(".html")
+    ? "text/html; charset=utf-8"
+    : file.endsWith(".css")
+      ? "text/css; charset=utf-8"
+      : "application/javascript; charset=utf-8";
+  return new Response(text, { headers: { ...CORS, "Content-Type": type } });
+}
+
+"@
+
+  return ($static + $crypto + "`n`n" + $ari + "`n`n" + $index)
 }
 
 function Get-OrCreate-D1 {
