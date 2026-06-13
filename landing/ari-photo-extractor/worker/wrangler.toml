@@ -1,0 +1,13 @@
+name = "ari-photo-extractor-api"
+main = "index.js"
+compatibility_date = "2024-06-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ari-photo-extractor"
+database_id = "REPLACE_WITH_D1_DATABASE_ID"
+
+[vars]
+# Set SHOP_PASSWORD and ENCRYPTION_KEY as secrets in Cloudflare dashboard:
+# wrangler secret put SHOP_PASSWORD
+# wrangler secret put ENCRYPTION_KEY

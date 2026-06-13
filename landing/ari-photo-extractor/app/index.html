@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>ARI Photo Extractor</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="login-view" class="panel">
+    <h1>ARI Photo Extractor</h1>
+    <p class="muted">Team login — shared shop password + your name</p>
+    <label>API URL</label>
+    <input id="api-base" type="url" value="https://ari-photo-extractor-api.zeiasyed.workers.dev">
+    <label>Your name</label>
+    <input id="user-name" type="text" autocomplete="name" placeholder="e.g. Mike">
+    <label>Shop password</label>
+    <input id="shop-password" type="password" autocomplete="current-password">
+    <button type="button" id="login-btn">Sign in</button>
+    <p id="login-error" class="error hidden"></p>
+  </div>
+
+  <div id="app-view" class="hidden">
+    <header class="topbar">
+      <div>
+        <strong>ARI Photo Extractor</strong>
+        <span id="user-label" class="muted"></span>
+      </div>
+      <div class="topbar-actions">
+        <button type="button" id="nav-ari" class="ghost">ARI settings</button>
+        <button type="button" id="nav-home" class="ghost">Batches</button>
+        <button type="button" id="logout-btn" class="ghost">Log out</button>
+      </div>
+    </header>
+
+    <main>
+      <section id="screen-ari" class="screen">
+        <h2>Connect ARI</h2>
+        <p class="muted">Credentials are encrypted and saved for your user only.</p>
+        <label>ARI email</label>
+        <input id="ari-email" type="email" autocomplete="username">
+        <label>ARI password</label>
+        <input id="ari-password" type="password" autocomplete="current-password">
+        <button type="button" id="ari-save-btn">Save &amp; connect</button>
+        <p id="ari-status" class="status" role="status"></p>
+      </section>
+
+      <section id="screen-batches" class="screen hidden">
+        <div class="row-between">
+          <h2>Your batches</h2>
+          <button type="button" id="new-batch-btn">+ New import</button>
+        </div>
+        <div id="batch-list" class="batch-list"></div>
+        <p id="batches-empty" class="muted hidden">No batches yet. Create one to import from ARI.</p>
+      </section>
+
+      <section id="screen-import" class="screen hidden">
+        <h2>New import</h2>
+        <label>Batch name</label>
+        <input id="batch-name" type="text" placeholder="e.g. Ford March 2026">
+        <label>Dealership (ARI client name)</label>
+        <input id="client-filter" type="text" list="client-options" placeholder="Start typing or leave blank for all">
+        <datalist id="client-options"></datalist>
+        <div class="grid-2">
+          <div>
+            <label>From date</label>
+            <input id="date-from" type="date">
+          </div>
+          <div>
+            <label>To date</label>
+            <input id="date-to" type="date">
+          </div>
+        </div>
+        <button type="button" id="import-btn">Import from ARI</button>
+        <p id="import-status" class="status" role="status"></p>
+        <button type="button" id="import-cancel" class="ghost">Cancel</button>
+      </section>
+
+      <section id="screen-review" class="screen hidden">
+        <div class="row-between review-head">
+          <div>
+            <h2 id="review-title">Review</h2>
+            <p id="review-meta" class="muted"></p>
+          </div>
+          <div class="review-actions">
+            <label class="inline-check"><input type="checkbox" id="show-kept-only"> Kept only</label>
+            <button type="button" id="save-review-btn">Save progress</button>
+            <button type="button" id="print-btn">Print PDF</button>
+          </div>
+        </div>
+        <p id="review-status" class="status" role="status"></p>
+        <div id="review-grid" class="review-grid"></div>
+        <div class="pager">
+          <button type="button" id="page-prev" class="ghost">← Prev</button>
+          <span id="page-label"></span>
+          <button type="button" id="page-next" class="ghost">Next →</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="print-root" class="hidden" aria-hidden="true"></div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
