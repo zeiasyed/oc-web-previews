@@ -37,15 +37,24 @@
       <div class="card">
         <h2 style="margin-top:0">Scans by business</h2>
         <table>
-          <thead><tr><th>Business</th><th>Scans</th><th>Last scan</th></tr></thead>
+          <thead><tr><th>Business</th><th>Scans</th><th>Last location</th><th>Last scan</th></tr></thead>
           <tbody id="slug-table"></tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <h2 style="margin-top:0">Scans by state</h2>
+        <p class="sub" style="margin-top:-0.5rem;margin-bottom:0.75rem">Where the scanner was located (IP geolocation).</p>
+        <table>
+          <thead><tr><th>State / region</th><th>Country</th><th>Scans</th><th>Last scan</th></tr></thead>
+          <tbody id="state-table"></tbody>
         </table>
       </div>
 
       <div class="card">
         <h2 style="margin-top:0">Recent scans</h2>
         <table>
-          <thead><tr><th>Business</th><th>When</th></tr></thead>
+          <thead><tr><th>Business</th><th>Location</th><th>Device</th><th>When</th></tr></thead>
           <tbody id="recent-table"></tbody>
         </table>
       </div>

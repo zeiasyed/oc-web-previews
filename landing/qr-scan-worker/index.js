@@ -9,6 +9,39 @@ const CORS = {
   "Access-Control-Allow-Headers": "Authorization, Content-Type",
 };
 
+const TEST_UA_PATTERNS = [
+  /powershell/i,
+  /\bcurl\//i,
+  /\bwget\b/i,
+  /python-requests/i,
+  /go-http-client/i,
+  /postman/i,
+  /insomnia/i,
+  /httpie/i,
+  /\baxios\//i,
+  /node-fetch/i,
+  /java\//i,
+  /okhttp/i,
+  /scrapy/i,
+];
+
+const REAL_SCAN_SQL_FILTER = `(
+  user_agent IS NULL OR (
+    user_agent NOT LIKE '%PowerShell%' AND
+    user_agent NOT LIKE '%curl/%' AND
+    user_agent NOT LIKE '%wget%' AND
+    user_agent NOT LIKE '%python-requests%' AND
+    user_agent NOT LIKE '%Go-http-client%' AND
+    user_agent NOT LIKE '%Postman%' AND
+    user_agent NOT LIKE '%Insomnia%' AND
+    user_agent NOT LIKE '%HTTPie%' AND
+    user_agent NOT LIKE '%axios/%' AND
+    user_agent NOT LIKE '%node-fetch%' AND
+    user_agent NOT LIKE '%okhttp%' AND
+    user_agent NOT LIKE '%Scrapy%'
+  )
+)`;
+
 function withCors(headers = {}) {
   return { ...CORS, ...headers };
 }
@@ -47,40 +80,153 @@ function normalizeSlug(raw) {
   return slug;
 }
 
+function isTestScan(request) {
+  const userAgent = request.headers.get("User-Agent") || "";
+  if (!userAgent.trim()) return true;
+  if (!TEST_UA_PATTERNS.some((pattern) => pattern.test(userAgent))) {
+    return false;
+  }
+  return true;
+}
+
+function geoFromRequest(request) {
+  const cf = request.cf || {};
+  const trim = (value, max) => {
+    const text = String(value || "").trim();
+    return text ? text.slice(0, max) : null;
+  };
+  return {
+    country: trim(cf.country, 8),
+    region_code: trim(cf.regionCode, 16),
+    region: trim(cf.region, 128),
+    city: trim(cf.city, 128),
+  };
+}
+
+function formatLocation(row) {
+  if (!row) return null;
+  const parts = [];
+  if (row.city) parts.push(row.city);
+  if (row.region_code) parts.push(row.region_code);
+  else if (row.region) parts.push(row.region);
+  if (row.country) parts.push(row.country);
+  return parts.length ? parts.join(", ") : null;
+}
+
 async function recordScan(env, slug, request) {
   const scannedAt = new Date().toISOString();
   const userAgent = (request.headers.get("User-Agent") || "").slice(0, 512);
   const referer = (request.headers.get("Referer") || "").slice(0, 512);
+  const geo = geoFromRequest(request);
   await env.DB.prepare(
-    "INSERT INTO scans (slug, scanned_at, user_agent, referer) VALUES (?1, ?2, ?3, ?4)"
+    `INSERT INTO scans (
+      slug, scanned_at, user_agent, referer,
+      country, region_code, region, city
+    ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)`
   )
-    .bind(slug, scannedAt, userAgent, referer)
+    .bind(
+      slug,
+      scannedAt,
+      userAgent,
+      referer,
+      geo.country,
+      geo.region_code,
+      geo.region,
+      geo.city
+    )
     .run();
-  return scannedAt;
+  return { scannedAt, geo };
 }
 
 async function getSummary(env) {
   const totals = await env.DB.prepare(
     `SELECT slug, COUNT(*) AS count, MAX(scanned_at) AS last_scan
      FROM scans
+     WHERE ${REAL_SCAN_SQL_FILTER}
      GROUP BY slug
      ORDER BY count DESC, slug ASC`
   ).all();
 
+  const latestBySlug = await env.DB.prepare(
+    `WITH ranked AS (
+       SELECT slug, city, region_code, region, country, scanned_at,
+         ROW_NUMBER() OVER (PARTITION BY slug ORDER BY scanned_at DESC) AS rn
+       FROM scans
+       WHERE ${REAL_SCAN_SQL_FILTER}
+     )
+     SELECT slug, city, region_code, region, country, scanned_at
+     FROM ranked
+     WHERE rn = 1`
+  ).all();
+
+  const latestMap = new Map(
+    (latestBySlug.results || []).map((row) => [row.slug, row])
+  );
+
+  const bySlugRows = (totals.results || []).map((row) => {
+    const latest = latestMap.get(row.slug);
+    return {
+      ...row,
+      country: latest?.country || null,
+      region_code: latest?.region_code || null,
+      region: latest?.region || null,
+      city: latest?.city || null,
+      last_location: latest ? formatLocation(latest) : null,
+    };
+  });
+
   const recent = await env.DB.prepare(
-    `SELECT slug, scanned_at
+    `SELECT slug, scanned_at, country, region_code, region, city, user_agent
      FROM scans
+     WHERE ${REAL_SCAN_SQL_FILTER}
      ORDER BY scanned_at DESC
      LIMIT 50`
   ).all();
 
-  const totalRow = await env.DB.prepare("SELECT COUNT(*) AS total FROM scans").first();
+  const byState = await env.DB.prepare(
+    `SELECT
+       COALESCE(NULLIF(region_code, ''), NULLIF(region, ''), 'Unknown') AS state,
+       country,
+       COUNT(*) AS count,
+       MAX(scanned_at) AS last_scan
+     FROM scans
+     WHERE ${REAL_SCAN_SQL_FILTER}
+       AND (country IS NOT NULL OR region_code IS NOT NULL OR region IS NOT NULL OR city IS NOT NULL)
+     GROUP BY state, country
+     ORDER BY count DESC, state ASC`
+  ).all();
+
+  const totalRow = await env.DB.prepare(
+    `SELECT COUNT(*) AS total FROM scans WHERE ${REAL_SCAN_SQL_FILTER}`
+  ).first();
+
+  const recentRows = (recent.results || []).map((row) => ({
+    slug: row.slug,
+    scanned_at: row.scanned_at,
+    country: row.country,
+    region_code: row.region_code,
+    region: row.region,
+    city: row.city,
+    location: formatLocation(row),
+    device: deviceLabel(row.user_agent),
+  }));
 
   return {
     total: totalRow?.total || 0,
-    by_slug: totals.results || [],
-    recent: recent.results || [],
+    by_slug: bySlugRows,
+    by_state: byState.results || [],
+    recent: recentRows,
   };
+}
+
+function deviceLabel(userAgent) {
+  const ua = String(userAgent || "");
+  if (!ua) return "Unknown";
+  if (/iphone|ipad|ipod/i.test(ua)) return "iPhone / iPad";
+  if (/android/i.test(ua)) return "Android";
+  if (/mobile/i.test(ua)) return "Mobile";
+  if (/windows|macintosh|linux/i.test(ua)) return "Desktop";
+  return "Browser";
 }
 
 export default {
@@ -101,9 +247,18 @@ export default {
       }
       const slug = normalizeSlug(body.slug);
       if (!slug) return json({ error: "Invalid slug" }, 400);
+      if (isTestScan(request)) {
+        return json({ ok: true, recorded: false, reason: "test_scan_ignored" });
+      }
       try {
-        const scannedAt = await recordScan(env, slug, request);
-        return json({ ok: true, slug, scanned_at: scannedAt });
+        const { scannedAt, geo } = await recordScan(env, slug, request);
+        return json({
+          ok: true,
+          recorded: true,
+          slug,
+          scanned_at: scannedAt,
+          location: formatLocation(geo),
+        });
       } catch (err) {
         return json({ error: String(err?.message || err) }, 500);
       }

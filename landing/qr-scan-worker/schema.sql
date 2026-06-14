@@ -3,7 +3,11 @@ CREATE TABLE IF NOT EXISTS scans (
   slug TEXT NOT NULL,
   scanned_at TEXT NOT NULL,
   user_agent TEXT,
-  referer TEXT
+  referer TEXT,
+  country TEXT,
+  region_code TEXT,
+  region TEXT,
+  city TEXT
 );
 
 CREATE INDEX IF NOT EXISTS idx_scans_slug ON scans(slug);

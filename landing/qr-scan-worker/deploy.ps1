@@ -87,6 +87,17 @@ $schema = Get-Content "$Root\schema.sql" -Raw
 foreach ($sql in (($schema -split ";") | ForEach-Object { $_.Trim() } | Where-Object { $_ })) {
   Invoke-CfApi POST "https://api.cloudflare.com/client/v4/accounts/$AccountId/d1/database/$dbId/query" @{ sql = $sql } | Out-Null
 }
+$migratePath = Join-Path $Root "migrate-location.sql"
+if (Test-Path $migratePath) {
+  foreach ($sql in (((Get-Content $migratePath -Raw) -split ";") | ForEach-Object { $_.Trim() } | Where-Object { $_ })) {
+    try {
+      Invoke-CfApi POST "https://api.cloudflare.com/client/v4/accounts/$AccountId/d1/database/$dbId/query" @{ sql = $sql } | Out-Null
+    } catch {
+      $msg = $_.Exception.Message
+      if ($msg -notmatch "duplicate column|already exists") { throw }
+    }
+  }
+}
 Write-Host "D1 schema applied." -ForegroundColor Green
 
 $DashboardPassword = -join ((48..57 + 65..90 + 97..122) | Get-Random -Count 16 | ForEach-Object { [char]$_ })

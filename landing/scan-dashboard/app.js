@@ -13,6 +13,7 @@
   var totalEl = document.getElementById("total-scans");
   var slugCountEl = document.getElementById("slug-count");
   var tableBody = document.getElementById("slug-table");
+  var stateBody = document.getElementById("state-table");
   var recentBody = document.getElementById("recent-table");
   var statusEl = document.getElementById("status");
 
@@ -47,6 +48,24 @@
     }
   }
 
+  function fmtLocation(row) {
+    if (!row) return "—";
+    if (row.last_location) return row.last_location;
+    if (row.location) return row.location;
+    var parts = [];
+    if (row.city) parts.push(row.city);
+    if (row.region_code) parts.push(row.region_code);
+    else if (row.region) parts.push(row.region);
+    if (row.country) parts.push(row.country);
+    return parts.length ? parts.join(", ") : "—";
+  }
+
+  function fmtState(row) {
+    if (!row) return "—";
+    if (row.state && row.state !== "Unknown") return row.state;
+    return "—";
+  }
+
   async function fetchSummary(token) {
     var res = await fetch(apiBase + "/api/summary", {
       headers: { Authorization: "Bearer " + token },
@@ -72,9 +91,30 @@
         row.count +
         "</strong></td>" +
         "<td>" +
+        fmtLocation(row) +
+        "</td>" +
+        "<td>" +
         fmtWhen(row.last_scan) +
         "</td>";
       tableBody.appendChild(tr);
+    });
+    stateBody.innerHTML = "";
+    (data.by_state || []).forEach(function (row) {
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        "<td><strong>" +
+        fmtState(row) +
+        "</strong></td>" +
+        "<td>" +
+        (row.country || "—") +
+        "</td>" +
+        "<td>" +
+        row.count +
+        "</td>" +
+        "<td>" +
+        fmtWhen(row.last_scan) +
+        "</td>";
+      stateBody.appendChild(tr);
     });
     recentBody.innerHTML = "";
     (data.recent || []).forEach(function (row) {
@@ -82,6 +122,10 @@
       tr.innerHTML =
         "<td>" +
         businessName(row.slug) +
+        "</td><td>" +
+        fmtLocation(row) +
+        "</td><td>" +
+        (row.device || "—") +
         "</td><td>" +
         fmtWhen(row.scanned_at) +
         "</td>";

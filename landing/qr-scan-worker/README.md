@@ -46,3 +46,7 @@ This worker records a scan when that page loads. **Do not change QR codes.**
 Open: `https://zeiasyed.github.io/oc-web-previews/landing/scan-dashboard/`
 
 Sign in with `DASHBOARD_PASSWORD`.
+
+Each scan stores scanner location from Cloudflare IP geolocation: **city, state (region code), country**. Older scans logged before this feature show `—` for location.
+
+Automated test traffic (PowerShell, curl, Postman, etc.) is **not recorded** and does not appear in the dashboard. Only real browser scans from the printed QR funnel are counted.
