@@ -18,5 +18,6 @@ window.BRANDING = {
   "formspree_endpoint": "",
   "formspree_register_endpoint": "",
   "formspree_callback_endpoint": "",
-  "stripe_payment_link": "https://buy.stripe.com/test_cNi6oH4sO3cs5gff4F8k800"
+  "stripe_payment_link": "https://buy.stripe.com/test_cNi6oH4sO3cs5gff4F8k800",
+  "qr_scan_api": "https://solena-qr-scan.zeiasyed.workers.dev"
 };

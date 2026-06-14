@@ -1,0 +1,11 @@
+name = "solena-qr-scan"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "solena-qr-scans"
+database_id = "d0a30387-81e2-4ca2-86d6-0170a0b3563e"
+
+[vars]
+# Set DASHBOARD_PASSWORD via: wrangler secret put DASHBOARD_PASSWORD

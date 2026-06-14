@@ -15,6 +15,7 @@
     "line2": "Orange, CA 92868"
   },
   "github_pages_base": "https://zeiasyed.github.io/oc-web-previews",
+  "qr_scan_api": "https://solena-qr-scan.zeiasyed.workers.dev",
   "offer_bullets": [
     "Get more calls from Google",
     "Look more professional online",

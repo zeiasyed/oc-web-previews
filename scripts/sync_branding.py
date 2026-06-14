@@ -28,6 +28,7 @@ def main() -> None:
         "formspree_register_endpoint": branding.get("formspree_register_endpoint", ""),
         "formspree_callback_endpoint": branding.get("formspree_callback_endpoint", ""),
         "stripe_payment_link": branding.get("stripe_payment_link", ""),
+        "qr_scan_api": branding.get("qr_scan_api", ""),
     }
     OUT.write_text(f"window.BRANDING = {json.dumps(js_payload, indent=2)};\n", encoding="utf-8")
     print(f"Synced {OUT}")

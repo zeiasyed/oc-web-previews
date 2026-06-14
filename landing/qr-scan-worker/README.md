@@ -1,0 +1,48 @@
+# QR scan tracker (no QR URL changes)
+
+Printed postcards already point to:
+
+`https://zeiasyed.github.io/oc-web-previews/landing/connect.html?biz=SLUG`
+
+This worker records a scan when that page loads. **Do not change QR codes.**
+
+## Setup (one time)
+
+1. Create D1 database:
+   ```bash
+   cd landing/qr-scan-worker
+   npx wrangler d1 create solena-qr-scans
+   ```
+   Copy `database_id` into `wrangler.toml`.
+
+2. Apply schema:
+   ```bash
+   npx wrangler d1 execute solena-qr-scans --file=schema.sql
+   ```
+
+3. Set dashboard password:
+   ```bash
+   npx wrangler secret put DASHBOARD_PASSWORD
+   ```
+
+4. Deploy:
+   ```bash
+   npx wrangler deploy
+   ```
+
+5. Put the worker URL in `config/branding.json`:
+   ```json
+   "qr_scan_api": "https://solena-qr-scan.YOUR_SUBDOMAIN.workers.dev"
+   ```
+
+6. Sync branding and push to GitHub Pages:
+   ```bash
+   python scripts/sync_branding.py
+   git push
+   ```
+
+## Dashboard
+
+Open: `https://zeiasyed.github.io/oc-web-previews/landing/scan-dashboard/`
+
+Sign in with `DASHBOARD_PASSWORD`.
