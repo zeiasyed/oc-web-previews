@@ -246,12 +246,14 @@ h1 {
 }
 
 #register-submit,
+#register-link,
 #contact-link {
   background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
   box-shadow: 0 8px 20px rgba(16, 185, 129, 0.28) !important;
 }
 
 #register-submit:hover,
+#register-link:hover,
 #contact-link:hover {
   box-shadow: 0 12px 28px rgba(16, 185, 129, 0.34) !important;
 }
@@ -326,6 +328,73 @@ h1 {
   border-radius: 50%;
   background: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+.actions-connect {
+  margin-top: 1.5rem;
+}
+
+.actions-connect .btn-success {
+  flex: 1 1 220px;
+}
+
+.cta-hint {
+  margin: -0.75rem 0 1.75rem;
+  font-size: 0.88rem;
+}
+
+.contact-secondary {
+  margin-top: 2rem;
+  padding: 1.25rem 1.35rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-sm);
+}
+
+.contact-intro {
+  margin: 0.35rem 0 1rem;
+  font-size: 0.92rem;
+}
+
+.contact-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.75rem;
+  align-items: flex-start;
+}
+
+.contact-strip-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.contact-strip-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.contact-strip-item a {
+  color: var(--primary-dark);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+
+.contact-strip-item a:hover {
+  text-decoration: underline;
+}
+
+.contact-alt {
+  margin: 1rem 0 0;
+  font-size: 0.9rem;
+}
+
+.contact-alt .text-link {
+  font-weight: 700;
 }
 
 .contact h2 {
@@ -1146,6 +1215,8 @@ h1 {
 
 @media (max-width: 640px) {
   .contact-grid { grid-template-columns: 1fr; }
+  .actions-connect { flex-direction: column; align-items: stretch; }
+  .actions-connect .btn-success { flex: 1 1 auto; order: -1; }
   .actions { flex-direction: column; align-items: stretch; }
   .actions .btn { text-align: center; }
   .landing-steps { width: 100%; justify-content: center; }

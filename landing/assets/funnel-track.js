@@ -10,7 +10,9 @@
 
   var AUTO_TRACK = {
     "preview-link": ["connect:preview-site", "View website preview"],
-    "pricing-link": ["connect:pricing-cta", "Simple Pricing"],
+    "register-link": ["connect:register-cta", "Register & get started"],
+    "pricing-link": ["connect:pricing-cta", "See pricing"],
+    "callback-link-connect": ["connect:request-callback", "Request a call back"],
     "nav-brand": ["nav:logo", "Logo / Preview step"],
     "nav-connect": ["nav:preview-step", "Nav: Preview"],
     "nav-pricing": ["nav:pricing-step", "Nav: Pricing"],
