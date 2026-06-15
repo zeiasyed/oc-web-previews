@@ -12,7 +12,7 @@
     "preview-link": ["connect:preview-site", "View website preview"],
     "register-link": ["connect:register-cta", "Register & get started"],
     "pricing-link": ["connect:pricing-cta", "See pricing"],
-    "callback-link-connect": ["connect:request-callback", "Request a call back"],
+    "callback-submit-connect": ["connect:callback-submit", "Call me back"],
     "nav-brand": ["nav:logo", "Logo / Preview step"],
     "nav-connect": ["nav:preview-step", "Nav: Preview"],
     "nav-pricing": ["nav:pricing-step", "Nav: Pricing"],

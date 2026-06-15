@@ -10,7 +10,7 @@
 
   <title>Solena Digital — Website Preview</title>
 
-  <link rel="stylesheet" href="assets/landing.css?v=17">
+  <link rel="stylesheet" href="assets/landing.css?v=18">
 
 </head>
 
@@ -86,7 +86,28 @@
 
           <div class="contact-strip" id="contact-grid"></div>
 
-          <p class="contact-alt"><a id="callback-link-connect" class="text-link" href="register.html#callback">Request a call back instead</a> <span class="muted">(no payment required)</span></p>
+          <div class="callback-inline" id="callback">
+            <p class="callback-inline-title">Or <strong>request a call back</strong> <span class="muted">(no payment required)</span></p>
+            <form id="callback-form-connect" class="callback-form-compact">
+              <input type="hidden" name="form_type" value="call_me_back">
+              <input type="hidden" name="business_slug" id="cb-connect-slug">
+              <input type="hidden" name="business_name" id="cb-connect-name">
+              <input type="hidden" name="_subject" id="cb-connect-subject">
+              <div class="callback-form-row">
+                <label>Your name
+                  <input type="text" name="contact_name" required autocomplete="name">
+                </label>
+                <label>Phone
+                  <input type="tel" name="phone" required autocomplete="tel">
+                </label>
+              </div>
+              <label>Best time to call <span class="optional">(optional)</span>
+                <input type="text" name="best_time" placeholder="e.g. Weekday mornings">
+              </label>
+              <button type="submit" class="btn btn-full" id="callback-submit-connect">Call me back</button>
+              <p id="callback-connect-status" class="form-status" role="status" aria-live="polite"></p>
+            </form>
+          </div>
 
           <form id="contact-form" class="contact-form hidden" action="#" method="POST">
 
