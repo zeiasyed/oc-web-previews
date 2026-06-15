@@ -46,7 +46,7 @@ if (-not $Password) {
 }
 
 Write-Host "Applying D1 schema + migrations..." -ForegroundColor Cyan
-$sqlFiles = @("schema.sql", "migrate-location.sql")
+$sqlFiles = @("schema.sql", "migrate-location.sql", "migrate-funnel-events.sql")
 foreach ($file in $sqlFiles) {
   $path = Join-Path $Root $file
   if (-not (Test-Path $path)) { continue }

@@ -216,7 +216,152 @@ async function getSummary(env) {
     by_slug: bySlugRows,
     by_state: byState.results || [],
     recent: recentRows,
+    funnel: await getFunnelMetrics(env),
   };
+}
+
+const FUNNEL_STEP_ORDER = ["connect", "pricing", "register", "payment"];
+
+function normalizeEventType(raw) {
+  const type = String(raw || "").trim().toLowerCase();
+  if (type === "page_view" || type === "click") return type;
+  return null;
+}
+
+function normalizePage(raw) {
+  const page = String(raw || "")
+    .trim()
+    .toLowerCase()
+    .slice(0, 32);
+  if (!page || !/^[a-z0-9_-]+$/.test(page)) return null;
+  return page;
+}
+
+function normalizeElementId(raw) {
+  if (raw == null || raw === "") return null;
+  const id = String(raw).trim().slice(0, 120);
+  return id || null;
+}
+
+async function recordFunnelEvent(env, slug, body, request) {
+  const eventType = normalizeEventType(body.event_type);
+  const page = normalizePage(body.page);
+  if (!eventType || !page) return null;
+  const eventAt = new Date().toISOString();
+  const userAgent = (request.headers.get("User-Agent") || "").slice(0, 512);
+  const geo = geoFromRequest(request);
+  const elementId = normalizeElementId(body.element_id);
+  const elementLabel = body.element_label
+    ? String(body.element_label).trim().slice(0, 200)
+    : null;
+  await env.DB.prepare(
+    `INSERT INTO funnel_events (
+      slug, event_type, page, element_id, element_label, event_at,
+      user_agent, country, region_code, city
+    ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10)`
+  )
+    .bind(
+      slug,
+      eventType,
+      page,
+      elementId,
+      elementLabel,
+      eventAt,
+      userAgent,
+      geo.country,
+      geo.region_code,
+      geo.city
+    )
+    .run();
+  return { eventAt, geo, eventType, page };
+}
+
+async function getFunnelMetrics(env) {
+  const empty = {
+    total_clicks: 0,
+    total_page_views: 0,
+    funnel_steps: FUNNEL_STEP_ORDER.map((page) => ({
+      page,
+      views: 0,
+      visitors: 0,
+      drop_from_prev: null,
+    })),
+    top_clicks: [],
+    recent: [],
+  };
+  try {
+    const pageViews = await env.DB.prepare(
+      `SELECT page, COUNT(*) AS views, COUNT(DISTINCT slug) AS visitors
+       FROM funnel_events
+       WHERE event_type = 'page_view' AND ${REAL_SCAN_SQL_FILTER}
+       GROUP BY page`
+    ).all();
+
+    const topClicks = await env.DB.prepare(
+      `SELECT element_id, element_label, page, COUNT(*) AS clicks, MAX(event_at) AS last_click
+       FROM funnel_events
+       WHERE event_type = 'click' AND ${REAL_SCAN_SQL_FILTER}
+       GROUP BY element_id, element_label, page
+       ORDER BY clicks DESC, last_click DESC
+       LIMIT 40`
+    ).all();
+
+    const recent = await env.DB.prepare(
+      `SELECT slug, event_type, page, element_id, element_label, event_at,
+              country, region_code, city, user_agent
+       FROM funnel_events
+       WHERE ${REAL_SCAN_SQL_FILTER}
+       ORDER BY event_at DESC
+       LIMIT 50`
+    ).all();
+
+    const totals = await env.DB.prepare(
+      `SELECT
+         SUM(CASE WHEN event_type = 'click' THEN 1 ELSE 0 END) AS clicks,
+         SUM(CASE WHEN event_type = 'page_view' THEN 1 ELSE 0 END) AS page_views
+       FROM funnel_events
+       WHERE ${REAL_SCAN_SQL_FILTER}`
+    ).first();
+
+    const pvMap = new Map(
+      (pageViews.results || []).map((row) => [row.page, row])
+    );
+    let prevViews = null;
+    const funnelSteps = FUNNEL_STEP_ORDER.map((page) => {
+      const row = pvMap.get(page) || { views: 0, visitors: 0 };
+      const views = row.views || 0;
+      const step = {
+        page,
+        views,
+        visitors: row.visitors || 0,
+        drop_from_prev:
+          prevViews != null && prevViews > 0
+            ? Math.round((1 - views / prevViews) * 100)
+            : null,
+      };
+      prevViews = views;
+      return step;
+    });
+
+    return {
+      total_clicks: totals?.clicks || 0,
+      total_page_views: totals?.page_views || 0,
+      funnel_steps: funnelSteps,
+      top_clicks: topClicks.results || [],
+      recent: (recent.results || []).map((row) => ({
+        slug: row.slug,
+        event_type: row.event_type,
+        page: row.page,
+        element_id: row.element_id,
+        element_label: row.element_label,
+        event_at: row.event_at,
+        location: formatLocation(row),
+        device: deviceLabel(row.user_agent),
+      })),
+    };
+  } catch {
+    return empty;
+  }
 }
 
 function deviceLabel(userAgent) {
@@ -258,6 +403,34 @@ export default {
           slug,
           scanned_at: scannedAt,
           location: formatLocation(geo),
+        });
+      } catch (err) {
+        return json({ error: String(err?.message || err) }, 500);
+      }
+    }
+
+    if (path === "/event" && request.method === "POST") {
+      let body = {};
+      try {
+        body = await request.json();
+      } catch {
+        return json({ error: "Invalid JSON" }, 400);
+      }
+      const slug = normalizeSlug(body.slug);
+      if (!slug) return json({ error: "Invalid slug" }, 400);
+      if (isTestScan(request)) {
+        return json({ ok: true, recorded: false, reason: "test_scan_ignored" });
+      }
+      try {
+        const result = await recordFunnelEvent(env, slug, body, request);
+        if (!result) return json({ error: "Invalid event" }, 400);
+        return json({
+          ok: true,
+          recorded: true,
+          slug,
+          event_type: result.eventType,
+          page: result.page,
+          event_at: result.eventAt,
         });
       } catch (err) {
         return json({ error: String(err?.message || err) }, 500);

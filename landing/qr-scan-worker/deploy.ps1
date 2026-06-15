@@ -88,6 +88,7 @@ foreach ($sql in (($schema -split ";") | ForEach-Object { $_.Trim() } | Where-Ob
   Invoke-CfApi POST "https://api.cloudflare.com/client/v4/accounts/$AccountId/d1/database/$dbId/query" @{ sql = $sql } | Out-Null
 }
 $migratePath = Join-Path $Root "migrate-location.sql"
+$migrateFunnelPath = Join-Path $Root "migrate-funnel-events.sql"
 if (Test-Path $migratePath) {
   foreach ($sql in (((Get-Content $migratePath -Raw) -split ";") | ForEach-Object { $_.Trim() } | Where-Object { $_ })) {
     try {
@@ -95,6 +96,16 @@ if (Test-Path $migratePath) {
     } catch {
       $msg = $_.Exception.Message
       if ($msg -notmatch "duplicate column|already exists") { throw }
+    }
+  }
+}
+if (Test-Path $migrateFunnelPath) {
+  foreach ($sql in (((Get-Content $migrateFunnelPath -Raw) -split ";") | ForEach-Object { $_.Trim() } | Where-Object { $_ })) {
+    try {
+      Invoke-CfApi POST "https://api.cloudflare.com/client/v4/accounts/$AccountId/d1/database/$dbId/query" @{ sql = $sql } | Out-Null
+    } catch {
+      $msg = "$($_.Exception.Message) $($_.ErrorDetails.Message)"
+      if ($msg -notmatch "duplicate column|already exists|SQLITE_ERROR") { throw }
     }
   }
 }

@@ -38,6 +38,14 @@ function renderContact(branding) {
     const block = document.createElement("div");
     block.className = "contact-item";
     block.innerHTML = `<strong>${item.label}</strong><br><a href="${item.href}">${item.text}</a>`;
+    const link = block.querySelector("a");
+    if (item.label === "Phone/Text") {
+      link.setAttribute("data-track", "connect:phone");
+      link.setAttribute("data-track-label", "Call / text us");
+    } else {
+      link.setAttribute("data-track", "connect:email");
+      link.setAttribute("data-track-label", "Email us");
+    }
     grid.appendChild(block);
   }
 

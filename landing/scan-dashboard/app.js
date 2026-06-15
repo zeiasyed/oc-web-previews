@@ -12,6 +12,11 @@
   var logoutBtn = document.getElementById("logout-btn");
   var totalEl = document.getElementById("total-scans");
   var slugCountEl = document.getElementById("slug-count");
+  var funnelViewsEl = document.getElementById("funnel-views");
+  var funnelClicksEl = document.getElementById("funnel-clicks");
+  var funnelStepsBody = document.getElementById("funnel-steps-table");
+  var clicksBody = document.getElementById("clicks-table");
+  var funnelRecentBody = document.getElementById("funnel-recent-table");
   var tableBody = document.getElementById("slug-table");
   var stateBody = document.getElementById("state-table");
   var recentBody = document.getElementById("recent-table");
@@ -66,6 +71,29 @@
     return "—";
   }
 
+  var PAGE_LABELS = {
+    connect: "1. Preview landing",
+    pricing: "2. Pricing",
+    register: "3. Register",
+    payment: "4. Payment",
+  };
+
+  function fmtPage(page) {
+    return PAGE_LABELS[page] || page || "—";
+  }
+
+  function fmtEvent(row) {
+    if (!row) return "—";
+    if (row.event_type === "page_view") return "Page view";
+    return row.element_label || row.element_id || "Click";
+  }
+
+  function fmtDropOff(value) {
+    if (value == null) return "—";
+    if (value <= 0) return "0%";
+    return value + "%";
+  }
+
   async function fetchSummary(token) {
     var res = await fetch(apiBase + "/api/summary", {
       headers: { Authorization: "Bearer " + token },
@@ -76,8 +104,70 @@
   }
 
   function renderSummary(data) {
+    var funnel = data.funnel || {};
     totalEl.textContent = String(data.total || 0);
     slugCountEl.textContent = String((data.by_slug || []).length);
+    funnelViewsEl.textContent = String(funnel.total_page_views || 0);
+    funnelClicksEl.textContent = String(funnel.total_clicks || 0);
+
+    funnelStepsBody.innerHTML = "";
+    (funnel.funnel_steps || []).forEach(function (row) {
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        "<td><strong>" +
+        fmtPage(row.page) +
+        "</strong></td>" +
+        "<td>" +
+        row.views +
+        "</td>" +
+        "<td>" +
+        row.visitors +
+        "</td>" +
+        "<td>" +
+        fmtDropOff(row.drop_from_prev) +
+        "</td>";
+      funnelStepsBody.appendChild(tr);
+    });
+
+    clicksBody.innerHTML = "";
+    (funnel.top_clicks || []).forEach(function (row) {
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        "<td><strong>" +
+        (row.element_label || row.element_id) +
+        '</strong><div class="muted">' +
+        (row.element_id || "") +
+        "</div></td>" +
+        "<td>" +
+        fmtPage(row.page) +
+        "</td>" +
+        "<td>" +
+        row.clicks +
+        "</td>" +
+        "<td>" +
+        fmtWhen(row.last_click) +
+        "</td>";
+      clicksBody.appendChild(tr);
+    });
+
+    funnelRecentBody.innerHTML = "";
+    (funnel.recent || []).forEach(function (row) {
+      var tr = document.createElement("tr");
+      tr.innerHTML =
+        "<td>" +
+        businessName(row.slug) +
+        "</td><td>" +
+        fmtEvent(row) +
+        "</td><td>" +
+        fmtPage(row.page) +
+        "</td><td>" +
+        fmtLocation(row) +
+        "</td><td>" +
+        fmtWhen(row.event_at) +
+        "</td>";
+      funnelRecentBody.appendChild(tr);
+    });
+
     tableBody.innerHTML = "";
     (data.by_slug || []).forEach(function (row) {
       var tr = document.createElement("tr");

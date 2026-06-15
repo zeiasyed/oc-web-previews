@@ -50,3 +50,12 @@ Sign in with `DASHBOARD_PASSWORD`.
 Each scan stores scanner location from Cloudflare IP geolocation: **city, state (region code), country**. Older scans logged before this feature show `—` for location.
 
 Automated test traffic (PowerShell, curl, Postman, etc.) is **not recorded** and does not appear in the dashboard. Only real browser scans from the printed QR funnel are counted.
+
+## Funnel click tracking
+
+After a QR scan, `funnel-track.js` on connect/pricing/register/payment records:
+
+- **Page views** per funnel step
+- **Clicks** on nav steps, CTAs, phone/email, pay button, call-me-back, etc.
+
+View metrics in the scan dashboard under **Funnel steps**, **Top clicks**, and **Recent funnel activity**.
