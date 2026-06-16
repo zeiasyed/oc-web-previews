@@ -36,13 +36,20 @@
 
     var body = opts && opts.body ? Object.assign({}, opts.body) : undefined;
     if (body && publishKey && !body.k) body.k = publishKey;
+    if (body && demoParam && !body.dry_run) body.dry_run = true;
 
     return fetch(url, {
       method: (opts && opts.method) || "GET",
       headers: headers,
       body: body ? JSON.stringify(body) : undefined,
     }).then(function (res) {
-      if (res.status === 401) throw new Error("Session expired — use the link from your email alert.");
+      if (res.status === 401) {
+        throw new Error(
+          demoParam
+            ? "Could not build preview — try again in a moment."
+            : "Session expired — use the link from your email alert."
+        );
+      }
       if (!res.ok) {
         return res.json().catch(function () { return {}; }).then(function (d) {
           throw new Error(d.error || "API error " + res.status);
@@ -80,7 +87,7 @@
       lead: lead,
       api: api,
       publishKey: publishKey || undefined,
-      hasAuth: !!getAuth(),
+      hasAuth: !!getAuth() || demoParam,
       dryRunPage: demoParam,
     });
   }

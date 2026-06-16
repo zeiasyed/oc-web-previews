@@ -272,6 +272,7 @@
           };
           if (lead.call_id) body.call_id = lead.call_id;
           if (opts.publishKey) body.k = opts.publishKey;
+          if (isDryRun(lead)) body.dry_run = true;
           opts
             .api("/api/outreach/publish-preview", { method: "POST", body: body })
             .then(function (result) {

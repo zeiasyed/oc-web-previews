@@ -112,12 +112,14 @@ async function handleOutreachProxy(request, env, localPath) {
   }
 
   let publishKey = url.searchParams.get("k") || "";
-  if (!publishKey && bodyText) {
+  let dryRun = false;
+  if (bodyText) {
     try {
       const parsed = JSON.parse(bodyText);
-      publishKey = parsed.k || parsed.publish_key || "";
+      publishKey = publishKey || parsed.k || parsed.publish_key || "";
+      dryRun = !!(parsed.demo || parsed.dry_run || parsed.lead?.demo || parsed.lead?.dry_run);
     } catch (e) {
-      publishKey = "";
+      publishKey = publishKey || "";
     }
   }
 
@@ -127,8 +129,9 @@ async function handleOutreachProxy(request, env, localPath) {
     (localPath === "/api/outreach/publish-preview" ||
       localPath === "/api/outreach/send-preview-sms" ||
       (localPath === "/api/outreach/publish-queue" && url.searchParams.get("call")));
+  const dryRunAccess = dryRun && localPath === "/api/outreach/publish-preview";
 
-  if (!authed && !publishKeyAccess) return unauthorized();
+  if (!authed && !publishKeyAccess && !dryRunAccess) return unauthorized();
   return proxyOutreachRequest(request, env, localPath, bodyText, publishKey);
 }
 
