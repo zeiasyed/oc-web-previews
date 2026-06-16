@@ -215,6 +215,12 @@
         esc([lead.city, lead.phone].filter(Boolean).join(" · ")) +
         "</p>" +
         '<div class="pw-info-grid">' +
+        '<div class="pw-info-row"><strong>Owner</strong><span>' +
+        esc(lead.contact_name || "—") +
+        "</span></div>" +
+        '<div class="pw-info-row"><strong>Current website</strong><span>' +
+        websiteHtml(lead) +
+        "</span></div>" +
         '<div class="pw-info-row"><strong>Phone</strong><span>' +
         esc(lead.phone || "—") +
         "</span></div>" +
@@ -223,12 +229,6 @@
         "</span></div>" +
         '<div class="pw-info-row"><strong>Address</strong><span>' +
         esc(lead.address || "—") +
-        "</span></div>" +
-        '<div class="pw-info-row"><strong>Owner</strong><span>' +
-        esc(lead.contact_name || "—") +
-        "</span></div>" +
-        '<div class="pw-info-row"><strong>Current website</strong><span>' +
-        websiteHtml(lead) +
         "</span></div>" +
         "</div>" +
         "</section>" +
