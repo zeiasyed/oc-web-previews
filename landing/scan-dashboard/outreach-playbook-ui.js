@@ -61,7 +61,7 @@
       var token = getToken();
       if (!token) {
         onTokenNeeded();
-        throw new Error("Enter your outreach API token to save.");
+        return Promise.reject(new Error("Enter your outreach API token."));
       }
       return fetch(apiBase.replace(/\/+$/, "") + path, {
         method: (opts && opts.method) || "GET",
@@ -269,6 +269,11 @@
     }
 
     function load() {
+      if (!getToken()) {
+        container.innerHTML =
+          '<p class="muted">Enter your API token above to load the outreach script.</p>';
+        return;
+      }
       draw();
       api("/voice/plumber-outreach/playbook")
         .then(function (res) {

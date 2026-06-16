@@ -158,6 +158,11 @@
     }
 
     function load() {
+      if (!getToken()) {
+        container.innerHTML =
+          '<p class="muted">Enter your API token above to publish preview sites.</p>';
+        return;
+      }
       draw();
       api("/voice/plumber-outreach/publish-queue")
         .then(function (res) {

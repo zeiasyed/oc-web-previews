@@ -107,10 +107,13 @@
       if (!t) return;
       setOutreachToken(t);
       outreachMounted = false;
-      if (outreachRoot) outreachRoot.innerHTML = "";
       publishController = null;
+      if (outreachRoot) outreachRoot.innerHTML = "";
       if (publishRoot) publishRoot.innerHTML = "";
-      mountOutreachBuilder();
+      var activeTab = document.querySelector(".dash-tab.active");
+      var tab = activeTab ? activeTab.getAttribute("data-tab") : "outreach";
+      if (tab === "outreach") mountOutreachBuilder();
+      else if (tab === "publish") mountPublishQueue();
     });
   }
 
