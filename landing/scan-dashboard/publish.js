@@ -7,27 +7,11 @@
   var callId = params.get("call") || "";
   var publishKey = params.get("k") || "";
   var slugParam = params.get("slug") || "";
+  var demoParam = params.get("demo") === "1";
 
   var alertBanner = document.getElementById("alert-banner");
-  var leadPanel = document.getElementById("lead-panel");
-  var publishBtn = document.getElementById("publish-btn");
-  var sendSmsBtn = document.getElementById("send-sms-btn");
-  var statusEl = document.getElementById("status");
-  var linksEl = document.getElementById("links");
+  var wizardRoot = document.getElementById("wizard-root");
   var errorEl = document.getElementById("error");
-  var companyEl = document.getElementById("company-name");
-  var metaEl = document.getElementById("lead-meta");
-  var detailsEl = document.getElementById("prospect-details");
-
-  var queueRow = null;
-  var prospect = null;
-
-  function esc(s) {
-    return String(s || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/"/g, "&quot;");
-  }
 
   function getAuth() {
     return sessionStorage.getItem(STORAGE_KEY) || "";
@@ -61,59 +45,51 @@
     });
   }
 
-  function renderProspectDetails(p) {
-    if (!p || !detailsEl) return;
-    var websiteHtml = p.website
-      ? '<a href="' + esc(p.website) + '" target="_blank" rel="noopener">' + esc(p.website) + "</a>"
-      : esc(p.website_label || "None listed");
-    detailsEl.innerHTML =
-      '<div class="prospect-row"><strong>Phone</strong><span>' + esc(p.phone || "—") + "</span></div>" +
-      '<div class="prospect-row"><strong>City</strong><span>' + esc(p.city || "—") + "</span></div>" +
-      '<div class="prospect-row"><strong>Current site</strong><span>' + websiteHtml + "</span></div>";
+  function normalizeLead(row, prospect) {
+    var p = prospect || {};
+    return {
+      call_id: row.call_id || callId || "",
+      slug: row.slug || slugParam || "",
+      company_name: row.company_name || p.company_name || "",
+      city: row.city || p.city || "",
+      phone: row.phone || p.phone || "",
+      address: row.address || p.address || "",
+      website: p.website || row.website || "",
+      has_website: !!(p.has_website || row.has_website || p.website || row.website),
+      website_label: p.website_label || row.website || "None listed on Google",
+      status: row.status || "pending",
+      preview_url: row.preview_url || null,
+      demo: !!row.demo,
+    };
   }
 
-  function showLinks(result) {
-    linksEl.innerHTML =
-      '<div class="copy-row"><input readonly id="preview-url" value="' +
-      esc(result.preview_url) +
-      '"><button type="button" id="copy-preview">Copy</button></div>' +
-      '<a href="' +
-      esc(result.preview_url) +
-      '" target="_blank" rel="noopener">Open public preview site</a>' +
-      (result.connect_url
-        ? '<a href="' + esc(result.connect_url) + '" target="_blank" rel="noopener">Open connect / pricing funnel</a>'
-        : "");
-    linksEl.classList.remove("hidden");
-    if (sendSmsBtn) {
-      sendSmsBtn.classList.remove("hidden");
-      sendSmsBtn.disabled = false;
-    }
-    document.getElementById("copy-preview").onclick = function () {
-      navigator.clipboard.writeText(result.preview_url);
-      statusEl.textContent = "Preview link copied.";
-    };
+  function mountWizard(lead) {
+    if (!window.PublishWizardUI || !wizardRoot) return;
+    window.PublishWizardUI.mount(wizardRoot, {
+      lead: lead,
+      api: api,
+      publishKey: publishKey || undefined,
+    });
   }
 
   function loadLead() {
     errorEl.textContent = "";
 
+    if (demoParam) {
+      mountWizard(Object.assign({}, window.PublishWizardUI.DEMO_LEAD));
+      return;
+    }
+
     if (callId && publishKey) {
       if (alertBanner) alertBanner.classList.remove("hidden");
       api("/api/outreach/publish-queue?call=" + encodeURIComponent(callId))
         .then(function (data) {
-          queueRow = data.queue;
-          prospect = data.prospect || {};
-          companyEl.textContent = queueRow.company_name || prospect.company_name;
-          metaEl.textContent = [queueRow.city || prospect.city, queueRow.phone || prospect.phone]
-            .filter(Boolean)
-            .join(" · ");
-          renderProspectDetails(prospect);
-          leadPanel.classList.remove("hidden");
+          var lead = normalizeLead(data.queue || {}, data.prospect || {});
           if (data.site && data.site.preview_url) {
-            publishBtn.textContent = "Rebuild their new site";
-            statusEl.textContent = "Preview site is live.";
-            showLinks({ preview_url: data.site.preview_url, connect_url: data.site.connect_url || "" });
+            lead.preview_url = data.site.preview_url;
+            lead.status = "published";
           }
+          mountWizard(lead);
         })
         .catch(function (e) {
           errorEl.textContent = e.message;
@@ -122,10 +98,12 @@
     }
 
     if (slugParam && getAuth()) {
-      companyEl.textContent = slugParam.replace(/-/g, " ");
-      metaEl.textContent = "Manual publish";
-      queueRow = { slug: slugParam, company_name: companyEl.textContent };
-      leadPanel.classList.remove("hidden");
+      mountWizard(
+        normalizeLead({
+          slug: slugParam,
+          company_name: slugParam.replace(/-/g, " "),
+        })
+      );
       return;
     }
 
@@ -140,58 +118,6 @@
     }
 
     errorEl.textContent = "Missing ?call= and ?k= in the URL.";
-  }
-
-  publishBtn.addEventListener("click", function () {
-    publishBtn.disabled = true;
-    statusEl.textContent = "Building preview site…";
-    errorEl.textContent = "";
-    api("/api/outreach/publish-preview", {
-      method: "POST",
-      body: {
-        call_id: callId || undefined,
-        k: publishKey || undefined,
-        lead: queueRow || { slug: slugParam },
-      },
-    })
-      .then(function (result) {
-        publishBtn.disabled = false;
-        publishBtn.textContent = "Rebuild their new site";
-        statusEl.textContent = "Site is live — open it or text the link to the plumber.";
-        showLinks(result);
-      })
-      .catch(function (e) {
-        publishBtn.disabled = false;
-        errorEl.textContent = e.message || "Build failed";
-        statusEl.textContent = "";
-      });
-  });
-
-  if (sendSmsBtn) {
-    sendSmsBtn.addEventListener("click", function () {
-      if (!callId || !publishKey) return;
-      sendSmsBtn.disabled = true;
-      statusEl.textContent = "Sending text…";
-      errorEl.textContent = "";
-      api("/api/outreach/send-preview-sms", {
-        method: "POST",
-        body: { call_id: callId, k: publishKey },
-      })
-        .then(function (result) {
-          sendSmsBtn.disabled = false;
-          if (result.ok) {
-            statusEl.textContent = "Preview link sent to " + (result.to || "plumber") + ".";
-          } else {
-            errorEl.textContent = (result.sms && result.sms.reason) || "SMS failed";
-            statusEl.textContent = "";
-          }
-        })
-        .catch(function (e) {
-          sendSmsBtn.disabled = false;
-          errorEl.textContent = e.message || "SMS failed";
-          statusEl.textContent = "";
-        });
-    });
   }
 
   loadLead();

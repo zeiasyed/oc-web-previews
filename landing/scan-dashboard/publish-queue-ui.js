@@ -18,7 +18,7 @@
   }
 
   function mount(container, apiBase, getToken, onTokenNeeded) {
-    var ui = { items: [], publishing: {}, msg: "", poll: null };
+    var ui = { items: [], activeLead: null, poll: null };
 
     function api(path, opts) {
       var token = getToken();
@@ -34,127 +34,155 @@
         },
         body: opts && opts.body ? JSON.stringify(opts.body) : undefined,
       }).then(function (res) {
-        if (res.status === 401) throw new Error("Invalid API token");
-        if (!res.ok) throw new Error("API error " + res.status);
+        if (res.status === 401) throw new Error("Session expired — sign in again.");
+        if (!res.ok) {
+          return res.json().catch(function () { return {}; }).then(function (d) {
+            throw new Error(d.error || "API error " + res.status);
+          });
+        }
         return res.json();
       });
     }
 
-    function publishRow(row) {
-      var key = row.call_id || row.slug;
-      if (ui.publishing[key]) return;
-      ui.publishing[key] = true;
+    function normalizeLead(row) {
+      return {
+        call_id: row.call_id || "",
+        slug: row.slug || "",
+        company_name: row.company_name || row.slug || "Lead",
+        city: row.city || "",
+        phone: row.phone || "",
+        address: row.address || "",
+        website: row.website || "",
+        has_website: !!row.has_website || !!row.website,
+        website_label: row.website || "None listed on Google",
+        status: row.status || "pending",
+        preview_url: row.preview_url || null,
+        created_at: row.created_at,
+        demo: !!row.demo,
+      };
+    }
+
+    function mountWizard() {
+      var wizardEl = container.querySelector("#publish-wizard-root");
+      if (!wizardEl || !global.PublishWizardUI || !ui.activeLead) return;
+      global.PublishWizardUI.mount(wizardEl, { lead: ui.activeLead, api: api });
+    }
+
+    function selectLead(lead) {
+      ui.activeLead = lead;
       draw();
-      api("/api/outreach/publish-preview", {
-        method: "POST",
-        body: { call_id: row.call_id || undefined, lead: row },
-      })
-        .then(function (result) {
-          ui.publishing[key] = false;
-          ui.msg = "Published " + (result.company_name || row.company_name) + " — share the preview link on your call.";
-          load();
+      mountWizard();
+    }
+
+    function loadDemo() {
+      selectLead(Object.assign({}, global.PublishWizardUI.DEMO_LEAD));
+    }
+
+    function selectFromRow(row) {
+      var lead = normalizeLead(row);
+      if (!row.call_id) {
+        selectLead(lead);
+        return;
+      }
+      api("/api/outreach/publish-queue?call=" + encodeURIComponent(row.call_id))
+        .then(function (data) {
+          var merged = normalizeLead(Object.assign({}, row, data.queue || {}, data.prospect || {}));
+          if (data.site && data.site.preview_url) {
+            merged.preview_url = data.site.preview_url;
+            merged.status = "published";
+          }
+          selectLead(merged);
         })
         .catch(function (e) {
-          ui.publishing[key] = false;
-          ui.msg = "";
-          draw();
-          alert(e.message || "Publish failed");
+          alert(e.message || "Could not load lead");
         });
     }
 
     function rowHtml(row) {
-      var key = row.call_id || row.slug;
-      var busy = !!ui.publishing[key];
-      var published = row.status === "published" && row.preview_url;
+      var id = row.call_id || row.slug;
+      var selected =
+        ui.activeLead &&
+        (ui.activeLead.call_id === row.call_id || (!row.call_id && ui.activeLead.slug === row.slug));
       var meta = [row.city, row.phone].filter(Boolean).join(" · ");
-      var actions =
-        published
-          ? '<a class="btn btn-small" href="' +
-            esc(row.preview_url) +
-            '" target="_blank" rel="noopener">Open preview</a>'
-          : '<button type="button" class="btn btn-small publish-queue-btn" data-call="' +
-            esc(row.call_id || "") +
-            '" data-slug="' +
-            esc(row.slug || "") +
-            '"' +
-            (busy ? " disabled" : "") +
-            ">" +
-            (busy ? "Publishing…" : "Publish now") +
-            "</button>";
-      if (row.call_id) {
-        actions +=
-          ' <a class="muted" href="publish.html?call=' +
-          encodeURIComponent(row.call_id) +
-          '" target="_blank" rel="noopener">Mobile page</a>';
-      }
+      var siteHint = row.website
+        ? '<div class="muted" style="font-size:0.8rem">Has site</div>'
+        : '<div class="muted" style="font-size:0.8rem">No website</div>';
+      var status =
+        row.status === "published" && row.preview_url
+          ? '<span class="pw-badge-live">Site live</span>'
+          : '<span class="pw-badge-pending">Pending</span>';
       return (
-        "<tr><td><strong>" +
+        '<tr class="pw-lead-row' +
+        (selected ? " pw-lead-selected" : "") +
+        '" data-call="' +
+        esc(row.call_id || "") +
+        '" data-slug="' +
+        esc(row.slug || "") +
+        '">' +
+        "<td><strong>" +
         esc(row.company_name || row.slug) +
-        '</strong><div class="muted">' +
+        "</strong><div class=\"muted\">" +
         esc(meta) +
-        "</div></td><td>" +
-        (published ? '<span style="color:var(--accent)">Live</span>' : "Pending") +
-        "</td><td>" +
+        "</div>" +
+        siteHint +
+        "</td>" +
+        "<td>" +
+        status +
+        "</td>" +
+        "<td>" +
         fmtWhen(row.created_at) +
-        "</td><td>" +
-        actions +
-        "</td></tr>"
+        "</td>" +
+        "<td><button type=\"button\" class=\"btn btn-small pw-open-lead\">Open</button></td></tr>"
       );
     }
 
     function draw() {
-      var manualSlug = container.querySelector("#publish-manual-slug");
-      var slugVal = manualSlug ? manualSlug.value.trim() : "";
       container.innerHTML =
         '<div class="publish-queue-wrap">' +
         '<div class="publish-queue-header">' +
         "<div><h2 style=\"margin:0\">Live publish</h2>" +
-        '<p class="sub" style="margin:0.35rem 0 0">When Alex flags a hot lead, publish their preview site here while you are on the phone.</p></div>' +
+        '<p class="sub" style="margin:0.35rem 0 0">3 steps: review lead info → create site → push link to plumber.</p></div>' +
+        '<div class="pw-header-actions">' +
+        '<button type="button" id="publish-demo-btn" class="btn btn-ghost">Load demo lead</button>' +
         '<button type="button" id="publish-queue-refresh" class="btn">Refresh</button>' +
-        "</div>" +
-        (ui.msg ? '<p class="outreach-msg">' + esc(ui.msg) + "</p>" : "") +
+        "</div></div>" +
         '<div class="card" style="margin-top:1rem">' +
         "<h3 style=\"margin-top:0\">Hot leads</h3>" +
         '<table><thead><tr><th>Business</th><th>Status</th><th>When</th><th></th></tr></thead>' +
         '<tbody id="publish-queue-body">' +
         (ui.items.length
           ? ui.items.map(rowHtml).join("")
-          : '<tr><td colspan="4" class="muted">No hot leads yet — they appear when Alex texts you during a call.</td></tr>') +
+          : '<tr><td colspan="4" class="muted">No hot leads yet — they appear after Alex flags interest or the 1-minute email fires.</td></tr>') +
         "</tbody></table></div>" +
-        '<div class="card">' +
-        "<h3 style=\"margin-top:0\">Manual publish</h3>" +
-        '<p class="sub">Publish any lead by slug (from your plumber list).</p>' +
-        '<div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:flex-end">' +
-        '<div style="flex:1;min-width:180px"><label for="publish-manual-slug">Slug</label>' +
-        '<input id="publish-manual-slug" type="text" placeholder="first-class-plumbing-ac-riverside" value="' +
-        esc(slugVal) +
-        '"></div>' +
-        '<button type="button" id="publish-manual-btn" class="btn">Publish</button>' +
-        "</div></div></div>";
+        '<div id="publish-wizard-root"></div></div>';
 
       container.querySelector("#publish-queue-refresh").onclick = load;
-      container.querySelectorAll(".publish-queue-btn").forEach(function (btn) {
-        btn.onclick = function () {
-          var callId = btn.getAttribute("data-call");
-          var slug = btn.getAttribute("data-slug");
+      container.querySelector("#publish-demo-btn").onclick = loadDemo;
+
+      container.querySelectorAll(".pw-open-lead").forEach(function (btn) {
+        btn.onclick = function (e) {
+          e.stopPropagation();
+          var tr = btn.closest("tr");
+          var callId = tr.getAttribute("data-call");
+          var slug = tr.getAttribute("data-slug");
           var row = ui.items.find(function (r) {
-            return (callId && r.call_id === callId) || r.slug === slug;
+            return (callId && r.call_id === callId) || (slug && r.slug === slug);
           });
-          if (row) publishRow(row);
+          if (row) selectFromRow(row);
         };
       });
-      var manualBtn = container.querySelector("#publish-manual-btn");
-      if (manualBtn) {
-        manualBtn.onclick = function () {
-          var slug = container.querySelector("#publish-manual-slug").value.trim();
-          if (!slug) return;
-          publishRow({
-            slug: slug,
-            company_name: slug.replace(/-/g, " "),
-            city: "Inland Empire",
+      container.querySelectorAll(".pw-lead-row").forEach(function (tr) {
+        tr.onclick = function () {
+          var callId = tr.getAttribute("data-call");
+          var slug = tr.getAttribute("data-slug");
+          var row = ui.items.find(function (r) {
+            return (callId && r.call_id === callId) || (slug && r.slug === slug);
           });
+          if (row) selectFromRow(row);
         };
-      }
+      });
+
+      mountWizard();
     }
 
     function load() {
@@ -167,18 +195,29 @@
       api("/api/outreach/publish-queue")
         .then(function (res) {
           ui.items = res.items || [];
+          if (ui.activeLead && ui.activeLead.call_id) {
+            var updated = ui.items.find(function (r) {
+              return r.call_id === ui.activeLead.call_id;
+            });
+            if (updated) {
+              ui.activeLead = normalizeLead(Object.assign({}, ui.activeLead, updated));
+            }
+          }
           draw();
+          if (!ui.items.length && !ui.activeLead && global.PublishWizardUI) {
+            loadDemo();
+          }
         })
         .catch(function (e) {
           container.innerHTML =
             '<p class="error">' +
             esc(e.message) +
-            '</p><p class="muted">Sign in to the dashboard first (same password as QR activity).</p>';
+            "</p><p class=\"muted\">Sign in to the dashboard first (same password as QR activity).</p>";
         });
     }
 
     function startPoll() {
-      stopPoll();
+      if (ui.poll) clearInterval(ui.poll);
       ui.poll = setInterval(load, 15000);
     }
 
@@ -191,7 +230,6 @@
 
     load();
     startPoll();
-
     return { refresh: load, stopPoll: stopPoll, startPoll: startPoll };
   }
 
