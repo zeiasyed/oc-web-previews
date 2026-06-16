@@ -14,6 +14,10 @@
   var wizardRoot = document.getElementById("wizard-root");
   var errorEl = document.getElementById("error");
 
+  function setError(msg) {
+    if (errorEl) errorEl.textContent = msg || "";
+  }
+
   function getAuth() {
     return sessionStorage.getItem(STORAGE_KEY) || "";
   }
@@ -67,8 +71,7 @@
   function mountWizard(lead) {
     if (!wizardRoot) return;
     if (!window.PublishWizardUI) {
-      errorEl.textContent =
-        "Wizard scripts did not load. Hard refresh this page (Ctrl+F5 or Cmd+Shift+R).";
+      setError("Wizard scripts did not load. Hard refresh this page (Ctrl+F5 or Cmd+Shift+R).");
       return;
     }
     window.PublishWizardUI.mount(wizardRoot, {
@@ -79,12 +82,11 @@
   }
 
   function loadLead() {
-    errorEl.textContent = "";
+    setError("");
 
     if (demoParam) {
       if (!window.PublishWizardUI) {
-        errorEl.textContent =
-          "Wizard scripts did not load. Hard refresh this page (Ctrl+F5 or Cmd+Shift+R).";
+        setError("Wizard scripts did not load. Hard refresh this page (Ctrl+F5 or Cmd+Shift+R).");
         return;
       }
       mountWizard(Object.assign({}, window.PublishWizardUI.DEMO_LEAD));
@@ -103,7 +105,7 @@
           mountWizard(lead);
         })
         .catch(function (e) {
-          errorEl.textContent = e.message;
+          setError(e.message);
         });
       return;
     }
@@ -119,17 +121,21 @@
     }
 
     if (callId && !publishKey) {
-      errorEl.textContent = "This link is missing its security key. Use the link from your 1-minute email alert.";
+      setError("This link is missing its security key. Use the link from your 1-minute email alert.");
       return;
     }
 
     if (slugParam && !getAuth()) {
-      errorEl.textContent = "Sign in on the main dashboard first, then open this page again.";
+      setError("Sign in on the main dashboard first, then open this page again.");
       return;
     }
 
-    errorEl.textContent = "Missing ?call= and ?k= in the URL.";
+    setError("Missing ?call= and ?k= in the URL.");
   }
 
-  loadLead();
+  try {
+    loadLead();
+  } catch (e) {
+    setError((e && e.message) || "Page failed to load.");
+  }
 })();
