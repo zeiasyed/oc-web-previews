@@ -25,15 +25,13 @@
     var company = root.querySelector("#outreach-company");
     var voice = root.querySelector("#outreach-voice");
     var ivr = root.querySelector("#outreach-ivr");
-    var openWeb = root.querySelector("#outreach-opening-web");
-    var openNo = root.querySelector("#outreach-opening-no");
+    var openPitch = root.querySelector("#outreach-opening");
     var rules = root.querySelector("#outreach-rules");
     if (persona) playbook.agent_persona = persona.value;
     if (company) playbook.company_label = company.value;
     if (voice) playbook.voice_style = voice.value;
     if (ivr) playbook.ivr_rules = ivr.value;
-    if (openWeb) playbook.opening_has_website = openWeb.value;
-    if (openNo) playbook.opening_no_website = openNo.value;
+    if (openPitch) playbook.opening = openPitch.value;
     if (rules) playbook.general_rules = rules.value;
 
     root.querySelectorAll(".outreach-path").forEach(function (el) {
@@ -51,7 +49,9 @@
         end_call: !!el.querySelector('[data-action="end_call"]')?.checked,
       };
     });
-    playbook.version = playbook.version || 2;
+    playbook.version = 3;
+    delete playbook.opening_has_website;
+    delete playbook.opening_no_website;
     return playbook;
   }
 
@@ -97,6 +97,8 @@
     function renderInspector() {
       if (ui.selected === "start") {
         var pb = ui.playbook;
+        var opening =
+          pb.opening || pb.opening_has_website || pb.opening_no_website || "";
         return (
           '<div class="outreach-inspector">' +
           "<h3>Call opening &amp; setup</h3>" +
@@ -105,9 +107,8 @@
           '<label>Company name</label><input id="outreach-company" type="text" value="' + esc(pb.company_label) + '">' +
           '<label>Voice style</label><textarea id="outreach-voice" rows="2">' + esc(pb.voice_style) + "</textarea>" +
           '<label>IVR rules</label><textarea id="outreach-ivr" rows="2">' + esc(pb.ivr_rules) + "</textarea>" +
-          '<label>Opening — has website</label><textarea id="outreach-opening-web" rows="3">' + esc(pb.opening_has_website) + "</textarea>" +
+          '<label>Opening pitch</label><textarea id="outreach-opening" rows="4">' + esc(opening) + "</textarea>" +
           '<p class="muted">Tags: {{company_name}}, {{city}}</p>' +
-          '<label>Opening — no website</label><textarea id="outreach-opening-no" rows="3">' + esc(pb.opening_no_website) + "</textarea>" +
           '<label>General rules</label><textarea id="outreach-rules" rows="3">' + esc(pb.general_rules) + "</textarea></div>"
         );
       }

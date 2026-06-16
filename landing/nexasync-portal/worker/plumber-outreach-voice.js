@@ -2,17 +2,15 @@
 
 function getDefaultOutreachPlaybook() {
   return {
-    version: 2,
+    version: 3,
     agent_persona: "Alex",
     company_label: "Solena Digital",
     voice_style:
       'Sound natural, friendly, confident — not salesy or robotic. Use brief fillers ("um", "okay so", "sure"). Keep live conversations under 60 seconds when possible.',
     ivr_rules:
       "Listen first. Navigate to reception or owner. Use press_digit when needed. Prefer operator / front desk. Never pitch during hold music or menus. HARD LIMITS: If still in IVR or an automated menu after 25 seconds with no human, use end_call. Do not loop menus. If you reach voicemail, leave ONE short sentence (max 15 seconds), then end_call immediately — do not wait on the line. Never hold longer than 20 seconds waiting for a person.",
-    opening_has_website:
-      "Hi — uh, this is Alex with Solena Digital. I was looking at {{company_name}} online — you've got a site, but it doesn't look like it's pulling in much traffic from Google. We actually put together a quick preview of what a stronger local page could look like for you. Would you be open to taking a quick look — just to see if it could bring in more calls?",
-    opening_no_website:
-      "Hi — uh, this is Alex with Solena Digital. I noticed {{company_name}} shows up on Google Maps but doesn't have a real website linked — you're probably losing calls to competitors who do. We built a sample preview page to show what you could put up pretty fast. Would you be interested in seeing it — just to see if it'd help you get more calls?",
+    opening:
+      "Hi — uh, this is Alex with Solena Digital. I was looking at {{company_name}} in {{city}} — we put together a quick preview of a stronger local page that could bring in more plumbing calls from Google. Would you be open to taking a quick look?",
     general_rules:
       "Do NOT claim you rebuilt their live website without their permission — it's a preview/sample for discussion. Do not discuss pricing unless they ask; say the specialist can walk through options. California calls may be recorded if asked. Do NOT transfer the live call — when they want the preview, call notify_owner_hot_lead then end_call; the account owner will text or call them back.",
     paths: [
@@ -96,13 +94,14 @@ function normalizeOutreachPlaybook(raw) {
   }
 
   return {
-    version: 2,
+    version: 3,
     agent_persona: String(raw.agent_persona || base.agent_persona),
     company_label: String(raw.company_label || base.company_label),
     voice_style,
     ivr_rules,
-    opening_has_website: String(raw.opening_has_website || base.opening_has_website),
-    opening_no_website: String(raw.opening_no_website || base.opening_no_website),
+    opening: String(
+      raw.opening || raw.opening_has_website || raw.opening_no_website || base.opening
+    ),
     general_rules,
     paths: mergedPaths.length ? mergedPaths : base.paths,
   };
@@ -133,11 +132,7 @@ Context for this business:
 ${pb.voice_style}
 
 ## Opening (after a live human answers — not during IVR)
-If they have a website:
-"${pb.opening_has_website}"
-
-If they do NOT have a website:
-"${pb.opening_no_website}"
+"${pb.opening}"
 
 ## IVR rules
 ${pb.ivr_rules}
