@@ -675,16 +675,14 @@ async function handlePlumberSendPreviewSms(request, env) {
   const previewUrl = row.preview_url || site?.preview_url;
   if (!previewUrl) return json({ error: "Preview not published yet — tap Build their new site first" }, 400);
 
-  const toPhone = String(body.to || row.phone || "").trim();
-  if (!toPhone) return json({ error: "No plumber phone on file" }, 400);
-
-  const company = row.company_name || "your business";
-  const defaultMsg = `Hi — Alex from Solena Digital here. As promised, here's the preview site we built for ${company}: ${previewUrl}`;
-  const message = String(body.message || defaultMsg).slice(0, 320);
-
-  if (typeof sendTwilioSms !== "function") return json({ error: "SMS not configured" }, 503);
-  const sms = await sendTwilioSms(env, toPhone, message);
-  return json({ ok: !!sms.sent, sms, preview_url: previewUrl, to: toPhone });
+  const sms = await sendPlumberPreviewLinkSms(env, {
+    previewUrl,
+    companyName: row.company_name,
+    phone: body.to || row.phone,
+    message: body.message,
+  });
+  if (sms.reason === "sms_not_configured") return json({ error: "SMS not configured" }, 503);
+  return json({ ok: !!sms.sent, sms, preview_url: previewUrl, to: sms.to });
 }
 
 async function handlePlumberOutreachHotLead(request, env) {

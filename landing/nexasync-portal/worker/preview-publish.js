@@ -47,7 +47,7 @@ const PLUMBER_THEME = {
 const PLUMBER_SERVICES = [
   {
     title: "Emergency Plumbing Repairs",
-    description: "Burst pipes, major leaks, and backed-up drains — fast response when every minute counts.",
+    description: "Burst pipes, major leaks, and backed-up drains &mdash; fast response when every minute counts.",
     image: "https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=600&q=80",
   },
   {
@@ -125,9 +125,9 @@ function previewNav(slug, active) {
     .join("\n        ");
 }
 
-function previewBar(slug) {
-  const connect = `${FUNNEL_CONNECT_BASE}?biz=${encodeURIComponent(slug)}`;
-  return `<div class="preview-bar" role="complementary"><div class="container preview-bar-inner"><p class="preview-bar-text"><strong>Like this site?</strong> Make it yours with Solena Digital.</p><a href="${connect}" class="btn btn-preview">Next steps — no obligation →</a></div></div>`;
+function previewBar(slug, env) {
+  const pricing = `${previewPagesOrigin(env)}/landing/pricing.html?biz=${encodeURIComponent(slug)}`;
+  return `<div class="preview-bar" role="complementary"><div class="container preview-bar-inner"><p class="preview-bar-text"><strong>Like this site?</strong> Make it yours with Solena Digital.</p><a href="${pricing}" class="btn btn-preview">Next steps &mdash; no obligation &rarr;</a></div></div>`;
 }
 
 function previewHead(name, desc, slug, env) {
@@ -135,8 +135,9 @@ function previewHead(name, desc, slug, env) {
   return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${previewEsc(name)} | Plumbing Services</title><meta name="description" content="${previewEsc(desc)}"><style>${previewThemeStyle()}</style><link rel="stylesheet" href="${cssUrl}"></head>`;
 }
 
-function previewFooter(name, slug) {
-  return `<footer class="site-footer"><div class="container footer-inner"><div><strong>${previewEsc(name)}</strong><p class="preview-note">Preview site by <a href="${FUNNEL_CONNECT_BASE}?biz=${encodeURIComponent(slug)}">Solena Digital</a></p></div></div></footer>${previewBar(slug)}</body></html>`;
+function previewFooter(name, slug, env) {
+  const pricing = `${previewPagesOrigin(env)}/landing/pricing.html?biz=${encodeURIComponent(slug)}`;
+  return `<footer class="site-footer"><div class="container footer-inner"><div><strong>${previewEsc(name)}</strong><p class="preview-note">Preview site by <a href="${pricing}">Solena Digital</a></p></div></div></footer>${previewBar(slug, env)}</body></html>`;
 }
 
 function buildPreviewContext(lead) {
@@ -173,15 +174,15 @@ function generatePreviewFiles(lead, env) {
       `<article class="blog-card"><img src="${b.image}" alt="" class="blog-card-image"><div class="blog-card-body"><p class="blog-date">${previewEsc(b.date)}</p><h3>${previewEsc(b.title)}</h3><p>${previewEsc(b.excerpt)}</p></div></article>`
   ).join("");
 
-  const index = `${previewHead(c.name, c.tagline, c.slug, env)}<body>${header("index.html")}<main><section class="hero hero-trade"><div class="container hero-grid"><div class="hero-copy"><p class="hero-badge">24/7 Emergency Service Available</p><p class="eyebrow">Plumbing Services</p><h1>${previewEsc(c.name)}</h1><p class="lead">${previewEsc(c.tagline)}</p><ul class="trust-badges"><li>Licensed & Insured</li><li>Free Estimates</li><li>Same-Day Service</li></ul><div class="hero-actions"><a href="contact.html" class="btn">Get a Free Estimate</a>${tel}</div></div><div class="hero-image"><img src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=1200&q=80" alt=""></div></div></section><section class="section"><div class="container"><div class="section-heading"><p class="eyebrow-dark">What we do</p><h2>Professional plumbing services</h2><p class="section-intro">Serving ${previewEsc(c.city)} and surrounding cities.</p></div><div class="service-grid">${servicesHtml}</div></div></section></main>${previewFooter(c.name, c.slug)}`;
+  const index = `${previewHead(c.name, c.tagline, c.slug, env)}<body>${header("index.html")}<main><section class="hero hero-trade"><div class="container hero-grid"><div class="hero-copy"><p class="hero-badge">24/7 Emergency Service Available</p><p class="eyebrow">Plumbing Services</p><h1>${previewEsc(c.name)}</h1><p class="lead">${previewEsc(c.tagline)}</p><ul class="trust-badges"><li>Licensed & Insured</li><li>Free Estimates</li><li>Same-Day Service</li></ul><div class="hero-actions"><a href="contact.html" class="btn">Get a Free Estimate</a>${tel}</div></div><div class="hero-image"><img src="https://images.unsplash.com/photo-1556911220-e15b29be8c8f?w=1200&q=80" alt=""></div></div></section><section class="section"><div class="container"><div class="section-heading"><p class="eyebrow-dark">What we do</p><h2>Professional plumbing services</h2><p class="section-intro">Serving ${previewEsc(c.city)} and surrounding cities.</p></div><div class="service-grid">${servicesHtml}</div></div></section></main>${previewFooter(c.name, c.slug, env)}`;
 
-  const services = `${previewHead(c.name, "Plumbing services", c.slug, env)}<body>${header("services.html")}<main><section class="page-hero"><div class="container"><p class="eyebrow-dark">Services</p><h1>How we help ${previewEsc(c.city)} homeowners</h1></div></section><section class="section"><div class="container service-grid service-grid-page">${PLUMBER_SERVICES.map((s) => `<article class="service-tile service-tile-large"><img src="${s.image}" class="service-tile-image" alt=""><div class="service-tile-body"><h2>${previewEsc(s.title)}</h2><p>${previewEsc(s.description)}</p></div></article>`).join("")}</div></section></main>${previewFooter(c.name, c.slug)}`;
+  const services = `${previewHead(c.name, "Plumbing services", c.slug, env)}<body>${header("services.html")}<main><section class="page-hero"><div class="container"><p class="eyebrow-dark">Services</p><h1>How we help ${previewEsc(c.city)} homeowners</h1></div></section><section class="section"><div class="container service-grid service-grid-page">${PLUMBER_SERVICES.map((s) => `<article class="service-tile service-tile-large"><img src="${s.image}" class="service-tile-image" alt=""><div class="service-tile-body"><h2>${previewEsc(s.title)}</h2><p>${previewEsc(s.description)}</p></div></article>`).join("")}</div></section></main>${previewFooter(c.name, c.slug, env)}`;
 
-  const about = `${previewHead(c.name, c.about, c.slug, env)}<body>${header("about.html")}<main><section class="page-hero"><div class="container"><h1>About ${previewEsc(c.name)}</h1><p class="lead">${previewEsc(c.about)}</p></div></section></main>${previewFooter(c.name, c.slug)}`;
+  const about = `${previewHead(c.name, c.about, c.slug, env)}<body>${header("about.html")}<main><section class="page-hero"><div class="container"><h1>About ${previewEsc(c.name)}</h1><p class="lead">${previewEsc(c.about)}</p></div></section></main>${previewFooter(c.name, c.slug, env)}`;
 
-  const contact = `${previewHead(c.name, "Contact us", c.slug, env)}<body>${header("contact.html")}<main><section class="page-hero"><div class="container"><h1>Contact ${previewEsc(c.name)}</h1></div></section><section class="section"><div class="container contact-grid"><div class="contact-card"><h2>Phone</h2><p>${c.phone ? `<a href="tel:${c.phoneRaw}">${previewEsc(c.phone)}</a>` : "Call for a free estimate"}</p></div><div class="contact-card"><h2>Service area</h2><p>${previewEsc(c.address)}</p></div></div></section></main>${previewFooter(c.name, c.slug)}`;
+  const contact = `${previewHead(c.name, "Contact us", c.slug, env)}<body>${header("contact.html")}<main><section class="page-hero"><div class="container"><h1>Contact ${previewEsc(c.name)}</h1></div></section><section class="section"><div class="container contact-grid"><div class="contact-card"><h2>Phone</h2><p>${c.phone ? `<a href="tel:${c.phoneRaw}">${previewEsc(c.phone)}</a>` : "Call for a free estimate"}</p></div><div class="contact-card"><h2>Service area</h2><p>${previewEsc(c.address)}</p></div></div></section></main>${previewFooter(c.name, c.slug, env)}`;
 
-  const blog = `${previewHead(c.name, "Plumbing tips", c.slug, env)}<body>${header("blog.html")}<main><section class="page-hero"><div class="container"><h1>Tips &amp; Guides</h1></div></section><section class="section"><div class="container blog-grid">${blogHtml}</div></section></main>${previewFooter(c.name, c.slug)}`;
+  const blog = `${previewHead(c.name, "Plumbing tips", c.slug, env)}<body>${header("blog.html")}<main><section class="page-hero"><div class="container"><h1>Tips &amp; Guides</h1></div></section><section class="section"><div class="container blog-grid">${blogHtml}</div></section></main>${previewFooter(c.name, c.slug, env)}`;
 
   return {
     context: c,
@@ -328,10 +329,26 @@ async function handleFunnelConnect(request, env) {
     ? await env.DB.prepare("SELECT * FROM preview_sites WHERE slug = ?1").bind(slug).first()
     : null;
   const previewUrl = site?.preview_url || `${PREVIEW_PUBLIC_BASE}/${encodeURIComponent(slug)}/index.html`;
+  // Plumber outreach previews live in D1 — send visitors straight to the site unless they want the hub.
+  if (site?.preview_url && !url.searchParams.has("hub")) {
+    return Response.redirect(site.preview_url, 302);
+  }
   const name = site?.company_name || slug.replace(/-/g, " ");
   const pages = previewPagesOrigin(env);
-  const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${previewEsc(name)} Preview | Solena Digital</title><link rel="stylesheet" href="${pages}/landing/assets/landing.css?v=18"></head><body class="page-connect"><main class="wrap"><div class="landing-shell"><section class="card card-hero"><h1>We built a free preview website for ${previewEsc(name)}</h1><p class="lead">Take a look, then register online to go live — we handle the rest.</p><div class="actions actions-connect"><a class="btn btn-outline" href="${previewEsc(previewUrl)}">View website preview</a><a class="btn" href="${pages}/landing/pricing.html?biz=${encodeURIComponent(slug)}">See pricing</a></div></section></div></main></body></html>`;
+  const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${previewEsc(name)} Preview | Solena Digital</title><link rel="stylesheet" href="${pages}/landing/assets/landing.css?v=18"></head><body class="page-connect"><main class="wrap"><div class="landing-shell"><section class="card card-hero"><h1>We built a free preview website for ${previewEsc(name)}</h1><p class="lead">Take a look, then register online to go live &mdash; we handle the rest.</p><div class="actions actions-connect"><a class="btn btn-outline" href="${previewEsc(previewUrl)}">View website preview</a><a class="btn" href="${pages}/landing/pricing.html?biz=${encodeURIComponent(slug)}">See pricing</a></div></section></div></main></body></html>`;
   return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8" } });
+}
+
+async function sendPlumberPreviewLinkSms(env, { previewUrl, companyName, phone, message }) {
+  const toPhone = String(phone || "").trim();
+  if (!previewUrl) return { sent: false, reason: "no_preview_url" };
+  if (!toPhone) return { sent: false, reason: "no_phone" };
+  const company = companyName || "your business";
+  const defaultMsg = `Hi — Alex from Solena Digital here. As promised, here's the preview site we built for ${company}: ${previewUrl}`;
+  const smsBody = String(message || defaultMsg).slice(0, 320);
+  if (typeof sendTwilioSms !== "function") return { sent: false, reason: "sms_not_configured" };
+  const sms = await sendTwilioSms(env, toPhone, smsBody);
+  return Object.assign({ to: toPhone, preview_url: previewUrl }, sms);
 }
 
 async function handlePlumberPublishPreview(request, env) {
@@ -339,6 +356,7 @@ async function handlePlumberPublishPreview(request, env) {
   const body = await request.json().catch(() => ({}));
   if (!(await authorizePlumberPublishRequest(request, env, body))) return json({ error: "Unauthorized" }, 401);
   const callId = String(body.call_id || "").trim();
+  const dryRun = !!(body.dry_run || body.demo);
   let lead = body.lead || body;
   if (callId) {
     const q = await env.DB.prepare("SELECT * FROM plumber_publish_queue WHERE call_id = ?1").bind(callId).first();
@@ -354,7 +372,18 @@ async function handlePlumberPublishPreview(request, env) {
   }
   if (!lead.company_name && !lead.name) return json({ error: "company_name required" }, 400);
   const result = await publishPreviewSite(env, lead, callId || null);
-  return json({ ok: true, ...result });
+  let sms = { sent: false, reason: dryRun ? "dry_run" : "no_call_id" };
+  if (callId && !dryRun) {
+    const row = await env.DB.prepare("SELECT phone, company_name FROM plumber_publish_queue WHERE call_id = ?1")
+      .bind(callId)
+      .first();
+    sms = await sendPlumberPreviewLinkSms(env, {
+      previewUrl: result.preview_url,
+      companyName: row?.company_name || result.company_name || lead.company_name,
+      phone: row?.phone || lead.phone,
+    });
+  }
+  return json({ ok: true, ...result, sms });
 }
 
 async function handlePlumberPublishQueueGet(request, env) {

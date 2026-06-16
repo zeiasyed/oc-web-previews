@@ -149,8 +149,76 @@
         esc(previewUrl) +
         '">' +
         '<button type="button" class="btn btn-small" id="pw-copy-preview">Copy link</button>' +
-        "</div></div>"
+        "</div>" +
+        '<button type="button" id="pw-update-btn" class="btn btn-ghost pw-update-btn">Update site & resend link</button>' +
+        "</div>"
       );
+    }
+
+    function publishResultMessage(lead, result) {
+      if (isDryRun(lead)) {
+        return "Live preview built — open Preview site above. Dry run: no text sent.";
+      }
+      var sms = result && result.sms;
+      if (sms && sms.sent) {
+        return "Site updated — preview link sent to " + (sms.to || lead.phone) + ".";
+      }
+      if (sms && sms.reason === "no_call_id") {
+        return "Site updated — use a live hot lead to auto-text the link.";
+      }
+      if (sms && sms.reason) {
+        return "Site updated — text not sent (" + sms.reason + "). Use Resend below.";
+      }
+      return "Site updated.";
+    }
+
+    function runPublish() {
+      var lead = state.lead;
+      if (!lead) return;
+      state.busy = true;
+      state.err = "";
+      state.msg = "";
+      startProgress();
+      draw();
+      var body = {
+        lead: {
+          slug: lead.slug,
+          company_name: lead.company_name,
+          phone: lead.phone,
+          city: lead.city,
+          address: lead.address,
+        },
+      };
+      if (lead.call_id) body.call_id = lead.call_id;
+      if (opts.publishKey) body.k = opts.publishKey;
+      if (isDryRun(lead)) body.dry_run = true;
+      opts
+        .api("/api/outreach/publish-preview", { method: "POST", body: body })
+        .then(function (result) {
+          finishProgress(function () {
+            state.busy = false;
+            state.progress = 0;
+            state.previewUrl = result.preview_url;
+            state.connectUrl = result.connect_url || "";
+            state.step = 3;
+            state.smsPreview = smsPreviewText(lead, result.preview_url);
+            state.msg = publishResultMessage(lead, result);
+            if (result.sms && !result.sms.sent && result.sms.reason && result.sms.reason !== "dry_run") {
+              state.err = "Auto-text failed: " + result.sms.reason;
+            }
+            lead.preview_url = result.preview_url;
+            lead.status = "published";
+            if (opts.onLeadUpdate) opts.onLeadUpdate(lead);
+            draw();
+          });
+        })
+        .catch(function (e) {
+          stopProgress();
+          state.busy = false;
+          state.progress = 0;
+          state.err = e.message || "Publish failed";
+          draw();
+        });
     }
 
     function smsPreviewText(lead, previewUrl) {
@@ -239,9 +307,9 @@
         '<p class="sub" style="margin:0 0 0.75rem">' +
         (isDryRun(lead)
           ? "Builds a live preview on inertia-intel.com using Blackmon's real listing data."
-          : "Generate a preview site for you to review before texting the plumber.") +
+          : "Generate or update the preview site — the link is texted to the plumber automatically.") +
         "</p>" +
-        (state.busy && !hasPreview
+        (state.busy
           ? progressHtml()
           : hasPreview
           ? previewReadyHtml(previewUrl)
@@ -251,12 +319,16 @@
         (hasPreview ? "" : " pw-panel-disabled") +
         '">' +
         "<h4 style=\"margin:0 0 0.5rem\">Step 3 — Push to plumber</h4>" +
-        '<p class="sub" style="margin:0 0 0.75rem">Text the preview link to <strong>' +
-        esc(lead.phone || "their number") +
-        "</strong> while you are on the call.</p>" +
+        '<p class="sub" style="margin:0 0 0.75rem">' +
+        (isDryRun(lead)
+          ? "Dry run: SMS is not sent. The text below shows what would go out on a live call."
+          : "The preview link is texted to <strong>" +
+            esc(lead.phone || "their number") +
+            "</strong> automatically after every site create or update.") +
+        "</p>" +
         '<button type="button" id="pw-push-btn" class="btn pw-push-btn"' +
-        (!hasPreview || state.busy ? " disabled" : "") +
-        ">Push preview link via text</button>" +
+        (!hasPreview || state.busy || isDryRun(lead) ? " disabled" : "") +
+        ">Resend preview link via text</button>" +
         dryRunPushNote(lead) +
         (outgoingSms
           ? '<div class="pw-sms-preview"><strong>They will receive this text</strong><p>' +
@@ -269,52 +341,10 @@
         "</div>";
 
       var createBtn = container.querySelector("#pw-create-btn");
-      if (createBtn) {
-        createBtn.onclick = function () {
-          state.busy = true;
-          state.err = "";
-          state.msg = "";
-          startProgress();
-          draw();
-          var body = {
-            lead: {
-              slug: lead.slug,
-              company_name: lead.company_name,
-              phone: lead.phone,
-              city: lead.city,
-              address: lead.address,
-            },
-          };
-          if (lead.call_id) body.call_id = lead.call_id;
-          if (opts.publishKey) body.k = opts.publishKey;
-          if (isDryRun(lead)) body.dry_run = true;
-          opts
-            .api("/api/outreach/publish-preview", { method: "POST", body: body })
-            .then(function (result) {
-              finishProgress(function () {
-                state.busy = false;
-                state.progress = 0;
-                state.previewUrl = result.preview_url;
-                state.connectUrl = result.connect_url || "";
-                state.step = 3;
-                state.msg = isDryRun(lead)
-                  ? "Live preview built — open Preview site above. Push is dry-run only."
-                  : "Site created — preview it, then push to the plumber.";
-                lead.preview_url = result.preview_url;
-                lead.status = "published";
-                if (opts.onLeadUpdate) opts.onLeadUpdate(lead);
-                draw();
-              });
-            })
-            .catch(function (e) {
-              stopProgress();
-              state.busy = false;
-              state.progress = 0;
-              state.err = e.message || "Create failed";
-              draw();
-            });
-        };
-      }
+      if (createBtn) createBtn.onclick = runPublish;
+
+      var updateBtn = container.querySelector("#pw-update-btn");
+      if (updateBtn) updateBtn.onclick = runPublish;
 
       var copyBtn = container.querySelector("#pw-copy-preview");
       if (copyBtn) {
@@ -336,18 +366,7 @@
       var pushBtn = container.querySelector("#pw-push-btn");
       if (pushBtn) {
         pushBtn.onclick = function () {
-          if (isDryRun(lead)) {
-            state.smsPreview = smsPreviewText(lead, state.previewUrl || lead.preview_url || "");
-            state.msg = "Dry run complete — no text sent to " + (lead.phone || "plumber") + ".";
-            state.err = "";
-            draw();
-            return;
-          }
-          if (!lead.call_id) {
-            state.err = "No call ID — use a live hot lead to push via SMS.";
-            draw();
-            return;
-          }
+          if (isDryRun(lead) || !lead.call_id) return;
           state.busy = true;
           state.err = "";
           state.msg = "";
