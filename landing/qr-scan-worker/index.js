@@ -65,6 +65,7 @@ const OUTREACH_PROXY_PATHS = {
   "/api/outreach/playbook": "/voice/plumber-outreach/playbook",
   "/api/outreach/publish-queue": "/voice/plumber-outreach/publish-queue",
   "/api/outreach/publish-preview": "/voice/plumber-outreach/publish-preview",
+  "/api/outreach/send-preview-sms": "/voice/plumber-outreach/send-preview-sms",
 };
 
 async function proxyOutreachRequest(request, env, localPath, bodyText, publishKey) {
@@ -79,6 +80,7 @@ async function proxyOutreachRequest(request, env, localPath, bodyText, publishKe
   const usePublishKeyOnly =
     !!publishKey &&
     (localPath === "/api/outreach/publish-preview" ||
+      localPath === "/api/outreach/send-preview-sms" ||
       (localPath === "/api/outreach/publish-queue" && url.searchParams.get("call")));
 
   const headers = {
@@ -123,6 +125,7 @@ async function handleOutreachProxy(request, env, localPath) {
   const publishKeyAccess =
     !!publishKey &&
     (localPath === "/api/outreach/publish-preview" ||
+      localPath === "/api/outreach/send-preview-sms" ||
       (localPath === "/api/outreach/publish-queue" && url.searchParams.get("call")));
 
   if (!authed && !publishKeyAccess) return unauthorized();

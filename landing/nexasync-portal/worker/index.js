@@ -849,7 +849,6 @@ export default {
         return withCors(request, env, await handlePlumberPublishQueueGet(request, env));
       }
       if (path === "/voice/plumber-outreach/send-preview-sms" && request.method === "POST") {
-        if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
         return withCors(request, env, await handlePlumberSendPreviewSms(request, env));
       }
       if (path === "/voice/twilio-status" && request.method === "GET") {
