@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>QR Scan Dashboard | Solena Digital</title>
+  <title>Solena Dashboard | QR Scans & Outreach</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="wrap">
     <section id="login" class="card login">
-      <h1>QR Scan Dashboard</h1>
+      <h1>Solena Dashboard</h1>
       <p class="sub">Track postcard QR scans (printed URLs unchanged).</p>
       <label for="password">Dashboard password</label>
       <input id="password" type="password" autocomplete="current-password">
@@ -20,15 +20,31 @@
     <section id="dashboard" class="hidden">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
         <div>
-          <h1>QR Scan Dashboard</h1>
+          <h1>Solena Dashboard</h1>
           <p id="status" class="sub"></p>
         </div>
-        <div style="display:flex;gap:0.5rem">
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
           <button id="refresh-btn" type="button">Refresh</button>
           <button id="logout-btn" type="button">Sign out</button>
         </div>
       </div>
 
+      <nav class="dash-tabs" aria-label="Dashboard sections">
+        <button type="button" class="dash-tab active" data-tab="qr">QR activity</button>
+        <button type="button" class="dash-tab" data-tab="outreach">Outreach script</button>
+        <button type="button" class="dash-tab" data-tab="publish">Live publish</button>
+      </nav>
+
+      <div id="outreach-token-bar" class="card hidden">
+        <label for="outreach-token">Outreach API token</label>
+        <p class="sub" style="margin:0 0 0.5rem">Required to save the voice script. Same token as lab verify / plumber campaigns.</p>
+        <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+          <input id="outreach-token" type="password" placeholder="Bearer token" style="flex:1;min-width:200px;margin:0">
+          <button id="outreach-token-save" type="button">Save token</button>
+        </div>
+      </div>
+
+      <div id="tab-qr">
       <div class="stats">
         <div class="stat"><strong id="total-scans">0</strong><span>QR scans</span></div>
         <div class="stat"><strong id="slug-count">0</strong><span>Businesses scanned</span></div>
@@ -86,11 +102,22 @@
           <tbody id="recent-table"></tbody>
         </table>
       </div>
+      </div>
+
+      <div id="tab-outreach" class="hidden">
+        <div id="outreach-playbook-root" class="card outreach-card"></div>
+      </div>
+
+      <div id="tab-publish" class="hidden">
+        <div id="publish-queue-root"></div>
+      </div>
     </section>
   </div>
 
   <script src="../assets/branding.js"></script>
   <script src="../assets/businesses.js"></script>
+  <script src="outreach-playbook-ui.js"></script>
+  <script src="publish-queue-ui.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

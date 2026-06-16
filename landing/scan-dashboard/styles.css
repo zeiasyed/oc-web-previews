@@ -53,3 +53,135 @@ button, .btn {
 }
 .error { color: #f87171; }
 .hidden { display: none; }
+
+.dash-tabs {
+  display: flex;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.dash-tab {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.45rem 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.dash-tab.active {
+  background: var(--accent);
+  color: #0f172a;
+  border-color: var(--accent);
+}
+.outreach-card { padding: 0; overflow: hidden; border-left: 4px solid var(--accent); }
+.outreach-builder { padding: 1rem 1.1rem 1.25rem; }
+.outreach-topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+.outreach-topbar-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.outreach-msg {
+  background: #064e3b;
+  color: #a7f3d0;
+  padding: 0.55rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+.outreach-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: 1rem;
+  align-items: start;
+}
+.outreach-flow {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+  background: #0b1220;
+}
+.outreach-start, .outreach-node {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.75rem;
+  background: var(--card);
+  cursor: pointer;
+}
+.outreach-node {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.65rem;
+  align-items: start;
+  margin-bottom: 0.5rem;
+}
+.outreach-node-selected, .outreach-start.outreach-node-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.outreach-drag { color: var(--muted); cursor: grab; user-select: none; }
+.outreach-node-when { font-size: 0.85rem; margin-top: 0.2rem; }
+.outreach-node-actions { font-size: 0.8rem; color: var(--accent); margin-top: 0.35rem; }
+.outreach-connector {
+  width: 2px;
+  height: 14px;
+  background: var(--border);
+  margin: 0.35rem auto;
+}
+.outreach-hub { text-align: center; font-size: 0.85rem; padding: 0.25rem; }
+.outreach-inspector {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem;
+  background: #0b1220;
+}
+.outreach-inspector label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  margin: 0.65rem 0 0.25rem;
+  color: var(--text);
+}
+.outreach-inspector input[type="text"],
+.outreach-inspector textarea {
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
+  box-sizing: border-box;
+}
+.outreach-inspector h3, .outreach-inspector h4 { margin: 0 0 0.35rem; }
+.outreach-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.35rem 0;
+  font-size: 0.9rem;
+  font-weight: normal;
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.publish-queue-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.publish-queue-wrap .btn-small {
+  font-size: 0.85rem;
+  padding: 0.35rem 0.65rem;
+}
+@media (max-width: 900px) {
+  .outreach-layout { grid-template-columns: 1fr; }
+}

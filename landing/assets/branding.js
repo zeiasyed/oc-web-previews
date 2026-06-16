@@ -19,5 +19,6 @@ window.BRANDING = {
   "formspree_register_endpoint": "",
   "formspree_callback_endpoint": "",
   "stripe_payment_link": "https://buy.stripe.com/cNi6oH4sO3cs5gff4F8k800",
-  "qr_scan_api": "https://solena-qr-scan.zeiasyed.workers.dev"
+  "qr_scan_api": "https://solena-qr-scan.zeiasyed.workers.dev",
+  "outreach_api": "https://api.inertia-intel.com"
 };
