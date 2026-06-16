@@ -168,13 +168,21 @@ async function init() {
   if (match) {
     headline.textContent = `We built a free preview website for ${match.name}`;
     subtitle.textContent = "Take a look, then register online to go live — we handle the rest.";
-    configurePreviewLink(previewLink, `../${match.preview_path}`, "View website preview");
+    configurePreviewLink(
+      previewLink,
+      window.PreviewLinks?.resolvePreviewHref(slug, businesses) || `../${match.preview_path}`,
+      "View website preview"
+    );
     formBusiness.value = match.name;
     document.title = `${match.name} Preview | ${branding.brand_name}`;
   } else if (slug) {
     headline.textContent = "Your free website preview";
     subtitle.textContent = "Review your preview, then register to launch with " + branding.brand_name + ".";
-    configurePreviewLink(previewLink, `../previews/${slug}/index.html`, "View website preview");
+    configurePreviewLink(
+      previewLink,
+      window.PreviewLinks?.resolvePreviewHref(slug, businesses) || `../previews/${slug}/index.html`,
+      "View website preview"
+    );
     formBusiness.value = slug;
   } else {
     headline.textContent = "Your free website preview";
@@ -189,7 +197,11 @@ init().catch((err) => {
   const slug = getSlug();
   const previewLink = document.getElementById("preview-link");
   if (slug) {
-    configurePreviewLink(previewLink, `../previews/${slug}/index.html`, "View website preview");
+    configurePreviewLink(
+      previewLink,
+      window.PreviewLinks?.dynamicPreviewUrl(slug) || `../previews/${slug}/index.html`,
+      "View website preview"
+    );
   }
   document.getElementById("subtitle").textContent =
     "Could not load business details. You can still register or contact us below.";

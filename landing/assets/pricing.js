@@ -11,13 +11,6 @@ async function loadBusinesses() {
   return response.json();
 }
 
-function previewHref(businesses) {
-  if (!slug) return null;
-  const match = businesses.find((b) => b.slug === slug);
-  if (match?.preview_path) return `../${match.preview_path}`;
-  return `../previews/${slug}/index.html`;
-}
-
 async function init() {
   const backLink = document.getElementById("back-link");
   const contactLink = document.getElementById("contact-link");
@@ -36,10 +29,17 @@ async function init() {
 
   try {
     const businesses = await loadBusinesses();
-    const href = previewHref(businesses);
-    if (href) backLink.href = href;
+    const href =
+      window.PreviewLinks?.resolvePreviewHref(slug, businesses) ||
+      `../previews/${slug}/index.html`;
+    backLink.href = href;
+    backLink.target = "_blank";
+    backLink.rel = "noopener noreferrer";
   } catch {
-    backLink.href = `../previews/${slug}/index.html`;
+    backLink.href =
+      window.PreviewLinks?.dynamicPreviewUrl(slug) || `../previews/${slug}/index.html`;
+    backLink.target = "_blank";
+    backLink.rel = "noopener noreferrer";
   }
 }
 
