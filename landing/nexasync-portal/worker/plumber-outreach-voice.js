@@ -2,30 +2,30 @@
 
 function getDefaultOutreachPlaybook() {
   return {
-    version: 1,
+    version: 2,
     agent_persona: "Alex",
     company_label: "Solena Digital",
     voice_style:
-      'Sound natural, friendly, confident — not salesy or robotic. Use brief fillers ("um", "okay so", "sure"). Keep the call under 90 seconds unless they ask questions.',
+      'Sound natural, friendly, confident — not salesy or robotic. Use brief fillers ("um", "okay so", "sure"). Keep live conversations under 60 seconds when possible.',
     ivr_rules:
-      "Listen first. Navigate to reception or owner. Use press_digit when needed. Prefer operator / front desk. Never pitch during hold music or menus.",
+      "Listen first. Navigate to reception or owner. Use press_digit when needed. Prefer operator / front desk. Never pitch during hold music or menus. HARD LIMITS: If still in IVR or an automated menu after 25 seconds with no human, use end_call. Do not loop menus. If you reach voicemail, leave ONE short sentence (max 15 seconds), then end_call immediately — do not wait on the line. Never hold longer than 20 seconds waiting for a person.",
     opening_has_website:
       "Hi — uh, this is Alex with Solena Digital. I was looking at {{company_name}} online — you've got a site, but it doesn't look like it's pulling in much traffic from Google. We actually put together a quick preview of what a stronger local page could look like for you. Would you be open to taking a quick look — just to see if it could bring in more calls?",
     opening_no_website:
       "Hi — uh, this is Alex with Solena Digital. I noticed {{company_name}} shows up on Google Maps but doesn't have a real website linked — you're probably losing calls to competitors who do. We built a sample preview page to show what you could put up pretty fast. Would you be interested in seeing it — just to see if it'd help you get more calls?",
     general_rules:
-      "Do NOT claim you rebuilt their live website without their permission — it's a preview/sample for discussion. Do not discuss pricing unless they ask; say the specialist can walk through options. California calls may be recorded if asked.",
+      "Do NOT claim you rebuilt their live website without their permission — it's a preview/sample for discussion. Do not discuss pricing unless they ask; say the specialist can walk through options. California calls may be recorded if asked. Do NOT transfer the live call — when they want the preview, call notify_owner_hot_lead then end_call; the account owner will text or call them back.",
     paths: [
       {
         id: "interested",
         label: "Interested / wants preview",
         when: "They say yes, maybe, or ask to see the preview",
-        say: "Great — uh, perfect. I'll connect you with the person on our team who built the preview. One sec.",
+        say: "Great — uh, perfect. Our specialist will text you the preview link in the next couple of minutes. Thanks for your time.",
         enabled: true,
         sort_order: 0,
-        actions: { notify_owner_sms: true, transfer_to_owner: true, end_call: false },
+        actions: { notify_owner_sms: true, transfer_to_owner: false, end_call: true },
         sms_template:
-          "HOT LEAD: {{company_name}} ({{city}})\nPhone: {{phone}}\nInterest: {{interest_level}}{{notes_line}}\nPublish preview: {{publish_url}}",
+          "HOT LEAD: {{company_name}} ({{city}})\nPhone: {{phone}}\nInterest: {{interest_level}}{{notes_line}}\nPublish preview: {{publish_url}}\nCall them back — no live transfer.",
       },
       {
         id: "not_interested",
@@ -75,15 +75,35 @@ function normalizeOutreachPlaybook(raw) {
     };
   });
   mergedPaths.sort((a, b) => a.sort_order - b.sort_order);
+
+  const version = raw.version != null ? Number(raw.version) : 2;
+
+  let voice_style = String(raw.voice_style || base.voice_style);
+  let ivr_rules = String(raw.ivr_rules || base.ivr_rules);
+  let general_rules = String(raw.general_rules || base.general_rules);
+
+  if (version < 2) {
+    voice_style = base.voice_style;
+    ivr_rules = base.ivr_rules;
+    general_rules = base.general_rules;
+    const interested = mergedPaths.find((p) => p.id === "interested");
+    const baseInterested = base.paths.find((p) => p.id === "interested");
+    if (interested && baseInterested) {
+      interested.say = baseInterested.say;
+      interested.sms_template = baseInterested.sms_template;
+      interested.actions = { ...baseInterested.actions };
+    }
+  }
+
   return {
-    version: 1,
+    version: 2,
     agent_persona: String(raw.agent_persona || base.agent_persona),
     company_label: String(raw.company_label || base.company_label),
-    voice_style: String(raw.voice_style || base.voice_style),
-    ivr_rules: String(raw.ivr_rules || base.ivr_rules),
+    voice_style,
+    ivr_rules,
     opening_has_website: String(raw.opening_has_website || base.opening_has_website),
     opening_no_website: String(raw.opening_no_website || base.opening_no_website),
-    general_rules: String(raw.general_rules || base.general_rules),
+    general_rules,
     paths: mergedPaths.length ? mergedPaths : base.paths,
   };
 }
@@ -96,7 +116,7 @@ function buildPlumberPromptFromPlaybook(playbook) {
       const acts = [];
       if (p.actions.notify_owner_sms) acts.push("Call notify_owner_hot_lead with interest level and notes (texts the account owner).");
       if (p.actions.transfer_to_owner) acts.push("Then use transfer_to_owner to transfer the live call.");
-      if (p.actions.end_call) acts.push("End politely with end_call.");
+      if (p.actions.end_call) acts.push("End politely with end_call — do not stay on the line.");
       return `## If ${p.label}\nWhen: ${p.when}\nSay: "${p.say}"\n${acts.length ? acts.map((a, i) => `${i + 1}. ${a}`).join("\n") : "End the call appropriately."}`;
     })
     .join("\n\n");
@@ -157,7 +177,7 @@ async function syncPlumberOutreachAgentPrompt(env) {
   const detail = await retellFetch(env, "GET", "/get-agent/" + agentId, null);
   const llmId = detail.response_engine?.llm_id;
   if (!llmId) return { ok: false, reason: "llm_not_found" };
-  const tools = buildPlumberTools(env);
+  const tools = buildPlumberTools(env, playbook);
   const hotLeadUrl =
     (await getPlumberOutreachConfig(env, "hot_lead_url")) || "https://api.inertia-intel.com/voice/plumber-outreach/hot-lead";
   const custom = tools.find((t) => t.name === "notify_owner_hot_lead");
@@ -358,9 +378,26 @@ function checkPlumberOutreachAuth(request, env) {
   return request.headers.get("X-Plumber-Outreach-Token") === token;
 }
 
-function buildPlumberTools(env) {
+function isTollFreePhone(phone) {
+  const digits = String(phone || "").replace(/\D/g, "");
+  const npa = digits.length === 11 && digits[0] === "1" ? digits.slice(1, 4) : digits.slice(0, 3);
+  return ["800", "888", "877", "866", "855", "844", "833"].includes(npa);
+}
+
+function filterPriorityLeads(leads) {
+  return (leads || []).filter((lead) => {
+    if (!lead || !lead.phone) return false;
+    if (lead.has_website) return false;
+    if (isTollFreePhone(lead.phone)) return false;
+    return true;
+  });
+}
+
+function buildPlumberTools(env, playbook) {
+  const pb = normalizeOutreachPlaybook(playbook || getDefaultOutreachPlaybook());
+  const allowTransfer = (pb.paths || []).some((p) => p.enabled && p.actions?.transfer_to_owner);
   const transferPhone = String(env.PLUMBER_OUTREACH_TRANSFER_PHONE || env.LAB_VERIFY_NOTIFY_PHONE || "").trim();
-  const tools = PLUMBER_OUTREACH_GENERAL_TOOLS.map((t) => {
+  const tools = PLUMBER_OUTREACH_GENERAL_TOOLS.filter((t) => allowTransfer || t.name !== "transfer_to_owner").map((t) => {
     if (t.name !== "transfer_to_owner") return t;
     return {
       ...t,
@@ -371,7 +408,7 @@ function buildPlumberTools(env) {
     type: "custom",
     name: "notify_owner_hot_lead",
     description:
-      "Text the account owner and log a hot lead when the plumber agrees to see the preview site. Call this BEFORE transfer_to_owner.",
+      "Text the account owner and log a hot lead when the plumber agrees to see the preview site. Call this, then end_call — do NOT transfer the live call.",
     url: "", // filled at setup
     method: "POST",
     speak_during_execution: true,
@@ -401,7 +438,7 @@ async function handlePlumberOutreachSetup(request, env) {
   const playbook = await getOutreachPlaybook(env);
   const outreachPrompt = buildPlumberPromptFromPlaybook(playbook);
 
-  const tools = buildPlumberTools(env);
+  const tools = buildPlumberTools(env, playbook);
   const custom = tools.find((t) => t.name === "notify_owner_hot_lead");
   if (custom) custom.url = hotLeadUrl;
 
@@ -568,10 +605,10 @@ async function sendPlumberOneMinuteAlert(env, callId, call, meta) {
     ? `<p><strong>Current website:</strong> <a href="${website.replace(/"/g, "")}">${website}</a></p>`
     : "<p><strong>Current website:</strong> none listed on Google</p>";
 
-  const subject = `Live call 1+ min — ${company}${city ? ` (${city})` : ""} — transfer may be coming`;
+  const subject = `Live call 1+ min — ${company}${city ? ` (${city})` : ""} — callback if hot`;
   const text =
     `Alex has been on a call with ${company}${city ? ` in ${city}` : ""} for over a minute.\n\n` +
-    `You may receive a transferred call soon if they are interested.\n\n` +
+    `Call or text them back if they become a hot lead (live transfer is off).\n\n` +
     `Plumber phone: ${phone || "—"}\n` +
     `Current website: ${website || "none listed"}\n\n` +
     `Open prospect dashboard: ${dashboardUrl}\n\n` +
@@ -582,7 +619,7 @@ async function sendPlumberOneMinuteAlert(env, callId, call, meta) {
     `<h2 style="margin:0 0 0.5rem">Call running 1+ minute</h2>` +
     `<p style="color:#475569">Alex is still on the line with <strong>${company}</strong>` +
     (city ? ` in <strong>${city}</strong>` : "") +
-    `. If they want the preview, your phone may ring soon.</p>` +
+    `. If they want the preview, text or call them back — Alex will not transfer the live call.</p>` +
     `<p><strong>Plumber phone:</strong> ${phone || "—"}</p>` +
     websiteLine +
     `<p style="margin:1.25rem 0"><a href="${dashboardUrl}" style="display:inline-block;background:#059669;color:#fff;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:700">Open prospect dashboard</a></p>` +
@@ -721,7 +758,7 @@ async function handlePlumberOutreachHotLead(request, env) {
 
   return json({
     success: true,
-    message: "Owner notified. Transfer the caller to the account owner now using transfer_to_owner.",
+    message: "Owner notified. End the call with end_call — they will text or call the plumber back.",
     sms,
     publish: publishInfo,
   });
@@ -822,7 +859,7 @@ async function processPlumberOutreachCampaignTick(env) {
     return { ok: true, action: "campaign_complete" };
   }
 
-  if (!nextItem.phone) {
+  if (!nextItem.phone || isTollFreePhone(nextItem.phone)) {
     await env.DB.prepare("UPDATE plumber_outreach_campaign_items SET status = 'skipped', updated_at = datetime('now') WHERE id = ?1")
       .bind(nextItem.id)
       .run();
@@ -858,15 +895,28 @@ async function processPlumberOutreachCampaignTick(env) {
 async function handlePlumberOutreachCampaignStart(request, env) {
   await ensurePlumberOutreachSchema(env);
   const body = await request.json().catch(() => ({}));
-  const leads = body.leads;
+  let leads = body.leads;
   if (!Array.isArray(leads) || !leads.length) return json({ error: "leads array required" }, 400);
+
+  const usePriority =
+    body.filter === "priority_no_website" || body.priority_only === true || body.priority_only === "1";
+  if (usePriority) {
+    leads = filterPriorityLeads(leads);
+    if (!leads.length) return json({ error: "No priority leads (need no-website, non-toll-free phones)" }, 400);
+  }
+
+  try {
+    await syncPlumberOutreachAgentPrompt(env);
+  } catch (e) {
+    console.warn("playbook sync before campaign", e);
+  }
 
   await env.DB.prepare("UPDATE plumber_outreach_campaigns SET status = 'paused', updated_at = datetime('now') WHERE status = 'running'").run();
 
   const campaignId = "poc_" + Date.now();
-  const name = String(body.name || "IE plumber outreach");
+  const name = String(body.name || (usePriority ? "IE priority — no website" : "IE plumber outreach"));
   await env.DB.prepare(
-    "INSERT INTO plumber_outreach_campaigns (id, name, status, next_call_at) VALUES (?1, ?2, 'running', datetime('now'))"
+    "INSERT INTO plumber_outreach_campaigns (id, name, status, next_call_at) VALUES (?1, ?2, 'paused', NULL)"
   )
     .bind(campaignId, name)
     .run();
@@ -897,8 +947,46 @@ async function handlePlumberOutreachCampaignStart(request, env) {
     n++;
   }
 
+  return json({
+    ok: true,
+    campaign_id: campaignId,
+    items: n,
+    filtered: usePriority,
+    status: "paused",
+    message: "Campaign loaded — no calls placed. POST /campaign/resume when ready to dial.",
+  });
+}
+
+async function handlePlumberOutreachCampaignResume(request, env) {
+  await ensurePlumberOutreachSchema(env);
+  const body = await request.json().catch(() => ({}));
+  const campaignId = String(body.campaign_id || "").trim();
+
+  let campaign;
+  if (campaignId) {
+    campaign = await env.DB.prepare("SELECT * FROM plumber_outreach_campaigns WHERE id = ?1").bind(campaignId).first();
+  } else {
+    campaign = await env.DB.prepare(
+      "SELECT * FROM plumber_outreach_campaigns WHERE status = 'paused' ORDER BY created_at DESC LIMIT 1"
+    ).first();
+  }
+
+  if (!campaign) return json({ error: "No paused campaign to resume" }, 404);
+  if (campaign.status === "complete") return json({ error: "Campaign already complete" }, 400);
+  if (campaign.status === "running") {
+    return json({ ok: true, campaign_id: campaign.id, status: "running", already_running: true });
+  }
+
+  await env.DB.prepare("UPDATE plumber_outreach_campaigns SET status = 'paused', updated_at = datetime('now') WHERE status = 'running'")
+    .run();
+  await env.DB.prepare(
+    "UPDATE plumber_outreach_campaigns SET status = 'running', next_call_at = datetime('now'), updated_at = datetime('now') WHERE id = ?1"
+  )
+    .bind(campaign.id)
+    .run();
+
   const tick = await processPlumberOutreachCampaignTick(env);
-  return json({ ok: true, campaign_id: campaignId, items: n, tick });
+  return json({ ok: true, campaign_id: campaign.id, status: "running", tick });
 }
 
 async function handlePlumberOutreachCampaignPause(request, env) {

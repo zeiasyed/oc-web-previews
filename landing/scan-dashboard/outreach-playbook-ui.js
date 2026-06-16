@@ -51,6 +51,7 @@
         end_call: !!el.querySelector('[data-action="end_call"]')?.checked,
       };
     });
+    playbook.version = playbook.version || 2;
     return playbook;
   }
 
@@ -71,8 +72,11 @@
         },
         body: opts && opts.body ? JSON.stringify(opts.body) : undefined,
       }).then(function (res) {
-        if (res.status === 401) throw new Error("Invalid API token");
-        if (!res.ok) throw new Error("API error " + res.status);
+        if (!res.ok) {
+          return res.json().catch(function () { return {}; }).then(function (d) {
+            throw new Error(d.error || d.message || ("API error " + res.status));
+          });
+        }
         return res.json();
       });
     }
@@ -192,14 +196,22 @@
       if (saveBtn) {
         saveBtn.onclick = function () {
           if (ui.saving) return;
+          syncAndReselect();
           ui.saving = true;
           ui.msg = "Saving…";
           draw();
-          syncAndReselect();
           api("/api/outreach/playbook", { method: "PATCH", body: { playbook: ui.playbook } })
             .then(function (res) {
               ui.playbook = res.playbook || ui.playbook;
-              ui.msg = res.sync && res.sync.ok ? "Saved. Alex will use this on the next call." : "Saved playbook (agent sync: check Retell).";
+              if (res.sync && res.sync.ok) {
+                ui.msg = "Saved. Alex will use this on the next call.";
+              } else if (res.sync && res.sync.error) {
+                ui.msg = "Saved script, but Retell sync failed: " + res.sync.error;
+              } else if (res.sync && res.sync.reason) {
+                ui.msg = "Saved script, but Retell sync skipped: " + res.sync.reason;
+              } else {
+                ui.msg = "Saved playbook (agent sync: check Retell).";
+              }
             })
             .catch(function (e) {
               ui.msg = e.message || "Save failed";
