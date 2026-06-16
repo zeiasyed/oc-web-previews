@@ -151,6 +151,18 @@
       );
     }
 
+    function smsPreviewText(lead, previewUrl) {
+      var url = previewUrl || state.previewUrl || lead.preview_url || "";
+      if (!url) return "";
+      var company = lead.company_name || "your business";
+      return (
+        "Hi — Alex from Solena Digital here. As promised, here's the preview site we built for " +
+        company +
+        ": " +
+        url
+      );
+    }
+
     function websiteHtml(lead) {
       var url = lead.website || "";
       if (url) {
@@ -176,6 +188,7 @@
       var hasPreview = !!(state.previewUrl || (lead.preview_url && lead.status === "published"));
       var previewUrl = state.previewUrl || lead.preview_url || "";
       var currentStep = hasPreview ? 3 : state.step;
+      var outgoingSms = state.smsPreview || (hasPreview ? smsPreviewText(lead, previewUrl) : "");
 
       container.innerHTML =
         '<div class="pw-wizard card">' +
@@ -243,9 +256,9 @@
         (!hasPreview || state.busy ? " disabled" : "") +
         ">Push preview link via text</button>" +
         dryRunPushNote(lead) +
-        (state.smsPreview
-          ? '<div class="pw-sms-preview"><strong>Text that would send</strong><p>' +
-            esc(state.smsPreview) +
+        (outgoingSms
+          ? '<div class="pw-sms-preview"><strong>They will receive this text</strong><p>' +
+            esc(outgoingSms) +
             "</p></div>"
           : "") +
         "</section>" +
@@ -316,15 +329,7 @@
       if (pushBtn) {
         pushBtn.onclick = function () {
           if (isDryRun(lead)) {
-            var previewLink = state.previewUrl || lead.preview_url || "";
-            var first = (lead.contact_name || "there").split(" ")[0];
-            state.smsPreview =
-              "Hi " +
-              first +
-              " — Alex from Solena Digital. Here's the new site preview we built for " +
-              lead.company_name +
-              ": " +
-              previewLink;
+            state.smsPreview = smsPreviewText(lead, state.previewUrl || lead.preview_url || "");
             state.msg = "Dry run complete — no text sent to " + (lead.phone || "plumber") + ".";
             state.err = "";
             draw();
