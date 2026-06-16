@@ -5,7 +5,7 @@
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, PATCH, OPTIONS",
   "Access-Control-Allow-Headers": "Authorization, Content-Type",
 };
 
@@ -68,7 +68,7 @@ const OUTREACH_PROXY_PATHS = {
   "/api/outreach/send-preview-sms": "/voice/plumber-outreach/send-preview-sms",
 };
 
-async function proxyOutreachRequest(request, env, localPath, bodyText, publishKey) {
+async function proxyOutreachRequest(request, env, localPath, bodyText, publishKey, forwardMethod) {
   const outreachToken = String(env.OUTREACH_API_TOKEN || "").trim();
   if (!outreachToken) return json({ error: "Outreach proxy not configured" }, 503);
 
@@ -90,7 +90,7 @@ async function proxyOutreachRequest(request, env, localPath, bodyText, publishKe
     headers.Authorization = "Bearer " + outreachToken;
   }
 
-  const init = { method: request.method, headers };
+  const init = { method: forwardMethod || request.method, headers };
   if (bodyText != null) init.body = bodyText;
 
   const res = await fetch(forwardUrl, init);
@@ -132,7 +132,13 @@ async function handleOutreachProxy(request, env, localPath) {
   const dryRunAccess = dryRun && localPath === "/api/outreach/publish-preview";
 
   if (!authed && !publishKeyAccess && !dryRunAccess) return unauthorized();
-  return proxyOutreachRequest(request, env, localPath, bodyText, publishKey);
+
+  let forwardMethod = request.method;
+  if (localPath === "/api/outreach/playbook" && forwardMethod === "POST") {
+    forwardMethod = "PATCH";
+  }
+
+  return proxyOutreachRequest(request, env, localPath, bodyText, publishKey, forwardMethod);
 }
 
 function checkAuth(request, env) {

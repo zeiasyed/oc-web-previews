@@ -200,7 +200,7 @@
           ui.saving = true;
           ui.msg = "Saving…";
           draw();
-          api("/api/outreach/playbook", { method: "PATCH", body: { playbook: ui.playbook } })
+          api("/api/outreach/playbook", { method: "POST", body: { playbook: ui.playbook } })
             .then(function (res) {
               ui.playbook = res.playbook || ui.playbook;
               if (res.sync && res.sync.ok) {
@@ -228,7 +228,7 @@
         resetBtn.onclick = function () {
           if (!confirm("Reset outreach script to defaults?")) return;
           ui.saving = true;
-          api("/api/outreach/playbook", { method: "PATCH", body: { reset: true } })
+          api("/api/outreach/playbook", { method: "POST", body: { reset: true } })
             .then(function (res) {
               ui.playbook = res.playbook;
               ui.selected = "start";
