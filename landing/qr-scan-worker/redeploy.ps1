@@ -1,6 +1,6 @@
 #Requires -Version 5.1
 # Redeploy worker code + D1 migrations; keeps existing dashboard password.
-param([string]$Password)
+param([string]$Password, [string]$OutreachApiToken)
 
 $ErrorActionPreference = "Stop"
 $Root = $PSScriptRoot
@@ -9,6 +9,7 @@ $WorkerName = "solena-qr-scan"
 $DbId = "d0a30387-81e2-4ca2-86d6-0170a0b3563e"
 $CredsFile = Join-Path (Split-Path $Root -Parent) "toledo-swift-haul-dashboard\.cloudflare-credentials.json"
 $OutputFile = Join-Path $Root "deploy-output.json"
+$EnvFile = Join-Path (Split-Path $Root -Parent) "oc-clia-prospect-list\.env"
 
 function Get-AuthHeaders {
   if ($script:AuthMode -eq "token") {
@@ -45,6 +46,18 @@ if (-not $Password) {
   throw "No password. Pass -Password or run deploy.ps1 first."
 }
 
+if (-not $OutreachApiToken -and (Test-Path $EnvFile)) {
+  foreach ($line in Get-Content $EnvFile) {
+    if ($line -match '^\s*LAB_VERIFY_API_TOKEN\s*=\s*(.+)\s*$') {
+      $OutreachApiToken = $Matches[1].Trim()
+      break
+    }
+  }
+}
+if (-not $OutreachApiToken) {
+  throw "No OUTREACH_API_TOKEN. Pass -OutreachApiToken or set LAB_VERIFY_API_TOKEN in oc-clia-prospect-list/.env"
+}
+
 Write-Host "Applying D1 schema + migrations..." -ForegroundColor Cyan
 $sqlFiles = @("schema.sql", "migrate-location.sql", "migrate-funnel-events.sql")
 foreach ($file in $sqlFiles) {
@@ -68,6 +81,7 @@ $metadata = @{
   bindings = @(
     @{ type = "d1"; name = "DB"; id = $DbId }
     @{ type = "plain_text"; name = "DASHBOARD_PASSWORD"; text = $Password }
+    @{ type = "plain_text"; name = "OUTREACH_API_TOKEN"; text = $OutreachApiToken }
   )
 } | ConvertTo-Json -Depth 5 -Compress
 

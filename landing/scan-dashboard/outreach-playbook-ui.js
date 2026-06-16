@@ -61,7 +61,7 @@
       var token = getToken();
       if (!token) {
         onTokenNeeded();
-        return Promise.reject(new Error("Enter your outreach API token."));
+        return Promise.reject(new Error("Sign in to the dashboard first."));
       }
       return fetch(apiBase.replace(/\/+$/, "") + path, {
         method: (opts && opts.method) || "GET",
@@ -196,7 +196,7 @@
           ui.msg = "Saving…";
           draw();
           syncAndReselect();
-          api("/voice/plumber-outreach/playbook", { method: "PATCH", body: { playbook: ui.playbook } })
+          api("/api/outreach/playbook", { method: "PATCH", body: { playbook: ui.playbook } })
             .then(function (res) {
               ui.playbook = res.playbook || ui.playbook;
               ui.msg = res.sync && res.sync.ok ? "Saved. Alex will use this on the next call." : "Saved playbook (agent sync: check Retell).";
@@ -216,7 +216,7 @@
         resetBtn.onclick = function () {
           if (!confirm("Reset outreach script to defaults?")) return;
           ui.saving = true;
-          api("/voice/plumber-outreach/playbook", { method: "PATCH", body: { reset: true } })
+          api("/api/outreach/playbook", { method: "PATCH", body: { reset: true } })
             .then(function (res) {
               ui.playbook = res.playbook;
               ui.selected = "start";
@@ -271,11 +271,11 @@
     function load() {
       if (!getToken()) {
         container.innerHTML =
-          '<p class="muted">Enter your API token above to load the outreach script.</p>';
+          '<p class="muted">Sign in to the dashboard to load the outreach script.</p>';
         return;
       }
       draw();
-      api("/voice/plumber-outreach/playbook")
+      api("/api/outreach/playbook")
         .then(function (res) {
           ui.playbook = res.playbook;
           ui.meta = res.meta || {};
@@ -286,7 +286,7 @@
           container.innerHTML =
             '<p class="error">' +
             esc(e.message) +
-            '</p><p class="muted">Set your API token above (same token used for lab verify / outreach campaigns).</p>';
+            '</p><p class="muted">Sign in to the dashboard first (same password as QR activity).</p>';
         });
     }
 

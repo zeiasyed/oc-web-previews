@@ -1,9 +1,7 @@
 (function () {
   var STORAGE_KEY = "solena_qr_scan_auth";
-  var OUTREACH_TOKEN_KEY = "solena_outreach_api_token";
   var branding = window.BRANDING || {};
   var apiBase = (branding.qr_scan_api || "").replace(/\/+$/, "");
-  var outreachApi = (branding.outreach_api || "https://api.inertia-intel.com").replace(/\/+$/, "");
 
   var loginEl = document.getElementById("login");
   var dashEl = document.getElementById("dashboard");
@@ -15,9 +13,6 @@
   var tabQr = document.getElementById("tab-qr");
   var tabOutreach = document.getElementById("tab-outreach");
   var tabPublish = document.getElementById("tab-publish");
-  var tokenBar = document.getElementById("outreach-token-bar");
-  var outreachTokenInput = document.getElementById("outreach-token");
-  var outreachTokenSave = document.getElementById("outreach-token-save");
   var outreachRoot = document.getElementById("outreach-playbook-root");
   var publishRoot = document.getElementById("publish-queue-root");
   var outreachMounted = false;
@@ -34,19 +29,11 @@
   var recentBody = document.getElementById("recent-table");
   var statusEl = document.getElementById("status");
 
-  function getOutreachToken() {
-    return sessionStorage.getItem(OUTREACH_TOKEN_KEY) || "";
-  }
-
-  function setOutreachToken(token) {
-    if (token) sessionStorage.setItem(OUTREACH_TOKEN_KEY, token);
-    else sessionStorage.removeItem(OUTREACH_TOKEN_KEY);
-    updateTokenBar();
-  }
-
-  function updateTokenBar() {
-    if (!tokenBar) return;
-    tokenBar.classList.toggle("hidden", !!getOutreachToken());
+  function resetOutreachPanels() {
+    outreachMounted = false;
+    publishController = null;
+    if (outreachRoot) outreachRoot.innerHTML = "";
+    if (publishRoot) publishRoot.innerHTML = "";
   }
 
   function switchTab(name) {
@@ -56,8 +43,6 @@
     if (tabQr) tabQr.classList.toggle("hidden", name !== "qr");
     if (tabOutreach) tabOutreach.classList.toggle("hidden", name !== "outreach");
     if (tabPublish) tabPublish.classList.toggle("hidden", name !== "publish");
-    var needsToken = name === "outreach" || name === "publish";
-    if (tokenBar) tokenBar.classList.toggle("hidden", !needsToken || !!getOutreachToken());
     if (refreshBtn) refreshBtn.style.display = name === "qr" ? "" : "none";
     if (publishController && publishController.stopPoll) publishController.stopPoll();
     if (name === "outreach") mountOutreachBuilder();
@@ -65,34 +50,20 @@
   }
 
   function mountPublishQueue() {
-    if (!publishRoot || !window.PublishQueueUI) return;
+    if (!publishRoot || !window.PublishQueueUI || !getToken()) return;
     if (publishController) {
       publishController.refresh();
       if (publishController.startPoll) publishController.startPoll();
       return;
     }
-    publishController = window.PublishQueueUI.mount(
-      publishRoot,
-      outreachApi,
-      getOutreachToken,
-      function () {
-        if (tokenBar) tokenBar.classList.remove("hidden");
-      }
-    );
+    publishController = window.PublishQueueUI.mount(publishRoot, apiBase, getToken, function () {});
   }
 
   function mountOutreachBuilder() {
-    if (!outreachRoot || !window.OutreachPlaybookUI) return;
+    if (!outreachRoot || !window.OutreachPlaybookUI || !getToken()) return;
     if (outreachMounted) return;
     outreachMounted = true;
-    window.OutreachPlaybookUI.mount(
-      outreachRoot,
-      outreachApi,
-      getOutreachToken,
-      function () {
-        if (tokenBar) tokenBar.classList.remove("hidden");
-      }
-    );
+    window.OutreachPlaybookUI.mount(outreachRoot, apiBase, getToken, function () {});
   }
 
   document.querySelectorAll(".dash-tab").forEach(function (btn) {
@@ -100,27 +71,6 @@
       switchTab(btn.getAttribute("data-tab"));
     });
   });
-
-  if (outreachTokenSave) {
-    outreachTokenSave.addEventListener("click", function () {
-      var t = (outreachTokenInput && outreachTokenInput.value.trim()) || "";
-      if (!t) return;
-      setOutreachToken(t);
-      outreachMounted = false;
-      publishController = null;
-      if (outreachRoot) outreachRoot.innerHTML = "";
-      if (publishRoot) publishRoot.innerHTML = "";
-      var activeTab = document.querySelector(".dash-tab.active");
-      var tab = activeTab ? activeTab.getAttribute("data-tab") : "outreach";
-      if (tab === "outreach") mountOutreachBuilder();
-      else if (tab === "publish") mountPublishQueue();
-    });
-  }
-
-  if (outreachTokenInput && getOutreachToken()) {
-    outreachTokenInput.value = getOutreachToken();
-  }
-  updateTokenBar();
 
   function getToken() {
     return sessionStorage.getItem(STORAGE_KEY) || "";
@@ -339,6 +289,9 @@
       var data = await fetchSummary(token);
       renderSummary(data);
       showDashboard(true);
+      resetOutreachPanels();
+      var activeTab = document.querySelector(".dash-tab.active");
+      switchTab(activeTab ? activeTab.getAttribute("data-tab") : "qr");
     } catch (err) {
       setToken("");
       showDashboard(false);
@@ -357,6 +310,7 @@
   logoutBtn.addEventListener("click", function () {
     setToken("");
     passwordInput.value = "";
+    resetOutreachPanels();
     showDashboard(false);
   });
 

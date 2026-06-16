@@ -60,6 +60,75 @@ function unauthorized() {
   return json({ error: "Unauthorized" }, 401);
 }
 
+const OUTREACH_API_BASE = "https://api.inertia-intel.com";
+const OUTREACH_PROXY_PATHS = {
+  "/api/outreach/playbook": "/voice/plumber-outreach/playbook",
+  "/api/outreach/publish-queue": "/voice/plumber-outreach/publish-queue",
+  "/api/outreach/publish-preview": "/voice/plumber-outreach/publish-preview",
+};
+
+async function proxyOutreachRequest(request, env, localPath, bodyText, publishKey) {
+  const outreachToken = String(env.OUTREACH_API_TOKEN || "").trim();
+  if (!outreachToken) return json({ error: "Outreach proxy not configured" }, 503);
+
+  const remotePath = OUTREACH_PROXY_PATHS[localPath];
+  if (!remotePath) return json({ error: "Not found" }, 404);
+
+  const url = new URL(request.url);
+  const forwardUrl = OUTREACH_API_BASE + remotePath + url.search;
+  const usePublishKeyOnly =
+    !!publishKey &&
+    (localPath === "/api/outreach/publish-preview" ||
+      (localPath === "/api/outreach/publish-queue" && url.searchParams.get("call")));
+
+  const headers = {
+    "Content-Type": request.headers.get("Content-Type") || "application/json",
+  };
+  if (!usePublishKeyOnly) {
+    headers.Authorization = "Bearer " + outreachToken;
+  }
+
+  const init = { method: request.method, headers };
+  if (bodyText != null) init.body = bodyText;
+
+  const res = await fetch(forwardUrl, init);
+  const text = await res.text();
+  return new Response(text, {
+    status: res.status,
+    headers: withCors({
+      "Content-Type": res.headers.get("Content-Type") || "application/json",
+      "Cache-Control": "no-store",
+    }),
+  });
+}
+
+async function handleOutreachProxy(request, env, localPath) {
+  const url = new URL(request.url);
+  let bodyText = null;
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    bodyText = await request.text();
+  }
+
+  let publishKey = url.searchParams.get("k") || "";
+  if (!publishKey && bodyText) {
+    try {
+      const parsed = JSON.parse(bodyText);
+      publishKey = parsed.k || parsed.publish_key || "";
+    } catch (e) {
+      publishKey = "";
+    }
+  }
+
+  const authed = checkAuth(request, env);
+  const publishKeyAccess =
+    !!publishKey &&
+    (localPath === "/api/outreach/publish-preview" ||
+      (localPath === "/api/outreach/publish-queue" && url.searchParams.get("call")));
+
+  if (!authed && !publishKeyAccess) return unauthorized();
+  return proxyOutreachRequest(request, env, localPath, bodyText, publishKey);
+}
+
 function checkAuth(request, env) {
   const expected = env.DASHBOARD_PASSWORD;
   if (!expected) return true;
@@ -441,6 +510,14 @@ export default {
       if (!checkAuth(request, env)) return unauthorized();
       try {
         return json(await getSummary(env));
+      } catch (err) {
+        return json({ error: String(err?.message || err) }, 500);
+      }
+    }
+
+    if (OUTREACH_PROXY_PATHS[path]) {
+      try {
+        return await handleOutreachProxy(request, env, path);
       } catch (err) {
         return json({ error: String(err?.message || err) }, 500);
       }

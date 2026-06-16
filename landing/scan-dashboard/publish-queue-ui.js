@@ -24,7 +24,7 @@
       var token = getToken();
       if (!token) {
         if (onTokenNeeded) onTokenNeeded();
-        return Promise.reject(new Error("API token required"));
+        return Promise.reject(new Error("Sign in to the dashboard first."));
       }
       return fetch(apiBase + path, {
         method: (opts && opts.method) || "GET",
@@ -45,7 +45,7 @@
       if (ui.publishing[key]) return;
       ui.publishing[key] = true;
       draw();
-      api("/voice/plumber-outreach/publish-preview", {
+      api("/api/outreach/publish-preview", {
         method: "POST",
         body: { call_id: row.call_id || undefined, lead: row },
       })
@@ -160,11 +160,11 @@
     function load() {
       if (!getToken()) {
         container.innerHTML =
-          '<p class="muted">Enter your API token above to publish preview sites.</p>';
+          '<p class="muted">Sign in to the dashboard to publish preview sites.</p>';
         return;
       }
       draw();
-      api("/voice/plumber-outreach/publish-queue")
+      api("/api/outreach/publish-queue")
         .then(function (res) {
           ui.items = res.items || [];
           draw();
@@ -173,7 +173,7 @@
           container.innerHTML =
             '<p class="error">' +
             esc(e.message) +
-            '</p><p class="muted">Set your API token above (same token used for lab verify / outreach campaigns).</p>';
+            '</p><p class="muted">Sign in to the dashboard first (same password as QR activity).</p>';
         });
     }
 
