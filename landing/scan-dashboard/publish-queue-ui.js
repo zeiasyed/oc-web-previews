@@ -44,6 +44,25 @@
       });
     }
 
+    function demoLead() {
+      if (!global.PublishWizardUI) return null;
+      return Object.assign({}, global.PublishWizardUI.DRY_RUN_LEAD || global.PublishWizardUI.DEMO_LEAD);
+    }
+
+    function displayItems() {
+      if (ui.items.length) return ui.items;
+      var demo = demoLead();
+      return demo ? [demo] : [];
+    }
+
+    function apiWithDryRun(path, opts) {
+      var body = opts && opts.body ? Object.assign({}, opts.body) : undefined;
+      if (body && ui.activeLead && (ui.activeLead.demo || ui.activeLead.dry_run)) {
+        body.dry_run = true;
+      }
+      return api(path, Object.assign({}, opts || {}, { body: body }));
+    }
+
     function normalizeLead(row) {
       return {
         call_id: row.call_id || "",
@@ -55,11 +74,19 @@
         website: row.website || "",
         has_website: !!row.has_website || !!row.website,
         website_label: row.website || "None listed on Google",
+        contact_name: row.contact_name || "",
         status: row.status || "pending",
         preview_url: row.preview_url || null,
         created_at: row.created_at,
-        demo: !!row.demo,
+        demo: !!(row.demo || row.dry_run),
+        dry_run: !!(row.demo || row.dry_run),
       };
+    }
+
+    function findRow(callId, slug) {
+      return displayItems().find(function (r) {
+        return (callId && r.call_id === callId) || (slug && r.slug === slug);
+      });
     }
 
     function mountWizard() {
@@ -67,7 +94,7 @@
       if (!wizardEl || !global.PublishWizardUI || !ui.activeLead) return;
       global.PublishWizardUI.mount(wizardEl, {
         lead: ui.activeLead,
-        api: api,
+        api: apiWithDryRun,
         hasAuth: true,
       });
     }
@@ -79,14 +106,13 @@
     }
 
     function loadDemo() {
-      selectLead(
-        Object.assign({}, global.PublishWizardUI.DRY_RUN_LEAD || global.PublishWizardUI.DEMO_LEAD)
-      );
+      var demo = demoLead();
+      if (demo) selectLead(normalizeLead(demo));
     }
 
     function selectFromRow(row) {
       var lead = normalizeLead(row);
-      if (!row.call_id) {
+      if (row.demo || row.dry_run || !row.call_id) {
         selectLead(lead);
         return;
       }
@@ -114,9 +140,12 @@
         ? '<div class="muted" style="font-size:0.8rem">Has site</div>'
         : '<div class="muted" style="font-size:0.8rem">No website</div>';
       var status =
-        row.status === "published" && row.preview_url
+        row.demo || row.dry_run
+          ? '<span class="pw-badge-dry">Dry run</span>'
+          : row.status === "published" && row.preview_url
           ? '<span class="pw-badge-live">Site live</span>'
           : '<span class="pw-badge-pending">Pending</span>';
+      var when = row.demo || row.dry_run ? "Practice lead" : fmtWhen(row.created_at);
       return (
         '<tr class="pw-lead-row' +
         (selected ? " pw-lead-selected" : "") +
@@ -136,7 +165,7 @@
         status +
         "</td>" +
         "<td>" +
-        fmtWhen(row.created_at) +
+        when +
         "</td>" +
         "<td><button type=\"button\" class=\"btn btn-small pw-open-lead\">Open</button></td></tr>"
       );
@@ -156,10 +185,14 @@
         "<h3 style=\"margin-top:0\">Hot leads</h3>" +
         '<table><thead><tr><th>Business</th><th>Status</th><th>When</th><th></th></tr></thead>' +
         '<tbody id="publish-queue-body">' +
+        (displayItems().length
+          ? displayItems().map(rowHtml).join("")
+          : '<tr><td colspan="4" class="muted">No leads yet.</td></tr>') +
+        "</tbody></table>" +
         (ui.items.length
-          ? ui.items.map(rowHtml).join("")
-          : '<tr><td colspan="4" class="muted">No hot leads yet — they appear after Alex flags interest or the 1-minute email fires.</td></tr>') +
-        "</tbody></table></div>" +
+          ? ""
+          : '<p class="muted" style="margin:0.65rem 0 0;font-size:0.85rem">Live hot leads appear here after Alex flags interest. Blackmon Plumbing is loaded for practice.</p>') +
+        "</div>" +
         '<div id="publish-wizard-root"></div></div>';
 
       container.querySelector("#publish-queue-refresh").onclick = load;
@@ -171,9 +204,7 @@
           var tr = btn.closest("tr");
           var callId = tr.getAttribute("data-call");
           var slug = tr.getAttribute("data-slug");
-          var row = ui.items.find(function (r) {
-            return (callId && r.call_id === callId) || (slug && r.slug === slug);
-          });
+          var row = findRow(callId, slug);
           if (row) selectFromRow(row);
         };
       });
@@ -181,9 +212,7 @@
         tr.onclick = function () {
           var callId = tr.getAttribute("data-call");
           var slug = tr.getAttribute("data-slug");
-          var row = ui.items.find(function (r) {
-            return (callId && r.call_id === callId) || (slug && r.slug === slug);
-          });
+          var row = findRow(callId, slug);
           if (row) selectFromRow(row);
         };
       });

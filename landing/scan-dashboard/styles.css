@@ -187,7 +187,7 @@ button, .btn {
 .pw-lead-row:hover td { background: rgba(56, 189, 248, 0.06); }
 .pw-lead-selected td { background: rgba(56, 189, 248, 0.12); }
 .pw-badge-live { color: #34d399; font-size: 0.85rem; font-weight: 600; }
-.pw-badge-pending { color: var(--muted); font-size: 0.85rem; }
+.pw-badge-dry { color: #fcd34d; font-size: 0.85rem; font-weight: 600; }
 .pw-wizard { margin-top: 1rem; }
 .pw-demo-tag {
   margin: 0 0 0.75rem; padding: 0.35rem 0.65rem; border-radius: 8px;
