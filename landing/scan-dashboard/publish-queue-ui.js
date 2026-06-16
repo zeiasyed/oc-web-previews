@@ -65,7 +65,11 @@
     function mountWizard() {
       var wizardEl = container.querySelector("#publish-wizard-root");
       if (!wizardEl || !global.PublishWizardUI || !ui.activeLead) return;
-      global.PublishWizardUI.mount(wizardEl, { lead: ui.activeLead, api: api });
+      global.PublishWizardUI.mount(wizardEl, {
+        lead: ui.activeLead,
+        api: api,
+        hasAuth: true,
+      });
     }
 
     function selectLead(lead) {
@@ -75,7 +79,9 @@
     }
 
     function loadDemo() {
-      selectLead(Object.assign({}, global.PublishWizardUI.DEMO_LEAD));
+      selectLead(
+        Object.assign({}, global.PublishWizardUI.DRY_RUN_LEAD || global.PublishWizardUI.DEMO_LEAD)
+      );
     }
 
     function selectFromRow(row) {
@@ -143,7 +149,7 @@
         "<div><h2 style=\"margin:0\">Live publish</h2>" +
         '<p class="sub" style="margin:0.35rem 0 0">3 steps: review lead info → create site → push link to plumber.</p></div>' +
         '<div class="pw-header-actions">' +
-        '<button type="button" id="publish-demo-btn" class="btn btn-ghost">Load demo lead</button>' +
+        '<button type="button" id="publish-demo-btn" class="btn btn-ghost">Dry run: Blackmon Plumbing</button>' +
         '<button type="button" id="publish-queue-refresh" class="btn">Refresh</button>' +
         "</div></div>" +
         '<div class="card" style="margin-top:1rem">' +

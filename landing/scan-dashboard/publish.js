@@ -14,6 +14,8 @@
   var wizardRoot = document.getElementById("wizard-root");
   var errorEl = document.getElementById("error");
 
+  var subtitleEl = document.getElementById("subtitle");
+
   function setError(msg) {
     if (errorEl) errorEl.textContent = msg || "";
   }
@@ -78,6 +80,8 @@
       lead: lead,
       api: api,
       publishKey: publishKey || undefined,
+      hasAuth: !!getAuth(),
+      dryRunPage: demoParam,
     });
   }
 
@@ -85,11 +89,15 @@
     setError("");
 
     if (demoParam) {
+      if (subtitleEl) {
+        subtitleEl.textContent =
+          "Dry run with Blackmon Plumbing (Baytown, TX) — live site build, no text sent.";
+      }
       if (!window.PublishWizardUI) {
         setError("Wizard scripts did not load. Hard refresh this page (Ctrl+F5 or Cmd+Shift+R).");
         return;
       }
-      mountWizard(Object.assign({}, window.PublishWizardUI.DEMO_LEAD));
+      mountWizard(Object.assign({}, window.PublishWizardUI.DRY_RUN_LEAD || window.PublishWizardUI.DEMO_LEAD));
       return;
     }
 

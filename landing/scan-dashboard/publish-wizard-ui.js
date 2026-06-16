@@ -1,26 +1,58 @@
 (function (global) {
   "use strict";
 
-  var DEMO_LEAD = {
+  // Verified TSBPE prospect — real business, real website (dry run skips SMS only).
+  var DRY_RUN_LEAD = {
     demo: true,
+    dry_run: true,
     call_id: "",
-    slug: "demo-acme-plumbing-riverside",
-    company_name: "Acme Plumbing & Rooting",
-    city: "Riverside",
-    phone: "(951) 555-0142",
-    address: "4200 Market St, Riverside, CA",
-    website: "https://www.example-plumber.com",
+    slug: "blackmon-plumbing-services-baytown",
+    company_name: "Blackmon Plumbing Services",
+    city: "Baytown, TX",
+    phone: "(281) 427-8325",
+    address: "4315 Barkaloo Rd, Baytown, TX 77521",
+    website: "https://www.blackmonplumbing.com",
     has_website: true,
-    website_label: "https://www.example-plumber.com",
+    website_label: "https://www.blackmonplumbing.com",
+    contact_name: "Shane Blackmon",
     status: "pending",
     preview_url: null,
   };
+
+  var DEMO_LEAD = DRY_RUN_LEAD;
 
   function esc(s) {
     return String(s || "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/"/g, "&quot;");
+  }
+
+  function isDryRun(lead) {
+    return !!(lead && (lead.demo || lead.dry_run));
+  }
+
+  function dryRunBanner(lead) {
+    if (!isDryRun(lead)) return "";
+    return (
+      '<p class="pw-demo-tag">Dry run — Blackmon Plumbing (Baytown, TX). Step 2 builds a real preview site; step 3 does not text Shane.</p>'
+    );
+  }
+
+  function dryRunPushNote(lead) {
+    if (!isDryRun(lead)) return "";
+    return (
+      '<p class="muted" style="margin:0.5rem 0 0;font-size:0.85rem">Dry run: no SMS is sent to ' +
+      esc(lead.phone || "the plumber") +
+      ".</p>"
+    );
+  }
+
+  function authHint(opts) {
+    if (!opts || opts.hasAuth !== false || !opts.dryRunPage) return "";
+    return (
+      '<p class="pw-auth-hint">Sign in on the <a href="index.html">main dashboard</a> first (same tab origin), then return here to run the live site build.</p>'
+    );
   }
 
   function stepClass(current, n) {
@@ -38,6 +70,7 @@
       busy: false,
       msg: "",
       err: "",
+      smsPreview: "",
     };
 
     function websiteHtml(lead) {
@@ -58,7 +91,7 @@
       var lead = state.lead;
       if (!lead) {
         container.innerHTML =
-          '<div class="pw-empty card"><p class="muted" style="margin:0">Select a hot lead from the list above, or load demo data to walk through the steps.</p></div>';
+          '<div class="pw-empty card"><p class="muted" style="margin:0">Select a hot lead from the list above, or load the Blackmon Plumbing dry run.</p></div>';
         return;
       }
 
@@ -68,7 +101,8 @@
 
       container.innerHTML =
         '<div class="pw-wizard card">' +
-        (lead.demo ? '<p class="pw-demo-tag">Demo lead — SMS push is simulated</p>' : "") +
+        dryRunBanner(lead) +
+        authHint(opts) +
         '<nav class="pw-steps" aria-label="Build flow">' +
         '<div class="' +
         stepClass(currentStep, 1) +
@@ -99,6 +133,9 @@
         '<div class="pw-info-row"><strong>Address</strong><span>' +
         esc(lead.address || "—") +
         "</span></div>" +
+        '<div class="pw-info-row"><strong>Owner</strong><span>' +
+        esc(lead.contact_name || "—") +
+        "</span></div>" +
         '<div class="pw-info-row"><strong>Current website</strong><span>' +
         websiteHtml(lead) +
         "</span></div>" +
@@ -106,7 +143,11 @@
         "</section>" +
         '<section class="pw-panel">' +
         "<h4 style=\"margin:0 0 0.5rem\">Step 2 — Create site</h4>" +
-        '<p class="sub" style="margin:0 0 0.75rem">Generate a preview site for you to review before texting the plumber.</p>' +
+        '<p class="sub" style="margin:0 0 0.75rem">' +
+        (isDryRun(lead)
+          ? "Builds a live preview on inertia-intel.com using Blackmon's real listing data."
+          : "Generate a preview site for you to review before texting the plumber.") +
+        "</p>" +
         (hasPreview
           ? '<p class="pw-success">Preview ready — review the link below before pushing.</p>' +
             '<div class="pw-review">' +
@@ -133,7 +174,12 @@
         '<button type="button" id="pw-push-btn" class="btn pw-push-btn"' +
         (!hasPreview || state.busy ? " disabled" : "") +
         ">Push preview link via text</button>" +
-        (lead.demo ? '<p class="muted" style="margin:0.5rem 0 0;font-size:0.85rem">Demo mode: no SMS is sent.</p>' : "") +
+        dryRunPushNote(lead) +
+        (state.smsPreview
+          ? '<div class="pw-sms-preview"><strong>Text that would send</strong><p>' +
+            esc(state.smsPreview) +
+            "</p></div>"
+          : "") +
         "</section>" +
         (state.msg ? '<p class="pw-msg">' + esc(state.msg) + "</p>" : "") +
         (state.err ? '<p class="error">' + esc(state.err) + "</p>" : "") +
@@ -164,7 +210,9 @@
               state.previewUrl = result.preview_url;
               state.connectUrl = result.connect_url || "";
               state.step = 3;
-              state.msg = "Site created — review it, then push to the plumber.";
+              state.msg = isDryRun(lead)
+                ? "Live preview built — open it below. Push is dry-run only (no text to Shane)."
+                : "Site created — review it, then push to the plumber.";
               lead.preview_url = result.preview_url;
               lead.status = "published";
               draw();
@@ -180,8 +228,17 @@
       var pushBtn = container.querySelector("#pw-push-btn");
       if (pushBtn) {
         pushBtn.onclick = function () {
-          if (lead.demo) {
-            state.msg = "Demo: would text preview link to " + (lead.phone || "plumber") + ".";
+          if (isDryRun(lead)) {
+            var previewLink = state.previewUrl || lead.preview_url || "";
+            var first = (lead.contact_name || "there").split(" ")[0];
+            state.smsPreview =
+              "Hi " +
+              first +
+              " — Alex from Solena Digital. Here's the new site preview we built for " +
+              lead.company_name +
+              ": " +
+              previewLink;
+            state.msg = "Dry run complete — no text sent to " + (lead.phone || "plumber") + ".";
             state.err = "";
             draw();
             return;
@@ -224,6 +281,7 @@
       state.previewUrl = lead && lead.preview_url ? lead.preview_url : null;
       state.msg = "";
       state.err = "";
+      state.smsPreview = "";
       state.busy = false;
       draw();
     }
@@ -232,5 +290,5 @@
     return { setLead: setLead, redraw: draw };
   }
 
-  global.PublishWizardUI = { DEMO_LEAD: DEMO_LEAD, mount: mount };
+  global.PublishWizardUI = { DEMO_LEAD: DEMO_LEAD, DRY_RUN_LEAD: DRY_RUN_LEAD, mount: mount };
 })(window);
