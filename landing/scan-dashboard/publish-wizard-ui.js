@@ -61,6 +61,14 @@
     return "pw-step";
   }
 
+  var PROGRESS_STEPS = [
+    { at: 12, label: "Loading lead data…" },
+    { at: 32, label: "Generating home page…" },
+    { at: 52, label: "Building services & contact pages…" },
+    { at: 72, label: "Publishing to server…" },
+    { at: 88, label: "Almost ready…" },
+  ];
+
   function mount(container, opts) {
     var state = {
       lead: opts.lead || null,
@@ -68,10 +76,80 @@
       previewUrl: null,
       connectUrl: null,
       busy: false,
+      progress: 0,
+      progressLabel: "",
+      progressTimer: null,
       msg: "",
       err: "",
       smsPreview: "",
     };
+
+    function stopProgress() {
+      if (state.progressTimer) {
+        clearInterval(state.progressTimer);
+        state.progressTimer = null;
+      }
+    }
+
+    function startProgress() {
+      stopProgress();
+      state.progress = 8;
+      state.progressLabel = PROGRESS_STEPS[0].label;
+      state.progressTimer = setInterval(function () {
+        if (state.progress < 92) {
+          state.progress = Math.min(92, state.progress + Math.random() * 5 + 2);
+          for (var i = PROGRESS_STEPS.length - 1; i >= 0; i--) {
+            if (state.progress >= PROGRESS_STEPS[i].at) {
+              state.progressLabel = PROGRESS_STEPS[i].label;
+              break;
+            }
+          }
+          draw();
+        }
+      }, 450);
+    }
+
+    function finishProgress(cb) {
+      stopProgress();
+      state.progress = 100;
+      state.progressLabel = "Site is live!";
+      draw();
+      setTimeout(cb, 500);
+    }
+
+    function progressHtml() {
+      return (
+        '<div class="pw-progress" role="status" aria-live="polite">' +
+        '<p class="pw-progress-label">' +
+        esc(state.progressLabel || "Creating site…") +
+        "</p>" +
+        '<div class="pw-progress-track">' +
+        '<div class="pw-progress-fill" style="width:' +
+        Math.round(state.progress) +
+        '%"></div>' +
+        "</div>" +
+        '<p class="pw-progress-pct muted">' +
+        Math.round(state.progress) +
+        "%</p>" +
+        "</div>"
+      );
+    }
+
+    function previewReadyHtml(previewUrl) {
+      return (
+        '<div class="pw-preview-ready">' +
+        '<p class="pw-success">Your preview site is ready</p>' +
+        '<a class="btn pw-preview-btn" href="' +
+        esc(previewUrl) +
+        '" target="_blank" rel="noopener">Preview site</a>' +
+        '<div class="pw-review">' +
+        '<input readonly id="pw-preview-url" value="' +
+        esc(previewUrl) +
+        '">' +
+        '<button type="button" class="btn btn-small" id="pw-copy-preview">Copy link</button>' +
+        "</div></div>"
+      );
+    }
 
     function websiteHtml(lead) {
       var url = lead.website || "";
@@ -148,21 +226,11 @@
           ? "Builds a live preview on inertia-intel.com using Blackmon's real listing data."
           : "Generate a preview site for you to review before texting the plumber.") +
         "</p>" +
-        (hasPreview
-          ? '<p class="pw-success">Preview ready — review the link below before pushing.</p>' +
-            '<div class="pw-review">' +
-            '<input readonly id="pw-preview-url" value="' +
-            esc(previewUrl) +
-            '">' +
-            '<a class="btn btn-small" href="' +
-            esc(previewUrl) +
-            '" target="_blank" rel="noopener">Review site</a>' +
-            "</div>"
-          : '<button type="button" id="pw-create-btn" class="btn pw-create-btn"' +
-            (state.busy ? " disabled" : "") +
-            ">" +
-            (state.busy ? "Creating…" : "Create site") +
-            "</button>") +
+        (state.busy && !hasPreview
+          ? progressHtml()
+          : hasPreview
+          ? previewReadyHtml(previewUrl)
+          : '<button type="button" id="pw-create-btn" class="btn pw-create-btn">Create site</button>') +
         "</section>" +
         '<section class="pw-panel' +
         (hasPreview ? "" : " pw-panel-disabled") +
@@ -191,6 +259,7 @@
           state.busy = true;
           state.err = "";
           state.msg = "";
+          startProgress();
           draw();
           var body = {
             lead: {
@@ -206,22 +275,39 @@
           opts
             .api("/api/outreach/publish-preview", { method: "POST", body: body })
             .then(function (result) {
-              state.busy = false;
-              state.previewUrl = result.preview_url;
-              state.connectUrl = result.connect_url || "";
-              state.step = 3;
-              state.msg = isDryRun(lead)
-                ? "Live preview built — open it below. Push is dry-run only (no text to Shane)."
-                : "Site created — review it, then push to the plumber.";
-              lead.preview_url = result.preview_url;
-              lead.status = "published";
-              draw();
+              finishProgress(function () {
+                state.busy = false;
+                state.progress = 0;
+                state.previewUrl = result.preview_url;
+                state.connectUrl = result.connect_url || "";
+                state.step = 3;
+                state.msg = isDryRun(lead)
+                  ? "Live preview built — open Preview site above. Push is dry-run only."
+                  : "Site created — preview it, then push to the plumber.";
+                lead.preview_url = result.preview_url;
+                lead.status = "published";
+                draw();
+              });
             })
             .catch(function (e) {
+              stopProgress();
               state.busy = false;
+              state.progress = 0;
               state.err = e.message || "Create failed";
               draw();
             });
+        };
+      }
+
+      var copyBtn = container.querySelector("#pw-copy-preview");
+      if (copyBtn) {
+        copyBtn.onclick = function () {
+          var input = container.querySelector("#pw-preview-url");
+          if (input && navigator.clipboard) {
+            navigator.clipboard.writeText(input.value);
+            state.msg = "Preview link copied.";
+            draw();
+          }
         };
       }
 
@@ -276,6 +362,7 @@
     }
 
     function setLead(lead) {
+      stopProgress();
       state.lead = lead;
       state.step = 1;
       state.previewUrl = lead && lead.preview_url ? lead.preview_url : null;
@@ -283,11 +370,13 @@
       state.err = "";
       state.smsPreview = "";
       state.busy = false;
+      state.progress = 0;
+      state.progressLabel = "";
       draw();
     }
 
     draw();
-    return { setLead: setLead, redraw: draw };
+    return { setLead: setLead, redraw: draw, stopProgress: stopProgress };
   }
 
   global.PublishWizardUI = { DEMO_LEAD: DEMO_LEAD, DRY_RUN_LEAD: DRY_RUN_LEAD, mount: mount };

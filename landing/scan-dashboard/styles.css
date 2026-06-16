@@ -241,6 +241,33 @@ button, .btn {
   background: rgba(56, 189, 248, 0.1); border: 1px solid rgba(56, 189, 248, 0.35);
   font-size: 0.88rem; color: var(--muted);
 }
+.pw-preview-ready { display: grid; gap: 0.75rem; }
+.pw-preview-btn {
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+  background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+  color: #0f172a;
+  font-weight: 700;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+}
+.pw-progress { margin: 0.5rem 0; }
+.pw-progress-label { margin: 0 0 0.5rem; font-size: 0.92rem; color: var(--text); font-weight: 600; }
+.pw-progress-track {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.pw-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #10b981 0%, #38bdf8 100%);
+  transition: width 0.35s ease;
+}
+.pw-progress-pct { margin: 0.35rem 0 0; font-size: 0.8rem; text-align: right; }
 .pw-auth-hint a { color: var(--accent); font-weight: 600; }
 @media (max-width: 900px) {
   .outreach-layout { grid-template-columns: 1fr; }
