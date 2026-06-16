@@ -70,10 +70,12 @@
   ];
 
   function mount(container, opts) {
+    var lead = opts.lead || null;
+    var initialPreview = lead && lead.preview_url ? lead.preview_url : null;
     var state = {
-      lead: opts.lead || null,
-      step: 1,
-      previewUrl: null,
+      lead: lead,
+      step: initialPreview ? 3 : 1,
+      previewUrl: initialPreview,
       connectUrl: null,
       busy: false,
       progress: 0,
@@ -185,8 +187,8 @@
         return;
       }
 
-      var hasPreview = !!(state.previewUrl || (lead.preview_url && lead.status === "published"));
       var previewUrl = state.previewUrl || lead.preview_url || "";
+      var hasPreview = !!previewUrl;
       var currentStep = hasPreview ? 3 : state.step;
       var outgoingSms = state.smsPreview || (hasPreview ? smsPreviewText(lead, previewUrl) : "");
 
@@ -300,6 +302,7 @@
                   : "Site created — preview it, then push to the plumber.";
                 lead.preview_url = result.preview_url;
                 lead.status = "published";
+                if (opts.onLeadUpdate) opts.onLeadUpdate(lead);
                 draw();
               });
             })
@@ -319,8 +322,13 @@
           var input = container.querySelector("#pw-preview-url");
           if (input && navigator.clipboard) {
             navigator.clipboard.writeText(input.value);
-            state.msg = "Preview link copied.";
-            draw();
+            var msgEl = container.querySelector(".pw-msg");
+            if (msgEl) {
+              msgEl.textContent = "Preview link copied.";
+            } else {
+              state.msg = "Preview link copied.";
+              draw();
+            }
           }
         };
       }
@@ -370,8 +378,8 @@
     function setLead(lead) {
       stopProgress();
       state.lead = lead;
-      state.step = 1;
       state.previewUrl = lead && lead.preview_url ? lead.preview_url : null;
+      state.step = state.previewUrl ? 3 : 1;
       state.msg = "";
       state.err = "";
       state.smsPreview = "";

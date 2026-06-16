@@ -18,7 +18,7 @@
   }
 
   function mount(container, apiBase, getToken, onTokenNeeded) {
-    var ui = { items: [], activeLead: null, poll: null };
+    var ui = { items: [], activeLead: null, poll: null, wizard: null };
 
     function api(path, opts) {
       var token = getToken();
@@ -52,7 +52,16 @@
     function displayItems() {
       if (ui.items.length) return ui.items;
       var demo = demoLead();
-      return demo ? [demo] : [];
+      if (!demo) return [];
+      if (
+        ui.activeLead &&
+        ui.activeLead.slug === demo.slug &&
+        ui.activeLead.preview_url
+      ) {
+        demo.preview_url = ui.activeLead.preview_url;
+        demo.status = ui.activeLead.status || "published";
+      }
+      return [demo];
     }
 
     function apiWithDryRun(path, opts) {
@@ -89,29 +98,138 @@
       });
     }
 
-    function mountWizard() {
-      var wizardEl = container.querySelector("#publish-wizard-root");
-      if (!wizardEl || !global.PublishWizardUI || !ui.activeLead) return;
-      global.PublishWizardUI.mount(wizardEl, {
-        lead: ui.activeLead,
-        api: apiWithDryRun,
-        hasAuth: true,
+    function mergeActiveLead(updated) {
+      if (!ui.activeLead || !updated) return;
+      var keepPreview = ui.activeLead.preview_url;
+      var keepStatus = ui.activeLead.status;
+      ui.activeLead = normalizeLead(Object.assign({}, ui.activeLead, updated));
+      if (keepPreview && !ui.activeLead.preview_url) {
+        ui.activeLead.preview_url = keepPreview;
+        ui.activeLead.status = keepStatus || "published";
+      }
+    }
+
+    function bindRowEvents() {
+      container.querySelectorAll(".pw-open-lead").forEach(function (btn) {
+        btn.onclick = function (e) {
+          e.stopPropagation();
+          var tr = btn.closest("tr");
+          var callId = tr.getAttribute("data-call");
+          var slug = tr.getAttribute("data-slug");
+          var row = findRow(callId, slug);
+          if (row) selectFromRow(row);
+        };
       });
+      container.querySelectorAll(".pw-lead-row").forEach(function (tr) {
+        tr.onclick = function () {
+          var callId = tr.getAttribute("data-call");
+          var slug = tr.getAttribute("data-slug");
+          var row = findRow(callId, slug);
+          if (row) selectFromRow(row);
+        };
+      });
+    }
+
+    function syncWizard() {
+      var wizardEl = container.querySelector("#publish-wizard-root");
+      if (!wizardEl || !global.PublishWizardUI || !ui.activeLead) {
+        if (ui.wizard) {
+          ui.wizard.stopProgress();
+          ui.wizard = null;
+        }
+        if (wizardEl) wizardEl.innerHTML = "";
+        return;
+      }
+      if (!ui.wizard) {
+        ui.wizard = global.PublishWizardUI.mount(wizardEl, {
+          lead: ui.activeLead,
+          api: apiWithDryRun,
+          hasAuth: true,
+          onLeadUpdate: function (lead) {
+            ui.activeLead = lead;
+            refreshTable();
+          },
+        });
+      } else {
+        ui.wizard.setLead(ui.activeLead);
+      }
+    }
+
+    function ensureShell() {
+      if (container.querySelector("#publish-wizard-root")) return;
+      container.innerHTML =
+        '<div class="publish-queue-wrap">' +
+        '<div class="publish-queue-header">' +
+        "<div><h2 style=\"margin:0\">Live publish</h2>" +
+        '<p class="sub" style="margin:0.35rem 0 0">3 steps: review lead info → create site → push link to plumber.</p></div>' +
+        '<div class="pw-header-actions">' +
+        '<button type="button" id="publish-demo-btn" class="btn btn-ghost">Dry run: Blackmon Plumbing</button>' +
+        '<button type="button" id="publish-queue-refresh" class="btn">Refresh</button>' +
+        "</div></div>" +
+        '<div class="card" style="margin-top:1rem">' +
+        "<h3 style=\"margin-top:0\">Hot leads</h3>" +
+        '<table><thead><tr><th>Business</th><th>Status</th><th>When</th><th></th></tr></thead>' +
+        '<tbody id="publish-queue-body"></tbody></table>' +
+        '<p id="publish-queue-empty" class="muted" style="margin:0.65rem 0 0;font-size:0.85rem;display:none">Live hot leads appear here after Alex flags interest. Blackmon Plumbing is loaded for practice.</p>' +
+        "</div>" +
+        '<div id="publish-wizard-root"></div></div>';
+
+      container.querySelector("#publish-queue-refresh").onclick = load;
+      container.querySelector("#publish-demo-btn").onclick = loadDemo;
+    }
+
+    function refreshTable() {
+      ensureShell();
+      var tbody = container.querySelector("#publish-queue-body");
+      var emptyNote = container.querySelector("#publish-queue-empty");
+      if (!tbody) return;
+      var rows = displayItems();
+      tbody.innerHTML = rows.length
+        ? rows.map(rowHtml).join("")
+        : '<tr><td colspan="4" class="muted">No leads yet.</td></tr>';
+      if (emptyNote) {
+        emptyNote.style.display = ui.items.length ? "none" : "block";
+      }
+      bindRowEvents();
+    }
+
+    function mountWizard() {
+      syncWizard();
     }
 
     function selectLead(lead) {
       ui.activeLead = lead;
-      draw();
-      mountWizard();
+      refreshTable();
+      syncWizard();
     }
 
     function loadDemo() {
       var demo = demoLead();
-      if (demo) selectLead(normalizeLead(demo));
+      if (demo) {
+        var lead = normalizeLead(demo);
+        if (
+          ui.activeLead &&
+          ui.activeLead.slug === lead.slug &&
+          ui.activeLead.preview_url
+        ) {
+          lead.preview_url = ui.activeLead.preview_url;
+          lead.status = ui.activeLead.status || "published";
+        }
+        selectLead(lead);
+      }
     }
 
     function selectFromRow(row) {
       var lead = normalizeLead(row);
+      if (
+        ui.activeLead &&
+        (row.demo || row.dry_run || !row.call_id) &&
+        ui.activeLead.slug === lead.slug &&
+        ui.activeLead.preview_url
+      ) {
+        lead.preview_url = ui.activeLead.preview_url;
+        lead.status = ui.activeLead.status || "published";
+      }
       if (row.demo || row.dry_run || !row.call_id) {
         selectLead(lead);
         return;
@@ -172,61 +290,21 @@
     }
 
     function draw() {
-      container.innerHTML =
-        '<div class="publish-queue-wrap">' +
-        '<div class="publish-queue-header">' +
-        "<div><h2 style=\"margin:0\">Live publish</h2>" +
-        '<p class="sub" style="margin:0.35rem 0 0">3 steps: review lead info → create site → push link to plumber.</p></div>' +
-        '<div class="pw-header-actions">' +
-        '<button type="button" id="publish-demo-btn" class="btn btn-ghost">Dry run: Blackmon Plumbing</button>' +
-        '<button type="button" id="publish-queue-refresh" class="btn">Refresh</button>' +
-        "</div></div>" +
-        '<div class="card" style="margin-top:1rem">' +
-        "<h3 style=\"margin-top:0\">Hot leads</h3>" +
-        '<table><thead><tr><th>Business</th><th>Status</th><th>When</th><th></th></tr></thead>' +
-        '<tbody id="publish-queue-body">' +
-        (displayItems().length
-          ? displayItems().map(rowHtml).join("")
-          : '<tr><td colspan="4" class="muted">No leads yet.</td></tr>') +
-        "</tbody></table>" +
-        (ui.items.length
-          ? ""
-          : '<p class="muted" style="margin:0.65rem 0 0;font-size:0.85rem">Live hot leads appear here after Alex flags interest. Blackmon Plumbing is loaded for practice.</p>') +
-        "</div>" +
-        '<div id="publish-wizard-root"></div></div>';
-
-      container.querySelector("#publish-queue-refresh").onclick = load;
-      container.querySelector("#publish-demo-btn").onclick = loadDemo;
-
-      container.querySelectorAll(".pw-open-lead").forEach(function (btn) {
-        btn.onclick = function (e) {
-          e.stopPropagation();
-          var tr = btn.closest("tr");
-          var callId = tr.getAttribute("data-call");
-          var slug = tr.getAttribute("data-slug");
-          var row = findRow(callId, slug);
-          if (row) selectFromRow(row);
-        };
-      });
-      container.querySelectorAll(".pw-lead-row").forEach(function (tr) {
-        tr.onclick = function () {
-          var callId = tr.getAttribute("data-call");
-          var slug = tr.getAttribute("data-slug");
-          var row = findRow(callId, slug);
-          if (row) selectFromRow(row);
-        };
-      });
-
-      mountWizard();
+      refreshTable();
+      syncWizard();
     }
 
     function load() {
       if (!getToken()) {
+        if (ui.wizard) {
+          ui.wizard.stopProgress();
+          ui.wizard = null;
+        }
         container.innerHTML =
           '<p class="muted">Sign in to the dashboard to publish preview sites.</p>';
         return;
       }
-      draw();
+      ensureShell();
       api("/api/outreach/publish-queue")
         .then(function (res) {
           ui.items = res.items || [];
@@ -234,16 +312,19 @@
             var updated = ui.items.find(function (r) {
               return r.call_id === ui.activeLead.call_id;
             });
-            if (updated) {
-              ui.activeLead = normalizeLead(Object.assign({}, ui.activeLead, updated));
-            }
+            if (updated) mergeActiveLead(updated);
           }
-          draw();
+          refreshTable();
+          syncWizard();
           if (!ui.items.length && !ui.activeLead && global.PublishWizardUI) {
             loadDemo();
           }
         })
         .catch(function (e) {
+          if (ui.wizard) {
+            ui.wizard.stopProgress();
+            ui.wizard = null;
+          }
           container.innerHTML =
             '<p class="error">' +
             esc(e.message) +
