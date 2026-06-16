@@ -7,7 +7,8 @@
   var callId = params.get("call") || "";
   var publishKey = params.get("k") || "";
   var slugParam = params.get("slug") || "";
-  var demoParam = params.get("demo") === "1";
+  var demoRaw = (params.get("demo") || "").toLowerCase();
+  var demoParam = demoRaw === "1" || demoRaw === "true" || demoRaw === "yes";
 
   var alertBanner = document.getElementById("alert-banner");
   var wizardRoot = document.getElementById("wizard-root");
@@ -64,7 +65,12 @@
   }
 
   function mountWizard(lead) {
-    if (!window.PublishWizardUI || !wizardRoot) return;
+    if (!wizardRoot) return;
+    if (!window.PublishWizardUI) {
+      errorEl.textContent =
+        "Wizard scripts did not load. Hard refresh this page (Ctrl+F5 or Cmd+Shift+R).";
+      return;
+    }
     window.PublishWizardUI.mount(wizardRoot, {
       lead: lead,
       api: api,
@@ -76,6 +82,11 @@
     errorEl.textContent = "";
 
     if (demoParam) {
+      if (!window.PublishWizardUI) {
+        errorEl.textContent =
+          "Wizard scripts did not load. Hard refresh this page (Ctrl+F5 or Cmd+Shift+R).";
+        return;
+      }
       mountWizard(Object.assign({}, window.PublishWizardUI.DEMO_LEAD));
       return;
     }

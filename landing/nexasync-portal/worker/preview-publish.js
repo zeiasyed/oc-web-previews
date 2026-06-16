@@ -402,7 +402,11 @@ async function handlePlumberPublishQueueGet(request, env) {
     });
   }
   const rows = await env.DB.prepare(
-    "SELECT call_id, slug, company_name, phone, city, address, status, preview_url, created_at, published_at FROM plumber_publish_queue ORDER BY created_at DESC LIMIT 20"
+    `SELECT q.call_id, q.slug, q.company_name, q.phone, q.city, q.address, q.status, q.preview_url, q.created_at, q.published_at,
+            c.website, c.has_website
+     FROM plumber_publish_queue q
+     LEFT JOIN plumber_outreach_calls c ON c.call_id = q.call_id
+     ORDER BY q.created_at DESC LIMIT 20`
   ).all();
   return json({ ok: true, items: rows.results || [] });
 }
