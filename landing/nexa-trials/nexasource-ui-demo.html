@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>NexaSource UI Preview — For Review | Nexa Trials</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css?v=10">
+  <link rel="stylesheet" href="css/nexasource-ui-demo.css?v=1">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <img class="brand-mark" src="assets/logo-mark.svg?v=4" alt="" width="44" height="44">
+        <span class="brand-lockup">
+          <span class="brand-title">
+            <span class="brand-name">NEXA</span>
+            <span class="brand-tag">TRIALS</span>
+          </span>
+          <span class="brand-sub">Clinical Technology Partner</span>
+        </span>
+      </a>
+      <nav class="nav-menu" id="nav-menu" aria-label="Main">
+        <ul>
+          <li><a href="nexasource.html">← Back to NexaSource page</a></li>
+          <li><a href="contact.html" class="header-cta">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="ns-showcase">
+      <div class="container">
+        <div class="ns-showcase__header">
+          <p class="ns-review-banner">Preview — for your review</p>
+          <h2>See how clean NexaSource feels in daily use</h2>
+          <p>Interactive mockup — switch views below. This is sample data only, not a live system.</p>
+        </div>
+
+        <div data-nexasource-ui>
+          <div class="ns-ui-frame">
+            <div class="ns-ui-frame__chrome">
+              <div class="ns-ui-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+              <div class="ns-ui-url">app.nexasource.io · Cenexel — Orange County</div>
+            </div>
+            <div class="ns-app">
+              <aside class="ns-app__sidebar">
+                <div class="ns-app__brand">
+                  <img src="assets/nexasource-mark.svg?v=2" alt="">
+                  <div>
+                    <strong>NexaSource</strong>
+                    <span>eSource platform</span>
+                  </div>
+                </div>
+                <nav class="ns-app__nav" aria-label="App navigation">
+                  <button type="button" class="is-active" data-panel="dashboard"><span class="ns-app__nav-icon">▦</span> Dashboard</button>
+                  <button type="button" data-panel="subjects"><span class="ns-app__nav-icon">👤</span> Subjects</button>
+                  <button type="button" data-panel="visit"><span class="ns-app__nav-icon">📋</span> Visit forms</button>
+                  <button type="button"><span class="ns-app__nav-icon">?</span> Queries</button>
+                  <button type="button"><span class="ns-app__nav-icon">↗</span> Exports</button>
+                </nav>
+                <div class="ns-app__study">
+                  <strong>NCT-2024-0847</strong>
+                  Phase III — Metabolic Outcomes
+                </div>
+              </aside>
+              <div class="ns-app__main">
+                <header class="ns-app__topbar">
+                  <div>
+                    <h3 id="ns-view-title">Study dashboard</h3>
+                    <p>Last synced 2 min ago · All systems operational</p>
+                  </div>
+                  <div class="ns-app__topbar-actions">
+                    <span class="ns-pill ns-pill--live">Live</span>
+                    <span class="ns-avatar" title="Site coordinator">SC</span>
+                  </div>
+                </header>
+                <div class="ns-app__body">
+                  <div class="ns-panel is-active" data-panel="dashboard">
+                    <div class="ns-stat-grid">
+                      <div class="ns-stat ns-stat--accent"><strong>12</strong><span>Enrolled</span></div>
+                      <div class="ns-stat"><strong>3</strong><span>In screening</span></div>
+                      <div class="ns-stat"><strong>87%</strong><span>Forms complete</span></div>
+                      <div class="ns-stat"><strong>0</strong><span>Open queries</span></div>
+                    </div>
+                    <div class="ns-card">
+                      <div class="ns-card__head">
+                        <h4>Upcoming visits this week</h4>
+                        <span class="ns-badge ns-badge--blue">4 scheduled</span>
+                      </div>
+                      <table class="ns-table">
+                        <thead>
+                          <tr><th>Subject</th><th>Visit</th><th>Window</th><th>Status</th></tr>
+                        </thead>
+                        <tbody>
+                          <tr><td>1042</td><td>Screening</td><td>Today</td><td><span class="ns-badge ns-badge--amber">In progress</span></td></tr>
+                          <tr><td>1038</td><td>Week 4</td><td>Thu 6/19</td><td><span class="ns-badge ns-badge--green">Ready</span></td></tr>
+                          <tr><td>1029</td><td>Week 8</td><td>Fri 6/20</td><td><span class="ns-badge ns-badge--green">Ready</span></td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="ns-panel" data-panel="subjects">
+                    <div class="ns-card">
+                      <div class="ns-card__head">
+                        <h4>Subject roster</h4>
+                        <span class="ns-badge ns-badge--green">15 total</span>
+                      </div>
+                      <table class="ns-table">
+                        <thead>
+                          <tr><th>ID</th><th>Status</th><th>Last visit</th><th>Completion</th></tr>
+                        </thead>
+                        <tbody>
+                          <tr><td>1042</td><td>Screening</td><td>—</td><td>72%</td></tr>
+                          <tr><td>1038</td><td>Enrolled</td><td>Week 4</td><td>100%</td></tr>
+                          <tr><td>1031</td><td>Enrolled</td><td>Week 2</td><td>94%</td></tr>
+                          <tr><td>1029</td><td>Enrolled</td><td>Week 8</td><td>100%</td></tr>
+                          <tr><td>1017</td><td>Completed</td><td>End of study</td><td>100%</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="ns-panel" data-panel="visit">
+                    <div class="ns-form-layout">
+                      <nav class="ns-form-nav" aria-label="Form sections">
+                        <button type="button" class="done">Demographics</button>
+                        <button type="button" class="is-active">Vitals</button>
+                        <button type="button">Inclusion criteria</button>
+                        <button type="button">Medical history</button>
+                        <button type="button">Sign &amp; submit</button>
+                      </nav>
+                      <div class="ns-form-panel">
+                        <h4>Screening visit · Subject 1042</h4>
+                        <p>Section 2 of 5 · Required fields marked on form</p>
+                        <div class="ns-field-grid">
+                          <div class="ns-field">
+                            <label for="ns-bp">Blood pressure (mmHg)</label>
+                            <input id="ns-bp" type="text" value="118 / 76" readonly>
+                          </div>
+                          <div class="ns-field">
+                            <label for="ns-hr">Heart rate (bpm)</label>
+                            <input id="ns-hr" type="text" value="72" readonly>
+                          </div>
+                          <div class="ns-field">
+                            <label for="ns-wt">Weight (kg)</label>
+                            <input id="ns-wt" type="text" value="78.4" readonly>
+                          </div>
+                          <div class="ns-field">
+                            <label for="ns-temp">Temperature (°C)</label>
+                            <input id="ns-temp" type="text" value="36.6" readonly>
+                          </div>
+                          <div class="ns-field ns-field--full">
+                            <label for="ns-notes">Coordinator notes</label>
+                            <input id="ns-notes" type="text" value="Vitals collected per protocol — no deviations." readonly>
+                          </div>
+                        </div>
+                        <div class="ns-progress" aria-hidden="true"><span></span></div>
+                        <div class="ns-form-actions">
+                          <button type="button" class="ns-btn ns-btn--ghost">Save draft</button>
+                          <button type="button" class="ns-btn ns-btn--primary">Mark section complete</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ns-ui-tabs" role="tablist" aria-label="Preview views">
+            <button type="button" class="ns-ui-tab is-active" data-panel="dashboard" role="tab">Dashboard</button>
+            <button type="button" class="ns-ui-tab" data-panel="subjects" role="tab">Subjects</button>
+            <button type="button" class="ns-ui-tab" data-panel="visit" role="tab">Visit form</button>
+          </div>
+        </div>
+
+        <p style="text-align:center;margin-top:2rem;color:var(--gray-500);font-size:0.9375rem;">
+          Like this direction?
+          <a href="contact.html">Tell us what to tweak</a>
+          or
+          <a href="nexasource.html">return to the NexaSource page</a>.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/nexasource-ui-demo.js?v=1"></script>
+  <script>
+    (function () {
+      var titles = {
+        dashboard: "Study dashboard",
+        subjects: "Subject roster",
+        visit: "Screening visit · Subject 1042"
+      };
+      document.querySelectorAll("[data-nexasource-ui] .ns-ui-tab, [data-nexasource-ui] .ns-app__nav button[data-panel]").forEach(function (el) {
+        el.addEventListener("click", function () {
+          var id = el.getAttribute("data-panel");
+          var title = document.getElementById("ns-view-title");
+          if (title && titles[id]) title.textContent = titles[id];
+        });
+      });
+    })();
+  </script>
+</body>
+</html>

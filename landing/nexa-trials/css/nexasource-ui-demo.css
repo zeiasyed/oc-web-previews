@@ -1,0 +1,562 @@
+/* NexaSource product UI mockup — marketing preview only */
+
+.ns-showcase {
+  padding: 3.5rem 0 4rem;
+  background: linear-gradient(180deg, var(--off-white) 0%, #eef4fb 55%, var(--white) 100%);
+  overflow: hidden;
+}
+
+.ns-showcase__header {
+  text-align: center;
+  max-width: 40rem;
+  margin: 0 auto 2.25rem;
+}
+
+.ns-showcase__header h2 {
+  margin: 0 0 0.65rem;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  color: var(--navy);
+}
+
+.ns-showcase__header p {
+  margin: 0;
+  color: var(--gray-500);
+  font-size: 1.05rem;
+}
+
+.ns-review-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: #92400e;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ns-ui-tabs {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.ns-ui-tab {
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  color: var(--gray-700);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.ns-ui-tab:hover {
+  border-color: var(--teal);
+  color: var(--teal-dark);
+}
+
+.ns-ui-tab.is-active {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--white);
+  box-shadow: var(--shadow);
+}
+
+.ns-ui-frame {
+  max-width: 58rem;
+  margin: 0 auto;
+  border-radius: 1rem;
+  background: var(--white);
+  box-shadow: var(--shadow-lg), 0 0 0 1px rgb(11 31 58 / 6%);
+  overflow: hidden;
+}
+
+.ns-ui-frame__chrome {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  background: linear-gradient(180deg, #f8fafc, #eef2f7);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.ns-ui-dots {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.ns-ui-dots span {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: var(--gray-200);
+}
+
+.ns-ui-dots span:nth-child(1) { background: #fca5a5; }
+.ns-ui-dots span:nth-child(2) { background: #fde68a; }
+.ns-ui-dots span:nth-child(3) { background: #86efac; }
+
+.ns-ui-url {
+  flex: 1;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ns-app {
+  display: grid;
+  grid-template-columns: 13.5rem 1fr;
+  min-height: 26rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.ns-app__sidebar {
+  background: var(--navy);
+  color: rgb(255 255 255 / 88%);
+  padding: 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ns-app__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0 0.35rem 0.85rem;
+  margin-bottom: 0.35rem;
+  border-bottom: 1px solid rgb(255 255 255 / 10%);
+}
+
+.ns-app__brand img {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.45rem;
+}
+
+.ns-app__brand strong {
+  display: block;
+  font-size: 0.8125rem;
+  color: var(--white);
+  letter-spacing: 0.03em;
+}
+
+.ns-app__brand span {
+  font-size: 0.6875rem;
+  color: rgb(255 255 255 / 55%);
+}
+
+.ns-app__nav button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.ns-app__nav button:hover {
+  background: rgb(255 255 255 / 8%);
+}
+
+.ns-app__nav button.is-active {
+  background: rgb(13 148 136 / 35%);
+  color: var(--white);
+  font-weight: 600;
+}
+
+.ns-app__nav-icon {
+  width: 1.1rem;
+  text-align: center;
+  opacity: 0.85;
+  font-size: 0.9rem;
+}
+
+.ns-app__study {
+  margin-top: auto;
+  padding: 0.75rem 0.65rem 0;
+  border-top: 1px solid rgb(255 255 255 / 10%);
+  font-size: 0.6875rem;
+  color: rgb(255 255 255 / 55%);
+}
+
+.ns-app__study strong {
+  display: block;
+  color: var(--white);
+  font-size: 0.75rem;
+  margin-bottom: 0.15rem;
+}
+
+.ns-app__main {
+  background: #f4f7fb;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ns-app__topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1.1rem;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.ns-app__topbar h3 {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--navy);
+}
+
+.ns-app__topbar p {
+  margin: 0.15rem 0 0;
+  font-size: 0.75rem;
+  color: var(--gray-500);
+}
+
+.ns-app__topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ns-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+.ns-pill--live {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.ns-pill--live::before {
+  content: "";
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: #22c55e;
+}
+
+.ns-avatar {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--teal), var(--navy-light));
+  color: var(--white);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+}
+
+.ns-app__body {
+  padding: 1rem 1.1rem 1.25rem;
+  flex: 1;
+  overflow: auto;
+}
+
+.ns-panel {
+  display: none;
+  animation: nsFadeIn 0.35s ease;
+}
+
+.ns-panel.is-active {
+  display: block;
+}
+
+@keyframes nsFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ns-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.ns-stat {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 0.65rem;
+  padding: 0.75rem;
+}
+
+.ns-stat strong {
+  display: block;
+  font-size: 1.25rem;
+  color: var(--navy);
+  line-height: 1.1;
+}
+
+.ns-stat span {
+  font-size: 0.6875rem;
+  color: var(--gray-500);
+}
+
+.ns-stat--accent {
+  border-color: rgb(13 148 136 / 35%);
+  background: linear-gradient(180deg, #f0fdfa, var(--white));
+}
+
+.ns-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 0.75rem;
+  overflow: hidden;
+}
+
+.ns-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--gray-200);
+  background: #fafbfd;
+}
+
+.ns-card__head h4 {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--navy);
+}
+
+.ns-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.ns-table th,
+.ns-table td {
+  padding: 0.55rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.ns-table th {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gray-500);
+  font-weight: 600;
+}
+
+.ns-badge {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.ns-badge--green { background: #dcfce7; color: #166534; }
+.ns-badge--amber { background: #fef3c7; color: #92400e; }
+.ns-badge--blue { background: #dbeafe; color: #1e40af; }
+
+.ns-form-layout {
+  display: grid;
+  grid-template-columns: 11rem 1fr;
+  gap: 1rem;
+}
+
+.ns-form-nav {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 0.75rem;
+  padding: 0.5rem;
+}
+
+.ns-form-nav button {
+  display: block;
+  width: 100%;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  font-size: 0.75rem;
+  padding: 0.5rem 0.55rem;
+  border-radius: 0.45rem;
+  color: var(--gray-700);
+  cursor: pointer;
+}
+
+.ns-form-nav button.is-active {
+  background: var(--navy);
+  color: var(--white);
+  font-weight: 600;
+}
+
+.ns-form-nav button.done {
+  color: var(--teal-dark);
+}
+
+.ns-form-nav button.done::before {
+  content: "✓ ";
+}
+
+.ns-form-panel {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.ns-form-panel h4 {
+  margin: 0 0 0.35rem;
+  font-size: 0.9375rem;
+  color: var(--navy);
+}
+
+.ns-form-panel > p {
+  margin: 0 0 1rem;
+  font-size: 0.75rem;
+  color: var(--gray-500);
+}
+
+.ns-field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.ns-field label {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: var(--gray-700);
+  margin-bottom: 0.25rem;
+}
+
+.ns-field input,
+.ns-field select {
+  width: 100%;
+  border: 1px solid var(--gray-200);
+  border-radius: 0.45rem;
+  padding: 0.45rem 0.55rem;
+  font: inherit;
+  font-size: 0.75rem;
+  background: #fafbfd;
+  color: var(--ink);
+}
+
+.ns-field input:focus,
+.ns-field select:focus {
+  outline: 2px solid rgb(13 148 136 / 35%);
+  border-color: var(--teal);
+}
+
+.ns-field--full {
+  grid-column: 1 / -1;
+}
+
+.ns-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--gray-100);
+}
+
+.ns-btn {
+  border: none;
+  border-radius: 0.45rem;
+  padding: 0.45rem 0.85rem;
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ns-btn--ghost {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  color: var(--gray-700);
+}
+
+.ns-btn--primary {
+  background: var(--teal);
+  color: var(--white);
+}
+
+.ns-progress {
+  height: 0.35rem;
+  background: var(--gray-100);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 0.75rem;
+}
+
+.ns-progress span {
+  display: block;
+  height: 100%;
+  width: 72%;
+  background: linear-gradient(90deg, var(--teal), #14b8a6);
+  border-radius: inherit;
+}
+
+@media (max-width: 900px) {
+  .ns-app {
+    grid-template-columns: 1fr;
+  }
+
+  .ns-app__sidebar {
+    display: none;
+  }
+
+  .ns-stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ns-form-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .ns-stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ns-field-grid {
+    grid-template-columns: 1fr;
+  }
+}
