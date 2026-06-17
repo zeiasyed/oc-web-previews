@@ -141,6 +141,8 @@
         };
       });
     }
+
+    function emailBarClass(pct) {
       if (pct >= 90) return "limit-warn limit-danger";
       if (pct >= 70) return "limit-warn";
       return "";
@@ -264,7 +266,7 @@
 
       html +=
         '<div class="card"><h2 style="margin-top:0">Call summaries</h2>' +
-        '<p class="sub" style="margin-top:-0.5rem;margin-bottom:0.75rem">Retell post-call analysis — refreshes every 20s.</p>' +
+        '<p class="sub" style="margin-top:-0.5rem;margin-bottom:0.75rem">Click ▶ in Recording to listen. Refreshes every 20s.</p>' +
         "<table><thead><tr>" +
         "<th>Business</th><th>Outcome</th><th>Duration</th><th>Recording</th><th>When</th><th>Summary</th>" +
         "</tr></thead><tbody>";
