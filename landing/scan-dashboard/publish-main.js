@@ -336,7 +336,13 @@
       headers: headers,
       body: body ? JSON.stringify(body) : undefined,
     }).then(function (res) {
-      if (res.status === 401) throw new Error("Session expired â€” use the link from your email alert.");
+      if (res.status === 401) {
+        throw new Error(
+          publishKey
+            ? "This alert link expired or is invalid — sign in on the main dashboard, or use the newest email alert link."
+            : "Sign in on the main dashboard first (same browser tab), then open this page again."
+        );
+      }
       if (!res.ok) {
         return res.json().catch(function () { return {}; }).then(function (d) {
           throw new Error(d.error || "API error " + res.status);

@@ -50,7 +50,7 @@
       return fetch(apiBase + path, {
         headers: { Authorization: "Bearer " + token },
       }).then(function (res) {
-        if (res.status === 401) throw new Error("Session expired — sign in again.");
+        if (res.status === 401) throw new Error("Dashboard sign-in expired — enter your password again on the login screen.");
         if (!res.ok) {
           return res.json().catch(function () { return {}; }).then(function (d) {
             throw new Error(d.error || "API error " + res.status);

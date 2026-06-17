@@ -66,6 +66,8 @@ const OUTREACH_PROXY_PATHS = {
   "/api/outreach/publish-queue": "/voice/plumber-outreach/publish-queue",
   "/api/outreach/publish-preview": "/voice/plumber-outreach/publish-preview",
   "/api/outreach/send-preview-sms": "/voice/plumber-outreach/send-preview-sms",
+  "/api/outreach/tracking": "/voice/plumber-outreach/tracking",
+  "/api/outreach/preflight": "/voice/plumber-outreach/preflight",
 };
 
 async function proxyOutreachRequest(request, env, localPath, bodyText, publishKey, forwardMethod) {
@@ -77,18 +79,10 @@ async function proxyOutreachRequest(request, env, localPath, bodyText, publishKe
 
   const url = new URL(request.url);
   const forwardUrl = OUTREACH_API_BASE + remotePath + url.search;
-  const usePublishKeyOnly =
-    !!publishKey &&
-    (localPath === "/api/outreach/publish-preview" ||
-      localPath === "/api/outreach/send-preview-sms" ||
-      (localPath === "/api/outreach/publish-queue" && url.searchParams.get("call")));
-
   const headers = {
     "Content-Type": request.headers.get("Content-Type") || "application/json",
+    Authorization: "Bearer " + outreachToken,
   };
-  if (!usePublishKeyOnly) {
-    headers.Authorization = "Bearer " + outreachToken;
-  }
 
   const init = { method: forwardMethod || request.method, headers };
   if (bodyText != null) init.body = bodyText;
