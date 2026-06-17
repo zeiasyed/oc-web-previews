@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Solena Dashboard | QR Scans & Outreach</title>
-  <link rel="stylesheet" href="styles.css?v=8">
+  <link rel="stylesheet" href="styles.css?v=9">
 </head>
 <body>
   <div class="wrap">
@@ -31,6 +31,7 @@
 
       <nav class="dash-tabs" aria-label="Dashboard sections">
         <button type="button" class="dash-tab active" data-tab="qr">QR activity</button>
+        <button type="button" class="dash-tab" data-tab="tracking">Tracking</button>
         <button type="button" class="dash-tab" data-tab="outreach">Outreach script</button>
         <button type="button" class="dash-tab" data-tab="publish">Live publish</button>
       </nav>
@@ -95,6 +96,10 @@
       </div>
       </div>
 
+      <div id="tab-tracking" class="hidden">
+        <div id="tracking-root"></div>
+      </div>
+
       <div id="tab-outreach" class="hidden">
         <div id="outreach-playbook-root" class="card outreach-card"></div>
       </div>
@@ -107,9 +112,10 @@
 
   <script src="../assets/branding.js?v=8"></script>
   <script src="../assets/businesses.js?v=8"></script>
+  <script src="tracking-ui.js?v=1"></script>
   <script src="outreach-playbook-ui.js?v=10"></script>
   <script src="publish-wizard-ui.js?v=11"></script>
   <script src="publish-queue-ui.js?v=9"></script>
-  <script src="app.js?v=8"></script>
+  <script src="app.js?v=9"></script>
 </body>
 </html>

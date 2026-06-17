@@ -11,12 +11,15 @@
   var refreshBtn = document.getElementById("refresh-btn");
   var logoutBtn = document.getElementById("logout-btn");
   var tabQr = document.getElementById("tab-qr");
+  var tabTracking = document.getElementById("tab-tracking");
   var tabOutreach = document.getElementById("tab-outreach");
   var tabPublish = document.getElementById("tab-publish");
   var outreachRoot = document.getElementById("outreach-playbook-root");
+  var trackingRoot = document.getElementById("tracking-root");
   var publishRoot = document.getElementById("publish-queue-root");
   var outreachMounted = false;
   var publishController = null;
+  var trackingController = null;
   var totalEl = document.getElementById("total-scans");
   var slugCountEl = document.getElementById("slug-count");
   var funnelViewsEl = document.getElementById("funnel-views");
@@ -32,8 +35,22 @@
   function resetOutreachPanels() {
     outreachMounted = false;
     publishController = null;
+    trackingController = null;
     if (outreachRoot) outreachRoot.innerHTML = "";
+    if (trackingRoot) trackingRoot.innerHTML = "";
     if (publishRoot) publishRoot.innerHTML = "";
+  }
+
+  function mountTracking() {
+    if (!trackingRoot || !window.TrackingUI || !getToken()) return;
+    if (trackingController) {
+      trackingController.refresh();
+      if (trackingController.startPoll) trackingController.startPoll();
+      return;
+    }
+    trackingController = window.TrackingUI.mount(trackingRoot, apiBase, getToken, function (msg) {
+      if (statusEl) statusEl.textContent = msg;
+    });
   }
 
   function switchTab(name) {
@@ -41,10 +58,13 @@
       btn.classList.toggle("active", btn.getAttribute("data-tab") === name);
     });
     if (tabQr) tabQr.classList.toggle("hidden", name !== "qr");
+    if (tabTracking) tabTracking.classList.toggle("hidden", name !== "tracking");
     if (tabOutreach) tabOutreach.classList.toggle("hidden", name !== "outreach");
     if (tabPublish) tabPublish.classList.toggle("hidden", name !== "publish");
     if (refreshBtn) refreshBtn.style.display = name === "qr" ? "" : "none";
     if (publishController && publishController.stopPoll) publishController.stopPoll();
+    if (trackingController && trackingController.stopPoll) trackingController.stopPoll();
+    if (name === "tracking") mountTracking();
     if (name === "outreach") mountOutreachBuilder();
     if (name === "publish") mountPublishQueue();
   }
