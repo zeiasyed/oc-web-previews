@@ -109,6 +109,11 @@ button:hover, .btn:hover { filter: brightness(1.05); }
   margin-bottom: 0.75rem;
   border: 1px solid #a7f3d0;
 }
+.outreach-msg-warn {
+  background: #fffbeb;
+  color: #92400e;
+  border-color: #fcd34d;
+}
 .outreach-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
@@ -357,4 +362,33 @@ button:hover, .btn:hover { filter: brightness(1.05); }
 .tracking-limit.limit-warn .limit-fill { background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%); }
 .tracking-limit.limit-danger .limit-fill { background: linear-gradient(90deg, #ef4444 0%, #b91c1c 100%); }
 .tracking-limit.limit-danger { border-left-color: #ef4444; }
+.tracking-play-btn {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--accent);
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+.tracking-play-btn:hover:not(:disabled) {
+  background: #eff6ff;
+  border-color: var(--accent);
+}
+.tracking-play-btn.playing {
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.tracking-play-btn:disabled { opacity: 0.55; cursor: wait; }
+.tracking-audio-hidden {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
 .summary-cell { max-width: 420px; white-space: normal; font-size: 0.9rem; line-height: 1.45; }

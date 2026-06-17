@@ -826,9 +826,74 @@ export default {
         if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
         return withCors(request, env, await handlePlumberOutreachCampaignPause(request, env));
       }
+      if (path === "/voice/plumber-outreach/campaign/resume" && request.method === "POST") {
+        if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
+        return withCors(request, env, await handlePlumberOutreachCampaignResume(request, env));
+      }
       if (path === "/voice/plumber-outreach/campaign/status" && request.method === "GET") {
         if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
         return withCors(request, env, await handlePlumberOutreachCampaignStatus(request, env));
+      }
+      if (path === "/voice/plumber-outreach/outbound" && request.method === "POST") {
+        if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
+        return withCors(request, env, await handlePlumberOutreachOutbound(request, env));
+      }
+      if (path === "/voice/plumber-outreach/resend-alert" && request.method === "POST") {
+        if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
+        return withCors(request, env, await handlePlumberOutreachResendAlert(request, env));
+      }
+      if (path === "/voice/plumber-outreach/test-alert-email" && request.method === "POST") {
+        if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
+        return withCors(request, env, await handlePlumberTestAlertEmail(request, env));
+      }
+      if (path === "/voice/plumber-outreach/tracking" && request.method === "GET") {
+        if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
+        return withCors(request, env, await handlePlumberOutreachTracking(request, env));
+      }
+      if (path === "/voice/plumber-outreach/voices" && request.method === "GET") {
+        if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
+        return withCors(request, env, await handlePlumberOutreachListVoices(request, env));
+      }
+      if (path === "/voice/plumber-outreach/agent-debug" && request.method === "GET") {
+        if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
+        return withCors(request, env, await handlePlumberOutreachAgentDebug(request, env));
+      }
+      if (path === "/voice/plumber-outreach/preflight" && request.method === "GET") {
+        if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
+        return withCors(request, env, await handlePlumberOutreachPreflight(request, env));
+      }
+      if (path === "/voice/plumber-outreach/inspect-call" && request.method === "GET") {
+        if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
+        return withCors(request, env, await handlePlumberOutreachInspectCall(request, env));
+      }
+      if (path === "/voice/plumber-outreach/recording" && request.method === "GET") {
+        if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
+        return withCors(request, env, await handlePlumberOutreachCallRecording(request, env));
+      }
+      if (path === "/voice/test-email" && request.method === "POST") {
+        if (!checkLabVerifyAuth(request, env) && !checkPlumberOutreachAuth(request, env)) {
+          return withCors(request, env, json({ error: "Unauthorized" }, 401));
+        }
+        const body = await request.json().catch(() => ({}));
+        const result =
+          typeof sendOutreachEmail === "function"
+            ? await sendOutreachEmail(env, {
+                to: body.to,
+                subject: String(body.subject || "Solena outreach email test"),
+                text: String(body.message || "If you received this, 1-minute call alerts are working."),
+                html: `<p>${String(body.message || "If you received this, 1-minute call alerts are working.")}</p>`,
+              })
+            : { sent: false, reason: "email_module_missing" };
+        return withCors(
+          request,
+          env,
+          json({
+            ok: !!result.sent,
+            to: result.to || env.PLUMBER_OUTREACH_NOTIFY_EMAIL || null,
+            from: env.OUTREACH_EMAIL_FROM || null,
+            result,
+          })
+        );
       }
       if (path === "/voice/plumber-outreach/playbook" && request.method === "GET") {
         if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));

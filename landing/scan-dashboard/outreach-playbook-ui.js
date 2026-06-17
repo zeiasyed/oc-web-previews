@@ -55,8 +55,22 @@
     return playbook;
   }
 
+  function snapshotPlaybook(playbook) {
+    return JSON.stringify(playbook || {});
+  }
+
   function mount(container, apiBase, getToken, onTokenNeeded) {
-    var ui = { saving: false, msg: "", selected: "start", dragIdx: null, playbook: null, meta: {} };
+    var ui = {
+      saving: false,
+      msg: "",
+      msgKind: "ok",
+      selected: "start",
+      dragIdx: null,
+      playbook: null,
+      meta: {},
+      integrity: {},
+      savedSnapshot: "",
+    };
 
     function api(path, opts) {
       var token = getToken();
@@ -81,6 +95,45 @@
       });
     }
 
+    function syncAndReselect() {
+      if (!ui.playbook) return;
+      ui.playbook = collectFromDom(container, ui.playbook);
+    }
+
+    function isDirty() {
+      if (!ui.playbook || !ui.savedSnapshot) return false;
+      syncAndReselect();
+      return snapshotPlaybook(ui.playbook) !== ui.savedSnapshot;
+    }
+
+    function markSaved(playbook, integrity) {
+      ui.playbook = playbook;
+      ui.integrity = integrity || ui.integrity || {};
+      ui.savedSnapshot = snapshotPlaybook(playbook);
+    }
+
+    function lockBanner() {
+      var integ = ui.integrity || {};
+      if (!integ.fingerprint) {
+        return (
+          '<p class="outreach-msg outreach-msg-warn">Script not locked in yet — click <strong>Save &amp; sync agent</strong> before any live call.</p>'
+        );
+      }
+      if (isDirty()) {
+        return (
+          '<p class="outreach-msg outreach-msg-warn">Unsaved changes — save before leaving this tab or placing a call.</p>'
+        );
+      }
+      var saved = integ.saved_at ? new Date(integ.saved_at).toLocaleString() : "unknown time";
+      return (
+        '<p class="outreach-msg">Script locked in (id ' +
+        esc(integ.fingerprint) +
+        ", saved " +
+        esc(saved) +
+        '). Calls are blocked until you save again after edits.</p>'
+      );
+    }
+
     function renderPathNode(path, idx) {
       if (!path.enabled) return "";
       var sel = ui.selected === path.id ? " outreach-node-selected" : "";
@@ -102,12 +155,12 @@
         return (
           '<div class="outreach-inspector">' +
           "<h3>Call opening &amp; setup</h3>" +
-          '<p class="muted">What Alex says first — after a live human answers (not during IVR).</p>' +
+          '<p class="muted">What Alex says first — after a live human answers (not during IVR). Use <code>(wait)</code> or <code>(pause)</code> between segments — Alex will pause silently, never read those aloud.</p>' +
           '<label>Agent name</label><input id="outreach-persona" type="text" value="' + esc(pb.agent_persona) + '">' +
           '<label>Company name</label><input id="outreach-company" type="text" value="' + esc(pb.company_label) + '">' +
           '<label>Voice style</label><textarea id="outreach-voice" rows="2">' + esc(pb.voice_style) + "</textarea>" +
           '<label>IVR rules</label><textarea id="outreach-ivr" rows="2">' + esc(pb.ivr_rules) + "</textarea>" +
-          '<label>Opening pitch</label><textarea id="outreach-opening" rows="4">' + esc(opening) + "</textarea>" +
+          '<label>Opening pitch</label><textarea id="outreach-opening" rows="6">' + esc(opening) + "</textarea>" +
           '<p class="muted">Tags: {{company_name}}, {{city}}</p>' +
           '<label>General rules</label><textarea id="outreach-rules" rows="3">' + esc(pb.general_rules) + "</textarea></div>"
         );
@@ -154,6 +207,7 @@
         return;
       }
       var nodes = (pb.paths || []).map(renderPathNode).join("");
+      var msgClass = ui.msgKind === "warn" ? "outreach-msg outreach-msg-warn" : "outreach-msg";
       container.innerHTML =
         '<div class="outreach-builder">' +
         '<div class="outreach-topbar">' +
@@ -162,7 +216,8 @@
         '<div class="outreach-topbar-actions">' +
         '<button type="button" class="btn btn-ghost" id="outreach-reset">Reset defaults</button>' +
         '<button type="button" class="btn" id="outreach-save">' + (ui.saving ? "Saving…" : "Save &amp; sync agent") + "</button></div></div>" +
-        (ui.msg ? '<p class="outreach-msg">' + esc(ui.msg) + "</p>" : "") +
+        lockBanner() +
+        (ui.msg ? '<p class="' + msgClass + '">' + esc(ui.msg) + "</p>" : "") +
         '<div class="outreach-layout">' +
         '<div class="outreach-flow">' +
         '<div class="outreach-start' + (ui.selected === "start" ? " outreach-node-selected" : "") + '" data-select="start">' +
@@ -176,10 +231,6 @@
         '<div id="outreach-inspector-wrap">' + renderInspector() + "</div></div></div>";
 
       bindEvents();
-    }
-
-    function syncAndReselect() {
-      ui.playbook = collectFromDom(container, ui.playbook);
     }
 
     function reorder(from, to) {
@@ -198,24 +249,35 @@
         saveBtn.onclick = function () {
           if (ui.saving) return;
           syncAndReselect();
+          if (!String(ui.playbook.opening || "").trim()) {
+            ui.msg = "Opening pitch cannot be empty.";
+            ui.msgKind = "warn";
+            draw();
+            return;
+          }
           ui.saving = true;
           ui.msg = "Saving…";
+          ui.msgKind = "ok";
           draw();
           api("/api/outreach/playbook", { method: "POST", body: { playbook: ui.playbook } })
             .then(function (res) {
-              ui.playbook = res.playbook || ui.playbook;
+              markSaved(res.playbook || ui.playbook, res.integrity || ui.integrity);
               if (res.sync && res.sync.ok) {
                 ui.msg = "Saved. Alex will use this on the next call.";
               } else if (res.sync && res.sync.error) {
                 ui.msg = "Saved script, but Retell sync failed: " + res.sync.error;
+                ui.msgKind = "warn";
               } else if (res.sync && res.sync.reason) {
                 ui.msg = "Saved script, but Retell sync skipped: " + res.sync.reason;
+                ui.msgKind = "warn";
               } else {
                 ui.msg = "Saved playbook (agent sync: check Retell).";
               }
+              ui.msgKind = ui.msgKind || "ok";
             })
             .catch(function (e) {
               ui.msg = e.message || "Save failed";
+              ui.msgKind = "warn";
             })
             .finally(function () {
               ui.saving = false;
@@ -227,16 +289,28 @@
       var resetBtn = container.querySelector("#outreach-reset");
       if (resetBtn) {
         resetBtn.onclick = function () {
-          if (!confirm("Reset outreach script to defaults?")) return;
+          var typed = prompt(
+            "This replaces your saved script with factory defaults.\n\nType RESET-PLAYBOOK to confirm:"
+          );
+          if (typed !== "RESET-PLAYBOOK") {
+            if (typed != null) {
+              ui.msg = "Reset cancelled — type RESET-PLAYBOOK exactly to confirm.";
+              ui.msgKind = "warn";
+              draw();
+            }
+            return;
+          }
           ui.saving = true;
-          api("/api/outreach/playbook", { method: "POST", body: { reset: true } })
+          api("/api/outreach/playbook", { method: "POST", body: { reset: true, reset_confirm: "RESET-PLAYBOOK" } })
             .then(function (res) {
-              ui.playbook = res.playbook;
+              markSaved(res.playbook, res.integrity || {});
               ui.selected = "start";
-              ui.msg = "Reset to defaults.";
+              ui.msg = "Reset to factory defaults and synced.";
+              ui.msgKind = "warn";
             })
             .catch(function (e) {
               ui.msg = e.message || "Reset failed";
+              ui.msgKind = "warn";
             })
             .finally(function () {
               ui.saving = false;
@@ -290,9 +364,10 @@
       draw();
       api("/api/outreach/playbook")
         .then(function (res) {
-          ui.playbook = res.playbook;
+          markSaved(res.playbook, res.integrity || {});
           ui.meta = res.meta || {};
           ui.msg = "";
+          ui.msgKind = "ok";
           draw();
         })
         .catch(function (e) {
@@ -304,6 +379,14 @@
     }
 
     load();
+
+    return {
+      isDirty: isDirty,
+      warnIfDirty: function () {
+        if (!isDirty()) return true;
+        return confirm("You have unsaved script changes. Leave anyway? (Click Cancel and save first.)");
+      },
+    };
   }
 
   global.OutreachPlaybookUI = {

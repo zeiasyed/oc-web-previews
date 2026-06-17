@@ -42,7 +42,7 @@
   }
 
   function mount(container, apiBase, getToken, onStatus) {
-    var ui = { poll: null, data: null };
+    var ui = { poll: null, data: null, activeAudio: null, activeBtn: null };
 
     function api(path) {
       var token = getToken();
@@ -60,7 +60,87 @@
       });
     }
 
-    function emailBarClass(pct) {
+    function fmtOutcomeDisplay(row) {
+      if (row.call_outcome) return fmtOutcome(row.call_outcome);
+      if (row.status === "in_progress" || row.status === "placed") return fmtOutcome(row.status);
+      if (row.status === "done") return "unclassified";
+      return fmtOutcome(row.status);
+    }
+
+    function bindRecordings() {
+      container.querySelectorAll(".tracking-play-btn").forEach(function (btn) {
+        btn.onclick = function () {
+          var callId = btn.getAttribute("data-call-id");
+          var url = btn.getAttribute("data-recording-url") || "";
+
+          function setBtnPlaying(playing) {
+            btn.classList.toggle("playing", playing);
+            btn.textContent = playing ? "⏸" : "▶";
+            btn.setAttribute("aria-label", playing ? "Pause recording" : "Play recording");
+          }
+
+          function stopActive() {
+            if (ui.activeAudio) {
+              ui.activeAudio.pause();
+              ui.activeAudio = null;
+            }
+            if (ui.activeBtn && ui.activeBtn !== btn) {
+              ui.activeBtn.classList.remove("playing");
+              ui.activeBtn.textContent = "▶";
+              ui.activeBtn.setAttribute("aria-label", "Play recording");
+            }
+            ui.activeBtn = null;
+          }
+
+          function startPlay(recordingUrl) {
+            stopActive();
+            var audio = btn._trackingAudio || document.createElement("audio");
+            audio.className = "tracking-audio-hidden";
+            audio.src = recordingUrl;
+            btn._trackingAudio = audio;
+            ui.activeAudio = audio;
+            ui.activeBtn = btn;
+            setBtnPlaying(true);
+            audio.onended = function () {
+              setBtnPlaying(false);
+              if (ui.activeBtn === btn) ui.activeBtn = null;
+              if (ui.activeAudio === audio) ui.activeAudio = null;
+            };
+            audio.play().catch(function () {
+              setBtnPlaying(false);
+              btn.title = "Could not play — try again";
+            });
+          }
+
+          if (btn.classList.contains("playing") && btn._trackingAudio) {
+            btn._trackingAudio.pause();
+            setBtnPlaying(false);
+            ui.activeAudio = null;
+            ui.activeBtn = null;
+            return;
+          }
+
+          if (url) {
+            startPlay(url);
+            return;
+          }
+
+          btn.disabled = true;
+          api("/api/outreach/recording?call_id=" + encodeURIComponent(callId))
+            .then(function (res) {
+              btn.disabled = false;
+              if (res.recording_url) {
+                btn.setAttribute("data-recording-url", res.recording_url);
+                startPlay(res.recording_url);
+              }
+            })
+            .catch(function (e) {
+              btn.disabled = false;
+              btn.title = e.message || "Recording unavailable";
+            });
+        };
+      });
+    }
       if (pct >= 90) return "limit-warn limit-danger";
       if (pct >= 70) return "limit-warn";
       return "";
@@ -186,11 +266,19 @@
         '<div class="card"><h2 style="margin-top:0">Call summaries</h2>' +
         '<p class="sub" style="margin-top:-0.5rem;margin-bottom:0.75rem">Retell post-call analysis — refreshes every 20s.</p>' +
         "<table><thead><tr>" +
-        "<th>Business</th><th>Outcome</th><th>Duration</th><th>When</th><th>Summary</th>" +
+        "<th>Business</th><th>Outcome</th><th>Duration</th><th>Recording</th><th>When</th><th>Summary</th>" +
         "</tr></thead><tbody>";
 
       (data.recent_calls || []).forEach(function (row) {
         var summary = row.call_summary || (row.status === "in_progress" ? "Call in progress…" : "—");
+        var canPlay = row.call_id && row.status !== "in_progress" && row.status !== "placed";
+        var recordingCell = canPlay
+          ? '<button type="button" class="tracking-play-btn" data-call-id="' +
+            esc(row.call_id) +
+            '"' +
+            (row.recording_url ? ' data-recording-url="' + esc(row.recording_url) + '"' : "") +
+            ' aria-label="Play recording" title="Play call recording">▶</button>'
+          : '<span class="muted">—</span>';
         html +=
           "<tr><td><strong>" +
           esc(row.company_name) +
@@ -198,9 +286,11 @@
           esc(row.city) +
           (row.contact_name ? " · " + esc(row.contact_name) : "") +
           "</div></td><td>" +
-          fmtOutcome(row.call_outcome || row.status) +
+          fmtOutcomeDisplay(row) +
           "</td><td>" +
           fmtDuration(row.duration_sec) +
+          "</td><td>" +
+          recordingCell +
           "</td><td>" +
           fmtWhen(row.ended_at || row.call_started_at || row.placed_at) +
           '</td><td class="summary-cell">' +
@@ -208,11 +298,12 @@
           "</td></tr>";
       });
       if (!(data.recent_calls || []).length) {
-        html += '<tr><td colspan="5" class="muted">No calls yet.</td></tr>';
+        html += '<tr><td colspan="6" class="muted">No calls yet.</td></tr>';
       }
       html += "</tbody></table></div>";
 
       container.innerHTML = html;
+      bindRecordings();
       if (onStatus) {
         onStatus("Tracking updated " + fmtWhen(data.updated_at));
       }

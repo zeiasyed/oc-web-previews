@@ -17,7 +17,7 @@
   var outreachRoot = document.getElementById("outreach-playbook-root");
   var trackingRoot = document.getElementById("tracking-root");
   var publishRoot = document.getElementById("publish-queue-root");
-  var outreachMounted = false;
+  var outreachController = null;
   var publishController = null;
   var trackingController = null;
   var totalEl = document.getElementById("total-scans");
@@ -33,12 +33,17 @@
   var statusEl = document.getElementById("status");
 
   function resetOutreachPanels() {
-    outreachMounted = false;
+    outreachController = null;
     publishController = null;
     trackingController = null;
     if (outreachRoot) outreachRoot.innerHTML = "";
     if (trackingRoot) trackingRoot.innerHTML = "";
     if (publishRoot) publishRoot.innerHTML = "";
+  }
+
+  function canLeaveOutreachTab() {
+    if (!outreachController || !outreachController.warnIfDirty) return true;
+    return outreachController.warnIfDirty();
   }
 
   function mountTracking() {
@@ -54,6 +59,10 @@
   }
 
   function switchTab(name) {
+    var activeTab = document.querySelector(".dash-tab.active");
+    var current = activeTab ? activeTab.getAttribute("data-tab") : "qr";
+    if (current === "outreach" && name !== "outreach" && !canLeaveOutreachTab()) return;
+
     document.querySelectorAll(".dash-tab").forEach(function (btn) {
       btn.classList.toggle("active", btn.getAttribute("data-tab") === name);
     });
@@ -81,9 +90,8 @@
 
   function mountOutreachBuilder() {
     if (!outreachRoot || !window.OutreachPlaybookUI || !getToken()) return;
-    if (outreachMounted) return;
-    outreachMounted = true;
-    window.OutreachPlaybookUI.mount(outreachRoot, apiBase, getToken, function () {});
+    if (outreachController) return;
+    outreachController = window.OutreachPlaybookUI.mount(outreachRoot, apiBase, getToken, function () {});
   }
 
   document.querySelectorAll(".dash-tab").forEach(function (btn) {
@@ -309,7 +317,6 @@
       var data = await fetchSummary(token);
       renderSummary(data);
       showDashboard(true);
-      resetOutreachPanels();
       var activeTab = document.querySelector(".dash-tab.active");
       switchTab(activeTab ? activeTab.getAttribute("data-tab") : "qr");
     } catch (err) {

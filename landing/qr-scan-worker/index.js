@@ -68,6 +68,7 @@ const OUTREACH_PROXY_PATHS = {
   "/api/outreach/send-preview-sms": "/voice/plumber-outreach/send-preview-sms",
   "/api/outreach/tracking": "/voice/plumber-outreach/tracking",
   "/api/outreach/preflight": "/voice/plumber-outreach/preflight",
+  "/api/outreach/recording": "/voice/plumber-outreach/recording",
 };
 
 async function proxyOutreachRequest(request, env, localPath, bodyText, publishKey, forwardMethod) {
