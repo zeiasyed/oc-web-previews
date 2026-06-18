@@ -76,17 +76,43 @@ async function submitToEndpoint(form, endpoint) {
   }
 }
 
-function mailtoFallback(form, subject, statusEl) {
-  const data = new FormData(form);
-  const lines = [];
-  for (const [key, value] of data.entries()) {
-    if (key.startsWith("_")) continue;
-    lines.push(`${key}: ${value}`);
+function callbackApiBase() {
+  return (window.BRANDING?.qr_scan_api || "").replace(/\/+$/, "");
+}
+
+function callbackPageName() {
+  const path = (window.location.pathname || "").split("/").pop() || "";
+  return path.replace(".html", "") || "unknown";
+}
+
+async function submitCallbackRequest(form, subject) {
+  const endpoint = window.BRANDING?.formspree_callback_endpoint || "";
+  if (endpoint) {
+    await submitToEndpoint(form, endpoint);
+    return;
   }
-  const email = window.BRANDING?.email_display || "hello@solena.digital";
-  const body = encodeURIComponent(lines.join("\n"));
-  const href = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${body}`;
-  statusEl.innerHTML = `Notification email not configured. <a href="${href}">Email us your details</a> or continue to payment below.`;
+
+  const apiBase = callbackApiBase();
+  if (!apiBase) {
+    throw new Error("Callback service unavailable. Please call us at " + (window.BRANDING?.phone_display || "714-686-4196") + ".");
+  }
+
+  const data = Object.fromEntries(new FormData(form).entries());
+  const response = await fetch(`${apiBase}/callback`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({
+      ...data,
+      subject,
+      slug: data.business_slug || slug || "",
+      page: callbackPageName(),
+    }),
+  });
+
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({}));
+    throw new Error(payload.error || "Could not send your request. Please try again.");
+  }
 }
 
 function wireCallbackForm() {
@@ -99,19 +125,14 @@ function wireCallbackForm() {
     statusEl.textContent = "Sending…";
     statusEl.className = "form-status";
 
-    const endpoint = window.BRANDING?.formspree_callback_endpoint || "";
     const subject = document.getElementById("cb-subject")?.value || "Call me back";
 
     try {
-      if (endpoint) {
-        await submitToEndpoint(form, endpoint);
-        statusEl.textContent = "Got it — we'll call you back soon!";
-        statusEl.className = "form-status form-status-success";
-        form.reset();
-        setBusinessContext(findBusiness());
-      } else {
-        mailtoFallback(form, subject, statusEl);
-      }
+      await submitCallbackRequest(form, subject);
+      statusEl.textContent = "Got it — we'll call you back soon!";
+      statusEl.className = "form-status form-status-success";
+      form.reset();
+      setBusinessContext(findBusiness());
     } catch (err) {
       console.error(err);
       statusEl.textContent = err.message || "Something went wrong. Please call or email us.";

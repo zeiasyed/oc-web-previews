@@ -3,6 +3,8 @@
  * Printed QR codes stay unchanged; connect.html beacons here on load.
  */
 
+import { PLUMBER_DIRECTORY } from "./plumber-directory.js";
+
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PATCH, OPTIONS",
@@ -63,6 +65,7 @@ function unauthorized() {
 const OUTREACH_API_BASE = "https://api.inertia-intel.com";
 const OUTREACH_PROXY_PATHS = {
   "/api/outreach/playbook": "/voice/plumber-outreach/playbook",
+  "/api/outreach/playbook/history": "/voice/plumber-outreach/playbook/history",
   "/api/outreach/publish-queue": "/voice/plumber-outreach/publish-queue",
   "/api/outreach/publish-preview": "/voice/plumber-outreach/publish-preview",
   "/api/outreach/send-preview-sms": "/voice/plumber-outreach/send-preview-sms",
@@ -137,14 +140,13 @@ async function handleOutreachProxy(request, env, localPath) {
 }
 
 function checkAuth(request, env) {
-  const expected = env.DASHBOARD_PASSWORD;
+  const expected = String(env.DASHBOARD_PASSWORD || "").trim();
   if (!expected) return true;
   const header = request.headers.get("Authorization") || "";
-  if (header.startsWith("Bearer ")) {
-    return header.slice(7) === expected;
-  }
+  const bearer = header.match(/^Bearer\s+(.+)$/i);
+  if (bearer) return bearer[1].trim() === expected;
   const key = new URL(request.url).searchParams.get("key");
-  return key === expected;
+  return String(key || "").trim() === expected;
 }
 
 function normalizeSlug(raw) {
@@ -241,14 +243,14 @@ async function getSummary(env) {
 
   const bySlugRows = (totals.results || []).map((row) => {
     const latest = latestMap.get(row.slug);
-    return {
+    return enrichScanRow({
       ...row,
       country: latest?.country || null,
       region_code: latest?.region_code || null,
       region: latest?.region || null,
       city: latest?.city || null,
       last_location: latest ? formatLocation(latest) : null,
-    };
+    });
   });
 
   const recent = await env.DB.prepare(
@@ -276,16 +278,18 @@ async function getSummary(env) {
     `SELECT COUNT(*) AS total FROM scans WHERE ${REAL_SCAN_SQL_FILTER}`
   ).first();
 
-  const recentRows = (recent.results || []).map((row) => ({
-    slug: row.slug,
-    scanned_at: row.scanned_at,
-    country: row.country,
-    region_code: row.region_code,
-    region: row.region,
-    city: row.city,
-    location: formatLocation(row),
-    device: deviceLabel(row.user_agent),
-  }));
+  const recentRows = (recent.results || []).map((row) =>
+    enrichScanRow({
+      slug: row.slug,
+      scanned_at: row.scanned_at,
+      country: row.country,
+      region_code: row.region_code,
+      region: row.region,
+      city: row.city,
+      location: formatLocation(row),
+      device: deviceLabel(row.user_agent),
+    })
+  );
 
   return {
     total: totalRow?.total || 0,
@@ -300,7 +304,7 @@ const FUNNEL_STEP_ORDER = ["connect", "pricing", "register", "payment"];
 
 function normalizeEventType(raw) {
   const type = String(raw || "").trim().toLowerCase();
-  if (type === "page_view" || type === "click") return type;
+  if (type === "page_view" || type === "click" || type === "callback_request") return type;
   return null;
 }
 
@@ -424,16 +428,18 @@ async function getFunnelMetrics(env) {
       total_page_views: totals?.page_views || 0,
       funnel_steps: funnelSteps,
       top_clicks: topClicks.results || [],
-      recent: (recent.results || []).map((row) => ({
-        slug: row.slug,
-        event_type: row.event_type,
-        page: row.page,
-        element_id: row.element_id,
-        element_label: row.element_label,
-        event_at: row.event_at,
-        location: formatLocation(row),
-        device: deviceLabel(row.user_agent),
-      })),
+      recent: (recent.results || []).map((row) =>
+        enrichScanRow({
+          slug: row.slug,
+          event_type: row.event_type,
+          page: row.page,
+          element_id: row.element_id,
+          element_label: row.element_label,
+          event_at: row.event_at,
+          location: formatLocation(row),
+          device: deviceLabel(row.user_agent),
+        })
+      ),
     };
   } catch {
     return empty;
@@ -450,8 +456,328 @@ function deviceLabel(userAgent) {
   return "Browser";
 }
 
+function slugLabel(slug) {
+  const info = PLUMBER_DIRECTORY[String(slug || "").toLowerCase()];
+  if (info?.company_name) return info.company_name;
+  return String(slug || "")
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+function plumberInfo(slug) {
+  const key = String(slug || "").trim().toLowerCase();
+  const row = PLUMBER_DIRECTORY[key];
+  if (!row) return { slug: key, company_name: slugLabel(key), phone: "", city: "" };
+  return {
+    slug: key,
+    company_name: row.company_name || slugLabel(key),
+    phone: row.phone || "",
+    city: row.city || "",
+  };
+}
+
+function enrichScanRow(row) {
+  const info = plumberInfo(row.slug);
+  return {
+    ...row,
+    company_name: info.company_name,
+    phone: info.phone,
+    plumber_city: info.city,
+  };
+}
+
+function scanConnectUrl(env, slug) {
+  const base = String(
+    env.SCAN_CONNECT_BASE || "https://zeiasyed.github.io/oc-web-previews/landing/connect.html"
+  ).replace(/\/+$/, "");
+  return `${base}?biz=${encodeURIComponent(slug)}`;
+}
+
+function scanDashboardUrl() {
+  return "https://zeiasyed.github.io/oc-web-previews/landing/scan-dashboard/";
+}
+
+async function shouldNotifyScan(env, slug) {
+  const minutes = Math.max(0, parseInt(env.SCAN_NOTIFY_COOLDOWN_MINUTES || "15", 10) || 15);
+  if (minutes === 0) return true;
+  try {
+    const row = await env.DB.prepare(
+      `SELECT id FROM scan_notify_log
+       WHERE slug = ?1 AND created_at > datetime('now', ?2)
+       LIMIT 1`
+    )
+      .bind(slug, `-${minutes} minutes`)
+      .first();
+    return !row;
+  } catch {
+    return true;
+  }
+}
+
+async function logScanNotify(env, slug, scannedAt, emailTo) {
+  try {
+    await env.DB.prepare(
+      `INSERT INTO scan_notify_log (slug, scanned_at, email_to, created_at)
+       VALUES (?1, ?2, ?3, datetime('now'))`
+    )
+      .bind(slug, scannedAt, emailTo || null)
+      .run();
+  } catch (err) {
+    console.warn("scan_notify_log insert failed", err?.message || err);
+  }
+}
+
+async function sendScanNotifyEmail(env, payload) {
+  const recipient = String(env.SCAN_NOTIFY_EMAIL || env.NOTIFY_EMAIL || "").trim();
+  if (!recipient) return { sent: false, reason: "no_recipient" };
+
+  const fromRaw = String(env.SCAN_EMAIL_FROM || "Solena Digital <alerts@nexa-trials.com>").trim();
+  const fromMatch = fromRaw.match(/<([^>]+)>/);
+  const fromEmail = fromMatch ? fromMatch[1] : fromRaw.trim();
+  const fromName = fromRaw.includes("<")
+    ? fromRaw.replace(/<[^>]+>/, "").trim() || "Solena Digital"
+    : "Solena Digital";
+  const fromHeader = fromRaw.includes("<") ? fromRaw : `${fromName} <${fromEmail}>`;
+
+  const { slug, scannedAt, location, device } = payload;
+  const info = plumberInfo(slug);
+  const label = info.company_name;
+  const when = new Date(scannedAt).toLocaleString("en-US", {
+    timeZone: "America/Los_Angeles",
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+  const loc = location || "Unknown location";
+  const connectUrl = scanConnectUrl(env, slug);
+  const dashboardUrl = scanDashboardUrl();
+  const phoneLine = info.phone ? `\nPhone: ${info.phone}` : "";
+  const cityLine = info.city ? `\nCity: ${info.city}` : "";
+
+  const subject = `Postcard QR scan: ${label}${location ? ` — ${location}` : ""}`;
+  const text =
+    `Someone scanned the postcard QR code.\n\n` +
+    `Company: ${label}${phoneLine}${cityLine}\n` +
+    `QR slug: ${slug}\n` +
+    `When: ${when} PT\n` +
+    `Location: ${loc}\n` +
+    `Device: ${device || "Unknown"}\n\n` +
+    `Funnel page: ${connectUrl}\n` +
+    `Dashboard: ${dashboardUrl}\n`;
+
+  const html =
+    `<p><strong>Someone scanned the postcard QR code.</strong></p>` +
+    `<ul>` +
+    `<li><strong>Company:</strong> ${label}</li>` +
+    (info.phone ? `<li><strong>Phone:</strong> <a href="tel:${info.phone.replace(/\D/g, "")}">${info.phone}</a></li>` : "") +
+    (info.city ? `<li><strong>City:</strong> ${info.city}</li>` : "") +
+    `<li><strong>QR slug:</strong> <code>${slug}</code></li>` +
+    `<li><strong>When:</strong> ${when} PT</li>` +
+    `<li><strong>Location:</strong> ${loc}</li>` +
+    `<li><strong>Device:</strong> ${device || "Unknown"}</li>` +
+    `</ul>` +
+    `<p><a href="${connectUrl}">Open funnel page</a> · ` +
+    `<a href="${dashboardUrl}">QR dashboard</a></p>`;
+
+  if (env.RESEND_API_KEY) {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ from: fromHeader, to: [recipient], subject, text, html }),
+    });
+    if (res.ok) return { sent: true, to: recipient, provider: "resend" };
+    console.warn("scan notify resend failed", await res.text());
+  }
+
+  const mcRes = await fetch("https://api.mailchannels.net/tx/v1/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      personalizations: [{ to: [{ email: recipient }] }],
+      from: { email: fromEmail, name: fromName },
+      subject,
+      content: [
+        { type: "text/plain", value: text },
+        { type: "text/html", value: html },
+      ],
+    }),
+  });
+  if (mcRes.status === 202 || mcRes.ok) return { sent: true, to: recipient, provider: "mailchannels" };
+  return { sent: false, reason: `email_failed: ${(await mcRes.text()).slice(0, 200)}` };
+}
+
+async function notifyScanEmail(env, ctx, payload) {
+  const task = (async () => {
+    if (!(await shouldNotifyScan(env, payload.slug))) {
+      return { sent: false, reason: "cooldown" };
+    }
+    const result = await sendScanNotifyEmail(env, payload);
+    if (result.sent) {
+      await logScanNotify(env, payload.slug, payload.scannedAt, result.to);
+    }
+    return result;
+  })();
+  if (ctx && typeof ctx.waitUntil === "function") {
+    ctx.waitUntil(task);
+    return { queued: true };
+  }
+  return task;
+}
+
+async function sendAlertEmail(env, { subject, text, html }) {
+  const recipient = String(env.SCAN_NOTIFY_EMAIL || env.NOTIFY_EMAIL || "").trim();
+  if (!recipient) return { sent: false, reason: "no_recipient" };
+
+  const fromRaw = String(env.SCAN_EMAIL_FROM || "Solena Digital <alerts@nexa-trials.com>").trim();
+  const fromMatch = fromRaw.match(/<([^>]+)>/);
+  const fromEmail = fromMatch ? fromMatch[1] : fromRaw.trim();
+  const fromName = fromRaw.includes("<")
+    ? fromRaw.replace(/<[^>]+>/, "").trim() || "Solena Digital"
+    : "Solena Digital";
+  const fromHeader = fromRaw.includes("<") ? fromRaw : `${fromName} <${fromEmail}>`;
+
+  if (env.RESEND_API_KEY) {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${env.RESEND_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ from: fromHeader, to: [recipient], subject, text, html }),
+    });
+    if (res.ok) return { sent: true, to: recipient, provider: "resend" };
+    console.warn("alert email resend failed", await res.text());
+  }
+
+  const mcRes = await fetch("https://api.mailchannels.net/tx/v1/send", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      personalizations: [{ to: [{ email: recipient }] }],
+      from: { email: fromEmail, name: fromName },
+      subject,
+      content: [
+        { type: "text/plain", value: text },
+        { type: "text/html", value: html },
+      ],
+    }),
+  });
+  if (mcRes.status === 202 || mcRes.ok) return { sent: true, to: recipient, provider: "mailchannels" };
+  return { sent: false, reason: `email_failed: ${(await mcRes.text()).slice(0, 200)}` };
+}
+
+async function sendCallbackNotifyEmail(env, payload) {
+  const {
+    slug,
+    businessName,
+    contactName,
+    phone,
+    bestTime,
+    page,
+    submittedAt,
+  } = payload;
+  const info = plumberInfo(slug);
+  const label = businessName || info.company_name || slug || "Unknown business";
+  const when = new Date(submittedAt).toLocaleString("en-US", {
+    timeZone: "America/Los_Angeles",
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+  const connectUrl = slug ? scanConnectUrl(env, slug) : scanDashboardUrl();
+  const phoneDigits = String(phone || "").replace(/\D/g, "");
+  const telHref = phoneDigits ? `tel:${phoneDigits.length === 10 ? "+1" + phoneDigits : phoneDigits}` : "";
+  const bestTimeLine = bestTime ? `\nBest time: ${bestTime}` : "";
+  const pageLine = page ? `\nPage: ${page}` : "";
+
+  const subject = `Call me back — ${contactName || "Prospect"} (${label})`;
+  const text =
+    `Someone requested a call back from the funnel.\n\n` +
+    `Name: ${contactName || "—"}\n` +
+    `Phone: ${phone || "—"}${bestTimeLine}\n` +
+    `Business: ${label}\n` +
+    `QR slug: ${slug || "—"}${pageLine}\n` +
+    `When: ${when} PT\n\n` +
+    `Funnel page: ${connectUrl}\n` +
+    `Dashboard: ${scanDashboardUrl()}\n`;
+
+  const html =
+    `<p><strong>Someone requested a call back from the funnel.</strong></p>` +
+    `<ul>` +
+    `<li><strong>Name:</strong> ${contactName || "—"}</li>` +
+    (phone
+      ? `<li><strong>Phone:</strong> <a href="${telHref}">${phone}</a></li>`
+      : `<li><strong>Phone:</strong> —</li>`) +
+    (bestTime ? `<li><strong>Best time:</strong> ${bestTime}</li>` : "") +
+    `<li><strong>Business:</strong> ${label}</li>` +
+    `<li><strong>QR slug:</strong> <code>${slug || "—"}</code></li>` +
+    (page ? `<li><strong>Page:</strong> ${page}</li>` : "") +
+    `<li><strong>When:</strong> ${when} PT</li>` +
+    `</ul>` +
+    `<p><a href="${connectUrl}">Open funnel page</a> · ` +
+    `<a href="${scanDashboardUrl()}">QR dashboard</a></p>`;
+
+  return sendAlertEmail(env, { subject, text, html });
+}
+
+async function handleCallbackRequest(env, ctx, body, request) {
+  const contactName = String(body.contact_name || "").trim().slice(0, 120);
+  const phone = String(body.phone || "").trim().slice(0, 40);
+  const bestTime = String(body.best_time || "").trim().slice(0, 120);
+  const page = String(body.page || "").trim().slice(0, 80);
+  const slug = normalizeSlug(body.slug || body.business_slug || "");
+  const businessName = String(body.business_name || "").trim().slice(0, 160);
+
+  if (!contactName) return json({ error: "Name is required" }, 400);
+  if (!phone) return json({ error: "Phone is required" }, 400);
+
+  const submittedAt = new Date().toISOString();
+  const emailResult = await sendCallbackNotifyEmail(env, {
+    slug,
+    businessName,
+    contactName,
+    phone,
+    bestTime,
+    page,
+    submittedAt,
+  });
+
+  if (slug && !isTestScan(request)) {
+    try {
+      await recordFunnelEvent(
+        env,
+        slug,
+        {
+          event_type: "callback_request",
+          page: page.replace(".html", "") || "unknown",
+          element_id: "callback-submit",
+          element_label: `${contactName} · ${phone}`,
+        },
+        request,
+      );
+    } catch (err) {
+      console.warn("callback funnel event failed", err?.message || err);
+    }
+  }
+
+  if (!emailResult.sent) {
+    return json({ error: "Could not send notification email. Please call us instead." }, 502);
+  }
+
+  return json({
+    ok: true,
+    recorded: true,
+    slug: slug || null,
+    notified: true,
+    submitted_at: submittedAt,
+  });
+}
+
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     if (request.method === "OPTIONS") {
       return new Response(null, { headers: withCors() });
     }
@@ -473,13 +799,30 @@ export default {
       }
       try {
         const { scannedAt, geo } = await recordScan(env, slug, request);
+        const location = formatLocation(geo);
+        const device = deviceLabel(request.headers.get("User-Agent"));
+        notifyScanEmail(env, ctx, { slug, scannedAt, location, device });
         return json({
           ok: true,
           recorded: true,
           slug,
           scanned_at: scannedAt,
-          location: formatLocation(geo),
+          location,
         });
+      } catch (err) {
+        return json({ error: String(err?.message || err) }, 500);
+      }
+    }
+
+    if (path === "/callback" && request.method === "POST") {
+      let body = {};
+      try {
+        body = await request.json();
+      } catch {
+        return json({ error: "Invalid JSON" }, 400);
+      }
+      try {
+        return await handleCallbackRequest(env, ctx, body, request);
       } catch (err) {
         return json({ error: String(err?.message || err) }, 500);
       }
