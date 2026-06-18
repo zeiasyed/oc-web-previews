@@ -78,14 +78,64 @@
     if (name === "publish") mountPublishQueue();
   }
 
+  var pendingPublishCallId = "";
+
+  function readDashboardParams() {
+    var params = new URLSearchParams(window.location.search);
+    return {
+      tab: params.get("tab") || "",
+      call: params.get("call") || "",
+    };
+  }
+
+  function clearDashboardParams() {
+    if (!window.history || !window.history.replaceState) return;
+    var url = new URL(window.location.href);
+    if (!url.searchParams.has("tab") && !url.searchParams.has("call")) return;
+    url.searchParams.delete("tab");
+    url.searchParams.delete("call");
+    var next = url.pathname + (url.searchParams.toString() ? "?" + url.searchParams.toString() : "") + url.hash;
+    window.history.replaceState({}, "", next);
+  }
+
+  function openPublishCall(callId) {
+    if (!callId) return;
+    pendingPublishCallId = callId;
+    switchTab("publish");
+    if (publishController && publishController.openCall) {
+      publishController.openCall(callId);
+      pendingPublishCallId = "";
+      clearDashboardParams();
+    }
+  }
+
   function mountPublishQueue() {
     if (!publishRoot || !window.PublishQueueUI || !getToken()) return;
+    var callToOpen = pendingPublishCallId;
     if (publishController) {
-      publishController.refresh();
-      if (publishController.startPoll) publishController.startPoll();
+      if (callToOpen && publishController.openCall) {
+        publishController.openCall(callToOpen);
+        pendingPublishCallId = "";
+        clearDashboardParams();
+        if (publishController.startPoll) publishController.startPoll();
+      } else {
+        publishController.refresh().then(function () {
+          if (publishController.startPoll) publishController.startPoll();
+        });
+      }
       return;
     }
-    publishController = window.PublishQueueUI.mount(publishRoot, apiBase, getToken, function () {});
+    publishController = window.PublishQueueUI.mount(
+      publishRoot,
+      apiBase,
+      getToken,
+      function () {},
+      { pendingCallId: callToOpen }
+    );
+    if (callToOpen) {
+      pendingPublishCallId = "";
+      clearDashboardParams();
+    }
   }
 
   function mountOutreachBuilder() {
@@ -114,12 +164,55 @@
     dashEl.classList.toggle("hidden", !show);
   }
 
-  function businessName(slug) {
+  function plumberLookup(slug) {
+    var key = String(slug || "").toLowerCase();
+    var qr = (window.QR_PLUMBERS || {})[key];
+    if (qr && qr.company_name) {
+      return {
+        name: qr.company_name,
+        phone: qr.phone || "",
+        city: qr.city || "",
+      };
+    }
     var list = window.BUSINESSES || [];
     for (var i = 0; i < list.length; i++) {
-      if (list[i].slug === slug) return list[i].name;
+      if (list[i].slug === key) {
+        return {
+          name: list[i].name || key,
+          phone: list[i].phone || "",
+          city: list[i].city || "",
+        };
+      }
     }
-    return slug;
+    return { name: key, phone: "", city: "" };
+  }
+
+  function businessName(slug) {
+    return plumberLookup(slug).name;
+  }
+
+  function fmtPhone(phone) {
+    if (!phone) return "—";
+    var digits = String(phone).replace(/\D/g, "");
+    var href = digits.length >= 10 ? "tel:+" + (digits.length === 10 ? "1" + digits : digits) : "tel:" + digits;
+    return '<a href="' + href + '">' + phone + "</a>";
+  }
+
+  function businessCell(row) {
+    var slug = row.slug || "";
+    var info = plumberLookup(slug);
+    var name = row.company_name || info.name;
+    var phone = row.phone || info.phone;
+    var city = row.plumber_city || info.city;
+    var meta = [phone ? fmtPhone(phone) : "", city || ""].filter(Boolean).join(" · ");
+    return (
+      "<td><strong>" +
+      name +
+      '</strong><div class="muted">' +
+      slug +
+      (meta ? "<br>" + meta : "") +
+      "</div></td>"
+    );
   }
 
   function fmtWhen(iso) {
@@ -173,9 +266,18 @@
   }
 
   async function fetchSummary(token) {
-    var res = await fetch(apiBase + "/api/summary", {
-      headers: { Authorization: "Bearer " + token },
-    });
+    var url =
+      apiBase +
+      "/api/summary?key=" +
+      encodeURIComponent(token);
+    var res;
+    try {
+      res = await fetch(url, {
+        headers: { Authorization: "Bearer " + token },
+      });
+    } catch (e) {
+      throw new Error("Cannot reach scan API — check connection or try again.");
+    }
     if (res.status === 401) throw new Error("Invalid password");
     if (!res.ok) throw new Error("API error " + res.status);
     return res.json();
@@ -207,7 +309,7 @@
       funnelStepsBody.appendChild(tr);
     });
 
-    clicksBody.innerHTML = "";
+      clicksBody.innerHTML = "";
     (funnel.top_clicks || []).forEach(function (row) {
       var tr = document.createElement("tr");
       tr.innerHTML =
@@ -232,9 +334,8 @@
     (funnel.recent || []).forEach(function (row) {
       var tr = document.createElement("tr");
       tr.innerHTML =
+        businessCell(row) +
         "<td>" +
-        businessName(row.slug) +
-        "</td><td>" +
         fmtEvent(row) +
         "</td><td>" +
         fmtPage(row.page) +
@@ -250,11 +351,7 @@
     (data.by_slug || []).forEach(function (row) {
       var tr = document.createElement("tr");
       tr.innerHTML =
-        "<td>" +
-        businessName(row.slug) +
-        '<div class="muted">' +
-        row.slug +
-        "</div></td>" +
+        businessCell(row) +
         "<td><strong>" +
         row.count +
         "</strong></td>" +
@@ -288,9 +385,8 @@
     (data.recent || []).forEach(function (row) {
       var tr = document.createElement("tr");
       tr.innerHTML =
+        businessCell(row) +
         "<td>" +
-        businessName(row.slug) +
-        "</td><td>" +
         fmtLocation(row) +
         "</td><td>" +
         (row.device || "—") +
@@ -317,8 +413,10 @@
       var data = await fetchSummary(token);
       renderSummary(data);
       showDashboard(true);
-      var activeTab = document.querySelector(".dash-tab.active");
-      switchTab(activeTab ? activeTab.getAttribute("data-tab") : "qr");
+      var dashParams = readDashboardParams();
+      if (dashParams.call) pendingPublishCallId = dashParams.call;
+      var tabName = dashParams.tab || (document.querySelector(".dash-tab.active") || {}).getAttribute("data-tab") || "qr";
+      switchTab(tabName);
     } catch (err) {
       setToken("");
       showDashboard(false);
@@ -326,13 +424,44 @@
     }
   }
 
-  loginBtn.addEventListener("click", function () {
+  async function attemptLogin() {
     loginError.textContent = "";
+    if (!apiBase) {
+      loginError.textContent =
+        "Tracking API not configured — check assets/branding.js (qr_scan_api).";
+      return;
+    }
     var token = passwordInput.value.trim();
     if (!token) return;
-    setToken(token);
-    refresh();
-  });
+    loginBtn.disabled = true;
+    loginError.textContent = "Signing in…";
+    try {
+      var data = await fetchSummary(token);
+      setToken(token);
+      renderSummary(data);
+      showDashboard(true);
+      loginError.textContent = "";
+      var dashParams = readDashboardParams();
+      if (dashParams.call) pendingPublishCallId = dashParams.call;
+      var tabName =
+        dashParams.tab ||
+        (document.querySelector(".dash-tab.active") || {}).getAttribute("data-tab") ||
+        "qr";
+      switchTab(tabName);
+    } catch (err) {
+      setToken("");
+      loginError.textContent = err.message || "Could not sign in";
+    } finally {
+      loginBtn.disabled = false;
+    }
+  }
+
+  loginBtn.addEventListener("click", attemptLogin);
+  if (passwordInput) {
+    passwordInput.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") attemptLogin();
+    });
+  }
 
   logoutBtn.addEventListener("click", function () {
     setToken("");
@@ -346,7 +475,13 @@
   if (!apiBase) {
     loginError.textContent =
       "Tracking API not configured yet. Deploy landing/qr-scan-worker and set qr_scan_api in branding.";
-  } else if (getToken()) {
-    refresh();
+  } else {
+    var urlKey = new URLSearchParams(window.location.search).get("key");
+    if (urlKey) {
+      passwordInput.value = urlKey.trim();
+      attemptLogin();
+    } else if (getToken()) {
+      refresh();
+    }
   }
 })();
