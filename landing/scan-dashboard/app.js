@@ -191,11 +191,21 @@
     return plumberLookup(slug).name;
   }
 
-  function fmtPhone(phone) {
-    if (!phone) return "—";
+  function connectUrl(slug) {
+    return "../connect.html?biz=" + encodeURIComponent(slug || "");
+  }
+
+  function fmtPhoneLink(phone) {
+    if (!phone) return "";
     var digits = String(phone).replace(/\D/g, "");
     var href = digits.length >= 10 ? "tel:+" + (digits.length === 10 ? "1" + digits : digits) : "tel:" + digits;
-    return '<a href="' + href + '">' + phone + "</a>";
+    return (
+      '<a class="biz-phone-link" href="' +
+      href +
+      '" title="Call business">' +
+      phone +
+      "</a>"
+    );
   }
 
   function businessCell(row) {
@@ -204,13 +214,27 @@
     var name = row.company_name || info.name;
     var phone = row.phone || info.phone;
     var city = row.plumber_city || info.city;
-    var meta = [phone ? fmtPhone(phone) : "", city || ""].filter(Boolean).join(" · ");
-    return (
-      "<td><strong>" +
+    var funnel = connectUrl(slug);
+    var nameLink =
+      '<a class="biz-name-link" href="' +
+      funnel +
+      '" target="_blank" rel="noopener" title="Open postcard funnel page">' +
       name +
+      "</a>";
+    var action = phone
+      ? fmtPhoneLink(phone)
+      : '<a class="biz-funnel-link" href="' +
+        funnel +
+        '" target="_blank" rel="noopener" title="Open postcard funnel page">Open funnel page →</a>';
+    var cityLine = city ? '<span class="biz-city">' + city + "</span>" : "";
+    return (
+      '<td class="biz-cell"><strong>' +
+      nameLink +
       '</strong><div class="muted">' +
       slug +
-      (meta ? "<br>" + meta : "") +
+      '</div><div class="biz-actions">' +
+      action +
+      cityLine +
       "</div></td>"
     );
   }
