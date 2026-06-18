@@ -1,6 +1,7 @@
 /** Inland Empire plumber outreach — Retell campaign (concatenated into index.js at deploy) */
 
-const PLUMBER_OUTREACH_VOICE_ID = "cartesia-Ethan";
+const PLUMBER_OUTREACH_VOICE_ID = "11labs-Brian";
+const PLUMBER_OUTREACH_VOICE_MODEL_DEFAULT = "eleven_v3";
 
 function plumberOutreachVoiceId(env) {
   return String(env.PLUMBER_OUTREACH_VOICE_ID || PLUMBER_OUTREACH_VOICE_ID).trim();
@@ -18,11 +19,15 @@ function plumberOutreachVoiceSettings(env, voiceIdOverride) {
     responsiveness: parseFloat(env.PLUMBER_OUTREACH_RESPONSIVENESS || "1") || 1,
     interruption_sensitivity: parseFloat(env.PLUMBER_OUTREACH_INTERRUPTION || "0.7") || 0.7,
     enable_backchannel: false,
-    fallback_voice_ids: ["11labs-Brian"],
+    fallback_voice_ids: ["cartesia-Ethan"],
   };
-  const model = String(env.PLUMBER_OUTREACH_VOICE_MODEL || "").trim();
+  const model = String(env.PLUMBER_OUTREACH_VOICE_MODEL || PLUMBER_OUTREACH_VOICE_MODEL_DEFAULT || "").trim();
   if (voiceId.startsWith("11labs-")) {
-    settings.voice_model = model || "eleven_turbo_v2_5";
+    settings.voice_model = model || "eleven_v3";
+    if (settings.voice_model === "eleven_v3" && env.PLUMBER_OUTREACH_EXPRESSIVE_MODE !== "0") {
+      settings.enable_expressive_mode = true;
+      settings.expressive_emotion_tags = ["pause", "emphasis", "curious", "happy", "sigh"];
+    }
   }
   return settings;
 }
@@ -457,6 +462,17 @@ function cleanOpeningSpeech(raw) {
     .trim();
 }
 
+/** Louder "Hey" at call onset — Cartesia volume SSML (applied at delivery, not stored in playbook). */
+const OPENING_HEY_VOLUME_RATIO = 1.55;
+
+function boostOpeningHey(text) {
+  const t = String(text || "").trim();
+  if (!t || /<volume\s+ratio=/i.test(t)) return t;
+  if (!/^hey\b/i.test(t)) return t;
+  const afterHey = t.replace(/^hey/i, "");
+  return `<volume ratio="${OPENING_HEY_VOLUME_RATIO}"/>Hey<volume ratio="1.0"/>${afterHey}`;
+}
+
 /** Cartesia SSML — reliable timed pause in TTS (max 3.5s). */
 function ssmlBreak(ms) {
   const sec = Math.min(3.5, Math.max(0.5, Number(ms) / 1000));
@@ -519,7 +535,7 @@ function parseOpeningSegments(opening) {
 function buildOpeningScriptBlock(playbook) {
   const structure = parseOpeningStructure(normalizeOutreachPlaybook(playbook).opening);
   if (!structure.length) return "Part 1: (opening not configured)";
-  const question = structure[0].text;
+  const question = boostOpeningHey(structure[0].text);
   const pitchLocked = structure.length > 1 ? combinePitchWithSsmlBreaks(structure.slice(1)) : "";
   if (!pitchLocked) {
     return `Part 1 — say EXACTLY:\n"${question}"`;
@@ -537,7 +553,7 @@ const PLUMBER_OPENING_MAX_STEPS = 8;
 function buildOpeningDynamicVariables(opening, templateVars) {
   const filled = fillOutreachTemplate(opening, templateVars);
   const structure = parseOpeningStructure(filled);
-  const question = structure[0]?.text || "";
+  const question = boostOpeningHey(structure[0]?.text || "");
   const pitchLocked = structure.length > 1 ? combinePitchWithSsmlBreaks(structure.slice(1)) : "";
   const vars = {
     opening_step_count: pitchLocked ? "2" : String(structure.length || 0),
@@ -627,7 +643,7 @@ After they greet you, deliver the opening Parts below — only the quoted words,
 ${openingScript}
 
 Opening delivery rules (critical):
-- Part 1: ask the plumbing question once, then wait for their answer
+- Part 1: ask the plumbing question once, then wait for their answer (includes <volume ratio="…"/> tags — speak the line verbatim; Cartesia makes "Hey" louder)
 - Part 2: speak {{opening_pitch_locked}} VERBATIM — every word and every <break time="…"/> tag exactly as written (tags = timed pauses in TTS)
 - Never paraphrase, never drop break tags, never use dashes instead of break tags
 - Keep spaces after periods ("website. Uhh" not "website.Uhh")
@@ -678,6 +694,14 @@ function isDefaultPlaybookOpening(opening) {
 function openingFirstSegment(opening) {
   const parts = parseOpeningSegments(opening);
   return parts[0] || String(opening || "").trim();
+}
+
+function stripSsmlTags(text) {
+  return String(text || "").replace(/<[^>]+>/g, "");
+}
+
+function openingFirstLineForDelivery(opening) {
+  return boostOpeningHey(openingFirstSegment(opening));
 }
 
 async function getPlaybookIntegrity(env) {
@@ -766,8 +790,8 @@ async function assertRetellPromptReadyForCall(env, agentId, playbook) {
   if (!livePrompt.includes("Opening script (LOCKED") || !livePrompt.includes("WAIT for the live person")) {
     throw new Error("Retell agent missing locked opening script — click Save & sync agent on dashboard");
   }
-  const firstSeg = openingFirstSegment(playbook.opening).slice(0, 40);
-  if (firstSeg && !livePrompt.includes(firstSeg.slice(0, 20))) {
+  const firstSeg = stripSsmlTags(openingFirstLineForDelivery(playbook.opening)).slice(0, 40);
+  if (firstSeg && !stripSsmlTags(livePrompt).includes(firstSeg.slice(0, 20))) {
     throw new Error("Retell prompt missing saved opening text — Save & sync agent on dashboard");
   }
   const banned = livePromptContainsBannedPitch(livePrompt);
@@ -897,6 +921,7 @@ async function handlePlumberOutreachAgentDebug(request, env) {
       name: resolved.agent_name || retell?.agent?.agent_name || null,
       source: resolved.source,
       voice_id: retell?.agent?.voice_id || null,
+      voice_model: retell?.agent?.voice_model || null,
       version: retell?.agent?.version ?? null,
     },
     playbook_opening: opening,
@@ -1148,7 +1173,14 @@ function validatePlumberOutreachPreflight(playbook, retell, sync, env, phoneBind
     { id: "no_nexa_script", ok: !/nexa calling|appointment for|scheduling_outcome/i.test(livePrompt), detail: "Not using Nexa scheduling script" },
     { id: "no_nexasync_intro", ok: !livePrompt.includes("NexaSync"), detail: "Intro says Solena Digital only" },
     { id: "prompts_equal", ok: livePrompt === expectedPrompt, detail: livePrompt === expectedPrompt ? "Retell prompt matches built prompt" : "Prompt drift — re-sync required" },
-    { id: "voice_set", ok: !!retell?.agent?.voice_id, detail: retell?.agent?.voice_id || "No voice" },
+    {
+      id: "voice_set",
+      ok: !!retell?.agent?.voice_id,
+      detail:
+        (retell?.agent?.voice_id || "No voice") +
+        (retell?.agent?.voice_model ? " / " + retell.agent.voice_model : "") +
+        (retell?.agent?.enable_expressive_mode ? " / expressive" : ""),
+    },
     {
       id: "phone_outbound_agent",
       ok: !!phoneBind?.ok,
@@ -1165,6 +1197,8 @@ function validatePlumberOutreachPreflight(playbook, retell, sync, env, phoneBind
     agent_id: sync?.agent_id || retell?.agent?.agent_id || null,
     voice_id: sync?.voice_id || retell?.agent?.voice_id || null,
     voice_name: sync?.voice_name || null,
+    voice_model: sync?.voice_model || retell?.agent?.voice_model || null,
+    enable_expressive_mode: !!retell?.agent?.enable_expressive_mode,
     voice_speed: plumberOutreachVoiceSettings(env, sync?.voice_id).voice_speed,
     from_number: env.RETELL_FROM_NUMBER || null,
     playbook_opening: opening,
