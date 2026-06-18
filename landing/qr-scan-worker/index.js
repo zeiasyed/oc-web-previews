@@ -639,18 +639,36 @@ async function sendAlertEmail(env, { subject, text, html }) {
     ? fromRaw.replace(/<[^>]+>/, "").trim() || "Solena Digital"
     : "Solena Digital";
   const fromHeader = fromRaw.includes("<") ? fromRaw : `${fromName} <${fromEmail}>`;
+  const fromCandidates = [
+    fromHeader,
+    `${fromName} <noreply@nexa-trials.com>`,
+    `${fromName} <alerts@inertia-intel.com>`,
+    "Solena Digital <onboarding@resend.dev>",
+  ];
+  const seen = new Set();
+  const uniqueFroms = fromCandidates.filter((addr) => {
+    const key = addr.toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 
   if (env.RESEND_API_KEY) {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${env.RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ from: fromHeader, to: [recipient], subject, text, html }),
-    });
-    if (res.ok) return { sent: true, to: recipient, provider: "resend" };
-    console.warn("alert email resend failed", await res.text());
+    let lastError = "";
+    for (const fromAddr of uniqueFroms) {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${env.RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ from: fromAddr, to: [recipient], subject, text, html }),
+      });
+      if (res.ok) return { sent: true, to: recipient, provider: "resend", from: fromAddr };
+      lastError = await res.text();
+      console.warn("alert email resend failed", fromAddr, lastError);
+    }
+    return { sent: false, reason: `resend_failed: ${lastError.slice(0, 220)}` };
   }
 
   const mcRes = await fetch("https://api.mailchannels.net/tx/v1/send", {

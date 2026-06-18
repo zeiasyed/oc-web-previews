@@ -957,9 +957,39 @@ h1 {
   text-align: center;
 }
 
-.form-status-success { color: #047857; font-weight: 700; }
+.form-status-success {
+  color: #047857;
+  font-weight: 700;
+}
 
 .form-status-error { color: #b91c1c; }
+
+.callback-success-banner {
+  margin-top: 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: var(--radius);
+  border: 1px solid #86efac;
+  background: #ecfdf5;
+  color: #065f46;
+  text-align: center;
+}
+
+.callback-success-banner strong {
+  display: block;
+  font-size: 1.05rem;
+  margin-bottom: 0.35rem;
+}
+
+.callback-success-banner p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.callback-form.is-submitted,
+.callback-form-compact.is-submitted {
+  display: none;
+}
 
 .register-sidebar { display: grid; gap: 1rem; }
 

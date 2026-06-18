@@ -9,3 +9,8 @@ database_id = "d0a30387-81e2-4ca2-86d6-0170a0b3563e"
 
 [vars]
 # Set DASHBOARD_PASSWORD via: wrangler secret put DASHBOARD_PASSWORD
+SCAN_NOTIFY_EMAIL = "zeiasyed@hotmail.com"
+SCAN_EMAIL_FROM = "Solena Digital <noreply@nexa-trials.com>"
+SCAN_CONNECT_BASE = "https://zeiasyed.github.io/oc-web-previews/landing/connect.html"
+SCAN_NOTIFY_COOLDOWN_MINUTES = "15"
+# Optional: wrangler secret put RESEND_API_KEY (falls back to Mailchannels if unset)

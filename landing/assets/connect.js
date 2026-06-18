@@ -138,6 +138,20 @@ async function submitCallbackRequest(form, subject) {
   }
 }
 
+function showCallbackSuccess(form, statusEl) {
+  const phone = new FormData(form).get("phone") || "";
+  const phoneDisplay = window.BRANDING?.phone_display || "714-686-4196";
+  const phoneHref = window.BRANDING?.phone || "7146864196";
+
+  form.classList.add("is-submitted");
+  statusEl.className = "callback-success-banner";
+  statusEl.innerHTML =
+    "<strong>Request received — we'll call you back soon!</strong>" +
+    `<p>Thanks for reaching out. A Solena team member will call ${phone ? `<strong>${phone}</strong>` : "the number you provided"} as soon as we can.` +
+    ` If it's urgent, call us at <a href="tel:${phoneHref}">${phoneDisplay}</a>.</p>`;
+  statusEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
 function wireCallbackForm() {
   const form = document.getElementById("callback-form-connect");
   const statusEl = document.getElementById("callback-connect-status");
@@ -145,15 +159,14 @@ function wireCallbackForm() {
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    statusEl.textContent = "Sending…";
+    statusEl.textContent = "Sending your request…";
     statusEl.className = "form-status";
 
     const subject = document.getElementById("cb-connect-subject")?.value || "Call me back";
 
     try {
       await submitCallbackRequest(form, subject);
-      statusEl.textContent = "Got it — we'll call you back soon!";
-      statusEl.className = "form-status form-status-success";
+      showCallbackSuccess(form, statusEl);
       form.reset();
       setCallbackContext(window.__connectBusiness);
     } catch (err) {
