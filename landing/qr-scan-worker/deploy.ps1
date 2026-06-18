@@ -1,5 +1,8 @@
-#Requires -Version 5.1
-# Deploy Solena QR scan worker (same Cloudflare account as Toledo dashboard)
+param(
+  [string]$DashboardPassword = "",
+  [string]$OutreachApiToken = ""
+)
+
 $ErrorActionPreference = "Stop"
 
 $Root = $PSScriptRoot
@@ -85,17 +88,23 @@ if ($existing) {
 
 $schema = Get-Content "$Root\schema.sql" -Raw
 foreach ($sql in (($schema -split ";") | ForEach-Object { $_.Trim() } | Where-Object { $_ })) {
-  Invoke-CfApi POST "https://api.cloudflare.com/client/v4/accounts/$AccountId/d1/database/$dbId/query" @{ sql = $sql } | Out-Null
+  try {
+    Invoke-CfApi POST "https://api.cloudflare.com/client/v4/accounts/$AccountId/d1/database/$dbId/query" @{ sql = $sql } | Out-Null
+  } catch {
+    $msg = "$($_.Exception.Message) $($_.ErrorDetails.Message)"
+    if ($msg -notmatch "duplicate column|already exists|SQLITE_ERROR") { throw }
+  }
 }
 $migratePath = Join-Path $Root "migrate-location.sql"
 $migrateFunnelPath = Join-Path $Root "migrate-funnel-events.sql"
+$migrateNotifyPath = Join-Path $Root "migrate-scan-notify.sql"
 if (Test-Path $migratePath) {
   foreach ($sql in (((Get-Content $migratePath -Raw) -split ";") | ForEach-Object { $_.Trim() } | Where-Object { $_ })) {
     try {
       Invoke-CfApi POST "https://api.cloudflare.com/client/v4/accounts/$AccountId/d1/database/$dbId/query" @{ sql = $sql } | Out-Null
     } catch {
-      $msg = $_.Exception.Message
-      if ($msg -notmatch "duplicate column|already exists") { throw }
+      $msg = "$($_.Exception.Message) $($_.ErrorDetails.Message)"
+      if ($msg -notmatch "duplicate column|already exists|SQLITE_ERROR") { throw }
     }
   }
 }
@@ -109,18 +118,62 @@ if (Test-Path $migrateFunnelPath) {
     }
   }
 }
+if (Test-Path $migrateNotifyPath) {
+  foreach ($sql in (((Get-Content $migrateNotifyPath -Raw) -split ";") | ForEach-Object { $_.Trim() } | Where-Object { $_ })) {
+    try {
+      Invoke-CfApi POST "https://api.cloudflare.com/client/v4/accounts/$AccountId/d1/database/$dbId/query" @{ sql = $sql } | Out-Null
+    } catch {
+      $msg = "$($_.Exception.Message) $($_.ErrorDetails.Message)"
+      if ($msg -notmatch "duplicate column|already exists|SQLITE_ERROR") { throw }
+    }
+  }
+}
 Write-Host "D1 schema applied." -ForegroundColor Green
 
-$DashboardPassword = -join ((48..57 + 65..90 + 97..122) | Get-Random -Count 16 | ForEach-Object { [char]$_ })
+if (-not $DashboardPassword) {
+  $outputPath = Join-Path $Root "deploy-output.json"
+  if (Test-Path $outputPath) {
+    $saved = Get-Content $outputPath -Raw | ConvertFrom-Json
+    if ($saved.dashboardPassword) { $DashboardPassword = $saved.dashboardPassword }
+  }
+}
+if (-not $DashboardPassword) {
+  $DashboardPassword = -join ((48..57 + 65..90 + 97..122) | Get-Random -Count 16 | ForEach-Object { [char]$_ })
+}
 Write-Host "Dashboard password: $DashboardPassword" -ForegroundColor Yellow
+
+$EnvFile = Join-Path (Split-Path $Root -Parent) "oc-clia-prospect-list\.env"
+if (-not $OutreachApiToken -and (Test-Path $EnvFile)) {
+  foreach ($line in Get-Content $EnvFile) {
+    if ($line -match '^\s*LAB_VERIFY_API_TOKEN\s*=\s*(.+)\s*$') {
+      $OutreachApiToken = $Matches[1].Trim()
+      break
+    }
+  }
+}
+if (-not $OutreachApiToken) {
+  throw "No OUTREACH_API_TOKEN. Pass -OutreachApiToken or set LAB_VERIFY_API_TOKEN in oc-clia-prospect-list/.env"
+}
+
+Write-Host "Building plumber directory..." -ForegroundColor Cyan
+$buildScript = Join-Path (Split-Path $Root -Parent) "scripts\build-qr-plumber-directory.py"
+if (Test-Path $buildScript) {
+  & python $buildScript
+}
 
 Write-Host "Deploying worker..." -ForegroundColor Cyan
 $workerCode = Get-Content "$Root\index.js" -Raw
+$directoryCode = Get-Content "$Root\plumber-directory.js" -Raw
 $metadata = @{
   main_module = "index.js"
   bindings = @(
     @{ type = "d1"; name = "DB"; id = $dbId }
     @{ type = "plain_text"; name = "DASHBOARD_PASSWORD"; text = $DashboardPassword }
+    @{ type = "plain_text"; name = "OUTREACH_API_TOKEN"; text = $OutreachApiToken }
+    @{ type = "plain_text"; name = "SCAN_NOTIFY_EMAIL"; text = "zeiasyed@hotmail.com" }
+    @{ type = "plain_text"; name = "SCAN_EMAIL_FROM"; text = "Solena Digital <noreply@nexa-trials.com>" }
+    @{ type = "plain_text"; name = "SCAN_CONNECT_BASE"; text = "https://zeiasyed.github.io/oc-web-previews/landing/connect.html" }
+    @{ type = "plain_text"; name = "SCAN_NOTIFY_COOLDOWN_MINUTES"; text = "15" }
   )
 } | ConvertTo-Json -Depth 5 -Compress
 
@@ -137,6 +190,11 @@ $bodyLines = @(
   "Content-Type: application/javascript+module",
   "",
   $workerCode,
+  "--$boundary",
+  "Content-Disposition: form-data; name=`"plumber-directory.js`"; filename=`"plumber-directory.js`"",
+  "Content-Type: application/javascript+module",
+  "",
+  $directoryCode,
   "--$boundary--"
 )
 $bodyBytes = [System.Text.Encoding]::UTF8.GetBytes(($bodyLines -join $LF))

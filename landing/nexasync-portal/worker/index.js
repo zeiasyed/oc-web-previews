@@ -814,6 +814,9 @@ export default {
       if (path === "/voice/plumber-outreach/hot-lead" && request.method === "POST") {
         return handlePlumberOutreachHotLead(request, env);
       }
+      if (path === "/voice/plumber-outreach/script-pause" && request.method === "POST") {
+        return handlePlumberOutreachScriptPause(request, env);
+      }
       if (path === "/voice/plumber-outreach/setup" && request.method === "POST") {
         if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
         return withCors(request, env, await handlePlumberOutreachSetup(request, env));
@@ -837,6 +840,10 @@ export default {
       if (path === "/voice/plumber-outreach/outbound" && request.method === "POST") {
         if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
         return withCors(request, env, await handlePlumberOutreachOutbound(request, env));
+      }
+      if (path === "/voice/funnel/callback-alert" && request.method === "POST") {
+        if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
+        return withCors(request, env, await handleFunnelCallbackAlert(request, env));
       }
       if (path === "/voice/plumber-outreach/resend-alert" && request.method === "POST") {
         if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
@@ -894,6 +901,10 @@ export default {
             result,
           })
         );
+      }
+      if (path === "/voice/plumber-outreach/playbook/history" && request.method === "GET") {
+        if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));
+        return withCors(request, env, await handlePlumberOutreachPlaybookHistory(env));
       }
       if (path === "/voice/plumber-outreach/playbook" && request.method === "GET") {
         if (!checkPlumberOutreachAuth(request, env)) return withCors(request, env, json({ error: "Unauthorized" }, 401));

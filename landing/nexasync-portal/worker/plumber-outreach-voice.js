@@ -14,9 +14,9 @@ function plumberOutreachVoiceSettings(env, voiceIdOverride) {
     voice_speed: parseFloat(env.PLUMBER_OUTREACH_VOICE_SPEED || "1") || 1,
     voice_temperature: parseFloat(env.PLUMBER_OUTREACH_VOICE_TEMPERATURE || "0.85") || 0.85,
     enable_dynamic_voice_speed: false,
-    enable_dynamic_responsiveness: true,
-    responsiveness: parseFloat(env.PLUMBER_OUTREACH_RESPONSIVENESS || "0.9") || 0.9,
-    interruption_sensitivity: parseFloat(env.PLUMBER_OUTREACH_INTERRUPTION || "0.55") || 0.55,
+    enable_dynamic_responsiveness: false,
+    responsiveness: parseFloat(env.PLUMBER_OUTREACH_RESPONSIVENESS || "1") || 1,
+    interruption_sensitivity: parseFloat(env.PLUMBER_OUTREACH_INTERRUPTION || "0.7") || 0.7,
     enable_backchannel: false,
     fallback_voice_ids: ["11labs-Brian"],
   };
@@ -25,6 +25,26 @@ function plumberOutreachVoiceSettings(env, voiceIdOverride) {
     settings.voice_model = model || "eleven_turbo_v2_5";
   }
   return settings;
+}
+
+/** Retell telephony timeouts — keep no-answer / IVR / voicemail calls short. */
+function plumberOutreachCallLimits(env) {
+  const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+  const ringMs = parseInt(env.PLUMBER_OUTREACH_RING_MS || "25000", 10) || 25000;
+  const silenceMs = parseInt(env.PLUMBER_OUTREACH_SILENCE_MS || "15000", 10) || 15000;
+  const maxCallMs = parseInt(env.PLUMBER_OUTREACH_MAX_CALL_MS || "90000", 10) || 90000;
+  return {
+    ring_duration_ms: clamp(ringMs, 5000, 300000),
+    end_call_after_silence_ms: clamp(silenceMs, 10000, 600000),
+    max_call_duration_ms: clamp(maxCallMs, 60000, 7200000),
+    voicemail_message: "",
+    voicemail_detection_timeout_ms: 15000,
+    voicemail_option: { action: { type: "hangup" } },
+  };
+}
+
+function plumberOutreachAgentSettings(env, voiceIdOverride) {
+  return { ...plumberOutreachVoiceSettings(env, voiceIdOverride), ...plumberOutreachCallLimits(env) };
 }
 
 const PLUMBER_MALE_VOICE_PREFER = [
@@ -41,19 +61,275 @@ const PLUMBER_MALE_VOICE_PREFER = [
   "11labs-Brian",
 ];
 
+function getDefaultOutreachRebuttals() {
+  return [
+    {
+      id: "cost_pricing",
+      label: "Cost / pricing",
+      when: "They ask what it costs, how much, or if they'll be charged",
+      say: "Nothing to look — zero. We mocked up a page that's structured to rank better on Google for local plumbing searches and pull in more calls. If you like it, my colleague can walk through options. I'm just asking to text you the link.",
+      enabled: true,
+      sort_order: 0,
+    },
+    {
+      id: "cost_catch",
+      label: "Is there a catch?",
+      when: "They ask if it's free, what's the catch, or if there's hidden cost",
+      say: "No catch for the preview. It's a sample of how your business could show up higher locally on Google and get more people calling — not a contract or a charge.",
+      enabled: true,
+      sort_order: 1,
+    },
+    {
+      id: "cost_not_paying",
+      label: "Not paying anything",
+      when: "They say they won't pay or refuse any payment",
+      say: "Totally fair — I'm not asking for money. Just permission to text you one link so you can glance at a preview built to rank you better locally and bring in more calls.",
+      enabled: true,
+      sort_order: 2,
+    },
+    {
+      id: "cost_if_want_it",
+      label: "How much if I want it?",
+      when: "They ask pricing if they decide to move forward",
+      say: "Depends on what you need — my colleague can break that down in two minutes. Today it's just a free preview built to improve how you rank locally and convert searchers into calls.",
+      enabled: true,
+      sort_order: 3,
+    },
+    {
+      id: "trust_who",
+      label: "Who are you?",
+      when: "They ask who is calling, what company, or who you represent",
+      say: "Alex with Solena Digital — we're a local web team in Southern California. We put together a preview designed to rank your business better on Google and bring in more plumbing calls. Not trying to sell you on the phone.",
+      enabled: true,
+      sort_order: 4,
+    },
+    {
+      id: "trust_number",
+      label: "How'd you get my number?",
+      when: "They ask where you got their number or how you found them",
+      say: "Your listing is public on Google — same info customers use to call you. I'm not pulling anything private; just reaching out about a preview we made to help you rank locally and get more calls.",
+      enabled: true,
+      sort_order: 5,
+    },
+    {
+      id: "trust_scam",
+      label: "Is this a scam?",
+      when: "They ask if this is a scam, spam, or suspicious",
+      say: "I get it — lot of junk calls. We're Solena Digital, local team. No payment, no login, no password. Just a link to a preview page built to help you show up higher in local search and get more calls.",
+      enabled: true,
+      sort_order: 6,
+    },
+    {
+      id: "trust_not_google",
+      label: "Are you Google?",
+      when: "They ask if you're Google, Yelp, Angi, or another platform",
+      say: "No — we're not Google. We're a local web company. Google shows your listing; we built a sample page structured the way Google tends to favor for local service businesses — so more people find you and actually call.",
+      enabled: true,
+      sort_order: 7,
+    },
+    {
+      id: "already_website",
+      label: "Already have a website",
+      when: "They say they already have a website or are online already",
+      say: "Perfect — most plumbers do. This isn't to replace what you have overnight. It's a quick sample of a layout built to rank higher locally and turn search traffic into calls. Worth a thirty-second look?",
+      enabled: true,
+      sort_order: 8,
+    },
+    {
+      id: "already_fine",
+      label: "We're fine / happy",
+      when: "They say they're fine, happy, or don't need changes",
+      say: "Makes sense — if it's working, keep it. This is just a free preview in case there's an easy win — better local ranking, more calls from Google — that you haven't seen yet. No pressure either way.",
+      enabled: true,
+      sort_order: 9,
+    },
+    {
+      id: "already_enough_calls",
+      label: "Enough calls already",
+      when: "They say they get enough business or enough calls",
+      say: "That's a good problem. Some guys still want more emergency or high-ticket jobs from search — this preview is built for that. If you're slammed, no pressure.",
+      enabled: true,
+      sort_order: 10,
+    },
+    {
+      id: "already_wix",
+      label: "We use Wix / Squarespace / nephew",
+      when: "They mention Wix, Squarespace, GoDaddy, or a friend/family built their site",
+      say: "Cool — whatever's working, keep it. This is just a sample of how you could show up stronger on Google and get more click-to-calls — take a look if you're curious.",
+      enabled: true,
+      sort_order: 11,
+    },
+    {
+      id: "time_busy",
+      label: "I'm busy",
+      when: "They say bad time, too busy, or can't talk now",
+      say: "Totally — thirty seconds. Can I text you a link? It's a preview built to rank you better locally and bring in more calls — look when you're off a job.",
+      enabled: true,
+      sort_order: 12,
+    },
+    {
+      id: "time_email",
+      label: "Send email instead",
+      when: "They ask for email instead of text or call",
+      say: "Sure — text is faster for the preview link. It's a sample page designed for local Google visibility and more calls. Is this number okay for one text, or do you want email instead?",
+      enabled: true,
+      sort_order: 13,
+    },
+    {
+      id: "time_callback",
+      label: "Call me back",
+      when: "They ask to call back later",
+      say: "No problem — what's a better time, morning or afternoon? I'll keep it short: free preview, built to rank higher locally and get you more calls.",
+      enabled: true,
+      sort_order: 14,
+    },
+    {
+      id: "time_decision_maker",
+      label: "Talk to partner / office",
+      when: "They say talk to wife, partner, office manager, or owner",
+      say: "Makes sense — can I text the link to this number so you can forward it? It's a preview built to rank better on Google and pull more calls — they can look in thirty seconds.",
+      enabled: true,
+      sort_order: 15,
+    },
+    {
+      id: "sales_selling",
+      label: "Are you selling me something?",
+      when: "They ask if you're selling, pitching, or this is a sales call",
+      say: "Not on this call — I'm not closing anything. We made a free preview structured for local search and more phone calls. If you like it, my colleague can chat. If not, you're done.",
+      enabled: true,
+      sort_order: 16,
+    },
+    {
+      id: "sales_not_interested",
+      label: "Not interested",
+      when: "They say not interested without being hostile",
+      say: "Fair enough — thanks for your time. Want me to skip the text, or okay if I send the link and you ignore it?",
+      enabled: true,
+      sort_order: 17,
+    },
+    {
+      id: "sales_too_good",
+      label: "Too good to be true",
+      when: "They say it sounds too good to be true or suspicious offer",
+      say: "Fair — it's a mock-up, not magic. But it's built around what actually helps local plumbers rank on Google and convert visitors into calls. No obligation to look.",
+      enabled: true,
+      sort_order: 18,
+    },
+    {
+      id: "sales_no_sign",
+      label: "Do I sign anything?",
+      when: "They ask about signing, contract, or commitment",
+      say: "Nope — nothing to sign. One text with a link to a preview built for local Google ranking and more calls. That's it unless you want to talk to my colleague later.",
+      enabled: true,
+      sort_order: 19,
+    },
+    {
+      id: "soft_maybe",
+      label: "Maybe / I'll think about it",
+      when: "They stall with maybe, I'll think about it, or not sure",
+      say: "Sure — easiest is I text the link now. It's built to help you rank locally and pull more calls from Google — look whenever you've got a minute.",
+      enabled: true,
+      sort_order: 20,
+    },
+    {
+      id: "soft_what_preview",
+      label: "What am I looking at?",
+      when: "They ask what the preview is or what they'll see",
+      say: "A sample homepage for {{company_name}} — laid out so Google can surface you better for local plumbing searches, with clear call buttons so searchers actually phone you.",
+      enabled: true,
+      sort_order: 21,
+    },
+    {
+      id: "soft_why_me",
+      label: "Why my business?",
+      when: "They ask why you picked them or why their business",
+      say: "We're calling plumbers in {{city}} who show up on Google but could probably rank higher and get more calls. Yours looked like a good fit for a quick preview.",
+      enabled: true,
+      sort_order: 22,
+    },
+    {
+      id: "soft_whats_different",
+      label: "What's different about it?",
+      when: "They ask what's different, special, or how it helps",
+      say: "Structure and content Google looks for locally — service areas, trust signals, fast mobile, obvious call button — so you rank better and more visitors actually call instead of bouncing.",
+      enabled: true,
+      sort_order: 23,
+    },
+    {
+      id: "legal_dnc",
+      label: "Do-not-call / remove me",
+      when: "They explicitly say do-not-call, take me off your list, or stop calling — hostile or firm",
+      say: "Sorry to bother you — I'll remove you from our list. Have a good one.",
+      enabled: true,
+      sort_order: 24,
+      hard_stop: true,
+    },
+    {
+      id: "legal_recorded",
+      label: "Is this recorded?",
+      when: "They ask if the call is being recorded",
+      say: "It may be recorded for quality — I'm Alex with Solena Digital calling about a free website preview built to rank you better locally and get more calls. Happy to keep it brief.",
+      enabled: true,
+      sort_order: 25,
+    },
+    {
+      id: "legal_no_permission",
+      label: "You rebuilt our site?",
+      when: "They say you changed their live site without permission",
+      say: "Not your live site — it's a separate preview sample we made to show ideas for ranking higher on Google and getting more calls. We wouldn't change anything live without you approving it first.",
+      enabled: true,
+      sort_order: 26,
+    },
+  ];
+}
+
+function mergeOutreachRebuttals(rawList) {
+  const base = getDefaultOutreachRebuttals();
+  const byId = Object.fromEntries(base.map((r) => [r.id, r]));
+  const merged = [];
+  const seen = new Set();
+  if (Array.isArray(rawList)) {
+    for (let i = 0; i < rawList.length; i++) {
+      const r = rawList[i];
+      const id = String(r?.id || "");
+      if (!id) continue;
+      seen.add(id);
+      const d = byId[id] || {};
+      merged.push({
+        id,
+        label: String(r.label ?? d.label ?? id),
+        when: String(r.when ?? d.when ?? ""),
+        say: String(r.say ?? d.say ?? ""),
+        enabled: r.enabled !== false,
+        sort_order: Number.isFinite(r.sort_order) ? r.sort_order : merged.length,
+        hard_stop: r.hard_stop === true || d.hard_stop === true,
+      });
+    }
+  }
+  for (const d of base) {
+    if (!seen.has(d.id)) merged.push({ ...d });
+  }
+  merged.sort((a, b) => a.sort_order - b.sort_order);
+  merged.forEach((r, i) => {
+    r.sort_order = i;
+  });
+  return merged;
+}
+
 function getDefaultOutreachPlaybook() {
   return {
-    version: 3,
+    version: 6,
     agent_persona: "Alex",
     company_label: "Solena Digital",
     voice_style:
       'Sound natural, friendly, confident — not salesy or robotic. Use brief fillers ("um", "okay so", "sure"). Keep live conversations under 60 seconds when possible.',
     ivr_rules:
-      "Listen first. Navigate to reception or owner. Use press_digit when needed. Prefer operator / front desk. Never pitch during hold music or menus. HARD LIMITS: If still in IVR or an automated menu after 25 seconds with no human, use end_call. Do not loop menus. If you reach voicemail, leave ONE short sentence (max 15 seconds), then end_call immediately — do not wait on the line. Never hold longer than 20 seconds waiting for a person.",
+      "Listen first. Navigate to reception or owner. Use press_digit for ALL keypad prompts — ZIP codes, menu options, extensions. Never speak digits aloud when the IVR wants keypad input. Prefer operator / front desk (often 0). Never pitch during hold music, call screening bots, or menus. HARD LIMITS: If still in IVR or an automated menu after 15 seconds with no human, use end_call immediately — do not loop menus. If Google Call Screen or 'record your name' appears, use end_call — that is not a live human. If you reach voicemail, use end_call immediately — do NOT leave a message. Never hold longer than 12 seconds waiting for a person. If you hear only ringing, hold music, or a machine greeting with no live human for 20 seconds total, use end_call.",
     opening:
-      "Hi — uh, this is Alex with Solena Digital. I was looking at {{company_name}} in {{city}} — we put together a quick preview of a stronger local page that could bring in more plumbing calls from Google. Would you be open to taking a quick look?",
+      "Hi — uh, this is Alex with Solena Digital. I was looking at {{company_name}} in {{city}} — (wait) we put together a quick preview of a stronger local page that could help you get more customers calling from Google. (wait) Would you be open to taking a quick look?",
     general_rules:
-      "Do NOT claim you rebuilt their live website without their permission — it's a preview/sample for discussion. Do not discuss pricing unless they ask; say the specialist can walk through options. California calls may be recorded if asked. Do NOT transfer the live call — when they want the preview, call notify_owner_hot_lead then end_call; the account owner will text or call them back.",
+      "Do NOT claim you rebuilt their live website without their permission — it's a preview/sample for discussion. When they ask about cost: use the Cost / pricing rebuttal — pricing questions are NOT do-not-call. California calls may be recorded if asked. Do NOT transfer the live call — when they want the preview, call notify_owner_hot_lead then end_call; the account owner will text or call them back. If they ask 'do you still do plumbing' style questions — you already know they are a plumber; use the opening script instead. After any rebuttal, steer back to permission to text the preview link unless they clearly agreed or declined. If they are hostile, profane, or explicitly say do-not-call: use the Do-not-call rebuttal then end_call — do not keep pitching.",
+    rebuttals: getDefaultOutreachRebuttals(),
     paths: [
       {
         id: "interested",
@@ -134,8 +410,22 @@ function normalizeOutreachPlaybook(raw) {
     }
   }
 
+  if (version < 4) {
+    ivr_rules = base.ivr_rules;
+  }
+
+  if (version < 5) {
+    general_rules = base.general_rules;
+    ivr_rules = base.ivr_rules;
+  }
+
+  let rebuttals = mergeOutreachRebuttals(raw.rebuttals);
+  if (version < 6) {
+    rebuttals = mergeOutreachRebuttals(null);
+  }
+
   return {
-    version: 3,
+    version: 6,
     agent_persona: String(raw.agent_persona || base.agent_persona),
     company_label: String(raw.company_label || base.company_label),
     voice_style,
@@ -144,40 +434,169 @@ function normalizeOutreachPlaybook(raw) {
       raw.opening || raw.opening_has_website || raw.opening_no_website || base.opening
     ),
     general_rules,
+    rebuttals,
     paths: mergedPaths.length ? mergedPaths : base.paths,
   };
 }
 
-function parseOpeningSegments(opening) {
+function parseOpeningDelimiter(raw) {
+  const d = String(raw || "").trim().toLowerCase();
+  if (/^wait(?:\s|$)/.test(d)) return { type: "wait_caller" };
+  const pauseSec = d.match(/^pause\s+(\d+(?:\.\d+)?)\s*sec/);
+  if (pauseSec) return { type: "pause_ms", ms: Math.round(parseFloat(pauseSec[1]) * 1000) };
+  const secMatch = d.match(/(?:after\s+)?(\d+(?:\.\d+)?)\s*(?:full\s+)?sec(?:ond)?s?/);
+  if (secMatch) return { type: "pause_ms", ms: Math.round(parseFloat(secMatch[1]) * 1000) };
+  if (/^pause/.test(d)) return { type: "pause_ms", ms: 2000 };
+  return { type: "wait_caller" };
+}
+
+function cleanOpeningSpeech(raw) {
+  return String(raw || "")
+    .replace(/^[\s"'“”‘’]+|[\s"'“”‘’]+$/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Cartesia SSML — reliable timed pause in TTS (max 3.5s). */
+function ssmlBreak(ms) {
+  const sec = Math.min(3.5, Math.max(0.5, Number(ms) / 1000));
+  const label = Number.isInteger(sec) ? `${sec}s` : `${sec.toFixed(1)}s`;
+  return `<break time="${label}"/>`;
+}
+
+function combinePitchWithSsmlBreaks(segments) {
+  return segments
+    .map((seg) => {
+      let s = seg.text;
+      if (seg.after.type === "pause_ms") s += ssmlBreak(seg.after.ms);
+      return s;
+    })
+    .join("");
+}
+
+function buildOpeningDeliveryGroups(opening) {
+  const structure = parseOpeningStructure(opening);
+  if (!structure.length) return [];
+  const waitIdx = structure.findIndex((s) => s.after.type === "wait_caller");
+  if (waitIdx < 0) {
+    return [{ type: "speak", segments: structure }];
+  }
+  const groups = [{ type: "question", segments: structure.slice(0, waitIdx + 1) }];
+  const rest = structure.slice(waitIdx + 1);
+  if (rest.length) groups.push({ type: "pitch", segments: rest });
+  return groups;
+}
+
+function combinePitchSegments(segments) {
+  return combinePitchWithSsmlBreaks(segments);
+}
+
+function parseOpeningStructure(opening) {
   const text = String(opening || "").trim();
   if (!text) return [];
-  return text
-    .split(
-      /\s*[\(\[\{](?:\s*wait(?:\s+for\s+(?:response|them|human))?\s*|\s*pause\s*)[\)\]\}]|\s*(?:^|\n)\s*(?:wait|pause)\s*(?:\n|$)\s*/gi
-    )
-    .map((s) => s.replace(/^[\s"'“”‘’]+|[\s"'“”‘’]+$/g, "").trim())
+  const re = /\s*[\(\[\{]\s*([^)\]}]+)\s*[\)\]\}]\s*/gi;
+  if (!re.test(text)) {
+    return [{ text: cleanOpeningSpeech(text), after: { type: "none" } }];
+  }
+  re.lastIndex = 0;
+  const pieces = text.split(re);
+  const segments = [];
+  for (let i = 0; i < pieces.length; i += 2) {
+    const spoken = cleanOpeningSpeech(pieces[i]);
+    if (!spoken) continue;
+    const after = i + 1 < pieces.length ? parseOpeningDelimiter(pieces[i + 1]) : { type: "none" };
+    segments.push({ text: spoken, after });
+  }
+  return segments;
+}
+
+function parseOpeningSegments(opening) {
+  return parseOpeningStructure(opening)
+    .map((s) => s.text)
     .filter(Boolean);
+}
+
+function buildOpeningScriptBlock(playbook) {
+  const structure = parseOpeningStructure(normalizeOutreachPlaybook(playbook).opening);
+  if (!structure.length) return "Part 1: (opening not configured)";
+  const question = structure[0].text;
+  const pitchLocked = structure.length > 1 ? combinePitchWithSsmlBreaks(structure.slice(1)) : "";
+  if (!pitchLocked) {
+    return `Part 1 — say EXACTLY:\n"${question}"`;
+  }
+  return (
+    `Part 1 — say EXACTLY once:\n"${question}"\n` +
+    "Wait for the caller to answer (yeah, yes, no — anything). Continue to Part 2 within 1 second — do not repeat the question.\n\n" +
+    "Part 2 — your ENTIRE next response must be EXACTLY this one string, character-for-character, including every <break time=\"…\"/> tag (Cartesia TTS uses these for timed pauses — never omit, shorten, or replace them with dashes):\n" +
+    `"${pitchLocked}"`
+  );
 }
 
 const PLUMBER_OPENING_MAX_STEPS = 8;
 
 function buildOpeningDynamicVariables(opening, templateVars) {
   const filled = fillOutreachTemplate(opening, templateVars);
-  const segments = parseOpeningSegments(filled);
+  const structure = parseOpeningStructure(filled);
+  const question = structure[0]?.text || "";
+  const pitchLocked = structure.length > 1 ? combinePitchWithSsmlBreaks(structure.slice(1)) : "";
   const vars = {
-    opening_step_count: String(segments.length || 0),
-    opening_first_line: segments[0] || "",
-    opening_line: segments[0] || "",
-    opening_script: segments.join(" "),
+    opening_step_count: pitchLocked ? "2" : String(structure.length || 0),
+    opening_first_line: question,
+    opening_line: question,
+    opening_script: pitchLocked ? question + " " + pitchLocked.replace(/<break[^/]*\/>/g, " ") : question,
+    opening_question: question,
+    opening_pitch_locked: pitchLocked,
   };
   for (let i = 0; i < PLUMBER_OPENING_MAX_STEPS; i++) {
-    vars["opening_step_" + (i + 1)] = segments[i] || "";
+    vars["opening_step_" + (i + 1)] = i === 0 ? question : i === 1 ? pitchLocked : "";
   }
   return vars;
 }
 
+function buildPlumberLlmDefaultDynamicVariables(playbook) {
+  const sample = {
+    company_name: "Example Plumbing Co",
+    city: "Example City",
+    has_website_label: "no",
+    website_or_none: "none listed on Google",
+    transfer_phone: "+10000000000",
+  };
+  const openingVars = buildOpeningDynamicVariables(playbook?.opening || "", sample);
+  return {
+    ...openingVars,
+    company_name: sample.company_name,
+    city: sample.city,
+    has_website_label: sample.has_website_label,
+    website_or_none: sample.website_or_none,
+    transfer_phone: sample.transfer_phone,
+  };
+}
+
+function buildRebuttalScriptBlock(rebuttals) {
+  const list = (rebuttals || []).filter((r) => r.enabled);
+  const soft = list.filter((r) => !r.hard_stop);
+  const hard = list.filter((r) => r.hard_stop);
+  const softBlocks = soft
+    .map(
+      (r) =>
+        `### ${r.label}\nWhen: ${r.when}\nSay: "${r.say}"\nThen: Steer back toward permission to text the preview link — unless they already said yes (use Interested path) or clearly declined (use Not interested path).`
+    )
+    .join("\n\n");
+  const hardBlocks = hard
+    .map((r) => `### ${r.label}\nWhen: ${r.when}\nSay: "${r.say}"\nThen: end_call immediately. Do not continue pitching.`)
+    .join("\n\n");
+  let out =
+    "When they push back during or after the opening, use the closest match below. " +
+    "Pricing questions, skepticism, and 'who are you' are NOT hang-up triggers.\n\n";
+  if (softBlocks) out += softBlocks;
+  if (hardBlocks) out += (softBlocks ? "\n\n## Hard stop\n\n" : "") + hardBlocks;
+  return out || "(No rebuttals configured)";
+}
+
 function buildPlumberPromptFromPlaybook(playbook) {
   const pb = normalizeOutreachPlaybook(playbook);
+  const openingScript = buildOpeningScriptBlock(playbook);
+  const rebuttalScript = buildRebuttalScriptBlock(pb.rebuttals);
   const pathBlocks = pb.paths
     .filter((p) => p.enabled)
     .map((p) => {
@@ -188,11 +607,6 @@ function buildPlumberPromptFromPlaybook(playbook) {
       return `## If ${p.label}\nWhen: ${p.when}\nSay: "${p.say}"\n${acts.length ? acts.map((a, i) => `${i + 1}. ${a}`).join("\n") : "End the call appropriately."}`;
     })
     .join("\n\n");
-
-  const stepLines = [];
-  for (let i = 2; i <= PLUMBER_OPENING_MAX_STEPS; i++) {
-    stepLines.push(`- After they respond, if opening step ${i} is non-empty, say it verbatim: "{{opening_step_${i}}}" — then go silent until they speak again.`);
-  }
 
   return `You are ${pb.agent_persona}, calling from ${pb.company_label} — a local web team in Southern California.
 
@@ -205,23 +619,33 @@ Context for this business:
 ## Voice
 ${pb.voice_style}
 
-## Opening (after a live human answers — not during IVR)
-WAIT for the live person to speak first ("hello", "how can I help you", company name, etc.). Do NOT talk before they greet you. Never pitch during hold music, IVR, or right when the line connects.
+## Opening script (LOCKED — mandatory, word-for-word)
+WAIT for the live person to speak first ("hello", "how can I help you", company name, etc.). Do NOT talk before they greet you. Never pitch during hold music, IVR, or call screening bots.
 
-After they have spoken, say part 1 verbatim: "{{opening_step_1}}" — then go silent until they speak again.
+After they greet you, deliver the opening Parts below — only the quoted words, in order:
 
-If {{opening_step_count}} is greater than 1, deliver the remaining parts ONE AT A TIME — only after the caller has responded since your last spoken line:
-${stepLines.join("\n")}
+${openingScript}
 
 Opening delivery rules (critical):
-- Say only the spoken words — never say "wait", "pause", "(anything)", line numbers, "step", or "opening"
-- Never read stage directions, separators, or instructions aloud
-- Do not combine multiple parts in one turn
-- Do not paraphrase — same words, same order
+- Part 1: ask the plumbing question once, then wait for their answer
+- Part 2: speak {{opening_pitch_locked}} VERBATIM — every word and every <break time="…"/> tag exactly as written (tags = timed pauses in TTS)
+- Never paraphrase, never drop break tags, never use dashes instead of break tags
+- Keep spaces after periods ("website. Uhh" not "website.Uhh")
+- Never repeat the plumbing question
 
 ## IVR rules
 ${pb.ivr_rules}
 
+## No live human — end quickly
+If no live person has greeted you within 20 seconds of the call connecting (only ringing, hold music, IVR, or voicemail), use end_call immediately. Do not wait two minutes. Outreach calls that never reach a human should end in under 45 seconds total.
+
+## Never say (banned — old bad script)
+Never use the old generic cold-call script. Never say stage directions like wait or pause aloud. Never pitch before the live person greets you.
+
+## Objection handling (rebuttals)
+${rebuttalScript}
+
+## Outcomes (after opening or rebuttal)
 ${pathBlocks}
 
 ## Rules
@@ -278,15 +702,90 @@ async function ensurePlaybookIntegrityBackfill(env, playbook) {
 async function recordPlaybookAudit(env, action, opening, detail) {
   await ensurePlumberOutreachSchema(env);
   try {
+    const fp = playbookOpeningFingerprint(opening);
+    const detailJson = JSON.stringify({
+      fingerprint: fp,
+      opening_full: String(opening || ""),
+      note: String(detail || ""),
+    });
     await env.DB.prepare(
       `INSERT INTO plumber_playbook_audit (action, opening_preview, detail, created_at)
        VALUES (?1, ?2, ?3, datetime('now'))`
     )
-      .bind(String(action || "save"), String(opening || "").slice(0, 500), String(detail || ""))
+      .bind(String(action || "save"), String(opening || "").slice(0, 500), detailJson)
       .run();
   } catch (e) {
     /* audit optional */
   }
+}
+
+/** Recovered from playbook audit (f53636c6) + live call transcripts — Jun 17 2026 */
+const PLUMBER_RECOVERED_OPENING_V1 =
+  'Hey, Do you still do plumbing?\n(wait)\nok. so this is gonna sound a bit weird.. umm plz dont hang up on me. I was checking out plumbers in the area and I actually made a cleaner website preview for you at no charge - to help you get more calls.\n(pause)\nCan I text you the link so you can take a look?\n(pause)\nIf you like it, I can have my colleague follow up. If not, no worries.';
+
+/** Campaign script — used on IE dials; got "Okay let's do it" on Allstar test */
+const PLUMBER_RECOVERED_OPENING_V2 =
+  "Hey, Do you still do plumbing?\n(wait)\nGot it. I'm local and I was checking out plumbers in the area. I actually made a cleaner, faster website preview for you — no charge. It's just something I do for local trades to help them get more customers calling.\n(pause)\nCan I text you the link so you can take a look?\n(pause)\nIf you like it, I can have my colleague follow up. If not, no worries.";
+
+const PLUMBER_BANNED_LIVE_PHRASES = [
+  "nexa calling",
+  "appointment for",
+  "scheduling_outcome",
+  "nexasync",
+];
+
+function promptBodyExcludingNeverSaySection(prompt) {
+  const text = String(prompt || "");
+  const idx = text.indexOf("## Never say");
+  return idx >= 0 ? text.slice(0, idx) : text;
+}
+
+function promptOpeningScriptSection(prompt) {
+  const text = String(prompt || "");
+  const start = text.indexOf("## Opening script (LOCKED");
+  if (start < 0) return "";
+  const end = text.indexOf("## IVR rules", start);
+  return end >= 0 ? text.slice(start, end) : text.slice(start);
+}
+
+function livePromptContainsBannedPitch(prompt) {
+  const body = promptBodyExcludingNeverSaySection(prompt);
+  const withoutOpening = body.replace(promptOpeningScriptSection(body), "");
+  const check = withoutOpening.toLowerCase();
+  return PLUMBER_BANNED_LIVE_PHRASES.find((p) => check.includes(p)) || null;
+}
+
+async function assertRetellPromptReadyForCall(env, agentId, playbook) {
+  if (!agentId || typeof retellFetch !== "function") {
+    throw new Error("Cannot verify Retell agent prompt before dialing");
+  }
+  const expectedPrompt = buildPlumberPromptFromPlaybook(playbook);
+  const retell = await fetchPlumberRetellLlmPrompt(env, agentId);
+  const livePrompt = String(retell?.llm?.general_prompt || "");
+  if (!livePrompt) throw new Error("Retell agent has no prompt — sync failed");
+  if (!livePrompt.includes("Opening script (LOCKED") || !livePrompt.includes("WAIT for the live person")) {
+    throw new Error("Retell agent missing locked opening script — click Save & sync agent on dashboard");
+  }
+  const firstSeg = openingFirstSegment(playbook.opening).slice(0, 40);
+  if (firstSeg && !livePrompt.includes(firstSeg.slice(0, 20))) {
+    throw new Error("Retell prompt missing saved opening text — Save & sync agent on dashboard");
+  }
+  const banned = livePromptContainsBannedPitch(livePrompt);
+  if (banned) throw new Error("Retell prompt still contains banned phrase: " + banned);
+  if (retell?.llm?.start_speaker !== "user") {
+    throw new Error("Retell agent must wait for user to speak first (start_speaker: user)");
+  }
+  if (retell?.llm?.begin_message) {
+    throw new Error("Retell begin_message must be empty so Alex waits for hello");
+  }
+  const expectsPause = /\(pause\s+\d/i.test(playbook.opening || "");
+  if (expectsPause && !expectedPrompt.includes("<break time=")) {
+    throw new Error("Opening has pause markers but prompt missing SSML breaks — re-save and sync");
+  }
+  if (livePrompt !== expectedPrompt) {
+    throw new Error("Retell prompt drifted from saved playbook — open Outreach script and Save & sync agent");
+  }
+  return { verified: true, agent_id: agentId, llm_id: retell?.llm?.llm_id || retell?.agent?.response_engine?.llm_id || null };
 }
 
 async function assertPlaybookReadyForCall(env, playbook) {
@@ -446,10 +945,24 @@ async function fetchRetellCallInspect(env, callId) {
   const detail = await retellFetch(env, "GET", "/v2/get-call/" + callId, null);
   const transcript = detail.transcript || detail.transcript_object || "";
   const agentUtterances = [];
+  const toolCalls = [];
+  const agentWordTimes = [];
   if (Array.isArray(detail.transcript_object)) {
     for (const t of detail.transcript_object) {
-      if (t.role === "agent" || t.speaker === "agent") {
-        agentUtterances.push(t.content || t.text || "");
+      const role = String(t.role || t.speaker || "").toLowerCase();
+      if (role === "tool_call_invocation" || role === "tool_call") {
+        toolCalls.push(String(t.name || t.tool_name || ""));
+      }
+      if (role === "agent") {
+        const content = String(t.content || t.text || "").trim();
+        if (content) agentUtterances.push(content);
+        if (Array.isArray(t.words)) {
+          for (const w of t.words) {
+            if (w.start != null && w.end != null) {
+              agentWordTimes.push({ word: w.word, start: w.start, end: w.end, utterance: content });
+            }
+          }
+        }
       }
     }
   } else if (typeof transcript === "string") {
@@ -457,14 +970,30 @@ async function fetchRetellCallInspect(env, callId) {
       if (/^agent:/i.test(line)) agentUtterances.push(line.replace(/^agent:\s*/i, ""));
     });
   }
+  const pitchUtterance = agentUtterances[1] || "";
+  const gaps = [];
+  for (let i = 1; i < agentWordTimes.length; i++) {
+    const gap = agentWordTimes[i].start - agentWordTimes[i - 1].end;
+    if (gap >= 0.3) gaps.push({ after: agentWordTimes[i - 1].word, before: agentWordTimes[i].word, gap_sec: Math.round(gap * 10) / 10 });
+  }
   return {
     call_id: callId,
     agent_id: detail.agent_id || detail.override_agent_id || null,
     agent_name: detail.agent_name || null,
     disconnection_reason: detail.disconnection_reason || null,
+    duration_sec: detail.duration_ms ? Math.round(detail.duration_ms / 1000) : null,
     first_agent_line: agentUtterances[0] || "",
-    agent_lines: agentUtterances.slice(0, 5),
-    transcript_excerpt: typeof transcript === "string" ? transcript.slice(0, 1200) : JSON.stringify(transcript).slice(0, 1200),
+    agent_lines: agentUtterances.slice(0, 6),
+    agent_turn_count: agentUtterances.length,
+    tool_calls: toolCalls,
+    script_pause_count: toolCalls.filter((n) => n === "script_pause").length,
+    pitch_combined_turn: agentUtterances.length <= 2 && pitchUtterance.length > 80,
+    pitch_missing_closing:
+      pitchUtterance.length > 0 &&
+      !/colleague|follow up|no worries|follow-up/i.test(pitchUtterance) &&
+      /text you the link|take a look/i.test(pitchUtterance),
+    significant_pauses: gaps.filter((g) => g.gap_sec >= 1.5),
+    transcript_excerpt: typeof transcript === "string" ? transcript.slice(0, 2000) : JSON.stringify(transcript).slice(0, 2000),
     recording_url: detail.recording_url || detail.recording_multi_channel_url || null,
   };
 }
@@ -525,14 +1054,30 @@ async function handlePlumberOutreachInspectCall(request, env) {
         agentOnCall = { error: String(e.message || e) };
       }
     }
+    const expectedParts = parseOpeningSegments(playbook.opening);
+    const expectedStructure = parseOpeningStructure(expectedOpening);
+    const pitchExpectedLocked =
+      expectedStructure.length > 1 ? combinePitchWithSsmlBreaks(expectedStructure.slice(1)) : "";
+    const pitchUtterance = inspect.agent_lines?.[1] || "";
+    const expectsSsmlPause = /<break time=/i.test(pitchExpectedLocked);
     return json({
       ok: true,
       inspect,
       expected_opening: expectedOpening,
-      opening_matches: inspect.first_agent_line && expectedOpening
-        ? inspect.first_agent_line.toLowerCase().includes("solena digital") &&
-          inspect.first_agent_line.toLowerCase().includes("looking at")
-        : false,
+      expected_parts: expectedParts,
+      expected_pitch_locked: pitchExpectedLocked,
+      opening_matches:
+        inspect.first_agent_line &&
+        expectedParts[0] &&
+        inspect.first_agent_line.toLowerCase().includes(expectedParts[0].slice(0, 20).toLowerCase()),
+      delivery_issues: [
+        inspect.pitch_combined_turn && "Pitch delivered as one rushed block (pauses skipped)",
+        expectsSsmlPause &&
+          pitchUtterance &&
+          !inspect.significant_pauses?.some((p) => p.gap_sec >= 1.5) &&
+          "No 1.5s+ TTS pauses detected after pitch (SSML breaks may have been dropped)",
+        inspect.pitch_missing_closing && "Closing line ('colleague follow up') never spoken",
+      ].filter(Boolean),
       agent_on_call: agentOnCall
         ? { agent_id: inspect.agent_id, agent_name: agentOnCall.agent_name, voice_id: agentOnCall.voice_id }
         : null,
@@ -568,14 +1113,28 @@ function validatePlumberOutreachPreflight(playbook, retell, sync, env, phoneBind
       detail: isDefaultPlaybookOpening(opening) ? "Still factory default opening" : "Custom script locked in",
     },
     {
+      id: "no_banned_phrases",
+      ok: !livePromptContainsBannedPitch(livePrompt),
+      detail: "No legacy cold-call script on Retell",
+    },
+    {
       id: "wait_rules",
-      ok: !/\(wait\)|\(pause\)|\[WAIT FOR HUMAN\]/i.test(livePrompt) && livePrompt.includes('never say "wait"'),
-      detail: "No stage directions in Retell prompt; silent pauses between parts",
+      ok:
+        !/\(wait\)|\(pause\)|\[WAIT FOR HUMAN\]/i.test(
+          (() => {
+            const p = promptBodyExcludingNeverSaySection(livePrompt);
+            const end = p.indexOf("## IVR rules");
+            return end >= 0 ? p.slice(0, end) : p;
+          })()
+        ) && /never say.*wait/i.test(livePrompt),
+      detail: "Opening script has no stage directions; rules forbid saying wait/pause aloud",
     },
     {
       id: "opening_on_retell",
-      ok: livePrompt.includes("opening_step_1") && livePrompt.includes("WAIT for the live person"),
-      detail: "Multi-part opening; waits for caller greeting before part 1",
+      ok:
+        livePrompt.includes("Opening script (LOCKED") &&
+        (livePrompt.includes("<break time=") || livePrompt.includes("say EXACTLY")),
+      detail: "Locked opening baked into Retell prompt; SSML breaks for pauses",
     },
     {
       id: "user_speaks_first",
@@ -653,8 +1212,8 @@ async function handlePlumberOutreachPreflight(request, env) {
   }, report.ready ? 200 : 503);
 }
 
-async function patchPlumberOutreachRetellLlm(env, llmId, prompt, tools) {
-  return retellFetch(env, "PATCH", "/update-retell-llm/" + llmId, plumberOutreachLlmPayload(prompt, tools));
+async function patchPlumberOutreachRetellLlm(env, llmId, prompt, tools, playbook) {
+  return retellFetch(env, "PATCH", "/update-retell-llm/" + llmId, plumberOutreachLlmPayload(prompt, tools, playbook));
 }
 
 async function syncPlumberOutreachAgentPrompt(env) {
@@ -669,15 +1228,19 @@ async function syncPlumberOutreachAgentPrompt(env) {
   let llmId = detail.response_engine?.llm_id;
   if (!llmId) return { ok: false, reason: "llm_not_found" };
   const tools = buildPlumberTools(env, playbook);
-  const hotLeadUrl =
-    (await getPlumberOutreachConfig(env, "hot_lead_url")) || "https://api.inertia-intel.com/voice/plumber-outreach/hot-lead";
-  const custom = tools.find((t) => t.name === "notify_owner_hot_lead");
-  if (custom) custom.url = hotLeadUrl;
-  const llmPayload = plumberOutreachLlmPayload(prompt, tools);
+  wirePlumberCustomToolUrls(tools, env, {
+    hotLeadUrl:
+      (await getPlumberOutreachConfig(env, "hot_lead_url")) ||
+      "https://api.inertia-intel.com/voice/plumber-outreach/hot-lead",
+    scriptPauseUrl:
+      (await getPlumberOutreachConfig(env, "script_pause_url")) ||
+      "https://api.inertia-intel.com/voice/plumber-outreach/script-pause",
+  });
+  const llmPayload = plumberOutreachLlmPayload(prompt, tools, playbook);
 
   let llmSynced = false;
   try {
-    await patchPlumberOutreachRetellLlm(env, llmId, prompt, tools);
+    await patchPlumberOutreachRetellLlm(env, llmId, prompt, tools, playbook);
     llmSynced = true;
   } catch (e) {
     if (!/cannot update published/i.test(String(e.message || e))) throw e;
@@ -693,7 +1256,7 @@ async function syncPlumberOutreachAgentPrompt(env) {
     const draft = await retellFetch(env, "GET", "/get-agent/" + agentId, null);
     llmId = draft.response_engine?.llm_id || llmId;
     try {
-      await patchPlumberOutreachRetellLlm(env, llmId, prompt, tools);
+      await patchPlumberOutreachRetellLlm(env, llmId, prompt, tools, playbook);
     } catch (e2) {
       const llm = await retellFetch(env, "POST", "/create-retell-llm", llmPayload);
       llmId = llm.llm_id;
@@ -706,7 +1269,7 @@ async function syncPlumberOutreachAgentPrompt(env) {
   const picked = await resolvePlumberMaleVoiceId(env, plumberOutreachVoiceId(env));
   const updated = await retellFetch(env, "PATCH", "/update-agent/" + agentId, {
     agent_name: "IE Plumber Outreach",
-    ...plumberOutreachVoiceSettings(env, picked.voice_id),
+    ...plumberOutreachAgentSettings(env, picked.voice_id),
   });
   const agentVersion = parseInt(updated.version, 10) || 0;
   if (agentVersion > 0) {
@@ -733,6 +1296,40 @@ async function syncPlumberOutreachAgentPrompt(env) {
   };
 }
 
+async function handlePlumberOutreachPlaybookHistory(env) {
+  await ensurePlumberOutreachSchema(env);
+  const rows = await env.DB.prepare(
+    `SELECT id, action, opening_preview, detail, created_at FROM plumber_playbook_audit ORDER BY created_at DESC LIMIT 30`
+  ).all();
+  const items = (rows.results || []).map((row) => {
+    let opening_full = String(row.opening_preview || "");
+    let fingerprint = null;
+    try {
+      const parsed = JSON.parse(row.detail || "{}");
+      if (parsed.opening_full) opening_full = parsed.opening_full;
+      if (parsed.fingerprint) fingerprint = parsed.fingerprint;
+    } catch (e) {
+      /* legacy row */
+    }
+    return {
+      id: row.id,
+      action: row.action,
+      created_at: row.created_at,
+      fingerprint,
+      opening_preview: String(row.opening_preview || "").slice(0, 120),
+      opening_full,
+    };
+  });
+  return json({
+    ok: true,
+    items,
+    recovered: {
+      v1_dashboard_jun17: PLUMBER_RECOVERED_OPENING_V1,
+      v2_campaign_live: PLUMBER_RECOVERED_OPENING_V2,
+    },
+  });
+}
+
 async function handlePlumberOutreachPlaybookGet(env) {
   const playbook = await getOutreachPlaybook(env);
   const integrity = await ensurePlaybookIntegrityBackfill(env, playbook);
@@ -751,6 +1348,7 @@ async function handlePlumberOutreachPlaybookGet(env) {
     meta: {
       variables: ["{{company_name}}", "{{city}}", "{{phone}}", "{{interest_level}}", "{{notes_line}}", "{{publish_url}}"],
       sms_variables: ["{{company_name}}", "{{city}}", "{{phone}}", "{{interest_level}}", "{{notes_line}}", "{{publish_url}}"],
+      rebuttal_count: (playbook.rebuttals || []).filter((r) => r.enabled).length,
     },
   });
 }
@@ -758,6 +1356,29 @@ async function handlePlumberOutreachPlaybookGet(env) {
 async function handlePlumberOutreachPlaybookPatch(request, env) {
   await ensurePlumberOutreachSchema(env);
   const body = await request.json().catch(() => ({}));
+  if (body.restore === "v1" || body.restore === "v2" || body.restore === "recovered") {
+    const opening =
+      body.restore === "v1"
+        ? PLUMBER_RECOVERED_OPENING_V1
+        : body.restore === "v2"
+          ? PLUMBER_RECOVERED_OPENING_V2
+          : PLUMBER_RECOVERED_OPENING_V2;
+    const playbook = await getOutreachPlaybook(env);
+    playbook.opening = opening;
+    playbook.version = 5;
+    const saved = await saveOutreachPlaybook(env, playbook, {
+      action: "restore",
+      via: "dashboard",
+      detail: "restored " + body.restore,
+    });
+    let sync = { ok: false };
+    try {
+      sync = await syncPlumberOutreachAgentPrompt(env);
+    } catch (e) {
+      sync = { ok: false, error: String(e.message || e) };
+    }
+    return json({ ok: true, restored: body.restore, playbook: saved, sync, integrity: await getPlaybookIntegrity(env) });
+  }
   if (body.reset) {
     if (String(body.reset_confirm || "").trim() !== "RESET-PLAYBOOK") {
       return json(
@@ -797,12 +1418,15 @@ async function handlePlumberOutreachPlaybookPatch(request, env) {
 
 const PLUMBER_OUTREACH_BEGIN = "";
 
-function plumberOutreachLlmPayload(prompt, tools) {
+function plumberOutreachLlmPayload(prompt, tools, playbook) {
   return {
     general_prompt: prompt,
     begin_message: PLUMBER_OUTREACH_BEGIN,
     start_speaker: "user",
     general_tools: tools,
+    model: "gpt-4.1-mini",
+    model_temperature: 0.25,
+    default_dynamic_variables: buildPlumberLlmDefaultDynamicVariables(playbook),
   };
 }
 
@@ -810,13 +1434,15 @@ const PLUMBER_OUTREACH_GENERAL_TOOLS = [
   {
     type: "press_digit",
     name: "press_digit",
-    description: "Press keypad digits to navigate IVR menus. Prefer operator or reception.",
+    description:
+      "Press keypad digits to navigate IVR menus — ZIP codes, extensions, menu options. Use this instead of speaking numbers when the system asks you to enter digits. Prefer operator / reception (often 0).",
     delay_ms: 1500,
   },
   {
     type: "end_call",
     name: "end_call",
-    description: "End the call politely when done or if they refuse.",
+    description:
+      "End the call immediately when done, if they refuse, if no live human answers, if stuck in IVR/voicemail/hold, or after any hard time limit in the prompt.",
   },
   {
     type: "transfer_call",
@@ -831,10 +1457,11 @@ const PLUMBER_OUTREACH_POST_CALL = [
   {
     type: "enum",
     name: "call_outcome",
-    description: "Outcome of the outreach call",
+    description:
+      "Outcome of the outreach call. Use interested_callback when they agree to see the preview (owner will text link) — NOT interested_transferred unless a live transfer actually happened.",
     choices: [
-      "interested_transferred",
       "interested_callback",
+      "interested_transferred",
       "not_interested",
       "voicemail",
       "no_answer",
@@ -844,7 +1471,7 @@ const PLUMBER_OUTREACH_POST_CALL = [
     required: true,
   },
   { type: "string", name: "contact_name", description: "Name of person spoken with", required: false },
-  { type: "system-presets", name: "call_summary", required: false },
+  { type: "string", name: "call_summary", description: "2-3 sentence summary of what happened on the call", required: true },
 ];
 
 function plumberOutreachWebhookUrl(request, env) {
@@ -857,6 +1484,38 @@ function plumberHotLeadUrl(request, env) {
   const origin = new URL(request.url).origin;
   if (origin && origin.startsWith("http")) return origin + "/voice/plumber-outreach/hot-lead";
   return "https://api.inertia-intel.com/voice/plumber-outreach/hot-lead";
+}
+
+function plumberScriptPauseUrl(request, env) {
+  const origin = new URL(request.url).origin;
+  if (origin && origin.startsWith("http")) return origin + "/voice/plumber-outreach/script-pause";
+  return "https://api.inertia-intel.com/voice/plumber-outreach/script-pause";
+}
+
+async function handlePlumberOutreachScriptPause(request, env) {
+  const rawBody = await request.text();
+  const signature = request.headers.get("x-retell-signature") || request.headers.get("X-Retell-Signature");
+  if (env.RETELL_API_KEY) {
+    const valid = await verifyRetellWebhook(rawBody, env.RETELL_API_KEY, signature);
+    if (!valid) return json({ error: "Invalid signature" }, 401);
+  }
+  let payload;
+  try {
+    payload = JSON.parse(rawBody);
+  } catch (e) {
+    return json({ error: "Invalid JSON" }, 400);
+  }
+  const args = payload.args || {};
+  const seconds = Math.min(5, Math.max(1, parseInt(args.seconds, 10) || 2));
+  await new Promise((resolve) => setTimeout(resolve, seconds * 1000));
+  return json({ ok: true, paused_seconds: seconds, continue_script: true });
+}
+
+function wirePlumberCustomToolUrls(tools, env, urls) {
+  const hotLead = tools.find((t) => t.name === "notify_owner_hot_lead");
+  if (hotLead) hotLead.url = urls.hotLeadUrl;
+  const pause = tools.find((t) => t.name === "script_pause");
+  if (pause) pause.url = urls.scriptPauseUrl;
 }
 
 async function ensurePlumberOutreachSchema(env) {
@@ -987,6 +1646,26 @@ function callDurationSec(call) {
   return null;
 }
 
+function plumberOutreachOutcomeFromCall(call, customOutcome) {
+  let outcome = String(customOutcome || "").trim();
+  if (outcome === "interested_transferred") {
+    const reason = String(call?.disconnection_reason || "").toLowerCase();
+    if (reason !== "call_transfer") outcome = "interested_callback";
+  }
+  if (outcome) return outcome;
+  const mapped = typeof mapRetellDisconnectionReason === "function" ? mapRetellDisconnectionReason(call?.disconnection_reason) : null;
+  if (mapped) return mapped;
+  const reason = String(call?.disconnection_reason || "").toLowerCase();
+  if (reason === "inactivity" || reason === "error_user_not_joined") return "no_answer";
+  return "";
+}
+
+function plumberOutreachCallSummary(call, custom) {
+  const analysis = call?.call_analysis || {};
+  const data = custom || analysis.custom_analysis_data || analysis;
+  return String(data.call_summary || analysis.call_summary || analysis.summary || "").trim();
+}
+
 function outreachVoiceRate(env) {
   const n = parseFloat(env.PLUMBER_VOICE_COST_PER_MIN || "0.15");
   return Number.isFinite(n) && n > 0 ? n : 0.15;
@@ -1098,6 +1777,24 @@ function buildPlumberTools(env, playbook) {
   });
   tools.push({
     type: "custom",
+    name: "script_pause",
+    description:
+      "Optional silent pause (legacy). Opening pauses are handled by SSML <break> tags in the pitch — do not call this during the opening unless explicitly instructed.",
+    url: "",
+    method: "POST",
+    speak_during_execution: false,
+    speak_after_execution: true,
+    timeout_ms: 8000,
+    parameters: {
+      type: "object",
+      properties: {
+        seconds: { type: "integer", description: "How many seconds to pause (1-5). Use the exact value from the opening script." },
+      },
+      required: ["seconds"],
+    },
+  });
+  tools.push({
+    type: "custom",
     name: "notify_owner_hot_lead",
     description:
       "Text the account owner and log a hot lead when the plumber agrees to see the preview site. Call this, then end_call — do NOT transfer the live call.",
@@ -1124,6 +1821,7 @@ async function handlePlumberOutreachSetup(request, env) {
   await ensurePlumberOutreachSchema(env);
   const webhookUrl = plumberOutreachWebhookUrl(request, env);
   const hotLeadUrl = plumberHotLeadUrl(request, env);
+  const scriptPauseUrl = plumberScriptPauseUrl(request, env);
   let agentId = (await resolvePlumberOutreachAgentId(env))?.agent_id || "";
   let llmId = null;
   let agentVersion = 0;
@@ -1131,8 +1829,7 @@ async function handlePlumberOutreachSetup(request, env) {
   const outreachPrompt = buildPlumberPromptFromPlaybook(playbook);
 
   const tools = buildPlumberTools(env, playbook);
-  const custom = tools.find((t) => t.name === "notify_owner_hot_lead");
-  if (custom) custom.url = hotLeadUrl;
+  wirePlumberCustomToolUrls(tools, env, { hotLeadUrl, scriptPauseUrl });
 
   const pickedVoice = await resolvePlumberMaleVoiceId(env, plumberOutreachVoiceId(env));
 
@@ -1141,10 +1838,10 @@ async function handlePlumberOutreachSetup(request, env) {
       const detail = await retellFetch(env, "GET", "/get-agent/" + agentId, null);
       llmId = detail.response_engine?.llm_id;
       if (llmId) {
-        await retellFetch(env, "PATCH", "/update-retell-llm/" + llmId, plumberOutreachLlmPayload(outreachPrompt, tools));
+        await retellFetch(env, "PATCH", "/update-retell-llm/" + llmId, plumberOutreachLlmPayload(outreachPrompt, tools, playbook));
         const updated = await retellFetch(env, "PATCH", "/update-agent/" + agentId, {
           agent_name: "IE Plumber Outreach",
-          ...plumberOutreachVoiceSettings(env, pickedVoice.voice_id),
+          ...plumberOutreachAgentSettings(env, pickedVoice.voice_id),
           webhook_url: webhookUrl,
           webhook_events: ["call_started", "call_ended", "call_analyzed", "transcript_updated"],
           post_call_analysis_data: PLUMBER_OUTREACH_POST_CALL,
@@ -1158,11 +1855,11 @@ async function handlePlumberOutreachSetup(request, env) {
   }
 
   if (!agentId) {
-    const llm = await retellFetch(env, "POST", "/create-retell-llm", plumberOutreachLlmPayload(outreachPrompt, tools));
+    const llm = await retellFetch(env, "POST", "/create-retell-llm", plumberOutreachLlmPayload(outreachPrompt, tools, playbook));
     llmId = llm.llm_id;
     const created = await retellFetch(env, "POST", "/create-agent", {
       agent_name: "IE Plumber Outreach",
-      ...plumberOutreachVoiceSettings(env, pickedVoice.voice_id),
+      ...plumberOutreachAgentSettings(env, pickedVoice.voice_id),
       response_engine: { type: "retell-llm", llm_id: llmId },
       webhook_url: webhookUrl,
       webhook_events: ["call_started", "call_ended", "call_analyzed", "transcript_updated"],
@@ -1184,6 +1881,7 @@ async function handlePlumberOutreachSetup(request, env) {
   await setPlumberOutreachConfig(env, "agent_id", agentId);
   await setPlumberOutreachConfig(env, "webhook_url", webhookUrl);
   await setPlumberOutreachConfig(env, "hot_lead_url", hotLeadUrl);
+  await setPlumberOutreachConfig(env, "script_pause_url", scriptPauseUrl);
 
   if (agentId) {
     await ensurePlumberOutreachPhoneBinding(env, agentId);
@@ -1217,6 +1915,7 @@ async function placePlumberOutreachCall(env, lead, extraMeta) {
 
   const playbook = await getOutreachPlaybook(env);
   const scriptLock = await assertPlaybookReadyForCall(env, playbook);
+  await assertRetellPromptReadyForCall(env, agentId, playbook);
 
   const templateVars = {
     company_name: String(lead.company_name || ""),
@@ -1575,9 +2274,9 @@ async function handlePlumberOutreachWebhook(request, env, ctx) {
   if (event === "call_analyzed") {
     const analysis = call.call_analysis || {};
     const custom = analysis.custom_analysis_data || analysis;
-    const outcome = custom.call_outcome || "";
+    const outcome = plumberOutreachOutcomeFromCall(call, custom.call_outcome || "");
     const contactName = custom.contact_name || "";
-    const summary = custom.call_summary || "";
+    const summary = plumberOutreachCallSummary(call, custom);
     const dur = callDurationSec(call);
     await env.DB.prepare(
       `UPDATE plumber_outreach_calls SET call_outcome = ?2, contact_name = ?3, call_summary = ?4, status = 'done',
@@ -1804,6 +2503,67 @@ async function handlePlumberOutreachCampaignCron(env) {
   return processPlumberOutreachCampaignTick(env);
 }
 
+async function handleFunnelCallbackAlert(request, env) {
+  const body = await request.json().catch(() => ({}));
+  const contactName = String(body.contact_name || "").trim().slice(0, 120);
+  const phone = String(body.phone || "").trim().slice(0, 40);
+  const bestTime = String(body.best_time || "").trim().slice(0, 120);
+  const slug = String(body.slug || body.business_slug || "").trim().slice(0, 120);
+  const businessName = String(body.business_name || "").trim().slice(0, 160);
+  const page = String(body.page || "").trim().slice(0, 80);
+
+  if (!contactName) return json({ error: "contact_name required" }, 400);
+  if (!phone) return json({ error: "phone required" }, 400);
+
+  const label = businessName || slug || "Unknown business";
+  const previewOrigin = String(env.PREVIEW_PAGES_ORIGIN || "").replace(/\/+$/, "");
+  const connectBase = previewOrigin ? `${previewOrigin}/landing/connect.html` : "";
+  const connectUrl = slug && connectBase ? `${connectBase}?biz=${encodeURIComponent(slug)}` : connectBase || previewOrigin || "";
+  const phoneDigits = phone.replace(/\D/g, "");
+  const telHref = phoneDigits ? `tel:${phoneDigits.length === 10 ? "+1" + phoneDigits : phoneDigits}` : "";
+
+  const subject = `Solena callback: ${contactName} - ${label}`;
+  const text =
+    `Someone requested a call back from the funnel.\n\n` +
+    `Name: ${contactName}\n` +
+    `Phone: ${phone}\n` +
+    (bestTime ? `Best time: ${bestTime}\n` : "") +
+    `Business: ${label}\n` +
+    `QR slug: ${slug || "—"}\n` +
+    (page ? `Page: ${page}\n` : "") +
+    `\nFunnel page: ${connectUrl}\n`;
+
+  const html =
+    `<p><strong>Someone requested a call back from the funnel.</strong></p>` +
+    `<ul>` +
+    `<li><strong>Name:</strong> ${contactName}</li>` +
+    `<li><strong>Phone:</strong> <a href="${telHref}">${phone}</a></li>` +
+    (bestTime ? `<li><strong>Best time:</strong> ${bestTime}</li>` : "") +
+    `<li><strong>Business:</strong> ${label}</li>` +
+    `<li><strong>QR slug:</strong> <code>${slug || "—"}</code></li>` +
+    (page ? `<li><strong>Page:</strong> ${page}</li>` : "") +
+    `</ul>` +
+    `<p><a href="${connectUrl}">Open funnel page</a></p>`;
+
+  const email =
+    typeof sendOutreachEmail === "function"
+      ? await sendOutreachEmail(env, { subject, text, html })
+      : { sent: false, reason: "email_module_missing" };
+
+  const smsBody = `Solena callback: ${contactName} at ${phone}${label ? ` (${label})` : ""}. Call them back.`;
+  const notifyPhone = env.PLUMBER_OUTREACH_NOTIFY_PHONE || env.LAB_VERIFY_NOTIFY_PHONE;
+  const sms =
+    notifyPhone && typeof sendTwilioSms === "function"
+      ? await sendTwilioSms(env, notifyPhone, smsBody)
+      : { sent: false, reason: "sms_not_configured" };
+
+  if (!email.sent && !sms.sent) {
+    return json({ error: "Notification failed", email, sms }, 502);
+  }
+
+  return json({ ok: true, email, sms, subject });
+}
+
 async function handlePlumberTestAlertEmail(request, env) {
   await ensurePlumberOutreachSchema(env);
   await ensurePreviewPublishSchema(env);
@@ -1982,10 +2742,15 @@ async function handlePlumberOutreachTracking(request, env) {
   ).all();
 
   const recentCalls = await env.DB.prepare(
-    `SELECT call_id, company_name, city, phone, status, call_outcome, contact_name, call_summary,
-            duration_sec, placed_at, call_started_at, ended_at, alert_email_sent, recording_url
-     FROM plumber_outreach_calls
-     ORDER BY COALESCE(ended_at, call_started_at, placed_at) DESC
+    `SELECT c.call_id, c.company_name, c.city, c.phone, c.status, c.call_outcome, c.contact_name, c.call_summary,
+            c.duration_sec, c.placed_at, c.call_started_at, c.ended_at, c.alert_email_sent, c.recording_url,
+            COALESCE(q.slug, ps.slug) AS slug,
+            COALESCE(q.preview_url, ps.preview_url) AS preview_url,
+            q.status AS publish_status
+     FROM plumber_outreach_calls c
+     LEFT JOIN plumber_publish_queue q ON q.call_id = c.call_id
+     LEFT JOIN preview_sites ps ON ps.call_id = c.call_id
+     ORDER BY COALESCE(c.ended_at, c.call_started_at, c.placed_at) DESC
      LIMIT 40`
   ).all();
 

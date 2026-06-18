@@ -125,7 +125,7 @@ function showCallbackSuccess(form, statusEl) {
   statusEl.innerHTML =
     "<strong>Request received — we'll call you back soon!</strong>" +
     `<p>Thanks for reaching out. A Solena team member will call ${phone ? `<strong>${phone}</strong>` : "the number you provided"} as soon as we can.` +
-    ` If it's urgent, call us at <a href="tel:${phoneHref}">${phoneDisplay}</a>.</p>`;
+    ` Our team has been notified by text and email. If it's urgent, call us at <a href="tel:${phoneHref}">${phoneDisplay}</a>.</p>`;
   statusEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 

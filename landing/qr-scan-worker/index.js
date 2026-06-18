@@ -711,7 +711,7 @@ async function sendCallbackNotifyEmail(env, payload) {
   const bestTimeLine = bestTime ? `\nBest time: ${bestTime}` : "";
   const pageLine = page ? `\nPage: ${page}` : "";
 
-  const subject = `Call me back — ${contactName || "Prospect"} (${label})`;
+  const subject = `Solena callback: ${contactName || "Prospect"} - ${label}`;
   const text =
     `Someone requested a call back from the funnel.\n\n` +
     `Name: ${contactName || "—"}\n` +
@@ -741,6 +741,47 @@ async function sendCallbackNotifyEmail(env, payload) {
   return sendAlertEmail(env, { subject, text, html });
 }
 
+async function notifyCallbackViaOutreach(env, payload) {
+  const token = String(env.OUTREACH_API_TOKEN || "").trim();
+  if (!token) return { sent: false, reason: "no_outreach_token" };
+
+  try {
+    const res = await fetch(`${OUTREACH_API_BASE}/voice/funnel/callback-alert`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        contact_name: payload.contactName,
+        phone: payload.phone,
+        best_time: payload.bestTime,
+        slug: payload.slug,
+        business_name: payload.businessName,
+        page: payload.page,
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) {
+      return {
+        sent: false,
+        reason: data.error || `outreach_${res.status}`,
+        email: data.email,
+        sms: data.sms,
+      };
+    }
+    return {
+      sent: true,
+      provider: "outreach",
+      email: data.email,
+      sms: data.sms,
+    };
+  } catch (err) {
+    return { sent: false, reason: String(err?.message || err) };
+  }
+}
+
 async function handleCallbackRequest(env, ctx, body, request) {
   const contactName = String(body.contact_name || "").trim().slice(0, 120);
   const phone = String(body.phone || "").trim().slice(0, 40);
@@ -753,7 +794,7 @@ async function handleCallbackRequest(env, ctx, body, request) {
   if (!phone) return json({ error: "Phone is required" }, 400);
 
   const submittedAt = new Date().toISOString();
-  const emailResult = await sendCallbackNotifyEmail(env, {
+  const notifyPayload = {
     slug,
     businessName,
     contactName,
@@ -761,7 +802,12 @@ async function handleCallbackRequest(env, ctx, body, request) {
     bestTime,
     page,
     submittedAt,
-  });
+  };
+
+  let notifyResult = await notifyCallbackViaOutreach(env, notifyPayload);
+  if (!notifyResult.sent) {
+    notifyResult = await sendCallbackNotifyEmail(env, notifyPayload);
+  }
 
   if (slug && !isTestScan(request)) {
     try {
@@ -781,8 +827,8 @@ async function handleCallbackRequest(env, ctx, body, request) {
     }
   }
 
-  if (!emailResult.sent) {
-    return json({ error: "Could not send notification email. Please call us instead." }, 502);
+  if (!notifyResult.sent) {
+    return json({ error: "Could not send notification. Please call us instead." }, 502);
   }
 
   return json({
@@ -790,6 +836,8 @@ async function handleCallbackRequest(env, ctx, body, request) {
     recorded: true,
     slug: slug || null,
     notified: true,
+    provider: notifyResult.provider || "resend",
+    sms_sent: !!notifyResult.sms?.sent,
     submitted_at: submittedAt,
   });
 }
