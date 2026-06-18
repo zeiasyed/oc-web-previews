@@ -191,10 +191,6 @@
     return plumberLookup(slug).name;
   }
 
-  function connectUrl(slug) {
-    return "../connect.html?biz=" + encodeURIComponent(slug || "");
-  }
-
   function fmtPhoneLink(phone) {
     if (!phone) return "";
     var digits = String(phone).replace(/\D/g, "");
@@ -202,7 +198,7 @@
     return (
       '<a class="biz-phone-link" href="' +
       href +
-      '" title="Call business">' +
+      '" title="Call plumber">' +
       phone +
       "</a>"
     );
@@ -214,27 +210,17 @@
     var name = row.company_name || info.name;
     var phone = row.phone || info.phone;
     var city = row.plumber_city || info.city;
-    var funnel = connectUrl(slug);
-    var nameLink =
-      '<a class="biz-name-link" href="' +
-      funnel +
-      '" target="_blank" rel="noopener" title="Open postcard funnel page">' +
-      name +
-      "</a>";
-    var action = phone
-      ? fmtPhoneLink(phone)
-      : '<a class="biz-funnel-link" href="' +
-        funnel +
-        '" target="_blank" rel="noopener" title="Open postcard funnel page">Open funnel page →</a>';
-    var cityLine = city ? '<span class="biz-city">' + city + "</span>" : "";
+    var contact = phone
+      ? fmtPhoneLink(phone) + (city ? '<span class="biz-city">' + city + "</span>" : "")
+      : '<span class="biz-missing">Phone not on file</span>' +
+        (city ? '<span class="biz-city">' + city + "</span>" : "");
     return (
       '<td class="biz-cell"><strong>' +
-      nameLink +
-      '</strong><div class="muted">' +
+      name +
+      '</strong><div class="biz-contact">' +
+      contact +
+      '</div><div class="muted">' +
       slug +
-      '</div><div class="biz-actions">' +
-      action +
-      cityLine +
       "</div></td>"
     );
   }

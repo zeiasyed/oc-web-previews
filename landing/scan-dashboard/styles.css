@@ -41,17 +41,14 @@ table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
 th, td { text-align: left; padding: 0.55rem 0.4rem; border-bottom: 1px solid var(--border); }
 th { color: var(--muted); font-weight: 600; }
 .muted { color: var(--muted); }
-.biz-cell .biz-actions { margin-top: 0.25rem; font-size: 0.88rem; }
-.biz-name-link,
-.biz-phone-link,
-.biz-funnel-link {
+.biz-cell .biz-contact { margin-top: 0.2rem; font-size: 0.88rem; }
+.biz-phone-link {
   color: var(--accent);
   font-weight: 600;
   text-decoration: none;
 }
-.biz-name-link:hover,
-.biz-phone-link:hover,
-.biz-funnel-link:hover { text-decoration: underline; }
+.biz-phone-link:hover { text-decoration: underline; }
+.biz-missing { color: var(--muted); font-style: italic; }
 .biz-city {
   color: var(--muted);
   margin-left: 0.35rem;
