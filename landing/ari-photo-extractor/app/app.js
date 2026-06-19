@@ -545,6 +545,11 @@
     }
   }
 
+  function tallyVehicleLabel(car) {
+    const parts = [car.year, car.make, car.model].filter(Boolean);
+    return parts.join(" ").trim() || car.model || "";
+  }
+
   function renderTallyResults() {
     const cars = state.tallyCars;
     const filters = state.tallyFilters || {};
@@ -562,11 +567,7 @@
       .map(
         (car) =>
           "<tr><td>" +
-          escapeHtml(car.year) +
-          "</td><td>" +
-          escapeHtml(car.make) +
-          "</td><td>" +
-          escapeHtml(car.model) +
+          escapeHtml(tallyVehicleLabel(car)) +
           "</td><td>" +
           escapeHtml(car.vin) +
           "</td><td>" +
@@ -614,17 +615,15 @@
   }
 
   function tallyWorkbookRows() {
-    const rows = [["Year", "Make", "Model", "VIN", "Date worked on"]];
+    const rows = [["Model", "VIN", "Date worked on"]];
     state.tallyCars.forEach((car) => {
       rows.push([
-        car.year || "",
-        car.make || "",
-        car.model || "",
+        tallyVehicleLabel(car),
         car.vin || "",
         fmtTallyDate(car.dateOrdered),
       ]);
     });
-    rows.push(["Total", "", "", "", state.tallyCars.length]);
+    rows.push(["Total", "", state.tallyCars.length]);
     return rows;
   }
 
@@ -661,7 +660,7 @@
     try {
       const XLSX = await ensureXlsx();
       const ws = XLSX.utils.aoa_to_sheet(tallyWorkbookRows());
-      ws["!cols"] = [{ wch: 8 }, { wch: 14 }, { wch: 18 }, { wch: 20 }, { wch: 16 }];
+      ws["!cols"] = [{ wch: 32 }, { wch: 20 }, { wch: 16 }];
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, "Car Tally");
       XLSX.writeFile(wb, tallyExportFilename(".xlsx"));
@@ -686,11 +685,7 @@
       .map(
         (car) =>
           "<tr><td>" +
-          escapeHtml(car.year) +
-          "</td><td>" +
-          escapeHtml(car.make) +
-          "</td><td>" +
-          escapeHtml(car.model) +
+          escapeHtml(tallyVehicleLabel(car)) +
           "</td><td>" +
           escapeHtml(car.vin) +
           "</td><td>" +
@@ -713,10 +708,10 @@
       escapeHtml(toLabel) +
       "</p>" +
       '<table class="tally-print-table"><thead><tr>' +
-      "<th>Year</th><th>Make</th><th>Model</th><th>VIN</th><th>Date worked on</th>" +
+      "<th>Model</th><th>VIN</th><th>Date worked on</th>" +
       "</tr></thead><tbody>" +
       rows +
-      '</tbody><tfoot><tr><td colspan="4"><strong>Total</strong></td><td><strong>' +
+      '</tbody><tfoot><tr><td colspan="2"><strong>Total</strong></td><td><strong>' +
       state.tallyCars.length +
       "</strong></td></tr></tfoot></table></div>";
 
