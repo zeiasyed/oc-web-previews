@@ -11,21 +11,24 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import (
+    BaseDocTemplate,
+    Frame,
     Image as RLImage,
     PageBreak,
+    PageTemplate,
     Paragraph,
-    SimpleDocTemplate,
     Table,
     TableStyle,
 )
 
 ROOT = Path(__file__).resolve().parent.parent
 NEXASOURCE_LOGO = ROOT / "nexa-trials" / "assets" / "nexasource-mark.png"
+PUBLISHED_PDF = ROOT / "ocr-demo" / "OCR-Demo-Readout.pdf"
 
 ASSETS = Path(
     r"C:\Users\zeias\.cursor\projects\c-Users-zeias-Documents-Website-Development-oc-web-previews-landing\assets"
 )
-OUT = Path.home() / "Downloads" / "OCR-Demo-Readout.pdf"
+OUT = PUBLISHED_PDF
 PANEL_LEFT_COL = 3.35 * inch
 PANEL_RIGHT_COL = 3.55 * inch
 # Inner readout max width — right column minus cell padding
@@ -110,7 +113,7 @@ def build_brand_header(styles) -> Table:
         leading=14,
         textColor=colors.HexColor("#0B1F3A"),
     )
-    logo_size = 0.42 * inch
+    logo_size = 0.48 * inch
     logo = RLImage(str(NEXASOURCE_LOGO), width=logo_size, height=logo_size)
     brand_text = Paragraph("Produced by the NexaSource&trade; data engine", brand_style)
     header = Table([[logo, brand_text]], colWidths=[0.55 * inch, 6.35 * inch])
@@ -386,25 +389,36 @@ def scaled_image(path: Path, max_w: float, max_h: float) -> RLImage:
 
 
 FOOTER_TEXT = "Nexa-Trials Confidential. Not for General Distribution"
+FOOTER_COLOR = colors.HexColor("#334155")
 
 
-def draw_footer(canvas, doc) -> None:
+def draw_page_footer(canvas, doc) -> None:
     canvas.saveState()
-    canvas.setFont("Helvetica", 7)
-    canvas.setFillColor(colors.HexColor("#64748b"))
-    canvas.drawCentredString(letter[0] / 2, 0.32 * inch, FOOTER_TEXT)
-    canvas.drawRightString(letter[0] - doc.rightMargin, 0.32 * inch, str(doc.page))
+    canvas.setFont("Helvetica", 8)
+    canvas.setFillColor(FOOTER_COLOR)
+    footer_y = 0.40 * inch
+    canvas.drawCentredString(letter[0] / 2, footer_y, FOOTER_TEXT)
+    canvas.drawRightString(letter[0] - doc.rightMargin, footer_y, str(canvas.getPageNumber()))
     canvas.restoreState()
 
 
+class OCRDocTemplate(BaseDocTemplate):
+    def __init__(self, filename: str, **kwargs):
+        super().__init__(filename, **kwargs)
+        frame = Frame(self.leftMargin, self.bottomMargin, self.width, self.height, id="main")
+        template = PageTemplate(id="main", frames=[frame], onPage=draw_page_footer)
+        self.addPageTemplates([template])
+
+
 def build_pdf(entries: list[dict]) -> None:
-    doc = SimpleDocTemplate(
-        str(OUT),
+    PUBLISHED_PDF.parent.mkdir(parents=True, exist_ok=True)
+    doc = OCRDocTemplate(
+        str(PUBLISHED_PDF),
         pagesize=letter,
         leftMargin=0.55 * inch,
         rightMargin=0.55 * inch,
         topMargin=0.5 * inch,
-        bottomMargin=0.5 * inch,
+        bottomMargin=0.65 * inch,
         title="OCR Demonstration Readout",
     )
     styles = getSampleStyleSheet()
@@ -495,11 +509,13 @@ def build_pdf(entries: list[dict]) -> None:
         )
         story.append(panel)
 
-    doc.build(story, onFirstPage=draw_footer, onLaterPages=draw_footer)
-    print(f"Wrote {OUT}")
+    doc.build(story)
+    print(f"Wrote {PUBLISHED_PDF}")
 
 
 def main() -> None:
+    if not NEXASOURCE_LOGO.exists():
+        raise FileNotFoundError(f"Logo not found: {NEXASOURCE_LOGO}")
     entries = []
     for spec in IMAGES:
         path = ASSETS / spec["file"]
