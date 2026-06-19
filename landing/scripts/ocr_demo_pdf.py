@@ -11,7 +11,6 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import (
-    Flowable,
     Image as RLImage,
     PageBreak,
     Paragraph,
@@ -262,29 +261,62 @@ def note_paragraph(text: str, styles, note_style: str = "hand") -> Paragraph:
     return Paragraph(escaped, style)
 
 
-class FormCheckbox(Flowable):
-    """Empty outline box; optional checkmark when selected."""
-
-    def __init__(self, checked: bool = False, size: float = 9):
-        self.checked = checked
-        self.size = size
-        self.width = size + 6
-        self.height = size + 6
-
-    def wrap(self, availWidth, availHeight):
-        return self.width, self.height
-
-    def draw(self):
-        s = self.size
-        x = (self.width - s) / 2
-        y = (self.height - s) / 2
-        self.canv.setLineWidth(0.85)
-        self.canv.setStrokeColor(colors.black)
-        self.canv.rect(x, y, s, s, stroke=1, fill=0)
-        if self.checked:
-            self.canv.setLineWidth(1.1)
-            self.canv.line(x + 0.18 * s, y + 0.48 * s, x + 0.40 * s, y + 0.22 * s)
-            self.canv.line(x + 0.40 * s, y + 0.22 * s, x + 0.82 * s, y + 0.78 * s)
+def make_form_checkbox(checked: bool, styles) -> Table:
+    """Outline checkbox via nested table — reliable inside parent table cells."""
+    box = 11
+    if checked:
+        inner = Paragraph(
+            "&#10003;",
+            ParagraphStyle(
+                "FormCheckMark",
+                parent=styles["Normal"],
+                fontName="Helvetica-Bold",
+                fontSize=9,
+                leading=9,
+                alignment=1,
+                textColor=colors.black,
+            ),
+        )
+    else:
+        inner = Paragraph(
+            " ",
+            ParagraphStyle(
+                "FormCheckEmpty",
+                parent=styles["Normal"],
+                fontSize=1,
+                leading=8,
+                alignment=1,
+            ),
+        )
+    cb = Table([[inner]], colWidths=[box], rowHeights=[box])
+    cb.setStyle(
+        TableStyle(
+            [
+                ("BOX", (0, 0), (-1, -1), 0.75, colors.black),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 0),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+                ("TOPPADDING", (0, 0), (-1, -1), 0),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+                ("BACKGROUND", (0, 0), (-1, -1), colors.white),
+            ]
+        )
+    )
+    holder = Table([[cb]], colWidths=[0.22 * inch])
+    holder.setStyle(
+        TableStyle(
+            [
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 0),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+                ("TOPPADDING", (0, 0), (-1, -1), 0),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+            ]
+        )
+    )
+    return holder
 
 
 def build_form_readout(layout: dict, styles) -> Table:
@@ -292,7 +324,7 @@ def build_form_readout(layout: dict, styles) -> Table:
     data = []
     note_pad_overrides = []
     for r_idx, row in enumerate(rows):
-        checkbox = FormCheckbox(checked=bool(row.get("checked")))
+        checkbox = make_form_checkbox(bool(row.get("checked")), styles)
         data.append(
             [
                 checkbox,
