@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS ari_credentials (
   user_name TEXT PRIMARY KEY,
   email_enc TEXT NOT NULL,
   password_enc TEXT NOT NULL,
+  ari_account_user_id TEXT,
+  ari_account_user_name TEXT,
   updated_at TEXT NOT NULL
 );
 

@@ -12,9 +12,51 @@ export async function ariSignIn(email, password) {
   );
   const data = await res.json();
   if (!res.ok) {
-    throw new Error(data?.error?.message || "ARI login failed");
+    const code = data?.error?.message || "";
+    if (code.includes("INVALID_PASSWORD") || code.includes("INVALID_LOGIN_CREDENTIALS")) {
+      throw new Error(
+        "Wrong main ARI password. Use your shop login password from web.ari.app (not your user passcode)."
+      );
+    }
+    if (code.includes("USER_NOT_FOUND")) {
+      throw new Error("ARI account not found for that email");
+    }
+    throw new Error(code || "ARI login failed");
   }
   return { idToken: data.idToken, uid: data.localId, email: data.email };
+}
+
+export async function listAccountUsers(email, password) {
+  const { idToken, uid } = await ariSignIn(email, password);
+  const users = await listCollection(idToken, uid, "accountUsers");
+  return {
+    hasSubUsers: users.length > 0,
+    users: users.map((u) => ({
+      id: u._id,
+      name: u.name || u.roleUsername || "User",
+      role: u.userRoleTitle || "",
+      roleUsername: u.roleUsername || "",
+      createdAt: u.createdAt || "",
+    })),
+  };
+}
+
+export async function validateAriLogin(email, password, accountUserId, passcode) {
+  const { idToken, uid } = await ariSignIn(email, password);
+  const users = await listCollection(idToken, uid, "accountUsers");
+  if (users.length === 0) {
+    return { accountUserId: null, accountUserName: null };
+  }
+  if (!accountUserId) throw new Error("Select your ARI user name");
+  const selected = users.find((u) => u._id === accountUserId);
+  if (!selected) throw new Error("ARI user not found");
+  if (String(selected.rolePassword || "") !== String(passcode || "")) {
+    throw new Error("Invalid ARI passcode");
+  }
+  return {
+    accountUserId: selected._id,
+    accountUserName: selected.name || selected.roleUsername || "",
+  };
 }
 
 function firestoreValue(field) {
@@ -43,6 +85,38 @@ function docToObject(doc) {
   const out = { _id: doc.name.split("/").pop() };
   for (const [k, v] of Object.entries(fields)) out[k] = firestoreValue(v);
   return out;
+}
+
+async function queryInvoices(idToken, uid) {
+  const parent = `projects/${FIREBASE_PROJECT}/databases/(default)/documents/users/${uid}`;
+  const url = `https://firestore.googleapis.com/v1/projects/${FIREBASE_PROJECT}/databases/(default)/documents:runQuery`;
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      parent,
+      structuredQuery: {
+        from: [{ collectionId: "EstimatesDB" }],
+        where: {
+          fieldFilter: {
+            field: { fieldPath: "TypeOfForm" },
+            op: "EQUAL",
+            value: { stringValue: "Invoice" },
+          },
+        },
+      },
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    throw new Error(data?.error?.message || "Firestore invoice query failed");
+  }
+  return (data || [])
+    .filter((row) => row.document)
+    .map((row) => docToObject(row.document));
 }
 
 async function listCollection(idToken, uid, collectionName) {
@@ -88,7 +162,7 @@ function normalizePhotos(pics) {
       const url = pic?._downloadURL || pic?.base64 || pic?.url || "";
       if (!url) return null;
       return {
-        id: pic?._id || pic?.id || `pic-${index}`,
+        id: String(pic?._id || pic?.id || `pic-${index}`),
         url,
         descr: pic?.descr || pic?.description || "",
       };
@@ -98,14 +172,19 @@ function normalizePhotos(pics) {
 
 export async function fetchAriInvoices(email, password, filters) {
   const { idToken, uid } = await ariSignIn(email, password);
-  const invoices = await listCollection(idToken, uid, "EstimatesDB");
+  let invoices;
+  try {
+    invoices = await queryInvoices(idToken, uid);
+  } catch {
+    invoices = await listCollection(idToken, uid, "EstimatesDB");
+    invoices = invoices.filter((inv) => (inv.TypeOfForm || "") === "Invoice");
+  }
 
   const from = filters.dateFrom ? new Date(filters.dateFrom + "T00:00:00") : null;
   const to = filters.dateTo ? new Date(filters.dateTo + "T23:59:59") : null;
   const clientNeedle = (filters.clientName || "").trim().toLowerCase();
 
   return invoices
-    .filter((inv) => (inv.TypeOfForm || "") === "Invoice")
     .filter((inv) => {
       if (!clientNeedle) return true;
       return String(inv.ClientName || "").toLowerCase().includes(clientNeedle);
@@ -119,8 +198,7 @@ export async function fetchAriInvoices(email, password, filters) {
     })
     .map((inv) => {
       const vehicle = parseVehicleInfo(inv.VehicleInfo);
-      const photos = normalizePhotos(inv.pics);
-      return {
+      const row = {
         ariInvoiceId: inv._id,
         invoiceNumber: String(inv.EstimateId || ""),
         vin: inv.vin || "",
@@ -129,8 +207,9 @@ export async function fetchAriInvoices(email, password, filters) {
         model: vehicle.model,
         clientName: inv.ClientName || "",
         dateOrdered: inv.DateOrdered || "",
-        photos,
       };
+      if (filters.includePhotos === false) return row;
+      return { ...row, photos: normalizePhotos(inv.pics) };
     })
     .sort((a, b) => String(b.dateOrdered).localeCompare(String(a.dateOrdered)));
 }

@@ -1,7 +1,8 @@
 #Requires -Version 5.1
 param(
   [string]$ShopPassword = "renu123",
-  [string]$EncryptionKey = "ari-photo-extractor-key-32charsxx"
+  [string]$EncryptionKey = "ari-photo-extractor-key-32charsxx",
+  [switch]$SkipGit
 )
 
 $ErrorActionPreference = "Stop"
@@ -36,17 +37,23 @@ function Invoke-Cf([string]$Method, [string]$Uri, $Body = $null) {
 }
 
 function Build-WorkerBundle {
-  $crypto = Get-Content (Join-Path $WorkerRoot "crypto.js") -Raw
-  $ari = Get-Content (Join-Path $WorkerRoot "ari-firebase.js") -Raw
-  $index = Get-Content (Join-Path $WorkerRoot "index.js") -Raw
-  $html = Get-Content (Join-Path $AppRoot "index.html") -Raw
-  $css = Get-Content (Join-Path $AppRoot "styles.css") -Raw
-  $js = Get-Content (Join-Path $AppRoot "app.js") -Raw
+  $crypto = Get-Content (Join-Path $WorkerRoot "crypto.js") -Raw -Encoding UTF8
+  $ari = Get-Content (Join-Path $WorkerRoot "ari-firebase.js") -Raw -Encoding UTF8
+  $index = Get-Content (Join-Path $WorkerRoot "index.js") -Raw -Encoding UTF8
+  $html = Get-Content (Join-Path $AppRoot "index.html") -Raw -Encoding UTF8
+  $css = Get-Content (Join-Path $AppRoot "styles.css") -Raw -Encoding UTF8
+  $js = Get-Content (Join-Path $AppRoot "app.js") -Raw -Encoding UTF8
+  $logoPath = Join-Path $AppRoot "renu-logo.png"
+  $logoB64 = ""
+  if (Test-Path $logoPath) {
+    $logoB64 = [Convert]::ToBase64String([System.IO.File]::ReadAllBytes($logoPath))
+  }
 
   $crypto = $crypto -replace 'export async function ', 'async function '
   $ari = $ari -replace 'export async function ', 'async function '
   $index = $index -replace 'import \{ encryptText, decryptText \} from "\./crypto\.js";\r?\n', ''
   $index = $index -replace 'import \{ fetchAriInvoices, listAriClients \} from "\./ari-firebase\.js";\r?\n', ''
+  $index = $index -replace 'import \{\s*fetchAriInvoices,\s*listAriClients,\s*listAccountUsers,\s*validateAriLogin,\s*\} from "\./ari-firebase\.js";\r?\n', ''
 
   $htmlB64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($html))
   $cssB64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($css))
@@ -57,6 +64,7 @@ const APP_B64 = {
   "index.html": "$htmlB64",
   "styles.css": "$cssB64",
   "app.js": "$jsB64",
+  "renu-logo.png": "$logoB64",
 };
 
 function serveStatic(pathname) {
@@ -65,6 +73,10 @@ function serveStatic(pathname) {
   file = file.replace(/^\//, "");
   const encoded = APP_B64[file];
   if (!encoded) return null;
+  if (file.endsWith(".png")) {
+    const bytes = Uint8Array.from(atob(encoded), (c) => c.charCodeAt(0));
+    return new Response(bytes, { headers: { ...CORS, "Content-Type": "image/png" } });
+  }
   const text = atob(encoded);
   const type = file.endsWith(".html")
     ? "text/html; charset=utf-8"
@@ -102,6 +114,25 @@ function Initialize-Schema([string]$DbId) {
     Invoke-Cf POST "https://api.cloudflare.com/client/v4/accounts/$AccountId/d1/database/$DbId/query" $body | Out-Null
   }
   Write-Host "   OK  Schema applied" -ForegroundColor Green
+}
+
+function Apply-Migrations([string]$DbId) {
+  $migratePath = Join-Path $WorkerRoot "migrate-ari-users.sql"
+  if (-not (Test-Path $migratePath)) { return }
+  Write-Host ">> D1 migrations" -ForegroundColor Cyan
+  $sql = Get-Content $migratePath -Raw
+  $statements = $sql -split ";" | Where-Object { $_.Trim() -ne "" }
+  foreach ($stmt in $statements) {
+    try {
+      $body = @{ sql = $stmt.Trim() }
+      Invoke-Cf POST "https://api.cloudflare.com/client/v4/accounts/$AccountId/d1/database/$DbId/query" $body | Out-Null
+    } catch {
+      if ($_.Exception.Message -notmatch "duplicate column") {
+        Write-Host "   !!  Migration: $_" -ForegroundColor Yellow
+      }
+    }
+  }
+  Write-Host "   OK  Migrations applied" -ForegroundColor Green
 }
 
 function Set-WorkerSecret([string]$Name, [string]$Value) {
@@ -206,6 +237,7 @@ Write-Host ""
 Write-Host "ARI Photo Extractor - deploy" -ForegroundColor White
 $dbId = Get-OrCreate-D1
 Initialize-Schema $dbId
+Apply-Migrations $dbId
 $workerUrl = Deploy-Worker $dbId
 $script:ApiUrl = "https://$WorkerName.zeiasyed.workers.dev"
 
@@ -216,7 +248,9 @@ try {
   Write-Host "   !!  API health check failed: $_" -ForegroundColor Yellow
 }
 
-Deploy-GitHubPages
+if (-not $SkipGit) {
+  Deploy-GitHubPages
+}
 
 $out = @{
   apiUrl            = $script:ApiUrl

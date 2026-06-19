@@ -4,32 +4,39 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <title>ARI Photo Extractor</title>
+  <title>Renu Photo Extractor</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div id="login-view" class="panel">
-    <h1>ARI Photo Extractor</h1>
-    <p class="muted">Team login — shared shop password + your name</p>
-    <label>API URL <span class="muted">(leave as-is)</span></label>
-    <input id="api-base" type="url" value="">
-    <label>Your name</label>
-    <input id="user-name" type="text" autocomplete="name" placeholder="e.g. Mike">
-    <label>Shop password</label>
-    <input id="shop-password" type="password" autocomplete="current-password">
-    <button type="button" id="login-btn">Sign in</button>
-    <p id="login-error" class="error hidden"></p>
+    <img src="renu-logo.png" alt="Renu Car" class="login-logo">
+    <h1>Photo Extractor</h1>
+    <p class="muted">Team login</p>
+    <div class="form-body">
+      <label>API URL <span class="muted">(leave as-is)</span></label>
+      <input id="api-base" type="url" value="">
+      <label>Your name</label>
+      <input id="user-name" type="text" autocomplete="name" placeholder="e.g. Mike">
+      <label>Shop password</label>
+      <input id="shop-password" type="password" autocomplete="current-password">
+      <button type="button" id="login-btn">Sign in</button>
+      <p id="login-error" class="error hidden"></p>
+    </div>
   </div>
 
   <div id="app-view" class="hidden">
     <header class="topbar">
-      <div>
-        <strong>ARI Photo Extractor</strong>
-        <span id="user-label" class="muted"></span>
+      <div class="brand">
+        <img src="renu-logo.png" alt="Renu Car" class="brand-logo">
+        <div>
+          <strong>Photo Extractor</strong>
+          <span id="user-label" class="muted"></span>
+        </div>
       </div>
       <div class="topbar-actions">
         <button type="button" id="nav-ari" class="ghost">ARI settings</button>
-        <button type="button" id="nav-home" class="ghost">Batches</button>
+        <button type="button" id="nav-home" class="ghost">Print Batches</button>
+        <button type="button" id="nav-tally" class="ghost">Car Tally</button>
         <button type="button" id="logout-btn" class="ghost">Log out</button>
       </div>
     </header>
@@ -37,22 +44,104 @@
     <main>
       <section id="screen-ari" class="screen">
         <h2>Connect ARI</h2>
-        <p class="muted">Credentials are encrypted and saved for your user only.</p>
-        <label>ARI email</label>
-        <input id="ari-email" type="email" autocomplete="username">
-        <label>ARI password</label>
-        <input id="ari-password" type="password" autocomplete="current-password">
-        <button type="button" id="ari-save-btn">Save &amp; connect</button>
+        <p class="muted">Same steps as the ARI app: shop login, then your name and passcode.</p>
+        <p class="muted small">Use the same email and <strong>main shop password</strong> as web.ari.app. Your user passcode is step 2 only.</p>
+
+        <div id="ari-step1">
+          <h3 class="step-label">Step 1 - Shop login</h3>
+          <label>ARI email</label>
+          <input id="ari-email" type="email" autocomplete="username">
+          <label>ARI password</label>
+          <input id="ari-password" type="password" autocomplete="current-password">
+          <button type="button" id="ari-continue-btn">Continue</button>
+        </div>
+
+        <div id="ari-step2" class="hidden">
+          <h3 class="step-label">Select Role</h3>
+          <p class="muted small">Choose your name, then enter your passcode.</p>
+          <div id="ari-role-grid" class="ari-role-grid"></div>
+        </div>
+
+        <div id="ari-passcode-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="ari-passcode-title">
+          <div class="modal-backdrop" id="ari-passcode-backdrop"></div>
+          <div class="modal-card">
+            <button type="button" id="ari-passcode-close" class="modal-close" aria-label="Close">x</button>
+            <h3 id="ari-passcode-title"></h3>
+            <label for="ari-passcode">Passcode</label>
+            <input id="ari-passcode" type="password" autocomplete="off" placeholder="Enter Passcode">
+            <button type="button" id="ari-save-btn">Login</button>
+          </div>
+        </div>
+
         <p id="ari-status" class="status" role="status"></p>
       </section>
 
       <section id="screen-batches" class="screen hidden">
         <div class="row-between">
-          <h2>Your batches</h2>
+          <h2>Print Batches</h2>
           <button type="button" id="new-batch-btn">+ New import</button>
         </div>
+        <div class="batch-toolbar">
+          <label class="inline-check"><input type="checkbox" id="select-all-batches"> Select all</label>
+          <button type="button" id="delete-batches-btn" class="ghost" disabled>Delete selected</button>
+        </div>
         <div id="batch-list" class="batch-list"></div>
-        <p id="batches-empty" class="muted hidden">No batches yet. Create one to import from ARI.</p>
+        <p id="batches-empty" class="muted hidden">No print batches yet. Create one to import from ARI.</p>
+        <p id="batches-status" class="status" role="status"></p>
+      </section>
+
+      <section id="screen-tally" class="screen hidden">
+        <div class="row-between">
+          <h2>Car Tally</h2>
+        </div>
+        <p class="muted">Pull invoice counts from ARI by dealership and date range. No photos — just vehicle details and a total.</p>
+        <label>Dealership (ARI client name)</label>
+        <input id="tally-client" type="text" list="client-options" placeholder="Start typing or leave blank for all">
+        <div class="grid-2">
+          <div>
+            <label>From date</label>
+            <input id="tally-date-from" type="date">
+          </div>
+          <div>
+            <label>To date</label>
+            <input id="tally-date-to" type="date">
+          </div>
+        </div>
+        <button type="button" id="tally-run-btn">Run tally</button>
+        <p id="tally-status" class="status" role="status"></p>
+        <div id="tally-progress" class="progress-wrap hidden">
+          <div class="progress-track"><div class="progress-fill" id="tally-progress-fill"></div></div>
+          <span class="progress-label" id="tally-progress-label">Loading from ARI...</span>
+        </div>
+        <div id="tally-results" class="hidden">
+          <div class="row-between tally-results-head">
+            <p id="tally-summary" class="muted"></p>
+            <div class="tally-export-actions">
+              <button type="button" id="tally-export-btn" class="ghost">Download Excel</button>
+              <button type="button" id="tally-print-btn">Print PDF</button>
+            </div>
+          </div>
+          <div class="tally-table-wrap">
+            <table class="tally-table" id="tally-table">
+              <thead>
+                <tr>
+                  <th>Year</th>
+                  <th>Make</th>
+                  <th>Model</th>
+                  <th>VIN</th>
+                  <th>Date worked on</th>
+                </tr>
+              </thead>
+              <tbody id="tally-table-body"></tbody>
+              <tfoot>
+                <tr class="tally-total-row">
+                  <td colspan="4"><strong>Total</strong></td>
+                  <td id="tally-total-cell"><strong>0</strong></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
       </section>
 
       <section id="screen-import" class="screen hidden">
@@ -74,6 +163,10 @@
         </div>
         <button type="button" id="import-btn">Import from ARI</button>
         <p id="import-status" class="status" role="status"></p>
+        <div id="import-progress" class="progress-wrap hidden">
+          <div class="progress-track"><div class="progress-fill" id="import-progress-fill"></div></div>
+          <span class="progress-label" id="import-progress-label">Importing...</span>
+        </div>
         <button type="button" id="import-cancel" class="ghost">Cancel</button>
       </section>
 
@@ -82,25 +175,31 @@
           <div>
             <h2 id="review-title">Review</h2>
             <p id="review-meta" class="muted"></p>
+            <p id="review-print-hint" class="review-hint"></p>
           </div>
           <div class="review-actions">
-            <label class="inline-check"><input type="checkbox" id="show-kept-only"> Kept only</label>
-            <button type="button" id="save-review-btn">Save progress</button>
+            <label class="inline-check"><input type="checkbox" id="show-kept-only"> Print only</label>
+            <button type="button" id="save-review-btn" class="ghost">Save progress</button>
             <button type="button" id="print-btn">Print PDF</button>
           </div>
         </div>
         <p id="review-status" class="status" role="status"></p>
+        <div id="print-progress" class="progress-wrap hidden">
+          <div class="progress-track"><div class="progress-fill" id="print-progress-fill"></div></div>
+          <span class="progress-label" id="print-progress-label">Preparing print...</span>
+        </div>
         <div id="review-grid" class="review-grid"></div>
         <div class="pager">
-          <button type="button" id="page-prev" class="ghost">← Prev</button>
+          <button type="button" id="page-prev" class="ghost">Prev</button>
           <span id="page-label"></span>
-          <button type="button" id="page-next" class="ghost">Next →</button>
+          <button type="button" id="page-next" class="ghost">Next</button>
         </div>
       </section>
     </main>
   </div>
 
   <div id="print-root" class="hidden" aria-hidden="true"></div>
+  <div id="tally-print-root" class="hidden" aria-hidden="true"></div>
 
   <script src="app.js" defer></script>
 </body>

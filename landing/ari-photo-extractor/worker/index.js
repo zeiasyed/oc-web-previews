@@ -1,5 +1,10 @@
 import { encryptText, decryptText } from "./crypto.js";
-import { fetchAriInvoices, listAriClients } from "./ari-firebase.js";
+import {
+  fetchAriInvoices,
+  listAriClients,
+  listAccountUsers,
+  validateAriLogin,
+} from "./ari-firebase.js";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -38,8 +43,6 @@ function defaultReview(photos) {
     unsorted: [...ids],
     before: [],
     after: [],
-    starredBefore: null,
-    starredAfter: null,
   };
 }
 
@@ -110,22 +113,55 @@ export default {
 
       const session = await requireSession(env, request);
 
+      if (path === "/api/ari/users" && request.method === "POST") {
+        if (!session) return err("Unauthorized", 401);
+        const body = await request.json();
+        if (!body.email || !body.password) return err("ARI email and password required");
+        const result = await listAccountUsers(body.email, body.password);
+        return json(result);
+      }
+
       if (path === "/api/ari/credentials" && request.method === "POST") {
         if (!session) return err("Unauthorized", 401);
         const body = await request.json();
         if (!body.email || !body.password) return err("ARI email and password required");
         const secret = env.ENCRYPTION_KEY;
         if (!secret) return err("ENCRYPTION_KEY not configured", 500);
+
+        const validated = await validateAriLogin(
+          body.email,
+          body.password,
+          body.accountUserId || null,
+          body.passcode || ""
+        );
+
         const emailEnc = await encryptText(body.email, secret);
         const passEnc = await encryptText(body.password, secret);
         await env.DB.prepare(
-          `INSERT INTO ari_credentials (user_name, email_enc, password_enc, updated_at)
-           VALUES (?, ?, ?, ?)
-           ON CONFLICT(user_name) DO UPDATE SET email_enc=excluded.email_enc, password_enc=excluded.password_enc, updated_at=excluded.updated_at`
+          `INSERT INTO ari_credentials (user_name, email_enc, password_enc, ari_account_user_id, ari_account_user_name, updated_at)
+           VALUES (?, ?, ?, ?, ?, ?)
+           ON CONFLICT(user_name) DO UPDATE SET
+             email_enc=excluded.email_enc,
+             password_enc=excluded.password_enc,
+             ari_account_user_id=excluded.ari_account_user_id,
+             ari_account_user_name=excluded.ari_account_user_name,
+             updated_at=excluded.updated_at`
         )
-          .bind(session.user_name, emailEnc, passEnc, nowIso())
+          .bind(
+            session.user_name,
+            emailEnc,
+            passEnc,
+            validated.accountUserId,
+            validated.accountUserName,
+            nowIso()
+          )
           .run();
-        return json({ ok: true, saved: true });
+        return json({
+          ok: true,
+          saved: true,
+          ariUserName: validated.accountUserName,
+          hasSubUsers: !!validated.accountUserId,
+        });
       }
 
       if (path === "/api/ari/clients" && request.method === "GET") {
@@ -134,6 +170,65 @@ export default {
         if (!creds) return err("ARI credentials not saved. Connect ARI first.", 400);
         const clients = await listAriClients(creds.email, creds.password);
         return json({ clients });
+      }
+
+      if (path === "/api/car-tally" && request.method === "POST") {
+        if (!session) return err("Unauthorized", 401);
+        const body = await request.json();
+        const creds = await getAriCredentials(env, session.user_name);
+        if (!creds) return err("ARI credentials not saved. Connect ARI first.", 400);
+
+        const clientName = body.clientName || "";
+        const dateFrom = body.dateFrom || "";
+        const dateTo = body.dateTo || "";
+
+        const cars = await fetchAriInvoices(creds.email, creds.password, {
+          clientName,
+          dateFrom,
+          dateTo,
+          includePhotos: false,
+        });
+
+        return json({
+          total: cars.length,
+          clientName,
+          dateFrom,
+          dateTo,
+          cars: cars.map((car) => ({
+            year: car.year,
+            make: car.make,
+            model: car.model,
+            vin: car.vin,
+            dateOrdered: car.dateOrdered,
+          })),
+        });
+      }
+
+      if (path === "/api/image" && request.method === "GET") {
+        if (!session) return err("Unauthorized", 401);
+        const imgUrl = url.searchParams.get("url");
+        if (!imgUrl) return err("url required");
+        let parsed;
+        try {
+          parsed = new URL(imgUrl);
+        } catch {
+          return err("Invalid url");
+        }
+        const allowedHosts = [
+          "firebasestorage.googleapis.com",
+          "storage.googleapis.com",
+          "lh3.googleusercontent.com",
+        ];
+        if (!allowedHosts.includes(parsed.hostname)) return err("Forbidden host", 403);
+        const upstream = await fetch(imgUrl, { headers: { Accept: "image/*" } });
+        if (!upstream.ok) return err("Image fetch failed", 502);
+        return new Response(upstream.body, {
+          headers: {
+            ...CORS,
+            "Content-Type": upstream.headers.get("Content-Type") || "image/jpeg",
+            "Cache-Control": "private, max-age=86400",
+          },
+        });
       }
 
       if (path === "/api/batches" && request.method === "GET") {
@@ -178,10 +273,12 @@ export default {
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)`
         );
 
-        for (const inv of invoices) {
-          const review = defaultReview(inv.photos);
-          await insertCar
-            .bind(
+        const CHUNK = 40;
+        for (let i = 0; i < invoices.length; i += CHUNK) {
+          const slice = invoices.slice(i, i + CHUNK);
+          const statements = slice.map((inv) => {
+            const review = defaultReview(inv.photos);
+            return insertCar.bind(
               uuid(),
               batchId,
               inv.ariInvoiceId,
@@ -194,8 +291,9 @@ export default {
               inv.dateOrdered,
               JSON.stringify(inv.photos),
               JSON.stringify(review)
-            )
-            .run();
+            );
+          });
+          if (statements.length) await env.DB.batch(statements);
         }
 
         return json({
@@ -203,6 +301,28 @@ export default {
           imported: invoices.length,
           withPhotos: invoices.filter((i) => i.photos.length > 0).length,
         });
+      }
+
+      if (path === "/api/batches/delete" && request.method === "POST") {
+        if (!session) return err("Unauthorized", 401);
+        const body = await request.json();
+        const ids = body.ids;
+        if (!Array.isArray(ids) || !ids.length) return err("Select at least one batch to delete");
+        let deleted = 0;
+        for (const id of ids) {
+          const owned = await env.DB.prepare(
+            "SELECT id FROM batches WHERE id = ? AND user_name = ?"
+          )
+            .bind(id, session.user_name)
+            .first();
+          if (!owned) continue;
+          await env.DB.prepare("DELETE FROM batch_cars WHERE batch_id = ?").bind(id).run();
+          await env.DB.prepare("DELETE FROM batches WHERE id = ? AND user_name = ?")
+            .bind(id, session.user_name)
+            .run();
+          deleted += 1;
+        }
+        return json({ deleted });
       }
 
       if (path.startsWith("/api/batches/") && request.method === "GET") {
@@ -272,9 +392,13 @@ export default {
         const parsed = (cars.results || []).map((car) => {
           const photos = JSON.parse(car.photos_json || "[]");
           const review = JSON.parse(car.review_json || "{}");
-          const photoMap = Object.fromEntries(photos.map((p) => [p.id, p]));
-          const beforeUrl = review.starredBefore ? photoMap[review.starredBefore]?.url : "";
-          const afterUrl = review.starredAfter ? photoMap[review.starredAfter]?.url : "";
+          const photoMap = Object.fromEntries(photos.map((p) => [String(p.id), p]));
+          const beforeUrls = (review.before || [])
+            .map((id) => photoMap[String(id)]?.url)
+            .filter(Boolean);
+          const afterUrls = (review.after || [])
+            .map((id) => photoMap[String(id)]?.url)
+            .filter(Boolean);
           return {
             id: car.id,
             vin: car.vin,
@@ -283,8 +407,8 @@ export default {
             model: car.model,
             invoiceNumber: car.invoice_number,
             dateOrdered: car.date_ordered,
-            beforeUrl,
-            afterUrl,
+            beforeUrls,
+            afterUrls,
           };
         });
         return json({ batch, cars: parsed });
