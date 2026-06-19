@@ -27,6 +27,7 @@
     selectedBatchIds: new Set(),
     tallyCars: [],
     tallyFilters: null,
+    tallyDateSort: "desc",
   };
 
   const PRINT_MAX_PX = 360;
@@ -545,6 +546,38 @@
     }
   }
 
+  function tallyDateValue(iso) {
+    if (!iso) return 0;
+    const t = new Date(iso).getTime();
+    return Number.isNaN(t) ? 0 : t;
+  }
+
+  function sortedTallyCars() {
+    const cars = [...state.tallyCars];
+    const dir = state.tallyDateSort === "asc" ? 1 : -1;
+    cars.sort((a, b) => {
+      const da = tallyDateValue(a.dateOrdered);
+      const db = tallyDateValue(b.dateOrdered);
+      if (da === db) return 0;
+      return da < db ? -dir : dir;
+    });
+    return cars;
+  }
+
+  function updateTallyDateSortHeader() {
+    const btn = $("tally-sort-date");
+    if (!btn) return;
+    btn.textContent =
+      "Date worked on " + (state.tallyDateSort === "asc" ? "↑" : "↓");
+    btn.setAttribute("aria-sort", state.tallyDateSort === "asc" ? "ascending" : "descending");
+  }
+
+  function toggleTallyDateSort() {
+    if (!state.tallyCars.length) return;
+    state.tallyDateSort = state.tallyDateSort === "asc" ? "desc" : "asc";
+    renderTallyResults();
+  }
+
   function tallyVehicleLabel(car) {
     const parts = [car.year, car.make, car.model].filter(Boolean);
     return parts.join(" ").trim() || car.model || "";
@@ -562,8 +595,9 @@
     $("tally-summary").textContent =
       clientLabel + " | " + fromLabel + " to " + toLabel + " | " + total + " car" + (total === 1 ? "" : "s");
     $("tally-total-cell").innerHTML = "<strong>" + total + "</strong>";
+    updateTallyDateSortHeader();
 
-    $("tally-table-body").innerHTML = cars
+    $("tally-table-body").innerHTML = sortedTallyCars()
       .map(
         (car) =>
           "<tr><td>" +
@@ -601,6 +635,7 @@
         dateFrom: data.dateFrom || dateFrom,
         dateTo: data.dateTo || dateTo,
       };
+      state.tallyDateSort = "desc";
       renderTallyResults();
       $("tally-status").textContent =
         "Found " + (data.total || state.tallyCars.length) + " car(s) for " +
@@ -616,7 +651,7 @@
 
   function tallyWorkbookRows() {
     const rows = [["Model", "VIN", "Date worked on"]];
-    state.tallyCars.forEach((car) => {
+    sortedTallyCars().forEach((car) => {
       rows.push([
         tallyVehicleLabel(car),
         car.vin || "",
@@ -681,7 +716,7 @@
     const clientLabel = filters.clientName || "All dealerships";
     const fromLabel = filters.dateFrom || "start";
     const toLabel = filters.dateTo || "end";
-    const rows = state.tallyCars
+    const rows = sortedTallyCars()
       .map(
         (car) =>
           "<tr><td>" +
@@ -1239,6 +1274,7 @@
   });
   $("import-btn").addEventListener("click", runImport);
   $("tally-run-btn").addEventListener("click", runCarTally);
+  $("tally-sort-date").addEventListener("click", toggleTallyDateSort);
   $("tally-export-btn").addEventListener("click", exportTallyExcel);
   $("tally-print-btn").addEventListener("click", printTallyPdf);
   $("save-review-btn").addEventListener("click", saveReview);

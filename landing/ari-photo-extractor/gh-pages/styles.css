@@ -806,6 +806,27 @@ main {
   background: var(--bg-elevated);
 }
 
+.tally-sort-btn {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.tally-sort-btn:hover,
+.tally-sort-btn:focus-visible {
+  color: var(--accent);
+  outline: none;
+}
+
 .tally-table tbody tr:hover {
   background: rgba(162, 217, 49, 0.06);
 }
