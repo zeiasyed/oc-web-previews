@@ -206,10 +206,13 @@ function Deploy-GitHubPages {
   $apiUrl = $script:ApiUrl
   $indexPath = Join-Path $pagesRoot "index.html"
   $html = Get-Content $indexPath -Raw
-  if ($html -notmatch 'value="https://') {
+  $apiUrl = $script:ApiUrl
+  if ($html -match 'id="api-base"[^>]*value="[^"]*"') {
+    $html = [regex]::Replace($html, '(id="api-base"[^>]*value=")[^"]*"', ('$1' + $apiUrl + '"'))
+  } elseif ($html -notmatch 'value="https://') {
     $html = $html.Replace('placeholder="https://ari-photo-extractor-api.your-account.workers.dev"', ('value="' + $apiUrl + '"'))
-    $html | Set-Content $indexPath -Encoding UTF8 -NoNewline
   }
+  $html | Set-Content $indexPath -Encoding UTF8 -NoNewline
 
   $repoRoot = Resolve-Path (Join-Path $Root "..")
   Push-Location $repoRoot
