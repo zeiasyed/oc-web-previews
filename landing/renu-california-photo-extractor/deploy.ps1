@@ -1,0 +1,304 @@
+#Requires -Version 5.1
+param(
+  [string]$ShopPassword = "renucalifornia",
+  [string]$EncryptionKey = "renu-california-pe-key-32chars!",
+  [string]$DefaultUserName = "California",
+  [string]$AriEmail = "",
+  [string]$AriPassword = "",
+  [switch]$SkipGit
+)
+
+$ErrorActionPreference = "Stop"
+
+$Root = $PSScriptRoot
+$WorkerRoot = Join-Path $Root "worker"
+$AppRoot = Join-Path $Root "app"
+$AccountId = "0f61b15e3b7ef041399aed19c79e6e7e"
+$WorkerName = "renu-california-photo-extractor-api"
+$DbName = "renu-california-photo-extractor"
+$PagesSlug = "renu-california-photo-extractor"
+$CredsFile = Join-Path (Join-Path $Root "..\toledo-swift-haul-dashboard") ".cloudflare-credentials.json"
+
+function Get-CfHeaders {
+  if (-not (Test-Path $CredsFile)) { throw "Missing Cloudflare credentials at $CredsFile" }
+  $c = Get-Content $CredsFile -Raw | ConvertFrom-Json
+  if ($c.type -eq "token") {
+    return @{ Authorization = "Bearer $($c.token)" }
+  }
+  return @{
+    "X-Auth-Email" = $c.email
+    "X-Auth-Key"   = $c.globalKey
+  }
+}
+
+function Invoke-Cf([string]$Method, [string]$Uri, $Body = $null) {
+  $headers = Get-CfHeaders
+  if ($Body -ne $null) {
+    $headers["Content-Type"] = "application/json"
+    return Invoke-RestMethod -Method $Method -Uri $Uri -Headers $headers -Body ($Body | ConvertTo-Json -Depth 10 -Compress)
+  }
+  return Invoke-RestMethod -Method $Method -Uri $Uri -Headers $headers
+}
+
+function Build-WorkerBundle {
+  $crypto = Get-Content (Join-Path $WorkerRoot "crypto.js") -Raw -Encoding UTF8
+  $ari = Get-Content (Join-Path $WorkerRoot "ari-firebase.js") -Raw -Encoding UTF8
+  $index = Get-Content (Join-Path $WorkerRoot "index.js") -Raw -Encoding UTF8
+  $html = Get-Content (Join-Path $AppRoot "index.html") -Raw -Encoding UTF8
+  $css = Get-Content (Join-Path $AppRoot "styles.css") -Raw -Encoding UTF8
+  $js = Get-Content (Join-Path $AppRoot "app.js") -Raw -Encoding UTF8
+  $logoPath = Join-Path $AppRoot "renu-logo.png"
+  $logoB64 = ""
+  if (Test-Path $logoPath) {
+    $logoB64 = [Convert]::ToBase64String([System.IO.File]::ReadAllBytes($logoPath))
+  }
+
+  $crypto = $crypto -replace 'export async function ', 'async function '
+  $ari = $ari -replace 'export async function ', 'async function '
+  $index = $index -replace 'import \{ encryptText, decryptText \} from "\./crypto\.js";\r?\n', ''
+  $index = $index -replace 'import \{ fetchAriInvoices, listAriClients \} from "\./ari-firebase\.js";\r?\n', ''
+  $index = $index -replace 'import \{\s*fetchAriInvoices,\s*listAriClients,\s*listAccountUsers,\s*validateAriLogin,\s*\} from "\./ari-firebase\.js";\r?\n', ''
+
+  $htmlB64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($html))
+  $cssB64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($css))
+  $jsB64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($js))
+
+  $static = @"
+const APP_B64 = {
+  "index.html": "$htmlB64",
+  "styles.css": "$cssB64",
+  "app.js": "$jsB64",
+  "renu-logo.png": "$logoB64",
+};
+
+function serveStatic(pathname) {
+  let file = pathname;
+  if (file === "/" || file === "") file = "/index.html";
+  file = file.replace(/^\//, "");
+  const encoded = APP_B64[file];
+  if (!encoded) return null;
+  if (file.endsWith(".png")) {
+    const bytes = Uint8Array.from(atob(encoded), (c) => c.charCodeAt(0));
+    return new Response(bytes, { headers: { ...CORS, "Content-Type": "image/png" } });
+  }
+  const text = atob(encoded);
+  const type = file.endsWith(".html")
+    ? "text/html; charset=utf-8"
+    : file.endsWith(".css")
+      ? "text/css; charset=utf-8"
+      : "application/javascript; charset=utf-8";
+  return new Response(text, { headers: { ...CORS, "Content-Type": type } });
+}
+
+"@
+
+  return ($static + $crypto + "`n`n" + $ari + "`n`n" + $index)
+}
+
+function Get-OrCreate-D1 {
+  Write-Host ">> D1 database" -ForegroundColor Cyan
+  $list = Invoke-Cf GET "https://api.cloudflare.com/client/v4/accounts/$AccountId/d1/database"
+  $existing = $list.result | Where-Object { $_.name -eq $DbName } | Select-Object -First 1
+  if ($existing) {
+    Write-Host "   OK  Using existing D1: $($existing.uuid)" -ForegroundColor Green
+    return $existing.uuid
+  }
+  $created = Invoke-Cf POST "https://api.cloudflare.com/client/v4/accounts/$AccountId/d1/database" @{ name = $DbName }
+  if (-not $created.success) { throw "D1 create failed" }
+  Write-Host "   OK  Created D1: $($created.result.uuid)" -ForegroundColor Green
+  return $created.result.uuid
+}
+
+function Initialize-Schema([string]$DbId) {
+  Write-Host ">> D1 schema" -ForegroundColor Cyan
+  $sql = Get-Content (Join-Path $WorkerRoot "schema.sql") -Raw
+  $statements = $sql -split ";" | Where-Object { $_.Trim() -ne "" }
+  foreach ($stmt in $statements) {
+    $body = @{ sql = $stmt.Trim() }
+    Invoke-Cf POST "https://api.cloudflare.com/client/v4/accounts/$AccountId/d1/database/$DbId/query" $body | Out-Null
+  }
+  Write-Host "   OK  Schema applied" -ForegroundColor Green
+}
+
+function Seed-AriCredentials([string]$DbId, [string]$UserName, [string]$Email, [string]$Password, [string]$EncKey) {
+  if (-not $Email -or -not $Password) {
+    Write-Host "   !!  Skipping ARI seed (no -AriEmail/-AriPassword)" -ForegroundColor Yellow
+    return
+  }
+  Write-Host ">> Seed ARI credentials for $UserName" -ForegroundColor Cyan
+  $seedScript = Join-Path $WorkerRoot "seed-credentials.py"
+  $py = Get-Command python -ErrorAction SilentlyContinue
+  if (-not $py) { throw "Python required for ARI credential seeding" }
+  $encJson = & python $seedScript $Email $Password $EncKey
+  if ($LASTEXITCODE -ne 0) { throw "ARI credential encryption failed" }
+  $enc = $encJson | ConvertFrom-Json
+  $sql = @"
+INSERT INTO ari_credentials (user_name, email_enc, password_enc, ari_account_user_id, ari_account_user_name, updated_at)
+VALUES (?, ?, ?, NULL, NULL, datetime('now'))
+ON CONFLICT(user_name) DO UPDATE SET
+  email_enc = excluded.email_enc,
+  password_enc = excluded.password_enc,
+  updated_at = excluded.updated_at
+"@
+  Invoke-Cf POST "https://api.cloudflare.com/client/v4/accounts/$AccountId/d1/database/$DbId/query" @{
+    sql    = $sql
+    params = @($UserName, $enc.emailEnc, $enc.passEnc)
+  } | Out-Null
+  Write-Host "   OK  ARI credentials seeded (email only in DB, encrypted)" -ForegroundColor Green
+}
+
+function Apply-Migrations([string]$DbId) {
+  $migratePath = Join-Path $WorkerRoot "migrate-ari-users.sql"
+  if (-not (Test-Path $migratePath)) { return }
+  Write-Host ">> D1 migrations" -ForegroundColor Cyan
+  $sql = Get-Content $migratePath -Raw
+  $statements = $sql -split ";" | Where-Object { $_.Trim() -ne "" }
+  foreach ($stmt in $statements) {
+    try {
+      $body = @{ sql = $stmt.Trim() }
+      Invoke-Cf POST "https://api.cloudflare.com/client/v4/accounts/$AccountId/d1/database/$DbId/query" $body | Out-Null
+    } catch {
+      if ($_.Exception.Message -notmatch "duplicate column") {
+        Write-Host "   !!  Migration: $_" -ForegroundColor Yellow
+      }
+    }
+  }
+  Write-Host "   OK  Migrations applied" -ForegroundColor Green
+}
+
+function Set-WorkerSecret([string]$Name, [string]$Value) {
+  Invoke-Cf PUT "https://api.cloudflare.com/client/v4/accounts/$AccountId/workers/scripts/$WorkerName/secrets" @{
+    name = $Name
+    text = $Value
+    type = "secret_text"
+  } | Out-Null
+}
+
+function Deploy-Worker([string]$DbId) {
+  Write-Host ">> Worker deploy ($WorkerName)" -ForegroundColor Cyan
+
+  $bindings = @(
+    @{ type = "d1"; name = "DB"; id = $DbId }
+  )
+
+  $metadata = @{
+    main_module = "index.js"
+    bindings    = $bindings
+  } | ConvertTo-Json -Depth 8 -Compress
+
+  $workerCode = Build-WorkerBundle
+  $boundary = [System.Guid]::NewGuid().ToString()
+  $LF = "`r`n"
+  $bodyLines = @(
+    "--$boundary",
+    "Content-Disposition: form-data; name=`"metadata`"",
+    "Content-Type: application/json",
+    "",
+    $metadata,
+    "--$boundary",
+    "Content-Disposition: form-data; name=`"index.js`"; filename=`"index.js`"",
+    "Content-Type: application/javascript+module",
+    "",
+    $workerCode,
+    "--$boundary--"
+  )
+  $bodyBytes = [System.Text.Encoding]::UTF8.GetBytes(($bodyLines -join $LF))
+  $headers = Get-CfHeaders
+  Invoke-RestMethod -Method PUT `
+    -Uri "https://api.cloudflare.com/client/v4/accounts/$AccountId/workers/scripts/$WorkerName" `
+    -Headers $headers `
+    -ContentType "multipart/form-data; boundary=$boundary" `
+    -Body $bodyBytes | Out-Null
+  Write-Host "   OK  Worker uploaded" -ForegroundColor Green
+
+  try {
+    Set-WorkerSecret "SHOP_PASSWORD" $ShopPassword
+    Set-WorkerSecret "ENCRYPTION_KEY" $EncryptionKey
+    Write-Host "   OK  Secrets set" -ForegroundColor Green
+  } catch {
+    Write-Host "   !!  Secrets: $_" -ForegroundColor Yellow
+  }
+
+  $subdomain = "$WorkerName.$AccountId"
+  try {
+    Invoke-Cf POST "https://api.cloudflare.com/client/v4/accounts/$AccountId/workers/scripts/$WorkerName/subdomain" @{ enabled = $true } | Out-Null
+  } catch { }
+
+  return "https://$WorkerName.zeiasyed.workers.dev"
+}
+
+function Deploy-GitHubPages {
+  Write-Host ">> GitHub Pages (oc-web-previews)" -ForegroundColor Cyan
+  $pagesRoot = Join-Path $Root "gh-pages"
+  if (Test-Path $pagesRoot) { Remove-Item $pagesRoot -Recurse -Force }
+  New-Item -ItemType Directory -Path $pagesRoot | Out-Null
+  Copy-Item (Join-Path $AppRoot "*") $pagesRoot -Recurse
+
+  $apiUrl = $script:ApiUrl
+  $indexPath = Join-Path $pagesRoot "index.html"
+  $html = Get-Content $indexPath -Raw
+  $apiUrl = $script:ApiUrl
+  if ($html -match 'id="api-base"[^>]*value="[^"]*"') {
+    $html = [regex]::Replace($html, '(id="api-base"[^>]*value=")[^"]*"', ('$1' + $apiUrl + '"'))
+  } elseif ($html -notmatch 'value="https://') {
+    $html = $html.Replace('placeholder="https://ari-photo-extractor-api.your-account.workers.dev"', ('value="' + $apiUrl + '"'))
+  }
+  $html | Set-Content $indexPath -Encoding UTF8 -NoNewline
+
+  $repoRoot = Resolve-Path (Join-Path $Root "..\..")
+  Push-Location $repoRoot
+  try {
+    git add "landing/$PagesSlug/gh-pages"
+    git add "landing/$PagesSlug/deploy.ps1"
+    git add "landing/$PagesSlug/worker"
+    git add "landing/$PagesSlug/app"
+    git add "landing/$PagesSlug/README.md"
+    git add "landing/$PagesSlug/DEPLOYMENT.md"
+    git status --short "landing/$PagesSlug"
+    git commit -m "Add ReNu California Photo Extractor (separate app and API)"
+    git push origin main
+    Write-Host "   OK  Pushed to origin/main" -ForegroundColor Green
+    Write-Host "   Pages URL: https://zeiasyed.github.io/oc-web-previews/landing/$PagesSlug/gh-pages/" -ForegroundColor Green
+  } catch {
+    Write-Host "   !!  Git push: $_" -ForegroundColor Yellow
+    Write-Host "   Copy gh-pages/ manually or enable GitHub Pages on this path." -ForegroundColor Yellow
+  } finally {
+    Pop-Location
+  }
+}
+
+Write-Host ""
+Write-Host "ReNu California Photo Extractor - deploy" -ForegroundColor White
+$dbId = Get-OrCreate-D1
+Initialize-Schema $dbId
+Apply-Migrations $dbId
+Seed-AriCredentials $dbId $DefaultUserName $AriEmail $AriPassword $EncryptionKey
+$workerUrl = Deploy-Worker $dbId
+$script:ApiUrl = "https://$WorkerName.zeiasyed.workers.dev"
+
+try {
+  $health = Invoke-RestMethod -Uri "$script:ApiUrl/health"
+  Write-Host "   OK  API health: $($health.service)" -ForegroundColor Green
+} catch {
+  Write-Host "   !!  API health check failed: $_" -ForegroundColor Yellow
+}
+
+if (-not $SkipGit) {
+  Deploy-GitHubPages
+}
+
+$out = @{
+  apiUrl            = $script:ApiUrl
+  workerName        = $WorkerName
+  d1Id              = $dbId
+  pagesPath         = "landing/$PagesSlug/gh-pages/"
+  defaultUserName   = $DefaultUserName
+  deployedAt        = (Get-Date).ToString("o")
+}
+$out | ConvertTo-Json | Set-Content (Join-Path $Root "deploy-output.json") -Encoding UTF8
+
+Write-Host ""
+Write-Host "Done." -ForegroundColor Green
+Write-Host "API:      $script:ApiUrl"
+Write-Host "Pages:    https://zeiasyed.github.io/oc-web-previews/landing/$PagesSlug/gh-pages/"
+Write-Host "Worker:   serves full app at API URL (California only; separate from Texas/Renu app)"

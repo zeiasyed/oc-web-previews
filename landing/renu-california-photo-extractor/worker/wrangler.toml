@@ -1,0 +1,11 @@
+name = "renu-california-photo-extractor-api"
+main = "index.js"
+compatibility_date = "2024-06-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "renu-california-photo-extractor"
+# database_id assigned on first deploy via deploy.ps1
+
+[vars]
+# Set SHOP_PASSWORD and ENCRYPTION_KEY as secrets via deploy.ps1
