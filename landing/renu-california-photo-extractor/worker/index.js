@@ -1,10 +1,19 @@
 import { encryptText, decryptText } from "./crypto.js";
 import {
   fetchAriInvoices,
+  fetchAriInvoiceGroups,
   listAriClients,
   listAccountUsers,
   validateAriLogin,
 } from "./ari-firebase.js";
+import { mergeQboInvoicesWithAri } from "./invoice-merge.js";
+import {
+  getQboAuthUrl,
+  getQboCredentials,
+  handleQboCallback,
+  getValidAccessToken,
+  fetchQboOpenInvoices,
+} from "./qbo-api.js";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -170,6 +179,146 @@ export default {
         if (!creds) return err("ARI credentials not saved. Connect ARI first.", 400);
         const clients = await listAriClients(creds.email, creds.password);
         return json({ clients });
+      }
+
+      if (path === "/api/invoice-generator/invoices" && request.method === "POST") {
+        if (!session) return err("Unauthorized", 401);
+        const body = await request.json();
+        const creds = await getAriCredentials(env, session.user_name);
+        if (!creds) return err("ARI credentials not saved. Connect ARI first.", 400);
+
+        const result = await fetchAriInvoiceGroups(creds.email, creds.password, {
+          clientName: body.clientName || "",
+          dateFrom: body.dateFrom || "",
+          dateTo: body.dateTo || "",
+        });
+        return json({ ...result, source: "ari" });
+      }
+
+      if (path === "/api/qbo/status" && request.method === "GET") {
+        if (!session) return err("Unauthorized", 401);
+        const qbo = await getQboCredentials(env, decryptText, session.user_name);
+        return json({
+          connected: !!qbo,
+          configured: !!env.QBO_CLIENT_ID,
+          realmId: qbo?.realmId || null,
+        });
+      }
+
+      if (path === "/api/qbo/auth-url" && request.method === "GET") {
+        if (!session) return err("Unauthorized", 401);
+        const authUrl = await getQboAuthUrl(env, session.token);
+        return json({ authUrl });
+      }
+
+      if (path === "/api/qbo/callback" && request.method === "GET") {
+        const code = url.searchParams.get("code");
+        const state = url.searchParams.get("state");
+        const realmId = url.searchParams.get("realmId");
+        if (!code || !state || !realmId) {
+          return new Response("Missing OAuth parameters", { status: 400, headers: CORS });
+        }
+        const sessionRow = await env.DB.prepare(
+          "SELECT user_name FROM sessions WHERE token = ? AND expires_at > ?"
+        )
+          .bind(state, nowIso())
+          .first();
+        if (!sessionRow) {
+          return new Response("Session expired. Sign in again and reconnect QuickBooks.", {
+            status: 401,
+            headers: CORS,
+          });
+        }
+        await handleQboCallback(env, encryptText, code, realmId, sessionRow.user_name);
+        const html =
+          "<!DOCTYPE html><html><body><p>QuickBooks connected. You can close this window.</p>" +
+          "<script>try{if(window.opener){window.opener.postMessage({type:'qbo-connected'},'*');}window.close();}catch(e){}</script></body></html>";
+        return new Response(html, { headers: { ...CORS, "Content-Type": "text/html; charset=utf-8" } });
+      }
+
+      if (path === "/api/invoice-generator/qbo-invoices" && request.method === "POST") {
+        if (!session) return err("Unauthorized", 401);
+        const body = await request.json();
+        const clientName = body.clientName || "";
+        const dateFrom = body.dateFrom || "";
+        const dateTo = body.dateTo || "";
+        if (!clientName) return err("Dealership name required");
+        if (!dateFrom || !dateTo) return err("Date range required");
+
+        const { accessToken, realmId } = await getValidAccessToken(
+          env,
+          encryptText,
+          decryptText,
+          session.user_name
+        );
+        const qbo = await fetchQboOpenInvoices(accessToken, realmId, env, {
+          clientName,
+          dateFrom,
+          dateTo,
+        });
+
+        let ariRows = [];
+        const ariCreds = await getAriCredentials(env, session.user_name);
+        if (ariCreds) {
+          const ariGroups = await fetchAriInvoiceGroups(ariCreds.email, ariCreds.password, {
+            clientName,
+            dateFrom,
+            dateTo,
+          });
+          ariRows = (ariGroups.invoiceGroups || []).flatMap((g) => g.cars || []);
+        }
+
+        const invoiceGroups = mergeQboInvoicesWithAri(
+          qbo.invoices,
+          ariRows,
+          qbo.customerName || clientName
+        );
+        const qboOpenTotal = invoiceGroups.reduce((s, g) => s + (Number(g.total) || 0), 0);
+
+        return json({
+          source: "qbo",
+          clientName: qbo.customerName || clientName,
+          dateFrom,
+          dateTo,
+          qboOpenTotal: Math.round(qboOpenTotal * 100) / 100,
+          invoiceCount: invoiceGroups.length,
+          invoiceGroups,
+        });
+      }
+
+      if (path === "/api/invoice-generator/import-merge" && request.method === "POST") {
+        if (!session) return err("Unauthorized", 401);
+        const body = await request.json();
+        const clientName = body.clientName || "";
+        const dateFrom = body.dateFrom || "";
+        const dateTo = body.dateTo || "";
+        const qboInvoices = body.qboInvoices || [];
+        if (!clientName) return err("Dealership name required");
+        if (!qboInvoices.length) return err("No QuickBooks invoice data to import");
+
+        let ariRows = [];
+        const ariCreds = await getAriCredentials(env, session.user_name);
+        if (ariCreds) {
+          const ariGroups = await fetchAriInvoiceGroups(ariCreds.email, ariCreds.password, {
+            clientName,
+            dateFrom: dateFrom || "1970-01-01",
+            dateTo: dateTo || "2099-12-31",
+          });
+          ariRows = (ariGroups.invoiceGroups || []).flatMap((g) => g.cars || []);
+        }
+
+        const invoiceGroups = mergeQboInvoicesWithAri(qboInvoices, ariRows, clientName);
+        const qboOpenTotal = invoiceGroups.reduce((s, g) => s + (Number(g.total) || 0), 0);
+
+        return json({
+          source: "qbo-import",
+          clientName,
+          dateFrom,
+          dateTo,
+          qboOpenTotal: Math.round(qboOpenTotal * 100) / 100,
+          invoiceCount: invoiceGroups.length,
+          invoiceGroups,
+        });
       }
 
       if (path === "/api/car-tally" && request.method === "POST") {

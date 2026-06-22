@@ -5,6 +5,8 @@ param(
   [string]$DefaultUserName = "California",
   [string]$AriEmail = "",
   [string]$AriPassword = "",
+  [string]$QboClientId = "",
+  [string]$QboClientSecret = "",
   [switch]$SkipGit
 )
 
@@ -18,6 +20,15 @@ $WorkerName = "renu-california-photo-extractor-api"
 $DbName = "renu-california-photo-extractor"
 $PagesSlug = "renu-california-photo-extractor"
 $CredsFile = Join-Path (Join-Path $Root "..\toledo-swift-haul-dashboard") ".cloudflare-credentials.json"
+$QboLocalFile = Join-Path $Root ".qbo-credentials.local.json"
+
+if ((-not $QboClientId -or -not $QboClientSecret) -and (Test-Path $QboLocalFile)) {
+  $qboLocal = Get-Content $QboLocalFile -Raw | ConvertFrom-Json
+  if (-not $QboClientId -and $qboLocal.clientId) { $QboClientId = $qboLocal.clientId }
+  if (-not $QboClientSecret -and $qboLocal.clientSecret) { $QboClientSecret = $qboLocal.clientSecret }
+}
+if (-not $QboClientId -and $env:QBO_CLIENT_ID) { $QboClientId = $env:QBO_CLIENT_ID }
+if (-not $QboClientSecret -and $env:QBO_CLIENT_SECRET) { $QboClientSecret = $env:QBO_CLIENT_SECRET }
 
 function Get-CfHeaders {
   if (-not (Test-Path $CredsFile)) { throw "Missing Cloudflare credentials at $CredsFile" }
@@ -42,11 +53,14 @@ function Invoke-Cf([string]$Method, [string]$Uri, $Body = $null) {
 
 function Build-WorkerBundle {
   $crypto = Get-Content (Join-Path $WorkerRoot "crypto.js") -Raw -Encoding UTF8
+  $merge = Get-Content (Join-Path $WorkerRoot "invoice-merge.js") -Raw -Encoding UTF8
+  $qbo = Get-Content (Join-Path $WorkerRoot "qbo-api.js") -Raw -Encoding UTF8
   $ari = Get-Content (Join-Path $WorkerRoot "ari-firebase.js") -Raw -Encoding UTF8
   $index = Get-Content (Join-Path $WorkerRoot "index.js") -Raw -Encoding UTF8
   $html = Get-Content (Join-Path $AppRoot "index.html") -Raw -Encoding UTF8
   $css = Get-Content (Join-Path $AppRoot "styles.css") -Raw -Encoding UTF8
   $js = Get-Content (Join-Path $AppRoot "app.js") -Raw -Encoding UTF8
+  $invJs = Get-Content (Join-Path $AppRoot "invoice-generator.js") -Raw -Encoding UTF8
   $logoPath = Join-Path $AppRoot "renu-logo.png"
   $logoB64 = ""
   if (Test-Path $logoPath) {
@@ -54,20 +68,27 @@ function Build-WorkerBundle {
   }
 
   $crypto = $crypto -replace 'export async function ', 'async function '
+  $merge = $merge -replace 'export function ', 'function '
+  $qbo = $qbo -replace 'export async function ', 'async function '
   $ari = $ari -replace 'export async function ', 'async function '
   $index = $index -replace 'import \{ encryptText, decryptText \} from "\./crypto\.js";\r?\n', ''
+  $index = $index -replace 'import \{ mergeQboInvoicesWithAri \} from "\./invoice-merge\.js";\r?\n', ''
+  $index = $index -replace 'import \{\s*getQboAuthUrl,\s*getQboCredentials,\s*handleQboCallback,\s*getValidAccessToken,\s*fetchQboOpenInvoices,\s*\} from "\./qbo-api\.js";\r?\n', ''
   $index = $index -replace 'import \{ fetchAriInvoices, listAriClients \} from "\./ari-firebase\.js";\r?\n', ''
+  $index = $index -replace 'import \{\s*fetchAriInvoices,\s*fetchAriInvoiceGroups,\s*listAriClients,\s*listAccountUsers,\s*validateAriLogin,\s*\} from "\./ari-firebase\.js";\r?\n', ''
   $index = $index -replace 'import \{\s*fetchAriInvoices,\s*listAriClients,\s*listAccountUsers,\s*validateAriLogin,\s*\} from "\./ari-firebase\.js";\r?\n', ''
 
   $htmlB64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($html))
   $cssB64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($css))
   $jsB64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($js))
+  $invJsB64 = [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($invJs))
 
   $static = @"
 const APP_B64 = {
   "index.html": "$htmlB64",
   "styles.css": "$cssB64",
   "app.js": "$jsB64",
+  "invoice-generator.js": "$invJsB64",
   "renu-logo.png": "$logoB64",
 };
 
@@ -81,7 +102,8 @@ function serveStatic(pathname) {
     const bytes = Uint8Array.from(atob(encoded), (c) => c.charCodeAt(0));
     return new Response(bytes, { headers: { ...CORS, "Content-Type": "image/png" } });
   }
-  const text = atob(encoded);
+  const bytes = Uint8Array.from(atob(encoded), (c) => c.charCodeAt(0));
+  const text = new TextDecoder("utf-8").decode(bytes);
   const type = file.endsWith(".html")
     ? "text/html; charset=utf-8"
     : file.endsWith(".css")
@@ -92,7 +114,7 @@ function serveStatic(pathname) {
 
 "@
 
-  return ($static + $crypto + "`n`n" + $ari + "`n`n" + $index)
+  return ($static + $crypto + "`n`n" + $merge + "`n`n" + $qbo + "`n`n" + $ari + "`n`n" + $index)
 }
 
 function Get-OrCreate-D1 {
@@ -179,6 +201,7 @@ function Deploy-Worker([string]$DbId) {
 
   $bindings = @(
     @{ type = "d1"; name = "DB"; id = $DbId }
+    @{ type = "plain_text"; name = "PUBLIC_BASE_URL"; text = "https://$WorkerName.zeiasyed.workers.dev" }
   )
 
   $metadata = @{
@@ -214,6 +237,8 @@ function Deploy-Worker([string]$DbId) {
   try {
     Set-WorkerSecret "SHOP_PASSWORD" $ShopPassword
     Set-WorkerSecret "ENCRYPTION_KEY" $EncryptionKey
+    if ($QboClientId) { Set-WorkerSecret "QBO_CLIENT_ID" $QboClientId }
+    if ($QboClientSecret) { Set-WorkerSecret "QBO_CLIENT_SECRET" $QboClientSecret }
     Write-Host "   OK  Secrets set" -ForegroundColor Green
   } catch {
     Write-Host "   !!  Secrets: $_" -ForegroundColor Yellow

@@ -37,6 +37,7 @@
         <button type="button" id="nav-ari" class="ghost">ARI settings</button>
         <button type="button" id="nav-home" class="ghost">Print Batches</button>
         <button type="button" id="nav-tally" class="ghost">Car Tally</button>
+        <button type="button" id="nav-invoice-gen" class="ghost">Invoice Generator</button>
         <button type="button" id="logout-btn" class="ghost">Log out</button>
       </div>
     </header>
@@ -88,6 +89,132 @@
         <div id="batch-list" class="batch-list"></div>
         <p id="batches-empty" class="muted hidden">No print batches yet. Create one to import from ARI.</p>
         <p id="batches-status" class="status" role="status"></p>
+      </section>
+
+      <section id="screen-invoice-gen" class="screen hidden">
+        <div class="row-between">
+          <h2>Invoice Generator</h2>
+        </div>
+        <p class="muted">
+          Load open QuickBooks invoices (PDF or CSV export), connect QuickBooks directly, or use ARI.
+          Split into one invoice per car - same invoice number and date - then print or mass-save PDFs.
+        </p>
+
+        <div class="inv-gen-grid">
+          <div class="inv-gen-panel">
+            <h3>1. Find invoices</h3>
+            <label for="inv-src-type">Source</label>
+            <select id="inv-src-type">
+              <option value="qbo" selected>QuickBooks Online</option>
+              <option value="ari">ARI - dealership &amp; date range</option>
+              <option value="pdf">Upload single QuickBooks PDF</option>
+            </select>
+
+            <div id="inv-dealer-source">
+              <label for="inv-client">Dealership (customer name)</label>
+              <input id="inv-client" type="text" list="client-options" placeholder="e.g. Autonation Toyota Irvine">
+              <div id="inv-qbo-import-block" class="inv-qbo-import">
+                <p id="inv-qbo-setup-hint" class="inv-qbo-hint hidden" role="status"></p>
+                <label for="inv-qbo-pdfs">QuickBooks open invoice PDFs</label>
+                <p class="muted small">
+                  In QuickBooks: Sales &gt; Invoices &gt; filter Open &gt; open each combined invoice &gt; Print/Save as PDF.
+                  Select one or many PDFs here (ATI-style ReNu invoices).
+                </p>
+                <input id="inv-qbo-pdfs" type="file" accept="application/pdf,.pdf" multiple>
+                <label for="inv-qbo-csv" class="inv-qbo-csv-label">Or QBO open-invoices CSV export</label>
+                <input id="inv-qbo-csv" type="file" accept=".csv,text/csv">
+              </div>
+              <div id="inv-qbo-connect-row" class="inv-qbo-row hidden">
+                <p id="inv-qbo-status" class="muted small"></p>
+                <button type="button" id="inv-qbo-connect-btn" class="ghost small-btn">Connect QuickBooks</button>
+              </div>
+              <div class="grid-2">
+                <div>
+                  <label for="inv-date-from">From date</label>
+                  <input id="inv-date-from" type="date">
+                </div>
+                <div>
+                  <label for="inv-date-to">To date</label>
+                  <input id="inv-date-to" type="date">
+                </div>
+              </div>
+              <button type="button" id="inv-load-btn">Load invoices</button>
+              <p id="inv-load-status" class="status inv-load-status" role="status"></p>
+              <div class="inv-pick-head">
+                <label>Combined invoices to split</label>
+                <label class="inline-check inv-select-all-label">
+                  <input type="checkbox" id="inv-select-all" disabled> Select all
+                </label>
+              </div>
+              <div id="inv-pick-list" class="inv-pick-list">
+                <p class="muted small inv-pick-empty">Load invoices first.</p>
+              </div>
+              <p id="inv-pick-count" class="muted small"></p>
+              <p id="inv-pick-total" class="inv-pick-total hidden"></p>
+            </div>
+
+            <div id="inv-pdf-source" class="hidden">
+              <label for="inv-pdf-file">Upload invoice PDF</label>
+              <input id="inv-pdf-file" type="file" accept="application/pdf,.pdf">
+            </div>
+          </div>
+
+          <div class="inv-gen-panel">
+            <h3>2. Split options</h3>
+            <label for="inv-split-by">Split line items by</label>
+            <select id="inv-split-by">
+              <option value="vin" selected>VIN found in line description</option>
+              <option value="section">Vehicle section / VIN headers</option>
+            </select>
+            <label for="inv-unassigned">Lines without a VIN go to</label>
+            <select id="inv-unassigned">
+              <option value="first" selected>First car on the invoice</option>
+              <option value="last">Last car on the invoice</option>
+              <option value="duplicate">Copy onto every split invoice</option>
+              <option value="all">Add full amount to each car (shared fees)</option>
+            </select>
+            <label for="inv-numbering">Invoice numbers</label>
+            <select id="inv-numbering">
+              <option value="same" selected>Same as original invoice (your preference)</option>
+              <option value="suffix">Original + suffix (-1, -2, …)</option>
+              <option value="vin">Original + last 6 of VIN</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="inv-gen-actions">
+          <button type="button" id="inv-parse-btn">Split &amp; preview</button>
+          <button type="button" id="inv-print-btn" class="ghost" disabled>Print all</button>
+          <button type="button" id="inv-save-folder-btn" class="ghost" disabled>Save all PDFs to folder</button>
+          <button type="button" id="inv-download-btn" class="ghost" disabled>Download all PDFs</button>
+        </div>
+        <p id="inv-gen-status" class="status" role="status"></p>
+        <div id="inv-gen-progress" class="progress-wrap hidden">
+          <div class="progress-track"><div class="progress-fill" id="inv-gen-progress-fill"></div></div>
+          <span class="progress-label" id="inv-gen-progress-label">Working...</span>
+        </div>
+
+        <div id="inv-gen-preview" class="hidden">
+          <div class="row-between inv-gen-preview-head">
+            <p id="inv-gen-summary" class="muted"></p>
+          </div>
+          <div class="inv-gen-table-wrap">
+            <table class="inv-gen-table">
+              <thead>
+                <tr>
+                  <th>Split #</th>
+                  <th>Invoice #</th>
+                  <th>Date</th>
+                  <th>Vehicle / VIN</th>
+                  <th>Line items</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="inv-gen-table-body"></tbody>
+            </table>
+          </div>
+          <div id="inv-gen-html-preview" class="inv-gen-html-preview hidden"></div>
+        </div>
       </section>
 
       <section id="screen-tally" class="screen hidden">
@@ -202,7 +329,9 @@
 
   <div id="print-root" class="hidden" aria-hidden="true"></div>
   <div id="tally-print-root" class="hidden" aria-hidden="true"></div>
+  <div id="inv-print-root" class="hidden" aria-hidden="true"></div>
 
+  <script src="invoice-generator.js" defer></script>
   <script src="app.js" defer></script>
 </body>
 </html>

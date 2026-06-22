@@ -155,6 +155,42 @@ function parseVehicleInfo(info) {
   return { year: "", make: "", model: info };
 }
 
+function pickAmount(inv) {
+  const candidates = [
+    inv.Total,
+    inv.GrandTotal,
+    inv.FinalTotal,
+    inv.Balance,
+    inv.Amount,
+    inv.total,
+    inv.SubTotal,
+  ];
+  for (const c of candidates) {
+    const n = Number(c);
+    if (Number.isFinite(n) && n > 0) return n;
+  }
+  return 0;
+}
+
+function vehicleLabel(year, make, model, vehicleInfo) {
+  const parts = [year, make, model].filter(Boolean);
+  if (parts.length) return parts.join(" ");
+  return String(vehicleInfo || "").trim();
+}
+
+function clientBillTo(client) {
+  if (!client) return "";
+  const lines = [
+    client.ClientName || client.name || client.Name || "",
+    client.Address || client.address || client.Street || "",
+    [client.City, client.State, client.Zip].filter(Boolean).join(", ") ||
+      client.CityStateZip ||
+      "",
+    client.Country || client.country || "",
+  ].filter(Boolean);
+  return lines.join("\n");
+}
+
 function normalizePhotos(pics) {
   if (!Array.isArray(pics)) return [];
   return pics
@@ -221,4 +257,95 @@ export async function listAriClients(email, password) {
     .map((c) => c.ClientName || c.name || c.Name || "")
     .filter(Boolean);
   return [...new Set(names)].sort((a, b) => a.localeCompare(b));
+}
+
+export async function fetchAriInvoiceGroups(email, password, filters) {
+  const { idToken, uid } = await ariSignIn(email, password);
+  let invoices;
+  try {
+    invoices = await queryInvoices(idToken, uid);
+  } catch {
+    invoices = await listCollection(idToken, uid, "EstimatesDB");
+    invoices = invoices.filter((inv) => (inv.TypeOfForm || "") === "Invoice");
+  }
+
+  const clients = await listCollection(idToken, uid, "ClientsDB");
+  const clientByName = new Map();
+  for (const c of clients) {
+    const name = String(c.ClientName || c.name || c.Name || "").trim().toLowerCase();
+    if (name && !clientByName.has(name)) clientByName.set(name, c);
+  }
+
+  const from = filters.dateFrom ? new Date(filters.dateFrom + "T00:00:00") : null;
+  const to = filters.dateTo ? new Date(filters.dateTo + "T23:59:59") : null;
+  const clientNeedle = (filters.clientName || "").trim().toLowerCase();
+
+  const rows = invoices
+    .filter((inv) => {
+      if (!clientNeedle) return true;
+      return String(inv.ClientName || "").toLowerCase().includes(clientNeedle);
+    })
+    .filter((inv) => {
+      const ordered = parseDate(inv.DateOrdered);
+      if (!ordered) return true;
+      if (from && ordered < from) return false;
+      if (to && ordered > to) return false;
+      return true;
+    })
+    .map((inv) => {
+      const vehicle = parseVehicleInfo(inv.VehicleInfo);
+      const clientKey = String(inv.ClientName || "").trim().toLowerCase();
+      const client = clientByName.get(clientKey);
+      return {
+        ariInvoiceId: inv._id,
+        invoiceNumber: String(inv.EstimateId || ""),
+        vin: inv.vin || "",
+        year: vehicle.year,
+        make: vehicle.make,
+        model: vehicle.model,
+        vehicle: vehicleLabel(vehicle.year, vehicle.make, vehicle.model, inv.VehicleInfo),
+        stockNo: String(inv.StockNo || inv.stockNo || inv.StockNumber || "").trim(),
+        clientName: inv.ClientName || "",
+        billTo: clientBillTo(client) || String(inv.ClientName || "").trim(),
+        dateOrdered: inv.DateOrdered || "",
+        amount: pickAmount(inv),
+        terms: String(inv.Terms || inv.PaymentTerms || "Net 30").trim() || "Net 30",
+        dueDate: inv.DueDate || inv.DateDue || "",
+      };
+    });
+
+  const groups = new Map();
+  for (const row of rows) {
+    const key = row.invoiceNumber || row.ariInvoiceId;
+    if (!groups.has(key)) {
+      groups.set(key, {
+        invoiceNumber: row.invoiceNumber || key,
+        clientName: row.clientName,
+        billTo: row.billTo,
+        dateOrdered: row.dateOrdered,
+        terms: row.terms,
+        dueDate: row.dueDate,
+        cars: [],
+      });
+    }
+    const group = groups.get(key);
+    if (!group.dateOrdered && row.dateOrdered) group.dateOrdered = row.dateOrdered;
+    if (!group.billTo && row.billTo) group.billTo = row.billTo;
+    group.cars.push(row);
+  }
+
+  const invoiceGroups = [...groups.values()]
+    .map((g) => ({
+      ...g,
+      carCount: g.cars.length,
+      total: g.cars.reduce((sum, c) => sum + (c.amount || 0), 0),
+    }))
+    .sort((a, b) => String(b.dateOrdered).localeCompare(String(a.dateOrdered)));
+
+  return {
+    clientName: filters.clientName || "",
+    dateFrom: filters.dateFrom || "",
+    dateTo: filters.dateTo || "",
+    invoiceGroups,
+  };
 }

@@ -28,6 +28,13 @@
     tallyCars: [],
     tallyFilters: null,
     tallyDateSort: "desc",
+    invParsed: null,
+    invSplits: [],
+    invGroups: [],
+    invSelectedIds: new Set(),
+    invMultiSource: false,
+    invSource: null,
+    invTemplateName: "",
   };
 
   const PRINT_MAX_PX = 360;
@@ -105,7 +112,7 @@
   }
 
   function showScreen(name) {
-    ["ari", "batches", "tally", "import", "review"].forEach((s) => {
+    ["ari", "batches", "tally", "invoice-gen", "import", "review"].forEach((s) => {
       const el = $("screen-" + s);
       if (el) el.classList.toggle("hidden", s !== name);
     });
@@ -531,6 +538,13 @@
     showScreen("tally");
     loadClientOptions();
     $("tally-status").textContent = "";
+    if (!$("tally-date-from").value) {
+      const to = new Date();
+      const from = new Date();
+      from.setMonth(from.getMonth() - 3);
+      $("tally-date-to").value = to.toISOString().slice(0, 10);
+      $("tally-date-from").value = from.toISOString().slice(0, 10);
+    }
   }
 
   function fmtTallyDate(iso) {
@@ -609,6 +623,657 @@
           "</td></tr>"
       )
       .join("");
+  }
+
+  function setInvGenStatus(msg, isError) {
+    const loadStatus = $("inv-load-status");
+    const mainStatus = $("inv-gen-status");
+    if (loadStatus) {
+      loadStatus.textContent = msg || "";
+      loadStatus.classList.toggle("error", !!isError);
+    }
+    if (mainStatus) {
+      mainStatus.textContent = msg || "";
+      mainStatus.classList.toggle("error", !!isError);
+    }
+    if (msg && loadStatus) {
+      loadStatus.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+  }
+
+  function openInvoiceGenerator() {
+    showScreen("invoice-gen");
+    loadClientOptions();
+    if (!$("inv-date-from").value) {
+      const to = new Date();
+      const from = new Date();
+      from.setMonth(from.getMonth() - 3);
+      $("inv-date-to").value = to.toISOString().slice(0, 10);
+      $("inv-date-from").value = from.toISOString().slice(0, 10);
+    }
+    toggleInvSourcePanels();
+    updateInvGenActions();
+  }
+
+  function toggleInvSourcePanels() {
+    const src = $("inv-src-type").value;
+    const isDealer = src === "ari" || src === "qbo";
+    $("inv-dealer-source").classList.toggle("hidden", !isDealer);
+    $("inv-pdf-source").classList.toggle("hidden", src !== "pdf");
+    $("inv-qbo-import-block").classList.toggle("hidden", src !== "qbo");
+    if (src === "qbo") refreshQboStatus();
+  }
+
+  async function refreshQboStatus() {
+    const statusEl = $("inv-qbo-status");
+    const btn = $("inv-qbo-connect-btn");
+    const connectRow = $("inv-qbo-connect-row");
+    const hint = $("inv-qbo-setup-hint");
+    if (!connectRow) return;
+    try {
+      const data = await api("/api/qbo/status");
+      if (!data.configured) {
+        connectRow.classList.add("hidden");
+        if (hint) {
+          hint.classList.remove("hidden", "error");
+          hint.innerHTML =
+            "<strong>QuickBooks API is not configured.</strong> Upload open invoice PDFs above, export a CSV, " +
+            'switch Source to <strong>ARI</strong>, or click Load to pull from ARI automatically.';
+        }
+        return;
+      }
+      connectRow.classList.remove("hidden");
+      if (hint) hint.classList.add("hidden");
+      if (data.connected) {
+        statusEl.textContent =
+          "QuickBooks connected" + (data.realmId ? " (company " + data.realmId + ")" : "");
+        if (btn) {
+          btn.textContent = "Reconnect QuickBooks";
+          btn.disabled = false;
+        }
+      } else {
+        statusEl.textContent = "Optional: connect QuickBooks to load open invoices automatically.";
+        if (btn) {
+          btn.textContent = "Connect QuickBooks";
+          btn.disabled = false;
+        }
+      }
+    } catch {
+      connectRow.classList.add("hidden");
+      if (hint) {
+        hint.classList.remove("hidden");
+        hint.textContent = "Could not check QuickBooks status. Upload PDFs or use ARI source.";
+      }
+    }
+  }
+
+  async function connectQuickBooks() {
+    $("inv-qbo-connect-btn").disabled = true;
+    $("inv-gen-status").textContent = "Opening QuickBooks sign-in…";
+    try {
+      const data = await api("/api/qbo/auth-url");
+      window.open(data.authUrl, "qbo-oauth", "width=640,height=720,noopener");
+      $("inv-gen-status").textContent = "Complete sign-in in the QuickBooks window, then load invoices.";
+    } catch (e) {
+      $("inv-gen-status").textContent = e.message;
+    } finally {
+      $("inv-qbo-connect-btn").disabled = false;
+    }
+  }
+
+  function fmtInvDate(iso) {
+    if (!iso) return "";
+    try {
+      return new Date(iso).toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    } catch {
+      return iso;
+    }
+  }
+
+  function invGroupLabel(g) {
+    const totalLabel = g.total > 0 ? window.InvoiceGenerator.money(g.total) : g.carCount + " car(s)";
+    const srcTag = g.source === "qbo" || state.invSource === "qbo" ? " | QBO open" : "";
+    return (
+      (g.invoiceNumber || "Invoice") +
+      " | " +
+      fmtInvDate(g.dateOrdered) +
+      " | " +
+      g.carCount +
+      " car(s) | " +
+      totalLabel +
+      srcTag
+    );
+  }
+
+  function invoiceGroupTotal(g) {
+    const fromGroup = Number(g.total);
+    if (Number.isFinite(fromGroup) && fromGroup > 0) return fromGroup;
+    return (g.cars || []).reduce((sum, car) => sum + (Number(car.amount) || 0), 0);
+  }
+
+  function selectedInvoicesTotal() {
+    return getSelectedInvIndices().reduce((sum, idx) => sum + invoiceGroupTotal(state.invGroups[idx]), 0);
+  }
+
+  function getSelectedInvIndices() {
+    return [...state.invSelectedIds]
+      .map((v) => Number(v))
+      .filter((idx) => Number.isFinite(idx) && state.invGroups[idx]);
+  }
+
+  function syncInvSelectAll() {
+    const selectAll = $("inv-select-all");
+    const total = state.invGroups.length;
+    const selected = state.invSelectedIds.size;
+    if (!selectAll) return;
+    selectAll.disabled = total === 0;
+    selectAll.checked = total > 0 && selected === total;
+    selectAll.indeterminate = selected > 0 && selected < total;
+    const countEl = $("inv-pick-count");
+    const totalEl = $("inv-pick-total");
+    if (countEl) {
+      countEl.textContent = total
+        ? selected + " of " + total + " invoice(s) selected"
+        : "";
+    }
+    if (totalEl) {
+      if (!total || selected === 0) {
+        totalEl.classList.add("hidden");
+        totalEl.textContent = "";
+      } else {
+        const amount = selectedInvoicesTotal();
+        totalEl.classList.remove("hidden");
+        const label =
+          state.invSource === "qbo" ? "QBO open total" : "Selected total";
+        totalEl.textContent =
+          label + ": " + window.InvoiceGenerator.money(amount) + " (" + selected + " invoice(s))";
+      }
+    }
+  }
+
+  function renderInvPickList() {
+    const list = $("inv-pick-list");
+    const groups = state.invGroups;
+    list.innerHTML = "";
+    if (!groups.length) {
+      list.innerHTML = '<p class="muted small inv-pick-empty">No invoices in this range.</p>';
+      state.invSelectedIds.clear();
+      syncInvSelectAll();
+      return;
+    }
+    groups.forEach((g, idx) => {
+      const row = document.createElement("div");
+      row.className = "inv-pick-row";
+      const checked = state.invSelectedIds.has(idx);
+      const cbId = "inv-pick-" + idx;
+      row.innerHTML =
+        '<input type="checkbox" id="' +
+        cbId +
+        '" data-inv-pick="' +
+        idx +
+        '" ' +
+        (checked ? "checked " : "") +
+        'aria-label="Select ' +
+        escapeHtml(g.invoiceNumber || "invoice") +
+        '">' +
+        '<label class="inv-pick-text" for="' +
+        cbId +
+        '">' +
+        escapeHtml(invGroupLabel(g)) +
+        "</label>";
+      const input = row.querySelector("input");
+      input.addEventListener("change", (e) => {
+        if (e.target.checked) state.invSelectedIds.add(idx);
+        else state.invSelectedIds.delete(idx);
+        syncInvSelectAll();
+      });
+      row.addEventListener("click", (e) => {
+        if (e.target.tagName === "INPUT") return;
+        input.checked = !input.checked;
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      });
+      list.appendChild(row);
+    });
+    syncInvSelectAll();
+  }
+
+  function rebuildInvSplitsFromSelection() {
+    const indices = getSelectedInvIndices().sort((a, b) => a - b);
+    if (!indices.length) return [];
+    let allSplits = [];
+    for (const idx of indices) {
+      const group = state.invGroups[idx];
+      if (!group?.cars?.length) continue;
+      const parsed = window.InvoiceGenerator.parsedFromAriGroup(group);
+      const splits = window.InvoiceGenerator.splitInvoice(parsed, invGenOptions());
+      allSplits = allSplits.concat(splits);
+    }
+    allSplits.forEach((s, i) => {
+      s.splitIndex = i + 1;
+      s.splitTotal = allSplits.length;
+    });
+    return allSplits;
+  }
+
+  async function loadInvoicesFromAri() {
+    const clientName = $("inv-client").value.trim();
+    const dateFrom = $("inv-date-from").value;
+    const dateTo = $("inv-date-to").value;
+
+    if (!clientName) {
+      setInvGenStatus("Enter a dealership name.", true);
+      return;
+    }
+    if (!dateFrom || !dateTo) {
+      setInvGenStatus("Choose a from and to date.", true);
+      return;
+    }
+
+    $("inv-load-btn").disabled = true;
+    setInvGenStatus("Loading invoices from ARI...");
+    showProgress("inv-gen-progress", "inv-gen-progress-fill", "inv-gen-progress-label", "Loading from ARI...");
+    state.invParsed = null;
+    state.invSplits = [];
+    state.invSource = "ari";
+    $("inv-gen-preview").classList.add("hidden");
+    updateInvGenActions();
+
+    try {
+      const data = await api(
+        "/api/invoice-generator/invoices",
+        {
+          method: "POST",
+          body: JSON.stringify({ clientName, dateFrom, dateTo }),
+        },
+        180000
+      );
+      state.invGroups = data.invoiceGroups || [];
+      state.invSelectedIds = new Set(state.invGroups.map((_, idx) => idx));
+      renderInvPickList();
+      const multi = state.invGroups.filter((g) => g.carCount > 1).length;
+      setInvGenStatus(
+        "Found " +
+        state.invGroups.length +
+        " invoice(s) for " +
+        clientName +
+        (multi ? " (" + multi + " combined/multi-car)" : "") +
+        "."
+      );
+      finishProgress("inv-gen-progress", "inv-gen-progress-fill", "inv-gen-progress-label", "Load complete");
+    } catch (e) {
+      state.invGroups = [];
+      renderInvPickList();
+      setInvGenStatus(e.message, true);
+      hideProgress("inv-gen-progress", "inv-gen-progress-fill");
+    } finally {
+      $("inv-load-btn").disabled = false;
+    }
+  }
+
+  async function loadInvoicesFromQbo() {
+    const clientName = $("inv-client").value.trim();
+    const dateFrom = $("inv-date-from").value;
+    const dateTo = $("inv-date-to").value;
+    const pdfInput = $("inv-qbo-pdfs");
+    const csvInput = $("inv-qbo-csv");
+    const pdfFiles = pdfInput?.files ? [...pdfInput.files] : [];
+    const csvFile = csvInput?.files && csvInput.files[0];
+
+    if (!clientName) {
+      setInvGenStatus("Enter a dealership name (must match QuickBooks customer).", true);
+      return;
+    }
+    if (!dateFrom || !dateTo) {
+      setInvGenStatus("Choose a from and to date.", true);
+      return;
+    }
+
+    $("inv-load-btn").disabled = true;
+    state.invParsed = null;
+    state.invSplits = [];
+    state.invSource = "qbo";
+    $("inv-gen-preview").classList.add("hidden");
+    updateInvGenActions();
+
+    try {
+      let qboStatus = { configured: false, connected: false };
+      try {
+        qboStatus = await api("/api/qbo/status");
+      } catch {
+        /* optional */
+      }
+
+      if (!pdfFiles.length && !csvFile && qboStatus.connected) {
+        setInvGenStatus("Loading open invoices from QuickBooks...");
+        showProgress(
+          "inv-gen-progress",
+          "inv-gen-progress-fill",
+          "inv-gen-progress-label",
+          "Loading from QuickBooks..."
+        );
+        const data = await api(
+          "/api/invoice-generator/qbo-invoices",
+          {
+            method: "POST",
+            body: JSON.stringify({ clientName, dateFrom, dateTo }),
+          },
+          180000
+        );
+        applyLoadedInvoiceGroups(data, clientName);
+        finishProgress("inv-gen-progress", "inv-gen-progress-fill", "inv-gen-progress-label", "Load complete");
+        return;
+      }
+
+      if (!pdfFiles.length && !csvFile) {
+        const importBlock = $("inv-qbo-import-block");
+        if (importBlock) {
+          importBlock.classList.add("inv-qbo-highlight");
+          setTimeout(() => importBlock.classList.remove("inv-qbo-highlight"), 2500);
+        }
+        setInvGenStatus(
+          "No QuickBooks PDFs or API connection — loading from ARI instead…",
+          false
+        );
+        await loadInvoicesFromAri();
+        return;
+      }
+
+      setInvGenStatus("Reading QuickBooks export...");
+      showProgress(
+        "inv-gen-progress",
+        "inv-gen-progress-fill",
+        "inv-gen-progress-label",
+        "Importing QuickBooks data..."
+      );
+
+      let qboInvoices = [];
+      if (csvFile) {
+        const csvText = await csvFile.text();
+        qboInvoices = window.InvoiceGenerator.parseQboOpenCsv(csvText);
+        if (!qboInvoices.length) {
+          throw new Error("Could not parse CSV. Export open invoices from QuickBooks with Num and Open Balance columns.");
+        }
+      }
+
+      if (pdfFiles.length) {
+        for (const file of pdfFiles) {
+          const text = await window.InvoiceGenerator.extractPdfText(file);
+          const parsed = window.InvoiceGenerator.parseInvoiceText(text);
+          if (!parsed.vehicles?.length) {
+            throw new Error("No vehicles in " + file.name + ". Use ReNu ATI-style QuickBooks PDFs.");
+          }
+          qboInvoices.push(window.InvoiceGenerator.parsedToQboInvoice(parsed));
+        }
+      }
+
+      const data = await api(
+        "/api/invoice-generator/import-merge",
+        {
+          method: "POST",
+          body: JSON.stringify({ clientName, dateFrom, dateTo, qboInvoices }),
+        },
+        180000
+      );
+      applyLoadedInvoiceGroups(data, clientName);
+      finishProgress("inv-gen-progress", "inv-gen-progress-fill", "inv-gen-progress-label", "Import complete");
+    } catch (e) {
+      state.invGroups = [];
+      renderInvPickList();
+      setInvGenStatus(e.message, true);
+      hideProgress("inv-gen-progress", "inv-gen-progress-fill");
+    } finally {
+      $("inv-load-btn").disabled = false;
+    }
+  }
+
+  function applyLoadedInvoiceGroups(data, clientName) {
+    state.invGroups = data.invoiceGroups || [];
+    state.invSelectedIds = new Set(state.invGroups.map((_, idx) => idx));
+    renderInvPickList();
+    const openTotal =
+      data.qboOpenTotal != null
+        ? window.InvoiceGenerator.money(data.qboOpenTotal)
+        : window.InvoiceGenerator.money(selectedInvoicesTotal());
+    const via = data.source === "qbo-import" ? "import" : data.source === "ari" ? "ARI" : "QuickBooks";
+    setInvGenStatus(
+      "Found " +
+      state.invGroups.length +
+      " invoice(s) for " +
+      (data.clientName || clientName) +
+      " via " +
+      via +
+      " — total " +
+      openTotal +
+      "."
+    );
+  }
+
+  async function loadInvoicesFromSource() {
+    const src = $("inv-src-type").value;
+    if (src === "qbo") return loadInvoicesFromQbo();
+    return loadInvoicesFromAri();
+  }
+
+  function splitSelectedInvoice() {
+    if ($("inv-src-type").value === "pdf") {
+      return parseInvoicePdf();
+    }
+    if (!window.InvoiceGenerator) {
+      $("inv-gen-status").textContent = "Invoice generator module did not load.";
+      return;
+    }
+    const indices = getSelectedInvIndices();
+    if (!indices.length) {
+      $("inv-gen-status").textContent = "Select at least one invoice to split.";
+      return;
+    }
+
+    state.invMultiSource = indices.length > 1;
+    state.invParsed = null;
+    state.invSplits = rebuildInvSplitsFromSelection();
+    if (!state.invSplits.length) {
+      $("inv-gen-status").textContent = "Selected invoice(s) have no vehicles.";
+      return;
+    }
+
+    const zeroAmount = state.invSplits.every((s) => !s.balanceDue);
+    if (zeroAmount) {
+      $("inv-gen-status").textContent =
+        "Split ready — amounts were $0; check line totals or upload the QuickBooks PDF for exact amounts.";
+    } else {
+      const selectedTotal = selectedInvoicesTotal();
+      const splitTotal = state.invSplits.reduce((s, inv) => s + (Number(inv.balanceDue) || 0), 0);
+      const totalsMatch = Math.abs(selectedTotal - splitTotal) < 0.02;
+      $("inv-gen-status").textContent =
+        "Ready — " +
+        state.invSplits.length +
+        " split PDF(s) from " +
+        indices.length +
+        " selected invoice(s)" +
+        (totalsMatch
+          ? " — totals match (" + window.InvoiceGenerator.money(splitTotal) + ")."
+          : " — split total " + window.InvoiceGenerator.money(splitTotal) + ".");
+    }
+    renderInvGenPreview();
+  }
+
+  function invGenOptions() {
+    return {
+      splitBy: $("inv-split-by").value,
+      unassignedMode: $("inv-unassigned").value,
+      numbering: $("inv-numbering").value,
+    };
+  }
+
+  function updateInvGenActions() {
+    const ready = state.invSplits.length > 0;
+    $("inv-print-btn").disabled = !ready;
+    $("inv-save-folder-btn").disabled = !ready;
+    $("inv-download-btn").disabled = !ready;
+  }
+
+  function renderInvGenPreview() {
+    const splits = state.invSplits;
+    $("inv-gen-preview").classList.toggle("hidden", !splits.length);
+    if (!splits.length) return;
+
+    const parsed = state.invParsed || {};
+    const sourceCount = getSelectedInvIndices().length;
+    let summary =
+      splits.length +
+      " split invoice" +
+      (splits.length === 1 ? "" : "s") +
+      " (one per car)";
+    if (state.invMultiSource && sourceCount > 1) {
+      summary = sourceCount + " source invoices | " + summary;
+    } else if (parsed.invoiceNumber) {
+      summary =
+        "Original #" +
+        parsed.invoiceNumber +
+        (parsed.invoiceDate
+          ? " | Date " + window.InvoiceGenerator.fmtDisplayDate(parsed.invoiceDate)
+          : "") +
+        " | " +
+        summary;
+    }
+    $("inv-gen-summary").textContent = summary;
+
+    $("inv-gen-table-body").innerHTML = splits
+      .map(
+        (inv) =>
+          "<tr><td>" +
+          inv.splitIndex +
+          "</td><td>" +
+          escapeHtml(inv.invoiceNumber) +
+          "</td><td>" +
+          escapeHtml(window.InvoiceGenerator.fmtDisplayDate(inv.invoiceDate)) +
+          "</td><td>" +
+          escapeHtml(inv.vehicle || "—") +
+          (inv.vin ? "<br><span class='muted'>" + escapeHtml(inv.vin) + "</span>" : "") +
+          (inv.stockNo ? "<br><span class='muted'>Stock " + escapeHtml(inv.stockNo) + "</span>" : "") +
+          "</td><td>" +
+          (inv.vehicles ? inv.vehicles.length : inv.lineItems?.length || 1) +
+          "</td><td>" +
+          escapeHtml(window.InvoiceGenerator.money(inv.balanceDue)) +
+          "</td></tr>"
+      )
+      .join("");
+
+    const preview = $("inv-gen-html-preview");
+    preview.innerHTML = window.InvoiceGenerator.buildPrintDocument(splits);
+    preview.classList.remove("hidden");
+    updateInvGenActions();
+  }
+
+  async function parseInvoicePdf() {
+    const fileInput = $("inv-pdf-file");
+    const file = fileInput.files && fileInput.files[0];
+    if (!file) {
+      $("inv-gen-status").textContent = "Choose a QuickBooks invoice PDF first.";
+      return;
+    }
+    if (!window.InvoiceGenerator) {
+      $("inv-gen-status").textContent = "Invoice generator module did not load.";
+      return;
+    }
+
+    const templateInput = $("inv-template-file");
+    if (templateInput) {
+      const templateFile = templateInput.files && templateInput.files[0];
+      if (templateFile) {
+        state.invTemplateName = templateFile.name;
+        $("inv-template-note").textContent =
+          "Layout reference saved: " + templateFile.name + " — send this file in chat to lock exact formatting.";
+        $("inv-template-note").classList.remove("hidden");
+      }
+    }
+
+    $("inv-parse-btn").disabled = true;
+    $("inv-gen-status").textContent = "Reading PDF...";
+    showProgress("inv-gen-progress", "inv-gen-progress-fill", "inv-gen-progress-label", "Parsing invoice...");
+    try {
+      const text = await window.InvoiceGenerator.extractPdfText(file);
+      const parsed = window.InvoiceGenerator.parseInvoiceText(text);
+      if (!parsed.vehicles?.length && !parsed.lineItems?.length) {
+        throw new Error(
+          "No vehicles found. Use a ReNu ATI-style PDF (DATE ORDERED / VEHICLE / VIN / AMOUNT table) or send a sample to match."
+        );
+      }
+      state.invParsed = parsed;
+      state.invSplits = window.InvoiceGenerator.splitInvoice(parsed, invGenOptions());
+      if (state.invSplits.length === 0) {
+        throw new Error("Could not split this invoice — no VINs detected in line items.");
+      }
+      renderInvGenPreview();
+      $("inv-gen-status").textContent =
+        "Ready — " + state.invSplits.length + " invoice(s), original date preserved.";
+      finishProgress("inv-gen-progress", "inv-gen-progress-fill", "inv-gen-progress-label", "Parse complete");
+    } catch (e) {
+      state.invParsed = null;
+      state.invSplits = [];
+      $("inv-gen-preview").classList.add("hidden");
+      $("inv-gen-status").textContent = e.message;
+      hideProgress("inv-gen-progress", "inv-gen-progress-fill");
+      updateInvGenActions();
+    } finally {
+      $("inv-parse-btn").disabled = false;
+    }
+  }
+
+  function printInvSplits() {
+    if (!state.invSplits.length) return;
+    $("inv-print-root").innerHTML = window.InvoiceGenerator.buildPrintDocument(state.invSplits);
+    document.body.classList.add("inv-printing");
+    $("inv-print-root").classList.remove("hidden");
+    window.print();
+    setTimeout(() => {
+      document.body.classList.remove("inv-printing");
+      $("inv-print-root").classList.add("hidden");
+      $("inv-print-root").innerHTML = "";
+    }, 500);
+  }
+
+  async function saveInvSplitsToFolder(useFolderPicker) {
+    if (!state.invSplits.length || !window.InvoiceGenerator) return;
+    const btn = useFolderPicker ? $("inv-save-folder-btn") : $("inv-download-btn");
+    btn.disabled = true;
+    $("inv-gen-status").textContent = useFolderPicker
+      ? "Pick a folder on your PC, then saving PDFs..."
+      : "Generating PDF downloads...";
+    showProgress("inv-gen-progress", "inv-gen-progress-fill", "inv-gen-progress-label", "Creating PDFs...");
+    try {
+      if (useFolderPicker && !window.showDirectoryPicker) {
+        $("inv-gen-status").textContent =
+          "Folder picker not supported in this browser — downloading PDFs instead.";
+      }
+      const result = await window.InvoiceGenerator.saveSplitsToFolder(
+        state.invSplits,
+        null,
+        { preferFolder: useFolderPicker },
+        (i, total) => {
+          $("inv-gen-progress-label").textContent = "PDF " + i + " of " + total;
+          $("inv-gen-progress-fill").style.width = Math.round((i / total) * 100) + "%";
+        }
+      );
+      $("inv-gen-status").textContent = result.usedFolder
+        ? "Saved " + result.saved + " PDF(s) to your folder. Check the folder you picked."
+        : "Downloaded " + result.saved + " PDF(s) to your Downloads folder.";
+      finishProgress("inv-gen-progress", "inv-gen-progress-fill", "inv-gen-progress-label", "Done");
+    } catch (e) {
+      if (e.name === "AbortError") {
+        $("inv-gen-status").textContent = "Folder pick cancelled.";
+      } else {
+        $("inv-gen-status").textContent = e.message;
+      }
+      hideProgress("inv-gen-progress", "inv-gen-progress-fill");
+    } finally {
+      btn.disabled = false;
+      updateInvGenActions();
+    }
   }
 
   async function runCarTally() {
@@ -1257,6 +1922,7 @@
   });
   $("nav-home").addEventListener("click", () => { showScreen("batches"); loadBatches(); });
   $("nav-tally").addEventListener("click", openCarTally);
+  $("nav-invoice-gen").addEventListener("click", openInvoiceGenerator);
   $("nav-ari").addEventListener("click", () => showScreen("ari"));
   $("new-batch-btn").addEventListener("click", () => { showScreen("import"); loadClientOptions(); });
   $("import-cancel").addEventListener("click", () => showScreen("batches"));
@@ -1277,6 +1943,42 @@
   $("tally-sort-date").addEventListener("click", toggleTallyDateSort);
   $("tally-export-btn").addEventListener("click", exportTallyExcel);
   $("tally-print-btn").addEventListener("click", printTallyPdf);
+  $("inv-parse-btn").addEventListener("click", splitSelectedInvoice);
+  $("inv-load-btn").addEventListener("click", loadInvoicesFromSource);
+  $("inv-qbo-connect-btn").addEventListener("click", connectQuickBooks);
+  window.addEventListener("message", (e) => {
+    if (e.data?.type === "qbo-connected") {
+      refreshQboStatus();
+      $("inv-gen-status").textContent = "QuickBooks connected. Load invoices to continue.";
+    }
+  });
+  $("inv-src-type").addEventListener("change", toggleInvSourcePanels);
+  $("inv-select-all").addEventListener("change", (e) => {
+    if (e.target.checked) {
+      state.invGroups.forEach((_, idx) => state.invSelectedIds.add(idx));
+    } else {
+      state.invSelectedIds.clear();
+    }
+    renderInvPickList();
+  });
+  $("inv-print-btn").addEventListener("click", printInvSplits);
+  $("inv-save-folder-btn").addEventListener("click", () => saveInvSplitsToFolder(true));
+  $("inv-download-btn").addEventListener("click", () => saveInvSplitsToFolder(false));
+  ["inv-split-by", "inv-unassigned", "inv-numbering"].forEach((id) => {
+    $(id).addEventListener("change", () => {
+      if ($("inv-src-type").value === "ari" || $("inv-src-type").value === "qbo") {
+        if (getSelectedInvIndices().length) {
+          state.invSplits = rebuildInvSplitsFromSelection();
+          renderInvGenPreview();
+          $("inv-gen-status").textContent = "Split options updated — " + state.invSplits.length + " PDF(s).";
+        }
+      } else if (state.invParsed && !state.invMultiSource) {
+        state.invSplits = window.InvoiceGenerator.splitInvoice(state.invParsed, invGenOptions());
+        renderInvGenPreview();
+        $("inv-gen-status").textContent = "Split options updated — " + state.invSplits.length + " invoice(s).";
+      }
+    });
+  });
   $("save-review-btn").addEventListener("click", saveReview);
   $("print-btn").addEventListener("click", printPdf);
   $("show-kept-only").addEventListener("change", (e) => {

@@ -45,3 +45,12 @@ CREATE TABLE IF NOT EXISTS batch_cars (
 
 CREATE INDEX IF NOT EXISTS idx_batches_user ON batches(user_name);
 CREATE INDEX IF NOT EXISTS idx_batch_cars_batch ON batch_cars(batch_id);
+
+CREATE TABLE IF NOT EXISTS qbo_credentials (
+  user_name TEXT PRIMARY KEY,
+  realm_id TEXT NOT NULL,
+  refresh_token_enc TEXT NOT NULL,
+  access_token_enc TEXT,
+  access_expires_at TEXT,
+  updated_at TEXT NOT NULL
+);
