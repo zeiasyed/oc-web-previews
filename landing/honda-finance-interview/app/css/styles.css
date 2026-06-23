@@ -265,12 +265,13 @@ h2 {
 
 .education-box {
   margin: 0 0 1rem;
-  padding: 0.85rem 1rem;
-  border-radius: 10px;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
   background: var(--blue-light);
-  border-left: 4px solid var(--blue);
-  font-size: 0.92rem;
+  border-left: 3px solid var(--blue);
+  font-size: 0.88rem;
   color: var(--mid);
+  line-height: 1.45;
 }
 
 .education-box strong {
@@ -295,12 +296,6 @@ select:focus {
 select:invalid,
 select.field-error {
   border-color: var(--honda-red);
-}
-
-.field-hint {
-  margin: 0.45rem 0 0;
-  font-size: 0.82rem;
-  color: var(--muted);
 }
 
 .field-error-msg {
@@ -377,14 +372,6 @@ select.field-error {
   background: linear-gradient(135deg, #444, var(--dark));
 }
 
-.result-banner h3 {
-  margin: 0 0 0.35rem;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  opacity: 0.9;
-}
-
 .result-banner .result-title {
   margin: 0;
   font-size: clamp(1.5rem, 4vw, 2rem);
@@ -428,41 +415,28 @@ select.field-error {
   margin-top: 0.35rem;
 }
 
-.score-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 0.75rem;
-  margin-top: 0.75rem;
+.result-scores {
+  display: flex;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 1rem;
 }
 
-.score-item {
-  padding: 0.75rem;
-  border-radius: 10px;
-  text-align: center;
-}
-
-.score-item.lease {
-  background: var(--blue-light);
-}
-
-.score-item.finance {
-  background: #fde8e8;
-}
-
-.score-item .score-label {
-  display: block;
-  font-size: 0.78rem;
+.score-chip {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--muted);
 }
 
-.score-item .score-value {
-  display: block;
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-top: 0.15rem;
+.score-chip.lease {
+  background: var(--blue-light);
+  color: var(--blue);
+}
+
+.score-chip.finance {
+  background: #fde8e8;
+  color: var(--honda-red);
 }
 
 .pros-cons-grid {
@@ -484,31 +458,10 @@ select.field-error {
   color: var(--honda-red);
 }
 
-.checklist {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.checklist li {
-  position: relative;
-  padding-left: 1.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.checklist li::before {
-  content: "✓";
-  position: absolute;
-  left: 0;
-  color: var(--green);
-  font-weight: 700;
-}
-
 .disclaimer {
-  font-size: 0.85rem;
+  margin: 0;
+  font-size: 0.82rem;
   color: var(--muted);
-  border-left: 3px solid var(--border);
-  padding-left: 0.85rem;
 }
 
 .site-footer {
