@@ -142,7 +142,6 @@ function renderQuestion(index) {
   progressFill.style.width = `${progress}%`;
   progressBar.setAttribute("aria-valuenow", String(Math.round(progress)));
 
-  prevBtn.hidden = index === 0;
   nextBtn.textContent = index === QUESTIONS.length - 1 ? "See result" : "Next";
 }
 
@@ -321,10 +320,12 @@ startBtn.addEventListener("click", () => {
 
 prevBtn.addEventListener("click", () => {
   saveCurrentAnswer();
-  if (currentStep > 0) {
-    currentStep -= 1;
-    renderQuestion(currentStep);
+  if (currentStep === 0) {
+    showSection(introSection);
+    return;
   }
+  currentStep -= 1;
+  renderQuestion(currentStep);
 });
 
 nextBtn.addEventListener("click", () => {
