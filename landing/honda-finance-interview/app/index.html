@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lease or Finance? | Honda Consumer Decision Tool</title>
+  <meta name="description" content="Interactive guide to help consumers understand leasing vs. retail finance and find the option that fits their driving habits and financial goals.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">H</span>
+        <span class="brand-text">
+          <span class="brand-title">Lease or Finance?</span>
+          <span class="brand-sub">A Consumer Decision Guide</span>
+        </span>
+      </div>
+      <p class="header-note">Educational tool — not financial advice</p>
+    </div>
+  </header>
+
+  <main id="main" class="container">
+    <!-- Intro: concepts -->
+    <section id="intro-section" class="panel active" aria-labelledby="intro-heading">
+      <div class="panel-header">
+        <p class="eyebrow">Before you decide</p>
+        <h1 id="intro-heading">Understand your options</h1>
+        <p class="lead">Leasing and retail finance (buying) both get you into a Honda — but they work very differently. This guide explains the concepts, then asks a few questions to recommend what may fit you best.</p>
+      </div>
+
+      <div class="concept-grid">
+        <article class="concept-card concept-lease">
+          <h2>Leasing</h2>
+          <p class="concept-tagline">Rent the vehicle for a fixed term</p>
+          <p>You pay for the vehicle's <strong>depreciation</strong> plus a finance charge over a set period — typically <strong>36 months</strong> on Honda Financial Services (HFS) leases.</p>
+          <ul>
+            <li>You do <strong>not</strong> own the car unless you buy it at lease-end</li>
+            <li>Lower monthly payment than financing the full price</li>
+            <li>Mileage limits apply (often ~10,000 miles/year on HFS)</li>
+            <li>Return the vehicle or purchase at a preset <strong>residual value</strong></li>
+          </ul>
+        </article>
+
+        <article class="concept-card concept-finance">
+          <h2>Retail Finance (Buying)</h2>
+          <p class="concept-tagline">Borrow to own the vehicle</p>
+          <p>You take a loan for the vehicle price and pay <strong>interest (APR)</strong> over a term — commonly 36 to 72 months through HFS or another lender.</p>
+          <ul>
+            <li>You <strong>build equity</strong> and own the car once the loan is paid off</li>
+            <li>Higher monthly payment, but no mileage caps</li>
+            <li>Freedom to sell, trade, or keep the vehicle as long as you want</li>
+            <li>Payment-free years possible after the loan is satisfied</li>
+          </ul>
+        </article>
+      </div>
+
+      <article class="concept-card concept-compare">
+        <h2>Key differences at a glance</h2>
+        <div class="compare-table-wrap">
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th scope="col">Factor</th>
+                <th scope="col">Lease</th>
+                <th scope="col">Retail Finance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">Ownership</th>
+                <td>Lender owns; you return or buy out</td>
+                <td>You own after loan payoff</td>
+              </tr>
+              <tr>
+                <th scope="row">Monthly payment</th>
+                <td>Usually lower</td>
+                <td>Usually higher</td>
+              </tr>
+              <tr>
+                <th scope="row">Mileage</th>
+                <td>Limited; overage fees apply</td>
+                <td>No limits</td>
+              </tr>
+              <tr>
+                <th scope="row">Best timeline</th>
+                <td>2–3 years, then new vehicle</td>
+                <td>5+ years of ownership</td>
+              </tr>
+              <tr>
+                <th scope="row">End of term</th>
+                <td>Turn in, lease again, or buy</td>
+                <td>Keep driving with no payment</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <div class="panel-actions">
+        <button type="button" class="btn btn-primary" id="start-btn">Start questionnaire</button>
+      </div>
+    </section>
+
+    <!-- Questionnaire -->
+    <section id="quiz-section" class="panel" aria-labelledby="quiz-heading" hidden>
+      <div class="panel-header">
+        <p class="eyebrow">Step <span id="step-current">1</span> of <span id="step-total">7</span></p>
+        <h2 id="quiz-heading">Tell us about your situation</h2>
+        <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+      </div>
+
+      <form id="quiz-form" novalidate>
+        <div id="question-container"></div>
+
+        <div class="panel-actions panel-actions-split">
+          <button type="button" class="btn btn-secondary" id="prev-btn" hidden>Back</button>
+          <button type="button" class="btn btn-primary" id="next-btn">Next</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Results -->
+    <section id="results-section" class="panel" aria-labelledby="results-heading" hidden>
+      <div class="panel-header">
+        <p class="eyebrow">Your personalized result</p>
+        <h2 id="results-heading">Recommendation</h2>
+      </div>
+
+      <div id="results-content"></div>
+
+      <div class="panel-actions panel-actions-split">
+        <button type="button" class="btn btn-secondary" id="restart-btn">Start over</button>
+        <a class="btn btn-primary" href="https://www.honda.com" target="_blank" rel="noopener noreferrer">Explore Honda vehicles</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>Educational presentation tool for Honda Financial Services interview. Compare total cost of ownership — not just monthly payment — before signing. Consult a dealer or financial advisor for your specific situation.</p>
+      <p class="footer-ref">References: HondaFinancialServices.com, Consumer Reports, Experian Q1 2026</p>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
