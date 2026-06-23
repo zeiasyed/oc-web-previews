@@ -99,6 +99,22 @@ const startBtn = document.getElementById("start-btn");
 const prevBtn = document.getElementById("prev-btn");
 const nextBtn = document.getElementById("next-btn");
 const restartBtn = document.getElementById("restart-btn");
+const exploreBtn = document.getElementById("explore-btn");
+
+const EXPLORE_LINKS = {
+  lease: {
+    label: "Explore Honda lease options",
+    href: "https://hondafinancialservices.com/lease",
+  },
+  finance: {
+    label: "Explore Honda finance options",
+    href: "https://hondafinancialservices.com/finance",
+  },
+  either: {
+    label: "Explore Honda lease & finance options",
+    href: "https://hondafinancialservices.com",
+  },
+};
 const resultsContent = document.getElementById("results-content");
 
 let currentStep = 0;
@@ -303,6 +319,10 @@ function showResults() {
     </div>
     ${buildExplanation(rec, scores)}
   `;
+
+  const explore = EXPLORE_LINKS[rec.type];
+  exploreBtn.textContent = explore.label;
+  exploreBtn.href = explore.href;
 
   showSection(resultsSection);
 }
