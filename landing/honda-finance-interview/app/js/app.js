@@ -98,7 +98,7 @@ const progressFill = document.getElementById("progress-fill");
 const startBtn = document.getElementById("start-btn");
 const prevBtn = document.getElementById("prev-btn");
 const nextBtn = document.getElementById("next-btn");
-const restartBtn = document.getElementById("restart-btn");
+const restartButtons = document.querySelectorAll("#restart-btn, [data-restart]");
 const resultsContent = document.getElementById("results-content");
 
 let currentStep = 0;
@@ -339,7 +339,7 @@ nextBtn.addEventListener("click", () => {
   }
 });
 
-restartBtn.addEventListener("click", resetApp);
+restartButtons.forEach((btn) => btn.addEventListener("click", resetApp));
 
 quizForm.addEventListener("submit", (e) => {
   e.preventDefault();

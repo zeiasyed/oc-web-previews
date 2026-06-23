@@ -22,7 +22,10 @@
           <span class="brand-sub">Consumer decision guide</span>
         </span>
       </div>
-      <p class="header-note">Educational — not financial advice</p>
+      <div class="header-actions">
+        <p class="header-note">Educational — not financial advice</p>
+        <button type="button" class="btn btn-text" id="restart-btn">Start over</button>
+      </div>
     </div>
   </header>
 
@@ -93,7 +96,8 @@
         </div>
       </article>
 
-      <div class="panel-actions">
+      <div class="panel-actions panel-actions-split">
+        <button type="button" class="btn btn-secondary" data-restart>Start over</button>
         <button type="button" class="btn btn-primary" id="start-btn">Start</button>
       </div>
     </section>
@@ -112,7 +116,10 @@
 
         <div class="panel-actions panel-actions-split">
           <button type="button" class="btn btn-secondary" id="prev-btn" hidden>Back</button>
-          <button type="button" class="btn btn-primary" id="next-btn">Next</button>
+          <div class="panel-actions-primary">
+            <button type="button" class="btn btn-secondary btn-restart-inline" data-restart>Start over</button>
+            <button type="button" class="btn btn-primary" id="next-btn">Next</button>
+          </div>
         </div>
       </form>
     </section>
@@ -126,7 +133,7 @@
       <div id="results-content"></div>
 
       <div class="panel-actions panel-actions-split">
-        <button type="button" class="btn btn-secondary" id="restart-btn">Start over</button>
+        <button type="button" class="btn btn-secondary" data-restart>Start over</button>
         <a class="btn btn-primary" href="https://www.honda.com" target="_blank" rel="noopener noreferrer">Explore Honda</a>
       </div>
     </section>
