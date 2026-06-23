@@ -3,12 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>Lease or Finance? | Honda Consumer Decision Tool</title>
   <meta name="description" content="Quick guide to leasing vs. retail finance for Honda buyers.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=3">
+  <link rel="stylesheet" href="css/styles.css?v=5">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to main content</a>
@@ -22,10 +25,7 @@
           <span class="brand-sub">Consumer decision guide</span>
         </span>
       </div>
-      <div class="header-actions">
-        <p class="header-note">Educational — not financial advice</p>
-        <button type="button" class="btn btn-text" id="restart-btn">Start over</button>
-      </div>
+      <p class="header-note">Educational — not financial advice</p>
     </div>
   </header>
 
@@ -96,8 +96,7 @@
         </div>
       </article>
 
-      <div class="panel-actions panel-actions-split">
-        <button type="button" class="btn btn-secondary" data-restart>Start over</button>
+      <div class="panel-actions">
         <button type="button" class="btn btn-primary" id="start-btn">Start</button>
       </div>
     </section>
@@ -116,10 +115,7 @@
 
         <div class="panel-actions panel-actions-split">
           <button type="button" class="btn btn-secondary" id="prev-btn" hidden>Back</button>
-          <div class="panel-actions-primary">
-            <button type="button" class="btn btn-secondary btn-restart-inline" data-restart>Start over</button>
-            <button type="button" class="btn btn-primary" id="next-btn">Next</button>
-          </div>
+          <button type="button" class="btn btn-primary" id="next-btn">Next</button>
         </div>
       </form>
     </section>
@@ -132,12 +128,17 @@
 
       <div id="results-content"></div>
 
-      <div class="panel-actions panel-actions-split">
-        <button type="button" class="btn btn-secondary" data-restart>Start over</button>
+      <div class="panel-actions">
         <a class="btn btn-primary" href="https://www.honda.com" target="_blank" rel="noopener noreferrer">Explore Honda</a>
       </div>
     </section>
   </main>
+
+  <div class="bottom-bar">
+    <div class="container bottom-bar-inner">
+      <button type="button" class="btn btn-secondary" id="restart-btn">Start over</button>
+    </div>
+  </div>
 
   <footer class="site-footer">
     <div class="container">
@@ -145,6 +146,6 @@
     </div>
   </footer>
 
-  <script src="js/app.js?v=3"></script>
+  <script src="js/app.js?v=5"></script>
 </body>
 </html>
