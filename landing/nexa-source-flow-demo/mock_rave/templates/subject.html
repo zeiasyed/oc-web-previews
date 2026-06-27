@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Subject {{ subject_id }} — Medidata Rave (Demo)</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='rave.css') }}"/>
+</head>
+<body>
+{% include 'rave_header.html' %}
+<div class="content layout">
+  <aside class="nav">
+    <h3>Visits</h3>
+    {% for v in visits %}
+    <div class="nav-group">
+      <div class="nav-visit">{{ v.name }}</div>
+      {% for f in v.forms %}
+      <a class="nav-form {{ 'populated' if f.populated else '' }}"
+         href="{{ url_for('crf', subject=subject_id, visit=v.name, form=f.name) }}">
+        {{ f.name }}{% if f.populated %} ✓{% endif %}
+      </a>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </aside>
+  <section>
+    <h2 class="page-title">Subject {{ subject_id }}</h2>
+    <p>Select a form from the left to view CRF data.</p>
+  </section>
+</div>
+{% include 'rave_footer.html' %}
+</body>
+</html>

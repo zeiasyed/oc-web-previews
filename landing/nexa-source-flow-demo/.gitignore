@@ -1,0 +1,8 @@
+demo_data/raw_csv/
+demo_data/edc_state.sqlite
+credentials.json
+token.json
+__pycache__/
+*.pyc
+.venv/
+venv/

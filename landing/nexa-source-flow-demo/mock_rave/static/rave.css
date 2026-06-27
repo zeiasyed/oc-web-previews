@@ -1,0 +1,46 @@
+body { margin: 0; font: 10pt Arial, sans-serif; color: #000; background: #fff; }
+.rave-header {
+  background: #336699; color: #fff; padding: 10px 20px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.rave-header a { color: #dbeafe; }
+.rave-logo { font-size: 14pt; font-weight: bold; }
+.rave-user { font-size: 9pt; }
+.tabs {
+  background: #dfe3eb; padding: 4px 12px; display: flex; flex-wrap: wrap; gap: 4px;
+  border-bottom: 1px solid #999;
+}
+.tab {
+  background: #d6d3d6; padding: 4px 10px; font-size: 9pt; border: 1px solid #999;
+  border-bottom: none;
+}
+.tab.active { background: #fff; font-weight: bold; }
+.tab.crf { color: #336699; }
+.content { padding: 16px 20px; }
+.layout { display: grid; grid-template-columns: 260px 1fr; gap: 20px; }
+.page-title { color: #336699; font-size: 14pt; margin: 0 0 12px; }
+.hint { color: #666; font-size: 9pt; margin-bottom: 12px; }
+.nav { border: 1px solid #ccc; background: #f8f8f8; padding: 10px; max-height: 70vh; overflow-y: auto; }
+.nav h3 { font-size: 10pt; margin: 0 0 8px; color: #336699; }
+.nav-group { margin-bottom: 12px; }
+.nav-visit { font-weight: bold; font-size: 9pt; margin-bottom: 4px; }
+.nav-form {
+  display: block; font-size: 9pt; padding: 3px 6px; color: #333; text-decoration: none;
+  border-left: 2px solid transparent;
+}
+.nav-form:hover { background: #e8eef5; }
+.nav-form.populated { border-left-color: #059669; }
+.nav-form.active { background: #fff; border-left-color: #336699; font-weight: bold; }
+.data-table, .crf-table { width: 100%; border-collapse: collapse; font-size: 10pt; }
+.data-table th, .crf-table th {
+  background: #336699; color: #fff; text-align: left; padding: 6px 8px;
+}
+.data-table td, .crf-table td { border: 1px solid #ccc; padding: 6px 8px; }
+.data-table tr.synced { background: #ecfdf5; }
+.field-label { width: 45%; background: #f1f1f1; font-weight: bold; }
+.field-value { background: #fff; }
+.empty-msg { color: #888; font-style: italic; padding: 20px !important; text-align: center; }
+.rave-footer {
+  margin-top: 24px; padding: 8px 20px; background: #003366; color: #bea8ff;
+  font-size: 8pt; text-align: center;
+}

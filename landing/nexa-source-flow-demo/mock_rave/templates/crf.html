@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>{{ form }} — Subject {{ subject }} — Demo Rave</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='rave.css') }}"/>
+</head>
+<body>
+{% include 'rave_header.html' %}
+<div class="tabs">
+  <span class="tab">Home</span>
+  <span class="tab">Study {{ study_id }}</span>
+  <span class="tab">{{ site_name }}</span>
+  <span class="tab active">{{ subject }}</span>
+  <span class="tab active">{{ visit }}</span>
+  <span class="tab active crf">{{ form }}</span>
+</div>
+<div class="content layout">
+  <aside class="nav">
+    <h3>Forms — {{ visit }}</h3>
+    {% for f in visit_forms %}
+    <a class="nav-form {{ 'active' if f == form else '' }}"
+       href="{{ url_for('crf', subject=subject, visit=visit, form=f) }}">{{ f }}</a>
+    {% endfor %}
+  </aside>
+  <section class="crf-panel">
+    <h2 class="page-title">{{ form }}</h2>
+    <table class="crf-table">
+      <thead><tr><th>Field</th><th>Value</th></tr></thead>
+      <tbody>
+        {% if fields %}
+          {% for row in fields %}
+          <tr>
+            <td class="field-label">{{ row.label }}</td>
+            <td class="field-value">{{ row.value or '—' }}</td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td colspan="2" class="empty-msg">No data synced yet. Run Nexa Source Flow sync for this subject and visit.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% include 'rave_footer.html' %}
+</body>
+</html>

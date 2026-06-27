@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Nexa Source Flow — Sync Console</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0b1f3a;
+  --navy-light: #132d52;
+  --teal: #0d9488;
+  --teal-dark: #0f766e;
+  --teal-soft: #ccfbf1;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --line: #e2e8f0;
+  --text: #0f172a;
+  --dim: #64748b;
+  --green: #059669;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; overflow: hidden; font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); }
+header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: #fff; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.brand { font-size: 1.35rem; font-weight: 700; }
+.brand span { color: var(--teal-soft); font-weight: 500; font-size: 0.85rem; margin-left: 8px; }
+.meta { font-size: 0.8rem; opacity: 0.85; margin-top: 2px; }
+.status-pill {
+  font-size: 0.75rem; font-weight: 500; padding: 8px 16px; border-radius: 999px;
+  background: rgba(255,255,255,0.12); display: flex; align-items: center; gap: 8px;
+}
+.status-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; }
+.status-pill.running .dot { background: #34d399; animation: pulse 1.5s infinite; }
+.status-pill.done .dot { background: #34d399; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 24%);
+  height: calc(100vh - 62px);
+}
+
+/* ── Primary control panel (dominant) ── */
+.panel-left {
+  background: var(--card);
+  border-right: 1px solid var(--line);
+  padding: 28px 36px 32px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.section { margin-bottom: 20px; flex-shrink: 0; }
+.section.subjects-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  margin-bottom: 16px;
+}
+.label {
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--dim); margin-bottom: 10px;
+}
+select {
+  width: 100%; max-width: 560px; padding: 12px 14px; border: 1px solid var(--line);
+  border-radius: 10px; font-size: 0.95rem; background: #fff;
+}
+select#study { font-size: 0.9rem; }
+.chip-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.chip-action {
+  font-size: 0.78rem; font-weight: 500; padding: 7px 14px; border: 1px solid var(--line);
+  border-radius: 8px; background: #fff; cursor: pointer; color: var(--dim);
+}
+.chip-action:hover { border-color: var(--teal); color: var(--teal-dark); }
+.chip-action.active { border-color: var(--navy); color: var(--navy); background: #f1f5f9; }
+.chips-wrap {
+  flex: 1; min-height: 120px; overflow-y: auto; border: 1px solid var(--line);
+  border-radius: 12px; padding: 16px; background: var(--bg);
+}
+.chips { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
+.chip {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; padding: 10px 16px;
+  border: 1px solid var(--line); border-radius: 8px; cursor: pointer;
+  background: #fff; color: var(--dim); transition: all 0.12s;
+}
+.chip:hover { border-color: var(--teal); color: var(--text); }
+.chip.selected { background: var(--teal); border-color: var(--teal); color: #fff; font-weight: 500; }
+
+.actions { flex-shrink: 0; max-width: 480px; }
+.btn-primary {
+  width: 100%; padding: 16px 20px; border: none; border-radius: 10px;
+  background: var(--teal); color: #fff; font-weight: 600; font-size: 1.05rem; cursor: pointer;
+}
+.btn-primary:hover:not(:disabled) { background: var(--teal-dark); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-secondary {
+  width: 100%; margin-top: 10px; padding: 12px; border: 1px solid var(--line);
+  border-radius: 10px; background: #fff; color: var(--navy); font-weight: 500; cursor: pointer;
+}
+.btn-secondary:hover { border-color: var(--teal); color: var(--teal-dark); }
+.btn-edc-main {
+  display: none; width: 100%; margin-top: 12px; padding: 16px 20px; border: none;
+  border-radius: 10px; background: var(--navy); color: #fff; font-weight: 600;
+  font-size: 1.05rem; cursor: pointer;
+}
+.btn-edc-main.show { display: block; }
+.btn-edc-main:hover { background: var(--navy-light); }
+.summary { font-size: 0.85rem; color: var(--dim); line-height: 1.5; }
+.summary-top {
+  margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--line);
+  font-size: 0.9rem; color: var(--text);
+}
+
+.success-card {
+  display: none; margin-bottom: 16px; padding: 16px 18px; border-radius: 10px;
+  background: #ecfdf5; border: 1px solid #a7f3d0; max-width: 480px;
+}
+.success-card.show { display: block; }
+.success-card strong { color: var(--green); font-size: 1rem; }
+.success-card p { font-size: 0.88rem; color: var(--dim); margin-top: 4px; }
+
+.progress-inline {
+  display: none; margin-bottom: 16px; max-width: 480px;
+}
+.progress-inline.show { display: block; }
+.progress-inline .stage { font-size: 0.88rem; font-weight: 500; margin-bottom: 8px; color: var(--navy); }
+.progress-row { display: flex; align-items: center; gap: 12px; }
+.progress-track { flex: 1; height: 10px; background: var(--line); border-radius: 5px; overflow: hidden; }
+.progress-fill { height: 100%; width: 0; background: var(--teal); transition: width 0.3s; }
+.progress-fill.indeterminate { width: 35% !important; animation: slide 1.2s infinite ease-in-out; }
+@keyframes slide { 0%{margin-left:0} 50%{margin-left:65%} 100%{margin-left:0} }
+.pct { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--dim); min-width: 3em; text-align: right; }
+
+/* ── Compact status / log strip (minimal) ── */
+.panel-right {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: #f1f5f9;
+  border-left: 1px solid var(--line);
+}
+.panel-right-head {
+  padding: 12px 14px; background: #fff; border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  flex-shrink: 0;
+}
+.panel-right-head span { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--dim); }
+.log-toggle {
+  font-size: 0.72rem; padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px;
+  background: #fff; cursor: pointer; color: var(--dim);
+}
+.log-toggle:hover { border-color: var(--teal); color: var(--teal-dark); }
+
+.console-wrap {
+  flex: 0 0 auto;
+  max-height: 72px;
+  overflow: hidden;
+  transition: max-height 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.console-wrap.expanded { flex: 1; max-height: none; }
+
+.console {
+  flex: 1; overflow-y: auto; padding: 8px 12px; background: #0f172a;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; line-height: 1.35;
+}
+.console-line { padding: 1px 0; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.console-wrap.expanded .console-line { white-space: pre-wrap; overflow: visible; text-overflow: clip; }
+.console-line.success { color: #6ee7b7; }
+.console-line.warning { color: #fcd34d; }
+.console-line.error { color: #fca5a5; }
+.console-line.info { color: #93c5fd; }
+.empty { color: #64748b; padding: 12px 8px; text-align: center; font-size: 0.72rem; }
+
+.panel-right-foot {
+  padding: 8px 12px; font-size: 0.65rem; color: var(--dim); background: #fff;
+  border-top: 1px solid var(--line); flex-shrink: 0;
+}
+
+@media (max-width: 900px) {
+  main { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
+  .panel-right { max-height: 100px; }
+  .console-wrap.expanded { max-height: 200px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="brand">Nexa Source Flow™ <span>Clinical data sync</span></div>
+    <div class="meta">Demo environment</div>
+  </div>
+  <div class="status-pill idle" id="status-pill"><span class="dot"></span><span id="status-text">Ready</span></div>
+</header>
+<main>
+  <section class="panel-left">
+    <div class="summary summary-top">Select a study, visit, and subjects, then sync ClinSpark source into the mock EDC.</div>
+    <div class="section">
+      <div class="label">Study</div>
+      <select id="study">
+        {% for s in studies %}
+        <option value="{{ s.id }}">{{ s.label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="section">
+      <div class="label">Visit</div>
+      <select id="visit">
+        {% for v in visits %}<option value="{{ v }}">{{ v }}</option>{% endfor %}
+      </select>
+    </div>
+
+    <div class="section subjects-block">
+      <div class="label">Subjects <span id="sel-count">(0 selected)</span></div>
+      <div class="chip-actions">
+        <button type="button" class="chip-action" data-action="all">All</button>
+        <button type="button" class="chip-action" data-action="none">Clear</button>
+        <button type="button" class="chip-action" data-action="group1">Group 1</button>
+        <button type="button" class="chip-action" data-action="group2">Group 2</button>
+      </div>
+      <div class="chips-wrap">
+        <div class="chips" id="chips">
+          {% for s in subjects %}<div class="chip" data-id="{{ s }}">{{ s }}</div>{% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="progress-inline" id="progress-box">
+      <div class="stage" id="stage">Awaiting sync</div>
+      <div class="progress-row">
+        <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+        <div class="pct" id="pct">—</div>
+      </div>
+    </div>
+
+    <div class="success-card" id="success-card">
+      <strong id="result-msg">Sync complete</strong>
+      <p id="result-detail"></p>
+    </div>
+
+    <div class="actions">
+      <button class="btn-primary" id="run-btn">Sync to EDC</button>
+      <button class="btn-edc-main" id="open-edc" type="button">Open EDC to verify →</button>
+      <button class="btn-secondary" id="reset-demo-btn" type="button">Reset demo (clear EDC)</button>
+    </div>
+  </section>
+
+  <section class="panel-right">
+    <div class="panel-right-head">
+      <span>Activity log</span>
+      <button type="button" class="log-toggle" id="log-toggle">Expand</button>
+    </div>
+    <div class="console-wrap" id="console-wrap">
+      <div class="console" id="console"><div class="empty" id="empty">Log hidden — expand to view details</div></div>
+    </div>
+    <div class="panel-right-foot"><span id="clock"></span></div>
+  </section>
+</main>
+<script>
+const GROUP1 = {{ group1 | tojson }};
+const GROUP2 = {{ group2 | tojson }};
+const RAVE_PORT = {{ rave_port }};
+let logExpanded = false;
+let autoScroll = true;
+
+function selected() {
+  return [...document.querySelectorAll('#chips .chip.selected')].map(c => c.dataset.id);
+}
+function updateCount() {
+  document.getElementById('sel-count').textContent = `(${selected().length} selected)`;
+}
+document.querySelectorAll('#chips .chip').forEach(c => {
+  c.addEventListener('click', () => { c.classList.toggle('selected'); updateCount(); });
+});
+document.querySelectorAll('.chip-action').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const action = btn.dataset.action;
+    document.querySelectorAll('#chips .chip').forEach(c => {
+      const id = c.dataset.id;
+      if (action === 'all') c.classList.add('selected');
+      else if (action === 'none') c.classList.remove('selected');
+      else if (action === 'group1') c.classList.toggle('selected', GROUP1.includes(id));
+      else if (action === 'group2') c.classList.toggle('selected', GROUP2.includes(id));
+    });
+    updateCount();
+  });
+});
+updateCount();
+
+document.getElementById('log-toggle').addEventListener('click', () => {
+  logExpanded = !logExpanded;
+  document.getElementById('console-wrap').classList.toggle('expanded', logExpanded);
+  document.getElementById('log-toggle').textContent = logExpanded ? 'Minimize' : 'Expand';
+});
+
+function classify(t) {
+  if (/✅|✓/.test(t)) return 'success';
+  if (/⚠/.test(t)) return 'warning';
+  if (/❌|Error/.test(t)) return 'error';
+  if (/^\s*\[\d+\/\d+\]/.test(t)) return 'info';
+  return '';
+}
+function appendLine(text) {
+  const el = document.getElementById('console');
+  document.getElementById('empty')?.remove();
+  const div = document.createElement('div');
+  div.className = 'console-line ' + classify(text);
+  div.textContent = text;
+  div.title = text;
+  el.appendChild(div);
+  while (el.children.length > 500) el.removeChild(el.firstChild);
+  if (autoScroll) el.scrollTop = el.scrollHeight;
+}
+function clearLog() {
+  document.getElementById('console').innerHTML = '<div class="empty" id="empty">Log hidden — expand to view details</div>';
+  document.getElementById('success-card').classList.remove('show');
+  document.getElementById('open-edc').classList.remove('show');
+}
+
+function setStatus(kind, text) {
+  const pill = document.getElementById('status-pill');
+  pill.className = 'status-pill ' + kind;
+  document.getElementById('status-text').textContent = text;
+}
+
+document.getElementById('run-btn').addEventListener('click', async () => {
+  const subjects = selected();
+  const visit = document.getElementById('visit').value;
+  const study = document.getElementById('study').value;
+  if (!subjects.length) { alert('Select at least one subject.'); return; }
+  clearLog();
+  document.getElementById('success-card').classList.remove('show');
+  document.getElementById('open-edc').classList.remove('show');
+  document.getElementById('progress-box').classList.add('show');
+  document.getElementById('run-btn').disabled = true;
+  setStatus('running', 'Syncing…');
+  document.getElementById('progress').classList.add('indeterminate');
+  document.getElementById('stage').textContent = 'Starting sync…';
+  const r = await fetch('/api/run/sync', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ visit, subjects, study }),
+  });
+  const data = await r.json();
+  if (!data.ok) {
+    appendLine('Error: ' + data.error);
+    setStatus('idle', 'Error');
+    document.getElementById('run-btn').disabled = false;
+  }
+});
+
+document.getElementById('reset-demo-btn').addEventListener('click', async () => {
+  if (!confirm('Clear all data in the mock EDC?')) return;
+  await fetch('/api/reset', { method: 'POST' });
+  clearLog();
+  document.getElementById('progress-box').classList.remove('show');
+  setStatus('idle', 'Ready');
+});
+
+document.getElementById('open-edc').addEventListener('click', async () => {
+  const st = await (await fetch('/api/status')).json();
+  const subj = (st.subjects && st.subjects[0]) || '0103';
+  const visit = encodeURIComponent(st.visit || document.getElementById('visit').value);
+  const token = st.token || '';
+  window.open(`http://127.0.0.1:${RAVE_PORT}/login?token=${token}&subject=${subj}&visit=${visit}`, '_blank');
+});
+
+const es = new EventSource('/api/stream');
+es.addEventListener('line', e => appendLine(e.data));
+es.addEventListener('progress', e => {
+  const p = JSON.parse(e.data);
+  if (p.stage) document.getElementById('stage').textContent = p.stage;
+  const fill = document.getElementById('progress');
+  if (p.overall_pct != null) {
+    fill.classList.remove('indeterminate');
+    fill.style.width = p.overall_pct + '%';
+    document.getElementById('pct').textContent = Math.round(p.overall_pct) + '%';
+  }
+});
+es.addEventListener('status', e => {
+  const s = JSON.parse(e.data);
+  if (s.state === 'running') {
+    setStatus('running', 'Syncing…');
+    document.getElementById('progress-box').classList.add('show');
+  }
+  if (s.state === 'done') {
+    setStatus('done', 'Complete');
+    document.getElementById('run-btn').disabled = false;
+    document.getElementById('progress').classList.remove('indeterminate');
+    document.getElementById('progress').style.width = '100%';
+    document.getElementById('pct').textContent = '100%';
+    document.getElementById('stage').textContent = 'Sync complete';
+    fetch('/api/status').then(r => r.json()).then(st => {
+      if (st.summary && st.summary.entered != null) {
+        document.getElementById('success-card').classList.add('show');
+        document.getElementById('open-edc').classList.add('show');
+        document.getElementById('result-msg').textContent = 'Sync complete';
+        document.getElementById('result-detail').textContent =
+          `${st.summary.entered} fields entered · ${st.summary.skipped} skipped · ${st.summary.conflicts} conflicts`;
+      }
+    });
+    if (logExpanded) return;
+    document.getElementById('console-wrap').classList.remove('expanded');
+  }
+  if (s.state === 'idle') document.getElementById('run-btn').disabled = false;
+});
+
+setInterval(() => {
+  document.getElementById('clock').textContent = new Date().toLocaleString();
+}, 1000);
+</script>
+</body>
+</html>

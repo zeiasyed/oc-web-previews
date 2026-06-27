@@ -1,0 +1,354 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head><meta name="ROBOTS" content="NOINDEX"><link href="../../Masters/Main/main.css" rel="stylesheet" type="text/css" /><STYLE>* { -moz-box-sizing: border-box;} body { background-color: #FFFFFF; FONT: 10pt arial, sans-serif; COLOR: #000000;   } .barColor { background-color: #336699; } .barColor2 { background-color: #003366; } .subTitle { FONT: bold 10pt arial, sans-serif; COLOR: #000000;  } .title { FONT: 16pt arial, sans-serif; COLOR: #336699; } div, p, th, td, li, dd { FONT: 10pt arial, sans-serif; COLOR: #000000;  } .textSmall { FONT: 8pt arial, sans-serif; COLOR: #000000; } A:link { TEXT-DECORATION: none; COLOR: #000000; } A:visited { TEXT-DECORATION: none; COLOR: #000000; } A:active { TEXT-DECORATION: none; COLOR: #000000; } A:hover { TEXT-DECORATION: underline; COLOR: #000000; } A.show:link { TEXT-DECORATION: none; COLOR: #0000FF; } A.show:visited { TEXT-DECORATION: none; COLOR: #0000FF; } A.show:active { TEXT-DECORATION: none; COLOR: #0000FF; } A.show:hover { TEXT-DECORATION: underline; COLOR: #0000FF; } .error { FONT: bold 10pt arial, sans-serif; COLOR: #ff0000 } .breaker { background-color: #DFE3EB; text-align: left } .oddRow { background-color: #FFFFFF; text-align: left } .evenRow { background-color: #F1F1F1; text-align: left } .evenRowCalc:nth-child(odd) { background-color: #F1F1F1; text-align: left } .oddWarning { background-color: #FFDFDF; text-align: left } .evenWarning { background-color: #FFB3B3; text-align: left } .bold { font-weight: bold; } .dashboardRow {background-color: #CBE7A2; text-align: left; } </STYLE><STYLE>* { -moz-box-sizing: border-box;} .barColor2 { background-color: #003366; } .footer { COLOR: #BEFFA8; } A.footer:link { TEXT-DECORATION: underline; COLOR: #BEFFA8; } A.footer:visited { TEXT-DECORATION: underline; COLOR: #BEFFA8; } A.footer:active { TEXT-DECORATION: underline; COLOR: #BEFFA8; } A.footer:hover { TEXT-DECORATION: underline; COLOR: #FFFFFF ; }</STYLE><STYLE>* { -moz-box-sizing: border-box;} .subTitle { FONT: bold 10pt arial, sans-serif; COLOR: #000000;  } body, div, p, th, td, li, dd { FONT: 10pt arial, sans-serif; COLOR: #000000;  } .textSmall { FONT: 8pt arial, sans-serif; COLOR: #000000; } A:link { TEXT-DECORATION: none; COLOR: #000000; } A:visited { TEXT-DECORATION: none; COLOR: #000000; } A:active { TEXT-DECORATION: none; COLOR: #000000; } A:hover { TEXT-DECORATION: underline; COLOR: #000000; } A.show:link { TEXT-DECORATION: none; COLOR: #0000FF; } A.show:visited { TEXT-DECORATION: none; COLOR: #0000FF; } A.show:active { TEXT-DECORATION: none; COLOR: #0000FF; } A.show:hover { TEXT-DECORATION: underline; COLOR: #0000FF; } .error { FONT: bold 10pt arial, sans-serif; COLOR: #ff0000 }</STYLE><STYLE>* { -moz-box-sizing: border-box;} .barColor { background-color: #336699; } .database { FONT:16pt arial, sans-serif; COLOR: #FF0000; } body, div, p, th, td, li, dd { FONT: 10pt arial, sans-serif; COLOR: #000000;  }  A:link { TEXT-DECORATION: none; COLOR: #000000; } A:visited { TEXT-DECORATION: none; COLOR: #000000; } A:active { TEXT-DECORATION: none; COLOR: #000000; } A:hover { TEXT-DECORATION: underline; COLOR: #000000; } .user { FONT: 10pt verdana, sans-serif; COLOR: #737373 } .name { FONT: 10pt verdana, sans-serif; COLOR: #000000 } .nav { FONT: 8pt verdana, sans-serif; COLOR: #000000 } A.nav:link { TEXT-DECORATION: none; COLOR: #000000 } A.nav:visited { TEXT-DECORATION: none; COLOR: #000000 } A.nav:active { TEXT-DECORATION: none; COLOR: #000000 } A.nav:hover { TEXT-DECORATION: underline; COLOR: #000000 }</STYLE><STYLE>* { -moz-box-sizing: border-box;} .largeFontSize { font-size: Large; } .mediumFontSize { font-size: Medium; }</STYLE>
+
+    <style type="text/css">
+        html, body { height:100%; }
+        #mask { position:absolute; left:0; top:0; z-index:9000; background-color:#fff; display:none; }
+    </style>
+    <link rel="icon" href="../../favicon.ico" type="image/x-icon" /><meta content="IsLoggedIn~saadkhan1" http-equiv="IsLoggedInName" name="IsLoggedInName"><meta content="5/27/2026 8:43:06 PM" http-equiv="IsLoggedIn" name="IsLoggedIn"><meta content="RedirectToLoginPage~saadkhan1" http-equiv="RedirectToLoginPageName" name="RedirectToLoginPageName"><meta content="https://www.imedidata.com/logout" http-equiv="RedirectToLoginPage" name="RedirectToLoginPage"><meta content="InteractionTimeout~saadkhan1" http-equiv="InteractionTimeoutName" name="InteractionTimeoutName"><meta content="2026-05-27T21:22:15.5008138Z" http-equiv="InteractionTimeout" name="InteractionTimeout"><link href="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/styles/EmailAlertConfig.css" rel="stylesheet" type="text/css" /><link href="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/styles/Window.css" rel="stylesheet" type="text/css" /><link href="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/styles/HeaderMessageControl.css" rel="stylesheet" type="text/css" /><link href="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Scripts/npm/jquery-ui/dist/themes/ui-lightness/jquery-ui.min.css" rel="stylesheet" type="text/css" /><script type="text/javascript" src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Scripts/npm/jquery/dist/jquery.min.js"></script><script type="text/javascript" src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Scripts/npm/jquery-ui/dist/jquery-ui.min.js"></script><title>
+	CRF
+</title></head>
+<body class="body" onunload=""> 
+    <div id="mask" ></div>
+    <script src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Scripts/activity-tracker.js" type="text/javascript"></script><script src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Masters/Main/MasterJS.js" type="text/javascript"></script>
+    <div id="MasterHeader" class="master-header">
+        
+		
+		
+
+<table class="BasicTable" height="45" cellSpacing="0" cellPadding="0" align="center" bgColor="#ffffff">
+	<tr>
+		<td vAlign="middle" noWrap align="left" height="45"><a id="_ctl0_PgHeader_HeaderImage" class="logoImage" href="../../HomePage.aspx"><img src="../../Img/AmgenCovance21.converted.jpg" alt="" border="0" /></a></td>
+		<td class="database" vAlign="middle" noWrap align="center" height="45"><span id="_ctl0_PgHeader_DBTitle" class="database"></span></td>
+		<td vAlign="top" align="right" height="23" class="HeaderIconBar">
+            <a id="_ctl0_PgHeader_PortalButtonlink" class="HeaderLink nav" target="_top"></a>
+                                   
+            <a id="_ctl0_PgHeader_iMedidataButtonlink" class="HeaderLink nav" href="https://www.imedidata.com" target="_top"><img id="_ctl0_PgHeader_iMedidataButton" class="HeaderIcon" src="../../Img/tr_iMedidata.gif" border="0" /></a>
+            <a id="_ctl0_PgHeader_iMedidataLink" class="HeaderLink nav" href="https://www.imedidata.com" target="_top">iMedidata</a>                       
+            <a id="_ctl0_PgHeader_MessagesButtonlink" class="HeaderLink nav" href="../Messages/MessagesSummary.aspx" target="_top"><img id="_ctl0_PgHeader_MessagesButton" class="HeaderIcon  nav" src="../../Img/i_mail.gif" border="0" /></a>
+            <a id="_ctl0_PgHeader_MessagesLink" class="HeaderLink nav" href="../Messages/MessagesSummary.aspx" target="_top">Messages</a>
+            <a id="_ctl0_PgHeader_ProfileButtonLink" class="HeaderLink nav" href="../../MyProfile.aspx" target="_top"><img id="_ctl0_PgHeader_ProfileButton" class="HeaderIcon" src="../../Img/rep_adm.gif" border="0" /></a>
+            <a id="_ctl0_PgHeader_ProfileLink" class="HeaderLink nav" href="../../MyProfile.aspx" target="_top">My Profile</a>
+            <a id="_ctl0_PgHeader_HelpButtonLink" class="HeaderLink nav" href="../../help.aspx" target="popup"><img id="_ctl0_PgHeader_HelpButton" class="HeaderIcon" src="../../Img/tr_help.gif" border="0" /></a>
+            <a id="_ctl0_PgHeader_HelpLink" class="HeaderLink nav" href="../../help.aspx" target="popup">Help</a>
+            <a id="_ctl0_PgHeader_HomeButtonLink" class="HeaderLink nav" href="../../HomePage.aspx"><img id="_ctl0_PgHeader_HomeButton" class="HeaderIcon" src="../../Img/tr_home.gif" border="0" /></a>            
+            <a id="_ctl0_PgHeader_HomeLink" class="HeaderLink nav" href="../../HomePage.aspx">Home</a>
+            <a id="_ctl0_PgHeader_LogoutButtonLink" class="HeaderLink nav" onclick="logout_clicked = true;" href="../../Logout.aspx" target="_top"><img id="_ctl0_PgHeader_LogoutButton" class="HeaderIcon" src="../../Img/tr_logout.gif" border="0" /></a>
+            <a id="_ctl0_PgHeader_LogoutLink" class="HeaderLink nav" onclick="logout_clicked = true;" href="../../Logout.aspx" target="_top">Logout</a><br>
+            <span></span>
+			<span class="user">
+				<span id="_ctl0_PgHeader_UserPrompt">User: </span></span>
+            <span id="_ctl0_PgHeader_UserName" class="name">Saad Khan </span>
+            <span id="_ctl0_PgHeader_RoleName" class="headerRoleName"> (Clinical Research Coordinator)</span>
+
+		</td>
+	</tr>
+</table>
+<table class="BasicTable" height="30" cellSpacing="0" cellPadding="0" align="center">
+	<tr>
+		<td class="HeaderBar barColor" vAlign="bottom" align="center" width="180px"><div class="HeaderBarDiv"></div></td>
+		<td class="HeaderBar barColor" vAlign="bottom" align="left"><table id="_ctl0_PgHeader_TabTable" cellspacing="0" cellpadding="0" height="27">
+	<tr>
+		<td><a id="_ctl0_PgHeader_TabImage0" href="../../HomePage.aspx"><img src="/MedidataRave/Img/tab_il.gif" alt="" border="0" /></a></td>
+		<td bgcolor="#D6D3D6" class="text"><a id="_ctl0_PgHeader_TabHyperlink0" href="../../HomePage.aspx"><img src="/MedidataRave/Img/i_home.gif" alt="" border="0" /></a><img src="../../Img/blank.gif" border="0" style="width:2px;" /></td>
+		<td nowrap="nowrap" class="text" bgcolor="#D6D3D6"><a id="_ctl0_PgHeader_TabTextHyperlink0" href="../../HomePage.aspx"></a></td>
+		<td><img id="_ctl0_PgHeader_FinalTabImage0" src="/MedidataRave/Img/tab_ir.gif" border="0" /></td>
+		<td><a id="_ctl0_PgHeader_TabImage1" href="../../HomePage.aspx?LD_StudyID=360"><img src="/MedidataRave/Img/tab_il.gif" alt="" border="0" /></a></td>
+		<td bgcolor="#D6D3D6" class="text"><a id="_ctl0_PgHeader_TabHyperlink1" href="../../HomePage.aspx?LD_StudyID=360"><img src="/MedidataRave/Img/study_bl.gif" alt="" border="0" /></a><img src="../../Img/blank.gif" border="0" style="width:2px;" /></td>
+		<td nowrap="nowrap" class="text" bgcolor="#D6D3D6"><a id="_ctl0_PgHeader_TabTextHyperlink1" title="20250012" href="../../HomePage.aspx?LD_StudyID=360">20250012</a></td>
+		<td><img id="_ctl0_PgHeader_FinalTabImage1" src="/MedidataRave/Img/tab_ir.gif" border="0" /></td>
+		<td><a id="_ctl0_PgHeader_TabImage2" href="../../HomePage.aspx?LD_StudySiteID=824"><img src="/MedidataRave/Img/tab_il.gif" alt="" border="0" /></a></td>
+		<td bgcolor="#D6D3D6" class="text"><a id="_ctl0_PgHeader_TabHyperlink2" href="../../HomePage.aspx?LD_StudySiteID=824"><img src="/MedidataRave/Img/site_bl.gif" alt="" border="0" /></a><img src="../../Img/blank.gif" border="0" style="width:2px;" /></td>
+		<td nowrap="nowrap" class="text" bgcolor="#D6D3D6"><a id="_ctl0_PgHeader_TabTextHyperlink2" title="Anaheim Clinical Trials (ACT)" href="../../HomePage.aspx?LD_StudySiteID=824">Anaheim Clinical Trials (ACT)</a></td>
+		<td><img id="_ctl0_PgHeader_FinalTabImage2" src="/MedidataRave/Img/tab_ir.gif" border="0" /></td>
+		<td><a id="_ctl0_PgHeader_TabImage3" href="SubjectPage.aspx?ID=23488"><img src="/MedidataRave/Img/tab_il.gif" alt="" border="0" /></a></td>
+		<td bgcolor="#D6D3D6" class="text"><a id="_ctl0_PgHeader_TabHyperlink3" href="SubjectPage.aspx?ID=23488"><img src="/MedidataRave/Img/subj_bl.gif" alt="" border="0" /></a><img src="../../Img/blank.gif" border="0" style="width:2px;" /></td>
+		<td nowrap="nowrap" class="text" bgcolor="#D6D3D6"><a id="_ctl0_PgHeader_TabTextHyperlink3" title="0103" href="SubjectPage.aspx?ID=23488">0103</a></td>
+		<td><img id="_ctl0_PgHeader_FinalTabImage3" src="/MedidataRave/Img/tab_ir.gif" border="0" /></td>
+		<td><a id="_ctl0_PgHeader_TabImage4" href="InstancePage.aspx?ID=442433"><img src="/MedidataRave/Img/tab_il.gif" alt="" border="0" /></a></td>
+		<td bgcolor="#D6D3D6" class="text"><a id="_ctl0_PgHeader_TabHyperlink4" href="InstancePage.aspx?ID=442433"><img src="/MedidataRave/Img/fldr_bl.gif" alt="" border="0" /></a><img src="../../Img/blank.gif" border="0" style="width:2px;" /></td>
+		<td nowrap="nowrap" class="text" bgcolor="#D6D3D6"><a id="_ctl0_PgHeader_TabTextHyperlink4" title="Screening" href="InstancePage.aspx?ID=442433">Screening</a></td>
+		<td><img id="_ctl0_PgHeader_FinalTabImage4" src="/MedidataRave/Img/tab_ir.gif" border="0" /></td>
+		<td><a id="_ctl0_PgHeader_TabImage5" href="CRFPage.aspx?DP=2908645"><img src="/MedidataRave/Img/tab_al.gif" alt="" border="0" /></a></td>
+		<td bgcolor="#FFFFFF" class="text"><a id="_ctl0_PgHeader_TabHyperlink5" href="CRFPage.aspx?DP=2908645"><img src="/MedidataRave/Img/crf_bl.gif" alt="" border="0" /></a><img src="../../Img/blank.gif" border="0" style="width:2px;" /></td>
+		<td nowrap="nowrap" class="text" bgcolor="#FFFFFF"><a id="_ctl0_PgHeader_TabTextHyperlink5" title="Inclusion/Exclusion Criteria" href="CRFPage.aspx?DP=2908645">Inclusion/Exclusion Criteria</a></td>
+		<td><img id="_ctl0_PgHeader_FinalTabImage5" src="/MedidataRave/Img/tab_ar.gif" border="0" /></td>
+	</tr>
+</table>
+</td>
+	</tr>
+</table>
+
+    </div>
+	
+    <script src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Scripts/npm/knockout/build/output/knockout-latest.js" type="text/javascript"></script><script src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Scripts/npm/knockout-mapping/dist/knockout.mapping.js" type="text/javascript"></script><script src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Scripts/MedidataJsUtils/checkAllHandler.js" type="text/javascript"></script><script src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Scripts/MedidataJsUtils/showMessage.js" type="text/javascript"></script><script src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Scripts/ESignature.js" type="text/javascript"></script><script src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Scripts/pageReload.js" type="text/javascript"></script>
+
+
+    <div id="MainMaster">
+        <div id="MasterLeftNav" class="master-leftnav">
+            
+
+<table id="TblOuter" align="center" class="BasicTable" cellpadding="3" cellspacing="0" width="165px">
+	<tr><td><table id="_ctl0_LeftNav_EDCTaskList_TblOuter" width="100%" align="center" border="0" cellpadding="1" cellspacing="0" bgcolor="#a0a0a0">
+	<tr>
+		<td><table id="_ctl0_LeftNav_EDCTaskList_TblTaskItems" width="171px" align="center" class="leftNavTable" border="0" cellpadding="3" cellspacing="0" bgcolor="#a0a0a0">
+			<tr class="leftNavTableRow">
+				<td bgcolor="#d6d3d6" class="leftNavTableIconCell" valign="top"><a><img src="../../Img/fldr_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" bgcolor="#d6d3d6"><a class="leftNaveTableRowLink" href="InstancePage.aspx?ID=442433">Screening</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Date of Visit" href="CRFPage.aspx?DP=2908642">Date of Visit</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Disposition - Informed Consent" href="CRFPage.aspx?DP=2908644">Disposition - Informed Consent</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Inclusion/Exclusion Criteria" href="CRFPage.aspx?DP=2908645">Inclusion/Exclusion Criteria</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Demographics" href="CRFPage.aspx?DP=2908641">Demographics</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Medical History Summary" href="CRFPage.aspx?DP=2908646">Medical History Summary</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Pregnancy History" href="CRFPage.aspx?DP=2908781">Pregnancy History</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Abbreviated Physical Examination" href="CRFPage.aspx?DP=2908750">Abbreviated Physical Examination</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Vital Signs (Body Measurement)" href="CRFPage.aspx?DP=2908774">Vital Signs (Body Measurement)</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="12-Lead ECG" href="CRFPage.aspx?DP=2908671">12-Lead ECG</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Vital Signs" href="CRFPage.aspx?DP=2908755">Vital Signs</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Pregnancy Test - Serum" href="CRFPage.aspx?DP=2908778">Pregnancy Test - Serum</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Reproductive System Findings" href="CRFPage.aspx?DP=2908782">Reproductive System Findings</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="FSH Test" href="CRFPage.aspx?DP=2908777">FSH Test</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Clinical Chemistry" href="CRFPage.aspx?DP=2908677">Clinical Chemistry</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Hematology" href="CRFPage.aspx?DP=2908684">Hematology</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Thyroid Stimulating Hormone" href="CRFPage.aspx?DP=2908708">Thyroid Stimulating Hormone</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Serology" href="CRFPage.aspx?DP=2908707">Serology</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Drug Screen" href="CRFPage.aspx?DP=2908650">Drug Screen</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Urinalysis" href="CRFPage.aspx?DP=2908709">Urinalysis</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="eGFR" href="CRFPage.aspx?DP=2908682">eGFR</a></td>
+			</tr>
+			<tr class="leftNavTableRow">
+				<td bgcolor="#FFFFFF" valign="top"><a><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td>
+				<td style="padding-right:10px;" width="100%" bgcolor="#FFFFFF"><a class="leftNaveTableRowLink" title="Complete Lipid Profile SCRN" href="CRFPage.aspx?DP=2908706">Complete Lipid Profile SCRN</a></td>
+			</tr>
+		</table>
+		</td>
+	</tr>
+</table>
+
+<p></p>
+</td></tr><tr><td><table class="leftNavTable" border="0" style="border: 1px solid #a0a0a0" cellpadding="3" cellspacing="0" bgcolor="#a0a0a0"><tr><td bgcolor="#d6d3d6" width="200px">CRF History</td></tr><tr class="leftNavTableRow"><td title="0103 - Inclusion/Exclusion Criteria" bgcolor="#ffffff" class="textsmall"><a class="leftNavTableRowLink" href="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Modules/EDC/CRFPage.aspx?DP=2908645">0103 - Inclusion/Exclusion Criteria</a></td></tr><tr class="leftNavTableRow"><td title="0103 - Disposition - Informed Consent" bgcolor="#ffffff" class="textsmall"><a class="leftNavTableRowLink" href="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Modules/EDC/CRFPage.aspx?DP=2908644">0103 - Disposition - Informed Consent</a></td></tr><tr class="leftNavTableRow"><td title="0103 - Date of Visit" bgcolor="#ffffff" class="textsmall"><a class="leftNavTableRowLink" href="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Modules/EDC/CRFPage.aspx?DP=2908642">0103 - Date of Visit</a></td></tr></table></td></tr><tr><td></td></tr>
+</table>
+
+        </div>
+        <div id="MainContent" class="main-content">
+            <div class="master-content">
+                <form name="aspnetForm" method="post" action="./CRFPage.aspx?DP=2908645" id="aspnetForm" style="height:100%" onkeypress="return SubmitOnEnter(event, this, null);">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__LASTFOCUS" id="__LASTFOCUS" value="" />
+<input type="hidden" name="scrollLeft" id="scrollLeft" value="" />
+<input type="hidden" name="scrollTop" id="scrollTop" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="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" />
+
+<script type="text/javascript">
+<!--
+var theForm = document.forms['aspnetForm'];
+if (!theForm) {
+    theForm = document.aspnetForm;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+// -->
+</script>
+
+
+<link type="text/css" rel="stylesheet" href="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Standard.css.aspx" /><script type="text/javascript">
+                            var base_url = '/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/';
+                            var logout_clicked = false;
+                            var reload_count = 0;
+                            var reload_count_max = 20;</script><link type="text/css" rel="stylesheet" href="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/CrfStyle.css.aspx" /><script language="JavaScript" src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Utilities.js.aspx"></script><script language="JavaScript" src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/PromptBeforeNavAway.js.aspx"></script><script language="JavaScript" src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/DeselectableRadioButtonList.js.aspx"></script>
+					<script language="javascript">
+					function loadPopUp(url)
+					{
+						var sFeatures = 'left=0,screenX=0,top=0,screenY=0,menubar=yes,toolbar=no,location=no,resizable=yes,scrollbars=yes';
+						var sLaunchUrl = url;
+						var popUpWinHandle;
+						if (window.screen) {
+							var ah = screen.availHeight - 30;
+							var aw = screen.availWidth - 10;
+							sFeatures += ',height=' + ah;
+							sFeatures += ',innerHeight=' + ah;
+							sFeatures += ',width=' + aw;
+							sFeatures += ',innerWidth=' + aw;
+							//var h = ah - 155; //CR.NET 2003 Web Viewer Control
+							//var w = aw - 50;  //CR.NET 2003 Web Viewer Control
+							var h = ah - 145; //CR 10.NET Web Viewer Control
+							var w = aw - 35;  //CR 10.NET Web Viewer Control
+							sHW = 'h=' + h + '&w=' + w;
+							if (sLaunchUrl != '')
+								sLaunchUrl += ((sLaunchUrl.indexOf('?') > 0) ? '&' : '?') + sHW;
+						} 
+						popUpWinHandle = window.open(sLaunchUrl, 'aamgencovph1mdsolcom_MedidataRave', sFeatures);
+						return popUpWinHandle;
+					}
+					</script>
+					<script language="JavaScript" src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/ReportRunner.js.aspx"></script><script language="JavaScript" src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/AjaxPostbackHelper.js.aspx"></script><script language="JavaScript" src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Json.js.aspx"></script><script language="JavaScript" src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/SubmitOnEnter.js.aspx"></script><script language="JavaScript" src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/PreventMultipleSubmits.js.aspx"></script><script language="JavaScript" src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/FocusFirstInput.js.aspx"></script>	
+				<script language = "javascript">
+				<!--
+				function SmartScroller_GetCoords() {
+
+					var scrollX, scrollY;
+					if (document.all) {
+						if (!document.documentElement.scrollLeft)
+							scrollX = document.body.scrollLeft;
+						else
+							scrollX = document.documentElement.scrollLeft;
+						if (!document.documentElement.scrollTop)
+							scrollY = document.body.scrollTop;
+						else
+							scrollY = document.documentElement.scrollTop; 
+					}
+					else {
+						scrollX = window.pageXOffset; scrollY = window.pageYOffset; 
+					}
+
+					document.getElementsByName('scrollLeft')[0].value = scrollX;
+					document.getElementsByName('scrollTop')[0].value = scrollY;
+				}
+
+				function SmartScroller_Scroll() {
+					var x = document.getElementsByName('scrollLeft')[0].value;
+					var y = document.getElementsByName('scrollTop')[0].value;
+					window.scrollTo(x, y); 
+				}
+
+				window.onload = SmartScroller_Scroll;
+				window.onscroll = SmartScroller_GetCoords;
+				window.onclick = SmartScroller_GetCoords; window.onkeypress = SmartScroller_GetCoords;
+				// -->
+				</script>
+<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="3F8F7583" />
+                    <div id="HorizontalScrollDiv">
+                        
+     <script src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/SharedPages/CRF.js" type="text/javascript"></script><script src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Scripts/MedidataPlugins.js" type="text/javascript"></script><script src="/MedidataRave/(S(extopztgejaozx4gdtbxbpi1))/Scripts/CRFTabFocus.js" type="text/javascript"></script>
+    <script language="javascript"> document.forms[0].onsubmit = function () { return true; } </script>
+	
+    <span></span>
+	<br />
+		
+        <span id="_ctl0_Content_R"><input name="_ctl0:Content:R:IsModifiedFlag" type="hidden" id="_ctl0_Content_R_IsModifiedFlag" value="false" NavAwayMessage="You have unsaved modifications. Do you want to continue anyway?" ButtonId="_ctl0_Content_R__ctl1_Button" /><input type="submit" style="display:none;" id="_ctl0_Content_R__ctl1_Button" />
+<script language="JavaScript">
+var eventHandlerManager=EventHandlerManager.GetObject(document.forms[0], 'onsubmit');
+eventHandlerManager.AddHandlerString('(function(){document.isModified=false;return true;})()');
+var eventHandlerManager=EventHandlerManager.GetObject(window, 'onbeforeunload');
+eventHandlerManager.AddHandlerString('PromptBeforeUnload();');
+document.isModifiedFieldId='_ctl0_Content_R_IsModifiedFlag';
+document.isModified=false;
+document.doNavAwayCheckEnabled=true;
+if(this.__doPostBack)
+{
+ this.PromptBeforeNavAway_DoPostBack=this.__doPostBack;
+this.__doPostBack=function(eventTarget, eventArgument){ if(!PromptBeforeNavAway()){eventTarget=''; eventArgument='';} else { PromptBeforeNavAway_DoPostBack(eventTarget, eventArgument); } };
+}
+</script>
+<table width="100%"><tr><td align="left">Patient: <b>0103</b><br />Page: <b>Inclusion/Exclusion Criteria - Screening</b></td><td align="center"><table><tr><td align="center"></td><td align="center"></td></tr><tr><td align="center" colspan="2"></td></tr></table></td><td align="right"><table><tr><td valign="top" align="left"><td valign="middle" align="right" width="200"><td valign="top" align="right"><table><tr><td></td><td></td><td></td></tr><tr><td><a id="_ctl0_Content_R_header_SG_DataStatusHyperlink" tabindex="-2" href="AuditsPage.aspx?Type=3&amp;ID=2908645"><img src="../../Img/crf_ok.gif" alt="" border="0" /></a></td><td><input type="image" name="_ctl0:Content:R:header:SG:PencilButton" id="_ctl0_Content_R_header_SG_PencilButton" tabindex="-2" src="../../Img/i_pen.gif" style="border-width:0px;" /></td><td><img id="MarkingControlBlankImg" border="0" width="16" height="16" src="/MedidataRave/Img/blank.gif" /></td></tr></table></td></tr></table></td></tr></table><table width="100%" class="evenRow"><tr><td class="crf_rowLeftSide" valign="top"><table class="crf_pre"><tr><td class="crf_preNumber0"></td><td class="crf_preText" valign="top">Protocol version</td></tr></table></td><td class="crf_rowCenter"></td><td class="crf_rowRightSide"><table class="crf_dataPoint"><tr><td class="crf_dataPointCell"><table class="crf_dataPointInternal" align="right"><tr><td class="crf_datapointInternalCell"><table class="Basic"><tr><td style="padding-left:4px;" id="sfVal_27905838_1101229">1.0</td><td><img border="0" title="" id="Delta" width="9" height="9" src="/MedidataRave/Img/blank.gif" /></td></tr></table></td></tr></table></td><td class="crf_dataPointCell"><table><tr><td><a id="_ctl0_Content_R_field1101229_SG1101229_DataStatusHyperlink" tabindex="-2" href="AuditsPage.aspx?Type=2&amp;ID=5725821&amp;F=1101229"><img src="../../Img/dp_ok.gif" alt="" border="0" /></a></td><td><input type="image" name="_ctl0:Content:R:field1101229:SG1101229:PencilButton" id="_ctl0_Content_R_field1101229_SG1101229_PencilButton" tabindex="-2" src="../../Img/i_pen.gif" style="border-width:0px;" /></td><td><img id="NoMarkingImage" border="0" width="16" height="16" src="/MedidataRave/Img/i_nomark.gif" /></td></tr></table></td></tr></table></td></tr></table><table width="100%" class="oddRow"><tr><td class="crf_rowLeftSide" valign="top"><table class="crf_pre"><tr><td class="crf_preNumber0"></td><td class="crf_preText" valign="top">Did the participant meet all eligibility criteria?</td></tr></table></td><td class="crf_rowCenter"></td><td class="crf_rowRightSide"><table class="crf_dataPoint"><tr><td class="crf_dataPointCell"><table class="crf_dataPointInternal" align="right"><tr><td class="crf_datapointInternalCell"><table class="Basic"><tr><td style="padding-left:4px;" id="sfVal_27905839_1101227_DD">Yes</td><td><img border="0" title="" id="Delta" width="9" height="9" src="/MedidataRave/Img/blank.gif" /></td></tr></table></td></tr></table></td><td class="crf_dataPointCell"><table><tr><td><a id="_ctl0_Content_R_field1101227_SG1101227_DataStatusHyperlink" tabindex="-2" href="AuditsPage.aspx?Type=2&amp;ID=5725821&amp;F=1101227"><img src="../../Img/dp_ok.gif" alt="" border="0" /></a></td><td><input type="image" name="_ctl0:Content:R:field1101227:SG1101227:PencilButton" id="_ctl0_Content_R_field1101227_SG1101227_PencilButton" tabindex="-2" src="../../Img/i_pen.gif" style="border-width:0px;" /></td><td><img id="NoMarkingImage" border="0" width="16" height="16" src="/MedidataRave/Img/i_nomark.gif" /></td></tr></table></td></tr></table></td></tr></table><table width="100%" class="breaker"><tr><td valign="top"><table class="crf_pre"><tr><td class="crf_preNumber0"></td><td class="crf_preText" valign="top"><i>If No, Enter all criteria which were not met below: </i><br /></td></tr></table></td></tr></table><table id="log" width="100%" border="0" cellpadding="0" cellspacing="0" style="overflow:visible;"><tr class="breaker" align="center"><td style="border-right: 1px solid #a0a0a0; border-bottom: 1px solid #a0a0a0" width="30"><a id="_ctl0_Content_R_log_log_RTN" tabindex="-2" href="javascript:__doPostBack(&#39;_ctl0$Content$R$log$log_RTN&#39;,&#39;&#39;)">#</a></td><td align="left" style="border-right: 1px solid #a0a0a0; border-bottom: 1px solid #a0a0a0">&nbsp;<a id="_ctl0_Content_R_log_log_F1101225" tabindex="-2" href="javascript:__doPostBack(&#39;_ctl0$Content$R$log$log_F1101225&#39;,&#39;&#39;)">Inclusion/Exclusion Criterion
+Short Name</a></td><td align="left" style="border-right: 1px solid #a0a0a0; border-bottom: 1px solid #a0a0a0">&nbsp;<a id="_ctl0_Content_R_log_log_F1101226" tabindex="-2" href="javascript:__doPostBack(&#39;_ctl0$Content$R$log$log_F1101226&#39;,&#39;&#39;)">Criterion ID</a></td><td style="border-bottom: 1px solid #a0a0a0; padding-right: 6px" align="right"><font class="textSmall"><table><tr><td></td><td></td><td></td></tr></table></font></td></tr><tr class="evenRow"><td style="border-right: 1px solid #a0a0a0; border-bottom: 1px solid #a0a0a0" align="center">1</td><td id="lVal_1_1101225_5725822" style="padding-left:4px; border-bottom: 1px solid #a0a0a0;border-right: 1px solid #a0a0a0" align="left"><table class="Basic"><tr><td style="padding-left:4px;"></td><td><img border="0" title="" id="Delta" width="9" height="9" src="/MedidataRave/Img/blank.gif" /></td></tr></table></td><td id="lVal_1_1101226_5725822" style="padding-left:4px; border-bottom: 1px solid #a0a0a0;border-right: 1px solid #a0a0a0" align="left"><table class="Basic"><tr><td style="padding-left:4px;"></td><td><img border="0" title="" id="Delta" width="9" height="9" src="/MedidataRave/Img/blank.gif" /></td></tr></table></td><td style="padding-left:4px; border-bottom: 1px solid #a0a0a0" align="right"><table><tr><td><a id="_ctl0_Content_R_log_log_SG5725822_DataStatusHyperlink" tabindex="-2" href="AuditsPage.aspx?Type=2&amp;ID=5725822"><img src="../../Img/dp_ok.gif" alt="" border="0" /></a></td><td><input type="image" name="_ctl0:Content:R:log:log_SG5725822:PencilButton" id="_ctl0_Content_R_log_log_SG5725822_PencilButton" tabindex="-2" src="../../Img/i_pen.gif" style="border-width:0px;" /></td><td><img id="NoMarkingImage" border="0" width="16" height="16" src="/MedidataRave/Img/i_nomark.gif" /></td><td width="3"></td></tr></table></td></tr><tr class="breaker"><td></td><td colspan="2"><a id="_ctl0_Content_R_log_log_AddLine" href="javascript:__doPostBack(&#39;_ctl0$Content$R$log$log_AddLine&#39;,&#39;&#39;)">Add a new Log line</a>&nbsp;&nbsp;<a id="_ctl0_Content_R_log_log_Inactivate" href="javascript:__doPostBack(&#39;_ctl0$Content$R$log$log_Inactivate&#39;,&#39;&#39;)">Inactivate</a></td><td align="right">&nbsp;</td></tr></table><table width="100%" border="0"><td align="left"><a href="javascript:window.print()" tabindex="-1" class="show">Printable Version</a>&nbsp;&nbsp;<a class=show tabindex=-1 href='javascript:if(typeof(RunReport) == "function"){ RunReport("../Reporting/SubjectPdfReport.aspx?st=360&sg=1,1&si=206&su=23488&dp=2908645&edcoverride&pdf=.pdf"); } else { alert("ReportRunner is required"); } '>View PDF</a> &nbsp;&nbsp;<script language=javascript>var gReportRunner = '_ctl0_Content_R_footer_CtlReportRunner';var gMsgErrorPrefix = 'ERROR: ';</script><span id="_ctl0_Content_R_footer_CtlReportRunner" AjaxParams="(true,ReportRunner_ProcessResponse,'_ctl0_Content_R_footer_CtlReportRunner','ResponseGenerator','Medidata.Reporting.Utilities.Controls.ReportRunner, Medidata.Reporting.Utilities')"></span><a href="/IconKey" onclick="iconKeyClicked(event, this);" tabindex="-1" class="show">Icon Key</a><div class="textSmall">CRF Version 1757 - Page Generated: 28 May 2026 01:54:56 Pakistan Standard Time</div></td><td align="right"><input type="submit" name="_ctl0:Content:R:footer:SB" value="Save" onclick="IsModfiedResetEvent(this);" language="javascript" id="_ctl0_Content_R_footer_SB" /> <input type="submit" name="_ctl0:Content:R:footer:CB" value="Cancel" onclick="IsModfiedResetEvent(this);" language="javascript" id="_ctl0_Content_R_footer_CB" /></td></tr></table></span>
+        
+
+	
+
+                    </div>
+                
+<script language="JavaScript">
+var eventHandlerManager=EventHandlerManager.GetObject(document.forms[0], 'onsubmit');
+eventHandlerManager.AddHandlerString('PreventMultipleSubmits();');
+document.isSubmitted=false;
+
+</script>
+
+<script type="text/javascript">thread_start(check_login_cookie_thread);</script><script language="JavaScript">FocusFirstInput()</script><script>ChangeAnchorTags()</script></form>
+            </div>
+        </div>
+        <div class="FloatingFooter">
+            
+<table id="Table1" class="BasicTable" height="40" cellspacing="0" cellpadding="0" align="center">
+	<tr>
+		<td class="barColor2 BottomLogo"><img id="_ctl0_Footer_Image1" src="../../Img/l_b.gif" border="0" style="height:40px;width:179px;" />
+		</td>
+		<td class="barColor2 BottomBar">
+			<span id="_ctl0_Footer_lblTechSupportInFooter" class="footer" onclick="window.open(&#39;/MedidataRave/Help/Modules/Support/Customer_Support.htm&#39;,null,&#39;height=800, width=900, status=no, resizable=yes, scrollbars=yes, toolbar=no,location=no, menubar=no&#39;);" onmouseover="this.style.cursor=&#39;pointer&#39;;">Click Here for Customer Support Information</span>
+		</td>
+		<td class="barColor2 BottomBar" align="right">
+			
+			<span id="_ctl0_Footer_Label2" class="footer"></span>
+			<span id="_ctl0_Footer_lblVersion" class="footer" onclick="window.open(&#39;/MedidataRave/Version.aspx&#39;,null,&#39;height=800, width=900, status=no, resizable=yes, scrollbars=yes, toolbar=no,location=no, menubar=no&#39;);" onmouseover="this.style.cursor=&#39;pointer&#39;;">Medidata Classic Rave® 2026.1.0</span>
+			<br>
+			<span id="_ctl0_Footer_Label1" class="footer">Copyright © 1999-2026 Medidata Solutions, Inc.</span>
+		</td>
+	</tr>
+</table>
+        </div>
+    </div>
+	<STYLE>* { -moz-box-sizing: border-box;} body { background-color: #FFFFFF; FONT: 10pt arial, sans-serif; COLOR: #000000;   } .barColor { background-color: #336699; } .barColor2 { background-color: #003366; } .subTitle { FONT: bold 10pt arial, sans-serif; COLOR: #000000;  } .title { FONT: 16pt arial, sans-serif; COLOR: #336699; } div, p, th, td, li, dd { FONT: 10pt arial, sans-serif; COLOR: #000000;  } .textSmall { FONT: 8pt arial, sans-serif; COLOR: #000000; } A:link { TEXT-DECORATION: none; COLOR: #000000; } A:visited { TEXT-DECORATION: none; COLOR: #000000; } A:active { TEXT-DECORATION: none; COLOR: #000000; } A:hover { TEXT-DECORATION: underline; COLOR: #000000; } A.show:link { TEXT-DECORATION: none; COLOR: #0000FF; } A.show:visited { TEXT-DECORATION: none; COLOR: #0000FF; } A.show:active { TEXT-DECORATION: none; COLOR: #0000FF; } A.show:hover { TEXT-DECORATION: underline; COLOR: #0000FF; } .error { FONT: bold 10pt arial, sans-serif; COLOR: #ff0000 } .breaker { background-color: #DFE3EB; text-align: left } .oddRow { background-color: #FFFFFF; text-align: left } .evenRow { background-color: #F1F1F1; text-align: left } .evenRowCalc:nth-child(odd) { background-color: #F1F1F1; text-align: left } .oddWarning { background-color: #FFDFDF; text-align: left } .evenWarning { background-color: #FFB3B3; text-align: left } .bold { font-weight: bold; } .dashboardRow {background-color: #CBE7A2; text-align: left; } </STYLE><STYLE>* { -moz-box-sizing: border-box;} .barColor2 { background-color: #003366; } .footer { COLOR: #BEFFA8; } A.footer:link { TEXT-DECORATION: underline; COLOR: #BEFFA8; } A.footer:visited { TEXT-DECORATION: underline; COLOR: #BEFFA8; } A.footer:active { TEXT-DECORATION: underline; COLOR: #BEFFA8; } A.footer:hover { TEXT-DECORATION: underline; COLOR: #FFFFFF ; }</STYLE><STYLE>* { -moz-box-sizing: border-box;} .subTitle { FONT: bold 10pt arial, sans-serif; COLOR: #000000;  } body, div, p, th, td, li, dd { FONT: 10pt arial, sans-serif; COLOR: #000000;  } .textSmall { FONT: 8pt arial, sans-serif; COLOR: #000000; } A:link { TEXT-DECORATION: none; COLOR: #000000; } A:visited { TEXT-DECORATION: none; COLOR: #000000; } A:active { TEXT-DECORATION: none; COLOR: #000000; } A:hover { TEXT-DECORATION: underline; COLOR: #000000; } A.show:link { TEXT-DECORATION: none; COLOR: #0000FF; } A.show:visited { TEXT-DECORATION: none; COLOR: #0000FF; } A.show:active { TEXT-DECORATION: none; COLOR: #0000FF; } A.show:hover { TEXT-DECORATION: underline; COLOR: #0000FF; } .error { FONT: bold 10pt arial, sans-serif; COLOR: #ff0000 }</STYLE><STYLE>* { -moz-box-sizing: border-box;} .barColor { background-color: #336699; } .database { FONT:16pt arial, sans-serif; COLOR: #FF0000; } body, div, p, th, td, li, dd { FONT: 10pt arial, sans-serif; COLOR: #000000;  }  A:link { TEXT-DECORATION: none; COLOR: #000000; } A:visited { TEXT-DECORATION: none; COLOR: #000000; } A:active { TEXT-DECORATION: none; COLOR: #000000; } A:hover { TEXT-DECORATION: underline; COLOR: #000000; } .user { FONT: 10pt verdana, sans-serif; COLOR: #737373 } .name { FONT: 10pt verdana, sans-serif; COLOR: #000000 } .nav { FONT: 8pt verdana, sans-serif; COLOR: #000000 } A.nav:link { TEXT-DECORATION: none; COLOR: #000000 } A.nav:visited { TEXT-DECORATION: none; COLOR: #000000 } A.nav:active { TEXT-DECORATION: none; COLOR: #000000 } A.nav:hover { TEXT-DECORATION: underline; COLOR: #000000 }</STYLE><STYLE>* { -moz-box-sizing: border-box;} .largeFontSize { font-size: Large; } .mediumFontSize { font-size: Medium; }</STYLE>
+
+</body>
+</html>
