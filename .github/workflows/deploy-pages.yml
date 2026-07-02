@@ -33,8 +33,9 @@ jobs:
             --exclude '__pycache__' \
             --exclude '.cursor' \
             --exclude '.playwright-cf-profile' \
-            --exclude '.git'
-          if [ -f CNAME ]; then cp CNAME _site/; fi
+            --exclude '.git' \
+            --exclude 'oc-clia-prospect-list' \
+            --exclude 'renu-california-photo-extractor/scripts'
           touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:

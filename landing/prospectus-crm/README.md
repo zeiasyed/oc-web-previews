@@ -46,25 +46,42 @@ Shorter redirect: `https://zeiasyed.github.io/oc-web-previews/landing/prospectus
 
 Tap any lead to open:
 
-- **Call** / **Email** / **Maps** — one tap
+- **Call** — logged in activity history
+- **Email (Gmail / Outlook)** — opens compose as **zeiasyed@nexa-care.com**
+- **Set follow-up** — reminder in 1 day, 3 days, 1 week, or custom
+- **Schedule visit** — Google Calendar, Outlook, or `.ics` (organizer: zeiasyed@nexa-care.com)
+- **Add note** — saved to activity timeline
+- **Tasks** — add and complete tasks per lead
+- **Activity** — full history of calls, emails, notes, visits
 - **Add to iPhone Contacts** — downloads `.vcf`
-- **Share contact** — iOS share sheet when available
 - **Edit** or **Delete**
 
-### 4. Find leads near you
+### 4. Tasks tab
+
+- View all open tasks across leads
+- Tap **+ Task** for a standalone to-do
+- Overdue and due-today tasks are highlighted
+
+### 5. Find leads near you
 
 1. Open the **Near Me** tab.
 2. Allow location access when prompted.
 3. Leads are sorted by distance (miles).
 4. Tap **Refresh location** if you have moved.
 
-### 5. Search by city
+### 6. Search by city (More tab)
 
-1. Open the **City** tab.
-2. Type a city name or tap a suggestion chip.
-3. All stored leads in that city appear (dead leads excluded).
+1. Open **More** → **City search**
+2. Type a city name or tap a suggestion chip
 
-### 6. Settings and data (More tab)
+### 7. Cloud sync (More tab)
+
+1. Deploy the sync worker (see below)
+2. In **More** → set **Sync API URL** and **Sync token**
+3. Tap **Sync now** — merges data across phone and laptop
+4. Auto-syncs when you reopen the app (if configured)
+
+### 8. Settings and data (More tab)
 
 - **Manage funnels** — add or rename categories (Clinical Trial Sites, Lab Sites, etc.)
 - **Export backup** — JSON file for safekeeping
@@ -76,14 +93,33 @@ Tap any lead to open:
 
 | Feature | How it works |
 |---------|----------------|
+| Follow-up reminders | Set per lead; banner + notifications when due |
+| Activity history | Calls, emails, notes, visits logged automatically |
+| Tasks | Per-lead or global to-dos with due dates |
+| Cloud sync | Cloudflare Worker + D1 (zeiasyed@nexa-care.com only) |
+| Email | Gmail/Outlook compose as zeiasyed@nexa-care.com |
+| Calendar | Site visits via Google, Outlook, or .ics |
 | Business card scan | Tesseract.js OCR in the browser |
 | iPhone Contacts | `.vcf` download + Share API |
 | Sales funnels | Custom categories per lead |
 | Temperature | Hot / Warm / Cool / Dead |
 | Dead filter | Hidden by default; filter to view |
 | Near Me | GPS + haversine distance sort |
-| City search | Text match on stored city field |
-| Storage | IndexedDB on your device (no account) |
+| City search | In More tab |
+| Storage | IndexedDB on device; optional cloud backup |
+
+## Cloud sync worker
+
+```powershell
+cd prospectus-crm/worker
+npx wrangler d1 create prospectus-crm
+# Update database_id in wrangler.toml
+npx wrangler d1 execute prospectus-crm --remote --file=../schema/schema.sql
+npx wrangler secret put SYNC_TOKEN
+npx wrangler deploy
+```
+
+Copy the worker URL into **More → Sync API URL**. Use the same token you set with `wrangler secret put`.
 
 ## Deploy
 
