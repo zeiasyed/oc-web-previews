@@ -23,19 +23,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
-      - name: Build slim Pages site
+      - name: Build Pages site
         run: |
           mkdir -p _site/landing
-          rsync -a landing/ _site/landing/ \
-            --exclude 'node_modules' \
-            --exclude '.venv' \
-            --exclude 'output' \
-            --exclude '__pycache__' \
-            --exclude '.cursor' \
-            --exclude '.playwright-cf-profile' \
-            --exclude '.git' \
-            --exclude 'oc-clia-prospect-list' \
-            --exclude 'renu-california-photo-extractor/scripts'
+          # Prospectus CRM
+          rsync -a landing/prospectus-crm/ _site/landing/prospectus-crm/
+          # Existing published apps
+          for dir in scan-dashboard connect.html pricing.html register.html payment.html assets; do
+            if [ -e "landing/$dir" ]; then
+              cp -r "landing/$dir" _site/landing/
+            fi
+          done
           touch _site/.nojekyll
       - uses: actions/upload-pages-artifact@v3
         with:
