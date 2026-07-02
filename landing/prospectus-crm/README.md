@@ -20,6 +20,8 @@ Open `http://localhost:8080` in your browser (use Safari on iPhone for the full 
 **Deployed URL (GitHub Pages):**
 `https://zeiasyed.github.io/oc-web-previews/landing/prospectus-crm/app/`
 
+Shorter redirect: `https://zeiasyed.github.io/oc-web-previews/landing/prospectus-crm/`
+
 ## Daily workflow
 
 ### 1. Capture a lead from a business card
