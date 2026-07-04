@@ -1,36 +1,23 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Program } from '../types';
 import { mosques } from '../data/mosques';
+import { loadTonightPrograms } from '../utils/programs';
 import { BottomNav } from '../components/BottomNav';
 import { IslamicDivider } from '../components/IslamicDivider';
 import { Calendar, MapPin, Navigation } from 'lucide-react';
 
 export function TonightsPrograms() {
   const navigate = useNavigate();
-  const [allPrograms, setAllPrograms] = useState<(Program & { mosqueName: string })[]>([]);
+  const [allPrograms, setAllPrograms] = useState<
+    ReturnType<typeof loadTonightPrograms>
+  >([]);
 
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0];
-    const collected: (Program & { mosqueName: string })[] = [];
-
-    for (const mosque of mosques) {
-      const stored = localStorage.getItem(`programs_${mosque.id}`);
-      if (stored) {
-        const allPrograms: Program[] = JSON.parse(stored);
-        const current = allPrograms.filter((p) => p.date >= today);
-        if (current.length !== allPrograms.length) {
-          localStorage.setItem(`programs_${mosque.id}`, JSON.stringify(current));
-        }
-        const todayPrograms = current.filter((p) => p.date === today);
-        todayPrograms.forEach((p) => {
-          collected.push({ ...p, mosqueName: mosque.shortName });
-        });
-      }
-    }
+    const collected = loadTonightPrograms(mosques);
 
     if (collected.length === 0) {
-      const samplePrograms: (Program & { mosqueName: string })[] = [
+      setAllPrograms([
         {
           id: 'sample-1',
           mosqueId: 'jafaria',
@@ -71,8 +58,7 @@ export function TonightsPrograms() {
           speakers: ['Maulana Naqvi'],
           timeSlots: [{ time: '19:00', activity: 'Recitation' }, { time: '19:30', activity: 'Lecture' }, { time: '20:30', activity: 'Ziyarat & Tabarruk' }],
         },
-      ];
-      setAllPrograms(samplePrograms);
+      ]);
     } else {
       setAllPrograms(collected);
     }

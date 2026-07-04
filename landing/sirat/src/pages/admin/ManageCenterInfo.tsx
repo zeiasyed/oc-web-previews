@@ -1,61 +1,42 @@
 import { useState, useEffect } from 'react';
 import { mosques } from '../../data/mosques';
+import { loadCenterInfoOverrides, saveCenterInfoOverrides, type CenterInfoOverrides } from '../../utils/centerInfo';
 import { Save, CheckCircle } from 'lucide-react';
 
 interface ManageCenterInfoProps {
   mosqueId: string;
 }
 
-interface CenterOverrides {
-  address?: string;
-  city?: string;
-  state?: string;
-  zip?: string;
-  phone?: string;
-  email?: string;
-  website?: string;
-  donateUrl?: string;
-  youtubeUrl?: string;
-  subscribeUrl?: string;
-  sundaySchoolUrl?: string;
-  parkingInfo?: string;
-}
-
 export function ManageCenterInfo({ mosqueId }: ManageCenterInfoProps) {
   const mosque = mosques.find((m) => m.id === mosqueId);
   const [saved, setSaved] = useState(false);
 
-  const [form, setForm] = useState<CenterOverrides>(() => {
-    const stored = localStorage.getItem(`center_info_${mosqueId}`);
-    if (stored) return JSON.parse(stored);
-    return {};
-  });
+  const [form, setForm] = useState<CenterInfoOverrides>(() => loadCenterInfoOverrides(mosqueId));
 
   useEffect(() => {
-    const stored = localStorage.getItem(`center_info_${mosqueId}`);
-    setForm(stored ? JSON.parse(stored) : {});
+    setForm(loadCenterInfoOverrides(mosqueId));
     setSaved(false);
   }, [mosqueId]);
 
   if (!mosque) return null;
 
-  const getValue = (field: keyof CenterOverrides) => {
+  const getValue = (field: keyof CenterInfoOverrides) => {
     if (form[field] !== undefined) return form[field]!;
     return (mosque as unknown as Record<string, string>)[field] || '';
   };
 
-  const handleChange = (field: keyof CenterOverrides, value: string) => {
+  const handleChange = (field: keyof CenterInfoOverrides, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setSaved(false);
   };
 
   const handleSave = () => {
-    localStorage.setItem(`center_info_${mosqueId}`, JSON.stringify(form));
+    saveCenterInfoOverrides(mosqueId, form);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
 
-  const fields: { key: keyof CenterOverrides; label: string; type?: string; placeholder?: string }[] = [
+  const fields: { key: keyof CenterInfoOverrides; label: string; type?: string; placeholder?: string }[] = [
     { key: 'address', label: 'Address', placeholder: 'Street address' },
     { key: 'city', label: 'City', placeholder: 'City' },
     { key: 'state', label: 'State', placeholder: 'CA' },

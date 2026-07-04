@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { Program, TimeSlot } from '../../types';
+import { loadProgramsForCenter, saveProgramsForCenter } from '../../utils/programs';
 import { Plus, Trash2, Save, Clock, UserCircle, AlertCircle } from 'lucide-react';
 
 function generateId(): string {
@@ -21,21 +22,12 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([{ time: '', activity: '' }]);
 
   useEffect(() => {
-    const stored = localStorage.getItem(`programs_${mosqueId}`);
-    if (stored) {
-      const all: Program[] = JSON.parse(stored);
-      const today = new Date().toISOString().split('T')[0];
-      const current = all.filter((p) => p.date >= today);
-      if (current.length !== all.length) {
-        localStorage.setItem(`programs_${mosqueId}`, JSON.stringify(current));
-      }
-      setPrograms(current);
-    }
+    setPrograms(loadProgramsForCenter(mosqueId));
   }, [mosqueId]);
 
   const savePrograms = (updated: Program[]) => {
     setPrograms(updated);
-    localStorage.setItem(`programs_${mosqueId}`, JSON.stringify(updated));
+    saveProgramsForCenter(mosqueId, updated);
   };
 
   const [error, setError] = useState('');

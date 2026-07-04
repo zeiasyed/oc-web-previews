@@ -1,5 +1,8 @@
 import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import { getCenterData } from '../hooks/useCenterData';
+import { loadProgramsForCenter } from '../utils/programs';
+import type { Program } from '../types';
 import { PrayerTimesCard } from '../components/PrayerTimesCard';
 import { ProgramsList } from '../components/ProgramsList';
 import { ContactInfo } from '../components/ContactInfo';
@@ -18,8 +21,13 @@ import { assetUrl } from '../utils/assets';
 export function MosquePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [programs, setPrograms] = useState<Program[]>([]);
 
   const mosque = id ? getCenterData(id) : undefined;
+
+  useEffect(() => {
+    if (id) setPrograms(loadProgramsForCenter(id));
+  }, [id]);
 
   if (!mosque) {
     return (
@@ -77,7 +85,7 @@ export function MosquePage() {
         <PrayerTimesCard city={mosque.city || 'Los Angeles'} />
 
         {/* Programs */}
-        <ProgramsList programs={[]} />
+        <ProgramsList programs={programs} />
 
         {/* Quick Actions */}
         <div className="grid grid-cols-2 gap-3">
