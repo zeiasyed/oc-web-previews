@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Compass, Heart, MoreHorizontal, X } from 'lucide-react';
+import { Home, Compass, Heart, MoreHorizontal, X, RefreshCw } from 'lucide-react';
+import { refreshApp } from '../utils/appRefresh';
 
 export function BottomNav() {
   const navigate = useNavigate();
   const location = useLocation();
   const [showMore, setShowMore] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const navItems = [
     { icon: Home, label: 'Home', path: '/home' },
@@ -33,6 +35,12 @@ export function BottomNav() {
   const getAdminPath = () => {
     const match = location.pathname.match(/^\/mosque\/([^/]+)/);
     return match ? `/admin/${match[1]}` : '/admin';
+  };
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    setShowMore(false);
+    await refreshApp();
   };
 
   return (
@@ -68,6 +76,17 @@ export function BottomNav() {
                 </button>
               ))}
             </div>
+            <button
+              type="button"
+              onClick={handleRefresh}
+              disabled={refreshing}
+              className="mt-3 w-full bg-green-800/60 hover:bg-green-700/70 border border-green-600/40 
+                         disabled:opacity-60 text-white font-medium py-2.5 px-4 rounded-xl 
+                         flex items-center justify-center gap-2 transition-colors text-sm"
+            >
+              <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
+              {refreshing ? 'Refreshing…' : 'Refresh App'}
+            </button>
           </div>
         </div>
       )}

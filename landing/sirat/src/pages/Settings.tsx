@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { BottomNav } from '../components/BottomNav';
 import { useSettings } from '../context/SettingsContext';
-import { Settings as SettingsIcon, Type } from 'lucide-react';
+import { Settings as SettingsIcon, Type, RefreshCw } from 'lucide-react';
+import { refreshApp } from '../utils/appRefresh';
 
 const FONT_OPTIONS = [
   { value: 'small' as const, label: 'Small', preview: 'Aa' },
@@ -11,6 +13,12 @@ const FONT_OPTIONS = [
 
 export function Settings() {
   const { fontSize, setFontSize } = useSettings();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await refreshApp();
+  };
 
   return (
     <div className="min-h-screen bg-charcoal pb-20">
@@ -59,6 +67,29 @@ export function Settings() {
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/10 mb-6">
+          <div className="flex items-center gap-3 mb-4">
+            <RefreshCw size={20} className={`text-gold ${refreshing ? 'animate-spin' : ''}`} />
+            <div>
+              <h2 className="text-white font-semibold">Refresh App</h2>
+              <p className="text-white text-xs">
+                Reload the latest version and update announcements, programs, and center info.
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="w-full bg-green-800/60 hover:bg-green-700/70 border border-green-600/40 
+                       disabled:opacity-60 text-white font-medium py-3 px-4 rounded-xl 
+                       flex items-center justify-center gap-2 transition-colors text-sm"
+          >
+            <RefreshCw size={16} className={refreshing ? 'animate-spin' : ''} />
+            {refreshing ? 'Refreshing…' : 'Refresh Now'}
+          </button>
         </div>
 
         <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/10">
