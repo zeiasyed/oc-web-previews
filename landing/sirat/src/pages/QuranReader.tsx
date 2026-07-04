@@ -54,7 +54,7 @@ export function QuranReader() {
     <div className="min-h-screen bg-charcoal pb-20">
       <div className="px-5 pt-12">
         <h1 className="text-2xl font-bold text-white mb-2">Quran</h1>
-        <p className="text-white/95 text-sm mb-6">Quick reference to surahs</p>
+        <p className="text-white text-sm mb-6">Quick reference to surahs</p>
 
         <input
           type="text"
@@ -62,7 +62,7 @@ export function QuranReader() {
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search surah by name or number..."
           className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                     placeholder-white/75 focus:outline-none focus:border-gold/50 text-sm mb-6"
+                     placeholder-white/90 focus:outline-none focus:border-gold/50 text-sm mb-6"
         />
 
         <div className="space-y-2">
@@ -87,11 +87,11 @@ export function QuranReader() {
                     {surah.arabic}
                   </span>
                 </div>
-                <p className="text-white/88 text-xs mt-0.5">
+                <p className="text-white text-xs mt-0.5">
                   {surah.verses} verses · {surah.type}
                 </p>
               </div>
-              <ExternalLink size={14} className="text-white/80 group-hover:text-gold/95 transition-colors flex-shrink-0" />
+              <ExternalLink size={14} className="text-white group-hover:text-gold transition-colors flex-shrink-0" />
             </button>
           ))}
         </div>

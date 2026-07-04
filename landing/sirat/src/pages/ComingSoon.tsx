@@ -14,7 +14,7 @@ export function ComingSoon({ title, description }: ComingSoonProps) {
           <Construction size={36} className="text-gold" />
         </div>
         <h1 className="text-2xl font-bold text-white mb-2">{title}</h1>
-        <p className="text-white/95 text-sm text-center max-w-xs">{description}</p>
+        <p className="text-white text-sm text-center max-w-xs">{description}</p>
         <div className="mt-8 bg-white/5 border border-white/10 rounded-xl px-6 py-3">
           <p className="text-gold text-sm font-medium">Coming Soon</p>
         </div>

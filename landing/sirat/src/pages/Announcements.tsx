@@ -60,7 +60,7 @@ export function Announcements() {
 
   const getTypeBadge = (t: Announcement['type']) => {
     switch (t) {
-      case 'death': return { text: 'Inna Lillahi', class: 'text-gray-300' };
+      case 'death': return { text: 'Inna Lillahi', class: 'text-gray-200' };
       case 'birth': return { text: 'Mubarak', class: 'text-green-400' };
       case 'marriage': return { text: 'Nikah', class: 'text-purple-400' };
       default: return { text: 'Announcement', class: 'text-gold' };
@@ -73,7 +73,7 @@ export function Announcements() {
     <div className="min-h-screen bg-charcoal pb-20">
       <div className="px-5 pt-12">
         <h1 className="text-2xl font-bold text-white mb-2">Community Announcements</h1>
-        <p className="text-white/95 text-sm mb-6">News from across the community</p>
+        <p className="text-white text-sm mb-6">News from across the community</p>
 
         <button
           onClick={() => setShowForm(!showForm)}
@@ -95,7 +95,7 @@ export function Announcements() {
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
                     type === t
                       ? 'bg-gold/20 border-gold/40 text-gold'
-                      : 'bg-white/5 border-white/10 text-white/95'
+                      : 'bg-white/5 border-white/10 text-white'
                   }`}
                 >
                   {t.charAt(0).toUpperCase() + t.slice(1)}
@@ -122,7 +122,7 @@ export function Announcements() {
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Announcement title"
               className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                         placeholder-white/75 focus:outline-none focus:border-gold/50 text-sm"
+                         placeholder-white/90 focus:outline-none focus:border-gold/50 text-sm"
             />
 
             <textarea
@@ -131,7 +131,7 @@ export function Announcements() {
               placeholder="Details..."
               rows={3}
               className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                         placeholder-white/75 focus:outline-none focus:border-gold/50 text-sm resize-none"
+                         placeholder-white/90 focus:outline-none focus:border-gold/50 text-sm resize-none"
             />
 
             <div className="flex gap-2">
@@ -144,7 +144,7 @@ export function Announcements() {
               </button>
               <button
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 text-white/95 hover:text-white text-sm transition-colors"
+                className="px-4 py-2 text-white hover:text-white text-sm transition-colors"
               >
                 Cancel
               </button>
@@ -161,7 +161,7 @@ export function Announcements() {
               className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
                 filter === f
                   ? 'bg-gold/20 border-gold/40 text-gold'
-                  : 'bg-white/5 border-white/10 text-white/95'
+                  : 'bg-white/5 border-white/10 text-white'
               }`}
             >
               {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -172,8 +172,8 @@ export function Announcements() {
         {/* Announcements */}
         {filtered.length === 0 ? (
           <div className="text-center py-12">
-            <Megaphone size={40} className="text-white/80 mx-auto mb-4" />
-            <p className="text-white/92 text-sm">No announcements</p>
+            <Megaphone size={40} className="text-white mx-auto mb-4" />
+            <p className="text-white text-sm">No announcements</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -188,11 +188,11 @@ export function Announcements() {
                     <span className={`text-[10px] uppercase tracking-wide font-semibold ${badge.class}`}>
                       {badge.text}
                     </span>
-                    <span className="text-white/88 text-xs">{announcement.date}</span>
+                    <span className="text-white text-xs">{announcement.date}</span>
                   </div>
                   <h3 className="text-white font-medium text-sm">{announcement.title}</h3>
-                  <p className="text-white/95 text-xs mt-2 leading-relaxed">{announcement.content}</p>
-                  <p className="text-gold/95 text-xs mt-2">— {getMosqueName(announcement.mosqueId)}</p>
+                  <p className="text-white text-xs mt-2 leading-relaxed">{announcement.content}</p>
+                  <p className="text-gold text-xs mt-2">— {getMosqueName(announcement.mosqueId)}</p>
                 </div>
               );
             })}

@@ -88,7 +88,7 @@ export function IslamicCalendar() {
         {/* Today's Hijri Date */}
         {!loading && (
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/10 mb-6">
-            <p className="text-white/92 text-xs uppercase tracking-wide mb-1">Today's Hijri Date</p>
+            <p className="text-white text-xs uppercase tracking-wide mb-1">Today's Hijri Date</p>
             <p className="text-white text-xl font-semibold">
               {hijriDate.day} {hijriDate.month} {hijriDate.year} AH
             </p>

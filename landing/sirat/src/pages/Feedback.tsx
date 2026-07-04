@@ -111,7 +111,7 @@ export function Feedback() {
               onChange={(e) => setMessage(e.target.value)}
               placeholder="What would you like to see improved or added?"
               className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm
-                         placeholder:text-white/82 focus:outline-none focus:border-gold/50 resize-none"
+                         placeholder:text-white/90 focus:outline-none focus:border-gold/50 resize-none"
               rows={4}
             />
           </div>
@@ -152,10 +152,10 @@ export function Feedback() {
                         <span className="text-xs px-2 py-0.5 rounded-md bg-gold/10 text-gold font-medium">
                           {item.category}
                         </span>
-                        <span className="text-white/95 text-xs">{formatTime(item.timestamp)}</span>
+                        <span className="text-white text-xs">{formatTime(item.timestamp)}</span>
                       </div>
                       <p className="text-white text-sm leading-relaxed">{item.message}</p>
-                      <p className="text-white/95 text-xs mt-2">— {item.author}</p>
+                      <p className="text-white text-xs mt-2">— {item.author}</p>
                     </div>
                     <button
                       onClick={() => handleVote(item.id)}
@@ -175,8 +175,8 @@ export function Feedback() {
 
         {feedbackList.length === 0 && (
           <div className="text-center py-12">
-            <MessageSquare size={40} className="text-white/80 mx-auto mb-3" />
-            <p className="text-white/95 text-sm">No feedback yet. Be the first to suggest something!</p>
+            <MessageSquare size={40} className="text-white mx-auto mb-3" />
+            <p className="text-white text-sm">No feedback yet. Be the first to suggest something!</p>
           </div>
         )}
       </div>

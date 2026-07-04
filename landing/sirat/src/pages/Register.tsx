@@ -50,7 +50,7 @@ export function Register() {
       <div className="relative z-10 w-full max-w-sm">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-1">Sirat</h1>
-          <p className="text-white/95 text-sm">Create your account</p>
+          <p className="text-white text-sm">Create your account</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -69,7 +69,7 @@ export function Register() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                         placeholder-white/75 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30
+                         placeholder-white/90 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30
                          transition-colors"
               placeholder="Your name"
               required
@@ -85,7 +85,7 @@ export function Register() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                         placeholder-white/75 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30
+                         placeholder-white/90 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30
                          transition-colors"
               placeholder="your@email.com"
               required
@@ -101,7 +101,7 @@ export function Register() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                         placeholder-white/75 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30
+                         placeholder-white/90 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30
                          transition-colors"
               placeholder="••••••••"
               required
@@ -117,7 +117,7 @@ export function Register() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                         placeholder-white/75 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30
+                         placeholder-white/90 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30
                          transition-colors"
               placeholder="••••••••"
               required
@@ -138,7 +138,7 @@ export function Register() {
 
         <button
           onClick={() => navigate('/login')}
-          className="w-full mt-4 text-white/92 hover:text-white py-2 text-sm transition-colors"
+          className="w-full mt-4 text-white hover:text-white py-2 text-sm transition-colors"
         >
           ← Back to Sign In
         </button>

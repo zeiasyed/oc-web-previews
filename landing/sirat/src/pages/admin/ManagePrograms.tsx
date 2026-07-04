@@ -108,7 +108,7 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Program title"
             className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                       placeholder-white/80 focus:outline-none focus:border-gold/50 text-sm"
+                       placeholder-white/90 focus:outline-none focus:border-gold/50 text-sm"
           />
           <input
             type="date"
@@ -123,7 +123,7 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
             placeholder="Description"
             rows={2}
             className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                       placeholder-white/80 focus:outline-none focus:border-gold/50 text-sm resize-none"
+                       placeholder-white/90 focus:outline-none focus:border-gold/50 text-sm resize-none"
           />
 
           {/* Speakers */}
@@ -141,7 +141,7 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
                     onChange={(e) => updateSpeaker(i, e.target.value)}
                     placeholder={`Speaker ${i + 1} name`}
                     className="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white 
-                               placeholder-white/80 focus:outline-none focus:border-gold/50 text-sm"
+                               placeholder-white/90 focus:outline-none focus:border-gold/50 text-sm"
                   />
                   {speakers.length > 1 && (
                     <button
@@ -184,7 +184,7 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
                     onChange={(e) => updateTimeSlot(i, 'activity', e.target.value)}
                     placeholder="Activity (e.g., Recitation, Lecture, Matam)"
                     className="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white 
-                               placeholder-white/80 focus:outline-none focus:border-gold/50 text-sm"
+                               placeholder-white/90 focus:outline-none focus:border-gold/50 text-sm"
                   />
                   {timeSlots.length > 1 && (
                     <button
@@ -211,7 +211,7 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
             onChange={(e) => setVideoUrl(e.target.value)}
             placeholder="Video URL (optional)"
             className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                       placeholder-white/80 focus:outline-none focus:border-gold/50 text-sm"
+                       placeholder-white/90 focus:outline-none focus:border-gold/50 text-sm"
           />
 
           {error && (
@@ -244,7 +244,7 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
 
       <div className="space-y-2">
         {programs.length === 0 ? (
-          <p className="text-white/95 text-center py-8 text-sm">
+          <p className="text-white text-center py-8 text-sm">
             No programs added yet. Click "Add Program" to create one.
           </p>
         ) : (
@@ -262,7 +262,7 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
                   </p>
                 )}
                 {program.timeSlots && program.timeSlots.length > 0 && (
-                  <p className="text-white/95 text-xs mt-1">
+                  <p className="text-white text-xs mt-1">
                     {program.timeSlots.length} time slot{program.timeSlots.length > 1 ? 's' : ''}
                   </p>
                 )}

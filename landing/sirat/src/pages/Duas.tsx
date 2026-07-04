@@ -47,7 +47,7 @@ export function Duas() {
               href="https://www.duas.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white/88 hover:text-white text-xs transition-colors"
+              className="text-white hover:text-white text-xs transition-colors"
             >
               Source: Duas.org
             </a>
@@ -88,7 +88,7 @@ export function Duas() {
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
                 <span className="text-white text-xs font-arabic" dir="rtl">{dua.arabicName}</span>
-                <ChevronRight size={16} className="text-white/95 group-hover:text-gold transition-colors" />
+                <ChevronRight size={16} className="text-white group-hover:text-gold transition-colors" />
               </div>
             </button>
           ))}

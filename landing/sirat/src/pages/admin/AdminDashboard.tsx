@@ -191,7 +191,7 @@ function ManageAnnouncements({ mosqueId }: { mosqueId: string }) {
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Announcement title"
             className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                       placeholder-white/80 focus:outline-none focus:border-gold/50 text-sm"
+                       placeholder-white/90 focus:outline-none focus:border-gold/50 text-sm"
           />
           <textarea
             value={content}
@@ -199,7 +199,7 @@ function ManageAnnouncements({ mosqueId }: { mosqueId: string }) {
             placeholder="Details"
             rows={3}
             className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                       placeholder-white/80 focus:outline-none focus:border-gold/50 text-sm resize-none"
+                       placeholder-white/90 focus:outline-none focus:border-gold/50 text-sm resize-none"
           />
           <button
             type="button"
@@ -213,7 +213,7 @@ function ManageAnnouncements({ mosqueId }: { mosqueId: string }) {
 
       <div className="space-y-2">
         {announcements.length === 0 ? (
-          <p className="text-white/95 text-center py-8 text-sm">No announcements yet.</p>
+          <p className="text-white text-center py-8 text-sm">No announcements yet.</p>
         ) : (
           announcements.map((a) => (
             <div key={a.id} className="bg-white/5 rounded-xl p-4 border border-white/5 flex items-start justify-between">

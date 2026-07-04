@@ -44,7 +44,7 @@ export function Tasbih() {
     <div className="min-h-screen bg-charcoal pb-20">
       <div className="px-5 pt-12">
         <h1 className="text-2xl font-bold text-white mb-2">Tasbih Counter</h1>
-        <p className="text-white/95 text-sm mb-6">Tap to count your dhikr</p>
+        <p className="text-white text-sm mb-6">Tap to count your dhikr</p>
 
         {/* Preset selector */}
         <div className="flex gap-2 overflow-x-auto pb-3 mb-8 -mx-1 px-1">
@@ -55,7 +55,7 @@ export function Tasbih() {
               className={`flex-shrink-0 px-3 py-2 rounded-xl text-xs font-medium transition-colors border ${
                 i === selectedPreset
                   ? 'bg-gold/20 border-gold/40 text-gold'
-                  : 'bg-white/5 border-white/10 text-white/95 hover:text-white'
+                  : 'bg-white/5 border-white/10 text-white hover:text-white'
               }`}
             >
               {p.name}
@@ -68,7 +68,7 @@ export function Tasbih() {
           <p className="text-gold text-2xl font-arabic" dir="rtl">
             {preset.arabic}
           </p>
-          <p className="text-white/92 text-sm mt-2">{preset.name}</p>
+          <p className="text-white text-sm mt-2">{preset.name}</p>
         </div>
 
         {/* Counter tap area */}
@@ -85,7 +85,7 @@ export function Tasbih() {
               <span className={`text-5xl font-bold ${completed ? 'text-gold' : 'text-white'}`}>
                 {count}
               </span>
-              <p className="text-white/92 text-xs mt-2">/ {preset.target}</p>
+              <p className="text-white text-xs mt-2">/ {preset.target}</p>
             </div>
           </button>
 
@@ -100,8 +100,8 @@ export function Tasbih() {
               />
             </div>
             <div className="flex justify-between mt-2">
-              <span className="text-white/88 text-xs">{count} counted</span>
-              <span className="text-white/88 text-xs">{Math.max(0, preset.target - count)} remaining</span>
+              <span className="text-white text-xs">{count} counted</span>
+              <span className="text-white text-xs">{Math.max(0, preset.target - count)} remaining</span>
             </div>
           </div>
 
@@ -114,7 +114,7 @@ export function Tasbih() {
           {/* Reset button */}
           <button
             onClick={handleReset}
-            className="mt-6 flex items-center gap-2 text-white/92 hover:text-white text-sm transition-colors"
+            className="mt-6 flex items-center gap-2 text-white hover:text-white text-sm transition-colors"
           >
             <RotateCcw size={16} />
             Reset

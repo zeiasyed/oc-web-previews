@@ -122,9 +122,9 @@ export function ProgramsList({ programs }: ProgramsListProps) {
                     </a>
                   )}
                   {isExpanded ? (
-                    <ChevronUp size={16} className="text-white/95" />
+                    <ChevronUp size={16} className="text-white" />
                   ) : (
-                    <ChevronDown size={16} className="text-white/95" />
+                    <ChevronDown size={16} className="text-white" />
                   )}
                 </div>
               </button>
@@ -137,7 +137,7 @@ export function ProgramsList({ programs }: ProgramsListProps) {
 
                   {hasSpeakers && (
                     <div>
-                      <p className="text-white/95 text-xs font-medium flex items-center gap-1 mb-1.5">
+                      <p className="text-white text-xs font-medium flex items-center gap-1 mb-1.5">
                         <UserCircle size={12} className="text-gold" />
                         Speaker{program.speakers.length > 1 ? 's' : ''}
                       </p>
@@ -156,7 +156,7 @@ export function ProgramsList({ programs }: ProgramsListProps) {
 
                   {hasSlots && (
                     <div>
-                      <p className="text-white/95 text-xs font-medium flex items-center gap-1 mb-1.5">
+                      <p className="text-white text-xs font-medium flex items-center gap-1 mb-1.5">
                         <Clock size={12} className="text-gold" />
                         Schedule
                       </p>

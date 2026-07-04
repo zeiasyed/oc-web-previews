@@ -44,7 +44,7 @@ export function Login() {
       <div className="relative z-10 w-full max-w-sm">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-1">Sirat</h1>
-          <p className="text-white/95 text-sm">Sign in to continue</p>
+          <p className="text-white text-sm">Sign in to continue</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -63,7 +63,7 @@ export function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                         placeholder-white/75 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30
+                         placeholder-white/90 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30
                          transition-colors"
               placeholder="your@email.com"
               required
@@ -80,7 +80,7 @@ export function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                           placeholder-white/75 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30
+                           placeholder-white/90 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30
                            transition-colors pr-12"
                 placeholder="••••••••"
                 required
@@ -88,7 +88,7 @@ export function Login() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/92 hover:text-white"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white hover:text-white"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -118,7 +118,7 @@ export function Login() {
 
           <button
             onClick={handleSkip}
-            className="w-full text-white/92 hover:text-white py-2 text-sm transition-colors"
+            className="w-full text-white hover:text-white py-2 text-sm transition-colors"
           >
             Skip for now →
           </button>

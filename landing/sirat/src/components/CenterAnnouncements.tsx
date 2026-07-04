@@ -26,7 +26,7 @@ function getTypeStyle(t: Announcement['type']) {
 function getTypeBadge(t: Announcement['type']) {
   switch (t) {
     case 'death':
-      return { text: 'Inna Lillahi', class: 'text-gray-300' };
+      return { text: 'Inna Lillahi', class: 'text-gray-200' };
     case 'birth':
       return { text: 'Mubarak', class: 'text-green-400' };
     case 'marriage':
@@ -63,7 +63,7 @@ export function CenterAnnouncements({
           <button
             type="button"
             onClick={() => navigate('/announcements')}
-            className="text-gold text-xs hover:text-gold/80 transition-colors"
+            className="text-gold text-xs hover:text-gold transition-colors"
           >
             View all
           </button>
@@ -82,10 +82,10 @@ export function CenterAnnouncements({
                 <span className={`text-[10px] uppercase tracking-wide font-semibold ${badge.class}`}>
                   {badge.text}
                 </span>
-                <span className="text-white/88 text-xs">{announcement.date}</span>
+                <span className="text-white text-xs">{announcement.date}</span>
               </div>
               <h3 className="text-white font-medium text-sm">{announcement.title}</h3>
-              <p className="text-white/95 text-xs mt-2 leading-relaxed">{announcement.content}</p>
+              <p className="text-white text-xs mt-2 leading-relaxed">{announcement.content}</p>
             </div>
           );
         })}
