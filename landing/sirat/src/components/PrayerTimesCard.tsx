@@ -25,7 +25,7 @@ export function PrayerTimesCard({ city }: PrayerTimesCardProps) {
   if (error || !prayerTimes) {
     return (
       <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6">
-        <p className="text-white/93 text-center">Unable to load prayer times</p>
+        <p className="text-white text-center">Unable to load prayer times</p>
       </div>
     );
   }
@@ -69,8 +69,8 @@ export function PrayerTimesCard({ city }: PrayerTimesCardProps) {
             }`}
           >
             <div className="flex items-center gap-3">
-              <span className="text-white/90 font-medium text-sm">{prayer.name}</span>
-              <span className="text-white/93 text-xs">{prayer.arabic}</span>
+              <span className="text-white font-medium text-sm">{prayer.name}</span>
+              <span className="text-white text-xs">{prayer.arabic}</span>
             </div>
             <span className="text-white font-mono text-sm">
               {prayer.time.split(' ')[0]}

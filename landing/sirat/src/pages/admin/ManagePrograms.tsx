@@ -108,7 +108,7 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Program title"
             className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                       placeholder-white/65 focus:outline-none focus:border-gold/50 text-sm"
+                       placeholder-white/80 focus:outline-none focus:border-gold/50 text-sm"
           />
           <input
             type="date"
@@ -123,12 +123,12 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
             placeholder="Description"
             rows={2}
             className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                       placeholder-white/65 focus:outline-none focus:border-gold/50 text-sm resize-none"
+                       placeholder-white/80 focus:outline-none focus:border-gold/50 text-sm resize-none"
           />
 
           {/* Speakers */}
           <div>
-            <label className="text-white/95 text-xs font-medium flex items-center gap-1 mb-2">
+            <label className="text-white text-xs font-medium flex items-center gap-1 mb-2">
               <UserCircle size={14} className="text-gold" />
               Speakers
             </label>
@@ -141,7 +141,7 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
                     onChange={(e) => updateSpeaker(i, e.target.value)}
                     placeholder={`Speaker ${i + 1} name`}
                     className="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white 
-                               placeholder-white/65 focus:outline-none focus:border-gold/50 text-sm"
+                               placeholder-white/80 focus:outline-none focus:border-gold/50 text-sm"
                   />
                   {speakers.length > 1 && (
                     <button
@@ -156,7 +156,7 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
             </div>
             <button
               onClick={addSpeaker}
-              className="mt-2 text-gold/93 hover:text-gold text-xs flex items-center gap-1 transition-colors"
+              className="mt-2 text-gold hover:text-gold text-xs flex items-center gap-1 transition-colors"
             >
               <Plus size={12} /> Add another speaker
             </button>
@@ -164,7 +164,7 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
 
           {/* Time Slots */}
           <div>
-            <label className="text-white/95 text-xs font-medium flex items-center gap-1 mb-2">
+            <label className="text-white text-xs font-medium flex items-center gap-1 mb-2">
               <Clock size={14} className="text-gold" />
               Schedule / Itinerary
             </label>
@@ -184,7 +184,7 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
                     onChange={(e) => updateTimeSlot(i, 'activity', e.target.value)}
                     placeholder="Activity (e.g., Recitation, Lecture, Matam)"
                     className="flex-1 bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white 
-                               placeholder-white/65 focus:outline-none focus:border-gold/50 text-sm"
+                               placeholder-white/80 focus:outline-none focus:border-gold/50 text-sm"
                   />
                   {timeSlots.length > 1 && (
                     <button
@@ -199,7 +199,7 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
             </div>
             <button
               onClick={addTimeSlot}
-              className="mt-2 text-gold/93 hover:text-gold text-xs flex items-center gap-1 transition-colors"
+              className="mt-2 text-gold hover:text-gold text-xs flex items-center gap-1 transition-colors"
             >
               <Plus size={12} /> Add time slot
             </button>
@@ -211,7 +211,7 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
             onChange={(e) => setVideoUrl(e.target.value)}
             placeholder="Video URL (optional)"
             className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                       placeholder-white/65 focus:outline-none focus:border-gold/50 text-sm"
+                       placeholder-white/80 focus:outline-none focus:border-gold/50 text-sm"
           />
 
           {error && (
@@ -234,7 +234,7 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
             <button
               type="button"
               onClick={resetForm}
-              className="px-4 py-2 text-white/86 hover:text-white/95 text-sm transition-colors"
+              className="px-4 py-2 text-white hover:text-white text-sm transition-colors"
             >
               Cancel
             </button>
@@ -244,7 +244,7 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
 
       <div className="space-y-2">
         {programs.length === 0 ? (
-          <p className="text-white/78 text-center py-8 text-sm">
+          <p className="text-white/95 text-center py-8 text-sm">
             No programs added yet. Click "Add Program" to create one.
           </p>
         ) : (
@@ -255,18 +255,18 @@ export function ManagePrograms({ mosqueId }: ManageProgramsProps) {
             >
               <div className="flex-1 min-w-0">
                 <h4 className="text-white font-medium text-sm">{program.title}</h4>
-                <p className="text-white/86 text-xs mt-1">{program.description}</p>
+                <p className="text-white text-xs mt-1">{program.description}</p>
                 {program.speakers && program.speakers.length > 0 && (
-                  <p className="text-gold/95 text-xs mt-1">
+                  <p className="text-gold text-xs mt-1">
                     Speaker{program.speakers.length > 1 ? 's' : ''}: {program.speakers.join(', ')}
                   </p>
                 )}
                 {program.timeSlots && program.timeSlots.length > 0 && (
-                  <p className="text-white/78 text-xs mt-1">
+                  <p className="text-white/95 text-xs mt-1">
                     {program.timeSlots.length} time slot{program.timeSlots.length > 1 ? 's' : ''}
                   </p>
                 )}
-                <p className="text-gold/86 text-xs mt-1">
+                <p className="text-gold text-xs mt-1">
                   {new Date(program.date + 'T00:00:00').toLocaleDateString()}
                 </p>
               </div>

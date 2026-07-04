@@ -60,7 +60,7 @@ export function LostFound() {
     <div className="min-h-screen bg-charcoal pb-20">
       <div className="px-5 pt-12">
         <h1 className="text-2xl font-bold text-white mb-2">Lost & Found</h1>
-        <p className="text-white/78 text-sm mb-6">Report or find items across all centers</p>
+        <p className="text-white/95 text-sm mb-6">Report or find items across all centers</p>
 
         <button
           onClick={() => setShowForm(!showForm)}
@@ -80,7 +80,7 @@ export function LostFound() {
                 className={`flex-1 py-2 rounded-xl text-sm font-medium transition-colors border ${
                   type === 'lost'
                     ? 'bg-red-900/30 border-red-600/40 text-red-300'
-                    : 'bg-white/5 border-white/10 text-white/78'
+                    : 'bg-white/5 border-white/10 text-white/95'
                 }`}
               >
                 Lost
@@ -90,7 +90,7 @@ export function LostFound() {
                 className={`flex-1 py-2 rounded-xl text-sm font-medium transition-colors border ${
                   type === 'found'
                     ? 'bg-green-900/30 border-green-600/40 text-green-200'
-                    : 'bg-white/5 border-white/10 text-white/78'
+                    : 'bg-white/5 border-white/10 text-white/95'
                 }`}
               >
                 Found
@@ -116,7 +116,7 @@ export function LostFound() {
               placeholder="Describe the item (e.g., black wallet, silver ring, blue jacket)"
               rows={3}
               className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                         placeholder-white/55 focus:outline-none focus:border-gold/50 text-sm resize-none"
+                         placeholder-white/75 focus:outline-none focus:border-gold/50 text-sm resize-none"
             />
 
             <input
@@ -125,7 +125,7 @@ export function LostFound() {
               onChange={(e) => setContactInfo(e.target.value)}
               placeholder="Your contact info (phone or email)"
               className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                         placeholder-white/55 focus:outline-none focus:border-gold/50 text-sm"
+                         placeholder-white/75 focus:outline-none focus:border-gold/50 text-sm"
             />
 
             <div className="flex gap-2">
@@ -138,7 +138,7 @@ export function LostFound() {
               </button>
               <button
                 onClick={() => setShowForm(false)}
-                className="px-4 py-2 text-white/78 hover:text-white text-sm transition-colors"
+                className="px-4 py-2 text-white/95 hover:text-white text-sm transition-colors"
               >
                 Cancel
               </button>
@@ -155,7 +155,7 @@ export function LostFound() {
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
                 filter === f
                   ? 'bg-gold/20 border-gold/40 text-gold'
-                  : 'bg-white/5 border-white/10 text-white/78'
+                  : 'bg-white/5 border-white/10 text-white/95'
               }`}
             >
               {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -166,8 +166,8 @@ export function LostFound() {
         {/* Items list */}
         {filteredItems.length === 0 ? (
           <div className="text-center py-12">
-            <Package size={40} className="text-white/45 mx-auto mb-4" />
-            <p className="text-white/68 text-sm">No items reported yet</p>
+            <Package size={40} className="text-white/80 mx-auto mb-4" />
+            <p className="text-white/92 text-sm">No items reported yet</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -198,15 +198,15 @@ export function LostFound() {
                     </div>
                     <p className="text-white text-sm mt-1">{item.description}</p>
                     <div className="flex items-center gap-3 mt-2">
-                      <span className="text-white/55 text-xs">{getMosqueName(item.mosqueId)}</span>
-                      <span className="text-white/55 text-xs">{item.date}</span>
+                      <span className="text-white/88 text-xs">{getMosqueName(item.mosqueId)}</span>
+                      <span className="text-white/88 text-xs">{item.date}</span>
                     </div>
-                    <p className="text-white/68 text-xs mt-1">Contact: {item.contactInfo}</p>
+                    <p className="text-white/92 text-xs mt-1">Contact: {item.contactInfo}</p>
                   </div>
                   {item.status !== 'resolved' && (
                     <button
                       onClick={() => markResolved(item.id)}
-                      className="text-white/55 hover:text-green-400 p-1 transition-colors"
+                      className="text-white/88 hover:text-green-400 p-1 transition-colors"
                       title="Mark as resolved"
                     >
                       <X size={16} />

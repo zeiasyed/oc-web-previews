@@ -13,7 +13,7 @@ export function Duas() {
         <div className="px-5 pt-12">
           <button
             onClick={() => setSelectedDua(null)}
-            className="text-gold hover:text-gold/95 text-sm mb-6 transition-colors flex items-center gap-1"
+            className="text-gold hover:text-gold text-sm mb-6 transition-colors flex items-center gap-1"
           >
             <ArrowLeft size={14} />
             Back to Duas
@@ -21,7 +21,7 @@ export function Duas() {
 
           <h1 className="text-2xl font-bold text-white mb-1">{selectedDua.name}</h1>
           <p className="text-gold text-sm font-arabic mb-1" dir="rtl">{selectedDua.arabicName}</p>
-          <p className="text-white/93 text-xs mb-8">{selectedDua.occasion}</p>
+          <p className="text-white text-xs mb-8">{selectedDua.occasion}</p>
 
           <div className="space-y-4">
             {selectedDua.verses.map((verse, i) => (
@@ -35,7 +35,7 @@ export function Duas() {
                 <p className="text-gold text-sm italic mb-1">
                   {verse.transliteration}
                 </p>
-                <p className="text-white/95 text-sm">
+                <p className="text-white text-sm">
                   {verse.translation}
                 </p>
               </div>
@@ -47,7 +47,7 @@ export function Duas() {
               href="https://www.duas.org"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-white/55 hover:text-white/75 text-xs transition-colors"
+              className="text-white/88 hover:text-white text-xs transition-colors"
             >
               Source: Duas.org
             </a>
@@ -63,7 +63,7 @@ export function Duas() {
     <div className="min-h-screen bg-charcoal pb-20">
       <div className="px-5 pt-12">
         <h1 className="text-2xl font-bold text-white mb-2">Duas & Ziyarat</h1>
-        <p className="text-white/93 text-sm mb-6">
+        <p className="text-white text-sm mb-6">
           Supplications from the Ahlulbayt (a.s.)
         </p>
 
@@ -84,11 +84,11 @@ export function Duas() {
                 <h3 className="text-white font-medium text-sm group-hover:text-gold transition-colors">
                   {dua.name}
                 </h3>
-                <p className="text-white/93 text-xs mt-0.5">{dua.occasion}</p>
+                <p className="text-white text-xs mt-0.5">{dua.occasion}</p>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
-                <span className="text-white/86 text-xs font-arabic" dir="rtl">{dua.arabicName}</span>
-                <ChevronRight size={16} className="text-white/78 group-hover:text-gold transition-colors" />
+                <span className="text-white text-xs font-arabic" dir="rtl">{dua.arabicName}</span>
+                <ChevronRight size={16} className="text-white/95 group-hover:text-gold transition-colors" />
               </div>
             </button>
           ))}

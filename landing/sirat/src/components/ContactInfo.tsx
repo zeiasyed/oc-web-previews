@@ -20,7 +20,7 @@ export function ContactInfo({ mosque }: ContactInfoProps) {
 
       {fullAddress && (
         <div className="space-y-3">
-          <p className="text-white/95 text-sm">{fullAddress}</p>
+          <p className="text-white text-sm">{fullAddress}</p>
           <button
             onClick={() => openDirections(mosque.coordinates.lat, mosque.coordinates.lng, fullAddress)}
             className="w-full bg-green-800/60 hover:bg-green-700/70 border border-green-600/40 
@@ -36,9 +36,9 @@ export function ContactInfo({ mosque }: ContactInfoProps) {
       {mosque.phone && (
         <a
           href={`tel:${mosque.phone}`}
-          className="flex items-center gap-3 text-white/95 hover:text-gold transition-colors text-sm"
+          className="flex items-center gap-3 text-white hover:text-gold transition-colors text-sm"
         >
-          <Phone size={16} className="text-gold/93" />
+          <Phone size={16} className="text-gold" />
           {mosque.phone}
         </a>
       )}
@@ -46,20 +46,20 @@ export function ContactInfo({ mosque }: ContactInfoProps) {
       {mosque.email && (
         <a
           href={`mailto:${mosque.email}`}
-          className="flex items-center gap-3 text-white/95 hover:text-gold transition-colors text-sm"
+          className="flex items-center gap-3 text-white hover:text-gold transition-colors text-sm"
         >
-          <Mail size={16} className="text-gold/93" />
+          <Mail size={16} className="text-gold" />
           {mosque.email}
         </a>
       )}
 
       {mosque.parkingInfo && (
         <div className="border-t border-white/10 pt-4 mt-4">
-          <p className="text-white/86 text-xs uppercase tracking-wide flex items-center gap-1 mb-1">
+          <p className="text-white text-xs uppercase tracking-wide flex items-center gap-1 mb-1">
             <ParkingSquare size={14} />
             Parking
           </p>
-          <p className="text-white/95 text-sm">{mosque.parkingInfo}</p>
+          <p className="text-white text-sm">{mosque.parkingInfo}</p>
         </div>
       )}
     </div>

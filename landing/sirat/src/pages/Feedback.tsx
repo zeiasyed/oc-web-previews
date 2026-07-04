@@ -79,13 +79,13 @@ export function Feedback() {
           <MessageSquare size={24} className="text-gold" />
           Feedback
         </h1>
-        <p className="text-white/93 text-sm mb-6">
+        <p className="text-white text-sm mb-6">
           Suggest features or improvements for the community
         </p>
 
         <form onSubmit={handleSubmit} className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/10 mb-6">
           <div className="mb-4">
-            <label className="text-white/95 text-xs font-medium block mb-2">Category</label>
+            <label className="text-white text-xs font-medium block mb-2">Category</label>
             <div className="flex flex-wrap gap-2">
               {CATEGORIES.map((cat) => (
                 <button
@@ -95,7 +95,7 @@ export function Feedback() {
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                     category === cat
                       ? 'bg-gold/20 text-gold border border-gold/40'
-                      : 'bg-white/5 text-white/93 border border-white/10 hover:bg-white/10'
+                      : 'bg-white/5 text-white border border-white/10 hover:bg-white/10'
                   }`}
                 >
                   {cat}
@@ -105,13 +105,13 @@ export function Feedback() {
           </div>
 
           <div className="mb-4">
-            <label className="text-white/95 text-xs font-medium block mb-2">Your Suggestion</label>
+            <label className="text-white text-xs font-medium block mb-2">Your Suggestion</label>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="What would you like to see improved or added?"
               className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white text-sm
-                         placeholder:text-white/68 focus:outline-none focus:border-gold/50 resize-none"
+                         placeholder:text-white/82 focus:outline-none focus:border-gold/50 resize-none"
               rows={4}
             />
           </div>
@@ -149,13 +149,13 @@ export function Feedback() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs px-2 py-0.5 rounded-md bg-gold/10 text-gold/90 font-medium">
+                        <span className="text-xs px-2 py-0.5 rounded-md bg-gold/10 text-gold font-medium">
                           {item.category}
                         </span>
-                        <span className="text-white/78 text-xs">{formatTime(item.timestamp)}</span>
+                        <span className="text-white/95 text-xs">{formatTime(item.timestamp)}</span>
                       </div>
-                      <p className="text-white/90 text-sm leading-relaxed">{item.message}</p>
-                      <p className="text-white/78 text-xs mt-2">— {item.author}</p>
+                      <p className="text-white text-sm leading-relaxed">{item.message}</p>
+                      <p className="text-white/95 text-xs mt-2">— {item.author}</p>
                     </div>
                     <button
                       onClick={() => handleVote(item.id)}
@@ -163,8 +163,8 @@ export function Feedback() {
                                  bg-white/5 hover:bg-gold/10 border border-white/10 hover:border-gold/30
                                  transition-colors flex-shrink-0"
                     >
-                      <ThumbsUp size={14} className="text-white/93" />
-                      <span className="text-white/93 text-xs font-medium">{item.votes}</span>
+                      <ThumbsUp size={14} className="text-white" />
+                      <span className="text-white text-xs font-medium">{item.votes}</span>
                     </button>
                   </div>
                 </div>
@@ -175,8 +175,8 @@ export function Feedback() {
 
         {feedbackList.length === 0 && (
           <div className="text-center py-12">
-            <MessageSquare size={40} className="text-white/45 mx-auto mb-3" />
-            <p className="text-white/78 text-sm">No feedback yet. Be the first to suggest something!</p>
+            <MessageSquare size={40} className="text-white/80 mx-auto mb-3" />
+            <p className="text-white/95 text-sm">No feedback yet. Be the first to suggest something!</p>
           </div>
         )}
       </div>

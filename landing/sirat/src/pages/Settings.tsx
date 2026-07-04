@@ -19,14 +19,14 @@ export function Settings() {
           <SettingsIcon size={24} className="text-gold" />
           Settings
         </h1>
-        <p className="text-white/93 text-sm mb-8">Customize your reading experience</p>
+        <p className="text-white text-sm mb-8">Customize your reading experience</p>
 
         <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/10 mb-6">
           <div className="flex items-center gap-3 mb-5">
             <Type size={20} className="text-gold" />
             <div>
               <h2 className="text-white font-semibold">Font Size</h2>
-              <p className="text-white/93 text-xs">Adjust text size for easier reading</p>
+              <p className="text-white text-xs">Adjust text size for easier reading</p>
             </div>
           </div>
 
@@ -52,7 +52,7 @@ export function Settings() {
                   {option.preview}
                 </span>
                 <span className={`text-xs ${
-                  fontSize === option.value ? 'text-gold font-medium' : 'text-white/93'
+                  fontSize === option.value ? 'text-gold font-medium' : 'text-white'
                 }`}>
                   {option.label}
                 </span>
@@ -70,7 +70,7 @@ export function Settings() {
             <p className="text-gold text-sm italic mb-1">
               Bismillahir Rahmanir Raheem
             </p>
-            <p className="text-white/95 text-sm">
+            <p className="text-white text-sm">
               In the name of Allah, the Most Gracious, the Most Merciful
             </p>
           </div>

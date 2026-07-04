@@ -58,14 +58,14 @@ export function ManageCenterInfo({ mosqueId }: ManageCenterInfoProps) {
         <div className="grid grid-cols-1 gap-3">
           {fields.map((f) => (
             <div key={f.key}>
-              <label className="text-white/93 text-xs block mb-1">{f.label}</label>
+              <label className="text-white text-xs block mb-1">{f.label}</label>
               <input
                 type={f.type || 'text'}
                 value={getValue(f.key)}
                 onChange={(e) => handleChange(f.key, e.target.value)}
                 placeholder={f.placeholder}
                 className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm
-                           placeholder-white/55 focus:outline-none focus:border-gold/50"
+                           placeholder-white/75 focus:outline-none focus:border-gold/50"
               />
             </div>
           ))}
@@ -80,7 +80,7 @@ export function ManageCenterInfo({ mosqueId }: ManageCenterInfoProps) {
           placeholder="Describe parking availability, lot location, street parking, etc."
           rows={3}
           className="w-full bg-white/5 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm
-                     placeholder-white/55 focus:outline-none focus:border-gold/50 resize-none"
+                     placeholder-white/75 focus:outline-none focus:border-gold/50 resize-none"
         />
       </div>
 

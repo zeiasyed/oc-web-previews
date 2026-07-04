@@ -26,14 +26,14 @@ export function MosqueCard({ mosque }: MosqueCardProps) {
           {mosque.name}
         </h3>
         {mosque.city && (
-          <p className="text-white/93 text-sm flex items-center gap-1 mt-0.5">
+          <p className="text-white text-sm flex items-center gap-1 mt-0.5">
             <MapPin size={12} />
             {mosque.city}, {mosque.state}
           </p>
         )}
       </div>
 
-      <ChevronRight size={20} className="text-white/86 group-hover:text-gold transition-colors flex-shrink-0" />
+      <ChevronRight size={20} className="text-white group-hover:text-gold transition-colors flex-shrink-0" />
     </button>
   );
 }
