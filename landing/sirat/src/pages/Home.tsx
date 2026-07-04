@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { MosqueCard } from '../components/MosqueCard';
+import { CenterAnnouncements } from '../components/CenterAnnouncements';
 import { BottomNav } from '../components/BottomNav';
 import { mosques } from '../data/mosques';
 import { LogOut, ChevronRight, RefreshCw } from 'lucide-react';
@@ -104,6 +105,12 @@ export function Home() {
           )}
         </div>
       </div>
+
+      {hasLastMosque && (
+        <div className="px-5 py-5">
+          <CenterAnnouncements mosqueId={lastMosque.id} />
+        </div>
+      )}
 
       {/* Full mosque list */}
       {!hasLastMosque && (

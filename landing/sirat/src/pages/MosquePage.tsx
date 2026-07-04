@@ -5,6 +5,7 @@ import { loadProgramsForCenter } from '../utils/programs';
 import type { Program } from '../types';
 import { PrayerTimesCard } from '../components/PrayerTimesCard';
 import { ProgramsList } from '../components/ProgramsList';
+import { CenterAnnouncements } from '../components/CenterAnnouncements';
 import { ContactInfo } from '../components/ContactInfo';
 import { IslamicDivider } from '../components/IslamicDivider';
 import { BottomNav } from '../components/BottomNav';
@@ -78,6 +79,11 @@ export function MosquePage() {
       </div>
 
       <IslamicDivider />
+
+      {/* Announcements for this center */}
+      <div className="px-5 mb-5">
+        <CenterAnnouncements mosqueId={mosque.id} />
+      </div>
 
       {/* Content Sections */}
       <div className="px-5 space-y-5">
