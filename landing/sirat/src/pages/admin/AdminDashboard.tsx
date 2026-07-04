@@ -5,6 +5,12 @@ import { mosques } from '../../data/mosques';
 import { ManagePrograms } from './ManagePrograms';
 import { ManageCenterInfo } from './ManageCenterInfo';
 import { ArrowLeft, Settings, Calendar, Building, Megaphone } from 'lucide-react';
+import type { Announcement } from '../../types';
+import {
+  getAnnouncementsForCenter,
+  addAnnouncement,
+  deleteAnnouncement,
+} from '../../utils/announcements';
 
 type AdminTab = 'info' | 'programs' | 'announcements';
 
@@ -114,33 +120,34 @@ export function AdminDashboard() {
 }
 
 function ManageAnnouncements({ mosqueId }: { mosqueId: string }) {
-  const [announcements, setAnnouncements] = useState<{ id: string; title: string; content: string; type: string; date: string }[]>(() => {
-    const stored = localStorage.getItem(`announcements_${mosqueId}`);
-    return stored ? JSON.parse(stored) : [];
-  });
+  const [announcements, setAnnouncements] = useState<Announcement[]>(() =>
+    getAnnouncementsForCenter(mosqueId)
+  );
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [type, setType] = useState('general');
+  const [type, setType] = useState<Announcement['type']>('general');
   const [showForm, setShowForm] = useState(false);
-
-  const save = (list: typeof announcements) => {
-    setAnnouncements(list);
-    localStorage.setItem(`announcements_${mosqueId}`, JSON.stringify(list));
-  };
 
   const handleAdd = () => {
     if (!title.trim() || !content.trim()) return;
-    const item = {
+    const item: Announcement = {
       id: Date.now().toString(36) + Math.random().toString(36).slice(2),
+      mosqueId,
       title: title.trim(),
       content: content.trim(),
       type,
       date: new Date().toISOString().split('T')[0],
     };
-    save([item, ...announcements]);
+    addAnnouncement(item);
+    setAnnouncements((prev) => [item, ...prev]);
     setTitle('');
     setContent('');
     setShowForm(false);
+  };
+
+  const handleDelete = (id: string) => {
+    deleteAnnouncement(id);
+    setAnnouncements((prev) => prev.filter((x) => x.id !== id));
   };
 
   return (
@@ -177,7 +184,7 @@ function ManageAnnouncements({ mosqueId }: { mosqueId: string }) {
               <button
                 key={t}
                 type="button"
-                onClick={() => setType(t)}
+                onClick={() => setType(t as Announcement['type'])}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors ${
                   type === t ? 'bg-gold/20 text-gold border border-gold/40' : 'bg-white/5 text-white/60 border border-white/10'
                 }`}
@@ -208,7 +215,7 @@ function ManageAnnouncements({ mosqueId }: { mosqueId: string }) {
                 <p className="text-gold/60 text-xs mt-1 capitalize">{a.type} · {a.date}</p>
               </div>
               <button
-                onClick={() => save(announcements.filter((x) => x.id !== a.id))}
+                onClick={() => handleDelete(a.id)}
                 className="text-red-400/50 hover:text-red-400 p-1 transition-colors"
               >
                 ✕

@@ -3,6 +3,11 @@ import type { Announcement } from '../types';
 import { mosques } from '../data/mosques';
 import { BottomNav } from '../components/BottomNav';
 import { Plus, Megaphone } from 'lucide-react';
+import {
+  loadAnnouncements,
+  addAnnouncement,
+  getSampleAnnouncements,
+} from '../utils/announcements';
 
 export function Announcements() {
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
@@ -15,44 +20,13 @@ export function Announcements() {
   const [mosqueId, setMosqueId] = useState(mosques[0].id);
 
   useEffect(() => {
-    const stored = localStorage.getItem('sirat_announcements');
-    if (stored) {
-      setAnnouncements(JSON.parse(stored));
+    const stored = loadAnnouncements();
+    if (stored.length > 0) {
+      setAnnouncements(stored);
     } else {
-      const samples: Announcement[] = [
-        {
-          id: '1',
-          mosqueId: 'jafaria',
-          title: 'Inna Lillahi - Passing of Br. Ahmed Rizvi',
-          content: 'It is with deep sorrow that we announce the passing of Br. Ahmed Rizvi. Namaz e Janaza will be held at Jafaria after Dhuhr prayers. Please recite Surah Fatiha.',
-          date: new Date().toISOString().split('T')[0],
-          type: 'death',
-        },
-        {
-          id: '2',
-          mosqueId: 'hussainiya',
-          title: 'Congratulations - Wedding of Ali & Fatima',
-          content: 'The community congratulates the families on the nikah ceremony. Walima will be held this Saturday at Hussainiya.',
-          date: new Date().toISOString().split('T')[0],
-          type: 'marriage',
-        },
-        {
-          id: '3',
-          mosqueId: 'imamia',
-          title: 'Muharram Schedule Announced',
-          content: 'Muharram programs will begin from 1st Muharram. Majlis every night at 8:30 PM. Tabarruk served after every program.',
-          date: new Date().toISOString().split('T')[0],
-          type: 'general',
-        },
-      ];
-      setAnnouncements(samples);
+      setAnnouncements(getSampleAnnouncements());
     }
   }, []);
-
-  const saveAnnouncements = (updated: Announcement[]) => {
-    setAnnouncements(updated);
-    localStorage.setItem('sirat_announcements', JSON.stringify(updated));
-  };
 
   const handleSubmit = () => {
     if (!title || !content) return;
@@ -66,7 +40,8 @@ export function Announcements() {
       type,
     };
 
-    saveAnnouncements([newAnnouncement, ...announcements]);
+    addAnnouncement(newAnnouncement);
+    setAnnouncements((prev) => [newAnnouncement, ...prev]);
     setTitle('');
     setContent('');
     setShowForm(false);
