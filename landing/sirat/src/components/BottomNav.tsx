@@ -40,7 +40,7 @@ export function BottomNav() {
           >
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-white font-semibold text-sm">More</h3>
-              <button onClick={() => setShowMore(false)} className="text-white/60 hover:text-white/90">
+              <button onClick={() => setShowMore(false)} className="text-white/86 hover:text-white">
                 <X size={18} />
               </button>
             </div>
@@ -52,7 +52,7 @@ export function BottomNav() {
                   className={`text-left px-3 py-2.5 rounded-xl text-sm transition-colors ${
                     location.pathname === item.path
                       ? 'bg-gold/20 text-gold font-medium'
-                      : 'bg-white/5 text-white/70 hover:bg-white/10'
+                      : 'bg-white/5 text-white/93 hover:bg-white/10'
                   }`}
                 >
                   {item.label}
@@ -84,7 +84,7 @@ export function BottomNav() {
                   }
                 }}
                 className={`flex flex-col items-center py-1 px-3 rounded-lg transition-colors ${
-                  isActive ? 'text-gold' : showMore && isMore ? 'text-gold' : 'text-white/70 hover:text-white/90'
+                  isActive ? 'text-gold' : showMore && isMore ? 'text-gold' : 'text-white/93 hover:text-white'
                 }`}
               >
                 <item.icon size={22} />

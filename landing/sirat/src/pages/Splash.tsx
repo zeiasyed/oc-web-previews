@@ -27,7 +27,7 @@ export function Splash() {
       <div className="absolute inset-0 bg-black/60" />
 
       <div className="relative z-10 text-center px-8 animate-fade-in">
-        <p className="text-gold/80 text-lg mb-2 font-arabic">
+        <p className="text-gold/95 text-lg mb-2 font-arabic">
           بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
         </p>
 
@@ -35,7 +35,7 @@ export function Splash() {
           Sirat
         </h1>
 
-        <p className="text-white/60 text-sm tracking-widest uppercase">
+        <p className="text-white/86 text-sm tracking-widest uppercase">
           Your guide to the community
         </p>
 

@@ -44,7 +44,7 @@ export function Login() {
       <div className="relative z-10 w-full max-w-sm">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-white mb-1">Sirat</h1>
-          <p className="text-white/50 text-sm">Sign in to continue</p>
+          <p className="text-white/78 text-sm">Sign in to continue</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -55,7 +55,7 @@ export function Login() {
           )}
 
           <div>
-            <label className="text-white/70 text-xs uppercase tracking-wide mb-1 block">
+            <label className="text-white/93 text-xs uppercase tracking-wide mb-1 block">
               Email
             </label>
             <input
@@ -63,7 +63,7 @@ export function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                         placeholder-white/30 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30
+                         placeholder-white/55 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30
                          transition-colors"
               placeholder="your@email.com"
               required
@@ -71,7 +71,7 @@ export function Login() {
           </div>
 
           <div>
-            <label className="text-white/70 text-xs uppercase tracking-wide mb-1 block">
+            <label className="text-white/93 text-xs uppercase tracking-wide mb-1 block">
               Password
             </label>
             <div className="relative">
@@ -80,7 +80,7 @@ export function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                           placeholder-white/30 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30
+                           placeholder-white/55 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30
                            transition-colors pr-12"
                 placeholder="••••••••"
                 required
@@ -88,7 +88,7 @@ export function Login() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/70"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/68 hover:text-white"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -111,14 +111,14 @@ export function Login() {
           <button
             onClick={() => navigate('/register')}
             className="w-full bg-white/5 border border-white/10 hover:border-white/20 
-                       text-white/70 font-medium py-3 px-4 rounded-xl transition-colors text-sm"
+                       text-white/93 font-medium py-3 px-4 rounded-xl transition-colors text-sm"
           >
             Create Account
           </button>
 
           <button
             onClick={handleSkip}
-            className="w-full text-white/40 hover:text-white/60 py-2 text-sm transition-colors"
+            className="w-full text-white/68 hover:text-white/85 py-2 text-sm transition-colors"
           >
             Skip for now →
           </button>

@@ -27,17 +27,17 @@ export function Profile() {
               <h2 className="text-white font-semibold text-lg">
                 {user?.displayName || 'Guest'}
               </h2>
-              <p className="text-white/70 text-sm">{user?.email}</p>
+              <p className="text-white/93 text-sm">{user?.email}</p>
             </div>
           </div>
 
           <div className="space-y-3 border-t border-white/10 pt-4">
-            <div className="flex items-center gap-3 text-white/70 text-sm">
-              <Mail size={16} className="text-gold/70" />
+            <div className="flex items-center gap-3 text-white/93 text-sm">
+              <Mail size={16} className="text-gold/93" />
               <span>{user?.email}</span>
             </div>
-            <div className="flex items-center gap-3 text-white/70 text-sm">
-              <Shield size={16} className="text-gold/70" />
+            <div className="flex items-center gap-3 text-white/93 text-sm">
+              <Shield size={16} className="text-gold/93" />
               <span>{user?.uid === 'guest' ? 'Guest Account' : 'Verified Member'}</span>
             </div>
           </div>

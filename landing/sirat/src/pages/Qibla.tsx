@@ -81,7 +81,7 @@ export function Qibla() {
     <div className="min-h-screen bg-charcoal pb-20">
       <div className="px-5 pt-12">
         <h1 className="text-2xl font-bold text-white mb-2">Qibla Direction</h1>
-        <p className="text-white/50 text-sm mb-8">Face the direction of the Kaaba</p>
+        <p className="text-white/78 text-sm mb-8">Face the direction of the Kaaba</p>
 
         <div className="flex flex-col items-center justify-center">
           <div className="relative w-64 h-64 rounded-full bg-white/5 border-2 border-white/10 flex items-center justify-center">
@@ -95,10 +95,10 @@ export function Qibla() {
               <Compass size={40} className="text-gold" />
             </div>
 
-            <div className="absolute top-2 left-1/2 -translate-x-1/2 text-white/40 text-xs">N</div>
-            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-white/40 text-xs">S</div>
-            <div className="absolute left-2 top-1/2 -translate-y-1/2 text-white/40 text-xs">W</div>
-            <div className="absolute right-2 top-1/2 -translate-y-1/2 text-white/40 text-xs">E</div>
+            <div className="absolute top-2 left-1/2 -translate-x-1/2 text-white/68 text-xs">N</div>
+            <div className="absolute bottom-2 left-1/2 -translate-x-1/2 text-white/68 text-xs">S</div>
+            <div className="absolute left-2 top-1/2 -translate-y-1/2 text-white/68 text-xs">W</div>
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 text-white/68 text-xs">E</div>
           </div>
 
           {qiblaAngle !== null && (
@@ -108,7 +108,7 @@ export function Qibla() {
           )}
 
           {error && (
-            <p className="text-white/40 text-sm mt-2">{error}</p>
+            <p className="text-white/68 text-sm mt-2">{error}</p>
           )}
 
           {!permissionGranted && (
@@ -121,7 +121,7 @@ export function Qibla() {
             </button>
           )}
 
-          <p className="text-white/30 text-xs mt-6 text-center max-w-xs">
+          <p className="text-white/55 text-xs mt-6 text-center max-w-xs">
             Point the top of your device toward the gold arrow for the Qibla direction. 
             Best accuracy outdoors away from metal objects.
           </p>

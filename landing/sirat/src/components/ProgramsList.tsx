@@ -96,7 +96,7 @@ export function ProgramsList({ programs }: ProgramsListProps) {
               >
                 <div className="flex-1 min-w-0">
                   <h4 className="text-white font-medium text-sm">{program.title}</h4>
-                  <p className="text-white/70 text-xs mt-1">
+                  <p className="text-white/93 text-xs mt-1">
                     {new Date(program.date + 'T00:00:00').toLocaleDateString('en-US', {
                       weekday: 'short',
                       month: 'short',
@@ -115,16 +115,16 @@ export function ProgramsList({ programs }: ProgramsListProps) {
                       href={program.videoUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gold/70 hover:text-gold transition-colors"
+                      className="text-gold/93 hover:text-gold transition-colors"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <Video size={16} />
                     </a>
                   )}
                   {isExpanded ? (
-                    <ChevronUp size={16} className="text-white/50" />
+                    <ChevronUp size={16} className="text-white/78" />
                   ) : (
-                    <ChevronDown size={16} className="text-white/50" />
+                    <ChevronDown size={16} className="text-white/78" />
                   )}
                 </div>
               </button>
@@ -132,12 +132,12 @@ export function ProgramsList({ programs }: ProgramsListProps) {
               {isExpanded && (
                 <div className="px-4 pb-4 border-t border-white/5 pt-3 space-y-3">
                   {program.description && (
-                    <p className="text-white/70 text-sm">{program.description}</p>
+                    <p className="text-white/93 text-sm">{program.description}</p>
                   )}
 
                   {hasSpeakers && (
                     <div>
-                      <p className="text-white/50 text-xs font-medium flex items-center gap-1 mb-1.5">
+                      <p className="text-white/78 text-xs font-medium flex items-center gap-1 mb-1.5">
                         <UserCircle size={12} className="text-gold" />
                         Speaker{program.speakers.length > 1 ? 's' : ''}
                       </p>
@@ -156,7 +156,7 @@ export function ProgramsList({ programs }: ProgramsListProps) {
 
                   {hasSlots && (
                     <div>
-                      <p className="text-white/50 text-xs font-medium flex items-center gap-1 mb-1.5">
+                      <p className="text-white/78 text-xs font-medium flex items-center gap-1 mb-1.5">
                         <Clock size={12} className="text-gold" />
                         Schedule
                       </p>
@@ -166,7 +166,7 @@ export function ProgramsList({ programs }: ProgramsListProps) {
                             <span className="text-gold font-mono text-xs w-16 flex-shrink-0">
                               {formatTime(slot.time)}
                             </span>
-                            <span className="text-white/80 text-sm">{slot.activity}</span>
+                            <span className="text-white/95 text-sm">{slot.activity}</span>
                           </div>
                         ))}
                       </div>

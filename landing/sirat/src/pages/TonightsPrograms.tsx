@@ -89,15 +89,15 @@ export function TonightsPrograms() {
     <div className="min-h-screen bg-charcoal pb-20">
       <div className="px-5 pt-12">
         <h1 className="text-2xl font-bold text-white mb-1">Tonight's Programs</h1>
-        <p className="text-white/50 text-sm mb-2">{today}</p>
-        <p className="text-gold/60 text-xs mb-6">What's happening across all centers tonight</p>
+        <p className="text-white/78 text-sm mb-2">{today}</p>
+        <p className="text-gold/86 text-xs mb-6">What's happening across all centers tonight</p>
 
         <IslamicDivider />
 
         {allPrograms.length === 0 ? (
           <div className="text-center py-12">
-            <Calendar size={40} className="text-white/20 mx-auto mb-4" />
-            <p className="text-white/40">No programs scheduled for tonight</p>
+            <Calendar size={40} className="text-white/45 mx-auto mb-4" />
+            <p className="text-white/68">No programs scheduled for tonight</p>
           </div>
         ) : (
           <div className="space-y-3">
@@ -110,17 +110,17 @@ export function TonightsPrograms() {
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex-1">
                     <h3 className="text-white font-medium text-sm">{program.title}</h3>
-                    <p className="text-white/40 text-xs mt-1">{program.description}</p>
+                    <p className="text-white/68 text-xs mt-1">{program.description}</p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/5">
-                  <span className="text-gold/70 text-xs flex items-center gap-1">
+                  <span className="text-gold/93 text-xs flex items-center gap-1">
                     <MapPin size={12} />
                     {program.mosqueName}
                   </span>
                   <button
                     onClick={() => navigate(`/mosque/${program.mosqueId}`)}
-                    className="text-xs text-white/50 hover:text-gold flex items-center gap-1 transition-colors"
+                    className="text-xs text-white/78 hover:text-gold flex items-center gap-1 transition-colors"
                   >
                     <Navigation size={12} />
                     View Center

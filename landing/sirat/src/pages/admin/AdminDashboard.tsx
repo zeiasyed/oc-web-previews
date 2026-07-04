@@ -39,7 +39,7 @@ export function AdminDashboard() {
         <div className="px-5 pt-12">
           <button
             onClick={() => { setSelectedMosqueId(null); setActiveTab('info'); }}
-            className="text-gold hover:text-gold/80 text-sm mb-4 transition-colors flex items-center gap-1"
+            className="text-gold hover:text-gold/95 text-sm mb-4 transition-colors flex items-center gap-1"
           >
             <ArrowLeft size={16} />
             Back to centers
@@ -56,7 +56,7 @@ export function AdminDashboard() {
                 className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-colors ${
                   activeTab === tab.id
                     ? 'bg-gold/20 text-gold border border-gold/40'
-                    : 'bg-white/5 text-white/60 border border-white/10 hover:bg-white/10'
+                    : 'bg-white/5 text-white/86 border border-white/10 hover:bg-white/10'
                 }`}
               >
                 <tab.icon size={14} />
@@ -82,11 +82,11 @@ export function AdminDashboard() {
               <Settings size={20} className="text-gold" />
               <h1 className="text-2xl font-bold text-white">Admin Panel</h1>
             </div>
-            <p className="text-white/70 text-sm">Manage center info, programs & announcements</p>
+            <p className="text-white/93 text-sm">Manage center info, programs & announcements</p>
           </div>
           <button
             onClick={() => navigate('/home')}
-            className="text-white/60 hover:text-white/80 text-sm transition-colors"
+            className="text-white/86 hover:text-white/95 text-sm transition-colors"
           >
             ← App
           </button>
@@ -109,7 +109,7 @@ export function AdminDashboard() {
                 <h3 className="text-white font-medium text-sm group-hover:text-gold transition-colors">
                   {mosque.name}
                 </h3>
-                <p className="text-white/60 text-xs">{mosque.city}, {mosque.state}</p>
+                <p className="text-white/86 text-xs">{mosque.city}, {mosque.state}</p>
               </div>
             </button>
           ))}
@@ -169,7 +169,7 @@ function ManageAnnouncements({ mosqueId }: { mosqueId: string }) {
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Announcement title"
             className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                       placeholder-white/40 focus:outline-none focus:border-gold/50 text-sm"
+                       placeholder-white/65 focus:outline-none focus:border-gold/50 text-sm"
           />
           <textarea
             value={content}
@@ -177,7 +177,7 @@ function ManageAnnouncements({ mosqueId }: { mosqueId: string }) {
             placeholder="Details"
             rows={3}
             className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
-                       placeholder-white/40 focus:outline-none focus:border-gold/50 text-sm resize-none"
+                       placeholder-white/65 focus:outline-none focus:border-gold/50 text-sm resize-none"
           />
           <div className="flex flex-wrap gap-2">
             {['general', 'death', 'birth', 'marriage'].map((t) => (
@@ -186,7 +186,7 @@ function ManageAnnouncements({ mosqueId }: { mosqueId: string }) {
                 type="button"
                 onClick={() => setType(t as Announcement['type'])}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors ${
-                  type === t ? 'bg-gold/20 text-gold border border-gold/40' : 'bg-white/5 text-white/60 border border-white/10'
+                  type === t ? 'bg-gold/20 text-gold border border-gold/40' : 'bg-white/5 text-white/86 border border-white/10'
                 }`}
               >
                 {t}
@@ -205,14 +205,14 @@ function ManageAnnouncements({ mosqueId }: { mosqueId: string }) {
 
       <div className="space-y-2">
         {announcements.length === 0 ? (
-          <p className="text-white/50 text-center py-8 text-sm">No announcements yet.</p>
+          <p className="text-white/78 text-center py-8 text-sm">No announcements yet.</p>
         ) : (
           announcements.map((a) => (
             <div key={a.id} className="bg-white/5 rounded-xl p-4 border border-white/5 flex items-start justify-between">
               <div>
                 <h4 className="text-white font-medium text-sm">{a.title}</h4>
-                <p className="text-white/60 text-xs mt-1">{a.content}</p>
-                <p className="text-gold/60 text-xs mt-1 capitalize">{a.type} · {a.date}</p>
+                <p className="text-white/86 text-xs mt-1">{a.content}</p>
+                <p className="text-gold/86 text-xs mt-1 capitalize">{a.type} · {a.date}</p>
               </div>
               <button
                 onClick={() => handleDelete(a.id)}

@@ -63,10 +63,10 @@ export function IslamicCalendar() {
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'martyrdom': return 'bg-red-900/30 border-red-700/30 text-red-300';
-      case 'birth': return 'bg-green-900/30 border-green-700/30 text-green-300';
+      case 'birth': return 'bg-green-900/30 border-green-700/30 text-green-200';
       case 'holiday': return 'bg-gold/20 border-gold/30 text-gold';
       case 'event': return 'bg-blue-900/30 border-blue-700/30 text-blue-300';
-      default: return 'bg-white/10 border-white/10 text-white/70';
+      default: return 'bg-white/10 border-white/10 text-white/93';
     }
   };
 
@@ -88,7 +88,7 @@ export function IslamicCalendar() {
         {/* Today's Hijri Date */}
         {!loading && (
           <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/10 mb-6">
-            <p className="text-white/40 text-xs uppercase tracking-wide mb-1">Today's Hijri Date</p>
+            <p className="text-white/68 text-xs uppercase tracking-wide mb-1">Today's Hijri Date</p>
             <p className="text-white text-xl font-semibold">
               {hijriDate.day} {hijriDate.month} {hijriDate.year} AH
             </p>

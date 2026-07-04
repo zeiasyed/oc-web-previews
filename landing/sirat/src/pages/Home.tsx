@@ -50,7 +50,7 @@ export function Home() {
             {user && user.uid !== 'guest' && (
               <button
                 onClick={logout}
-                className="text-white/60 hover:text-white/80 p-2 rounded-lg transition-colors"
+                className="text-white/86 hover:text-white/95 p-2 rounded-lg transition-colors"
                 title="Logout"
               >
                 <LogOut size={20} />
@@ -59,7 +59,7 @@ export function Home() {
           </div>
 
           {user && (
-            <p className="text-white/70 text-sm">
+            <p className="text-white/93 text-sm">
               Welcome, <span className="text-white">{user.displayName}</span>
             </p>
           )}
@@ -81,20 +81,20 @@ export function Home() {
                   <span className="text-gold text-2xl">☪</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-gold/80 text-xs uppercase tracking-wide mb-0.5">Your Last Visit</p>
+                  <p className="text-gold/95 text-xs uppercase tracking-wide mb-0.5">Your Last Visit</p>
                   <h2 className="text-white font-bold text-lg truncate group-hover:text-gold transition-colors">
                     {lastMosque.name}
                   </h2>
-                  <p className="text-white/60 text-sm">
+                  <p className="text-white/86 text-sm">
                     {lastMosque.city}, {lastMosque.state}
                   </p>
                 </div>
-                <ChevronRight size={24} className="text-gold/60 group-hover:text-gold transition-colors flex-shrink-0" />
+                <ChevronRight size={24} className="text-gold/86 group-hover:text-gold transition-colors flex-shrink-0" />
               </button>
 
               <button
                 onClick={() => setShowAll(true)}
-                className="mt-4 w-full text-center text-white/60 hover:text-gold text-sm 
+                className="mt-4 w-full text-center text-white/86 hover:text-gold text-sm 
                            flex items-center justify-center gap-2 transition-colors py-2"
               >
                 <RefreshCw size={14} />
@@ -120,10 +120,10 @@ export function Home() {
       {showAll && lastMosque && (
         <div className="px-5 space-y-3 mt-2">
           <div className="flex items-center justify-between mb-1">
-            <p className="text-white/70 text-sm font-medium">All Centers</p>
+            <p className="text-white/93 text-sm font-medium">All Centers</p>
             <button
               onClick={() => setShowAll(false)}
-              className="text-gold/70 hover:text-gold text-xs transition-colors"
+              className="text-gold/93 hover:text-gold text-xs transition-colors"
             >
               Back
             </button>
