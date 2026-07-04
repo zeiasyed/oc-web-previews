@@ -171,6 +171,20 @@ function ManageAnnouncements({ mosqueId }: { mosqueId: string }) {
 
       {showForm && (
         <div className="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/10 space-y-3">
+          <div className="flex flex-wrap gap-2">
+            {(['general', 'death', 'marriage'] as const).map((t) => (
+              <button
+                key={t}
+                type="button"
+                onClick={() => setType(t)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors ${
+                  type === t ? 'bg-gold/20 text-gold border border-gold/40' : 'bg-white/5 text-white border border-white/10'
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
           <input
             type="text"
             value={title}
@@ -187,20 +201,6 @@ function ManageAnnouncements({ mosqueId }: { mosqueId: string }) {
             className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white 
                        placeholder-white/80 focus:outline-none focus:border-gold/50 text-sm resize-none"
           />
-          <div className="flex flex-wrap gap-2">
-            {['general', 'death', 'birth', 'marriage'].map((t) => (
-              <button
-                key={t}
-                type="button"
-                onClick={() => setType(t as Announcement['type'])}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-colors ${
-                  type === t ? 'bg-gold/20 text-gold border border-gold/40' : 'bg-white/5 text-white border border-white/10'
-                }`}
-              >
-                {t}
-              </button>
-            ))}
-          </div>
           <button
             type="button"
             onClick={handleAdd}
