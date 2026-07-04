@@ -81,7 +81,7 @@ function AppRoutes() {
       } />
       <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
       <Route path="/feedback" element={<ProtectedRoute><Feedback /></ProtectedRoute>} />
-      <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+      <Route path="/admin/:mosqueId?" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
     </Routes>
   );
 }

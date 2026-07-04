@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { mosques } from '../../data/mosques';
 import { ManagePrograms } from './ManagePrograms';
@@ -17,8 +17,16 @@ type AdminTab = 'info' | 'programs' | 'announcements';
 export function AdminDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [selectedMosqueId, setSelectedMosqueId] = useState<string | null>(null);
+  const { mosqueId: routeMosqueId } = useParams<{ mosqueId?: string }>();
   const [activeTab, setActiveTab] = useState<AdminTab>('info');
+
+  const selectedMosqueId =
+    routeMosqueId && mosques.some((m) => m.id === routeMosqueId) ? routeMosqueId : null;
+
+  if (routeMosqueId && !selectedMosqueId) {
+    navigate('/admin', { replace: true });
+    return null;
+  }
 
   if (!user) {
     navigate('/login');
@@ -38,7 +46,7 @@ export function AdminDashboard() {
       <div className="min-h-screen bg-charcoal pb-10">
         <div className="px-5 pt-12">
           <button
-            onClick={() => { setSelectedMosqueId(null); setActiveTab('info'); }}
+            onClick={() => { navigate('/admin'); setActiveTab('info'); }}
             className="text-gold hover:text-gold/95 text-sm mb-4 transition-colors flex items-center gap-1"
           >
             <ArrowLeft size={16} />
@@ -96,7 +104,7 @@ export function AdminDashboard() {
           {mosques.map((mosque) => (
             <button
               key={mosque.id}
-              onClick={() => setSelectedMosqueId(mosque.id)}
+              onClick={() => navigate(`/admin/${mosque.id}`)}
               className="w-full bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-4
                          hover:bg-white/15 hover:border-gold/30 transition-all duration-300
                          flex items-center gap-4 text-left group"

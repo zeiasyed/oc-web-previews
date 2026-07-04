@@ -30,6 +30,11 @@ export function BottomNav() {
     { label: 'Profile', path: '/profile' },
   ];
 
+  const getAdminPath = () => {
+    const match = location.pathname.match(/^\/mosque\/([^/]+)/);
+    return match ? `/admin/${match[1]}` : '/admin';
+  };
+
   return (
     <>
       {showMore && (
@@ -48,9 +53,13 @@ export function BottomNav() {
               {moreItems.map((item) => (
                 <button
                   key={item.path}
-                  onClick={() => { navigate(item.path); setShowMore(false); }}
+                  onClick={() => {
+                    navigate(item.path === '/admin' ? getAdminPath() : item.path);
+                    setShowMore(false);
+                  }}
                   className={`text-left px-3 py-2.5 rounded-xl text-sm transition-colors ${
-                    location.pathname === item.path
+                    location.pathname === item.path ||
+                    (item.path === '/admin' && location.pathname.startsWith('/admin/'))
                       ? 'bg-gold/20 text-gold font-medium'
                       : 'bg-white/5 text-white/93 hover:bg-white/10'
                   }`}
