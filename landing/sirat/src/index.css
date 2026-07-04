@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  --color-gold: #FFB800;
-  --color-gold-light: #FFC833;
-  --color-charcoal: #2a2a42;
-  --color-green-deep: #1B5E20;
-  --color-green-mid: #2E7D32;
+  --color-gold: #FFC833;
+  --color-gold-light: #FFD866;
+  --color-charcoal: #4a4a68;
+  --color-green-deep: #2E7D32;
+  --color-green-mid: #43A047;
 }
 
 @layer base {
