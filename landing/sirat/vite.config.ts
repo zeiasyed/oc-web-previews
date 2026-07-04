@@ -10,7 +10,7 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['images/*'],
+      includeAssets: ['icons/*', 'images/*'],
       manifest: {
         name: 'Sirat - Community Guide',
         short_name: 'Sirat',
@@ -22,17 +22,17 @@ export default defineConfig({
         start_url: '/oc-web-previews/landing/sirat/',
         icons: [
           {
-            src: '/icons/icon-192.png',
+            src: 'icons/icon-192.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: '/icons/icon-512.png',
+            src: 'icons/icon-512.png',
             sizes: '512x512',
             type: 'image/png',
           },
           {
-            src: '/icons/icon-512.png',
+            src: 'icons/icon-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'maskable',
