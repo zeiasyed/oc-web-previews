@@ -22,10 +22,19 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: landing/sirat/package-lock.json
       - uses: actions/configure-pages@v5
       - name: Build Pages site
         run: |
           mkdir -p _site/landing
+          # Sirat PWA
+          npm ci --prefix landing/sirat
+          npm run build --prefix landing/sirat
+          rsync -a landing/sirat/dist/ _site/landing/sirat/
           # Prospectus CRM
           rsync -a landing/prospectus-crm/ _site/landing/prospectus-crm/
           # Existing published apps
