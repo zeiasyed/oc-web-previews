@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
+import { assetUrl } from '../utils/assets';
 
 export function Login() {
   const [email, setEmail] = useState('');
@@ -36,7 +37,7 @@ export function Login() {
     <div className="min-h-screen relative flex flex-col items-center justify-center px-6">
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: 'url(/images/shrine-najaf.png)' }}
+        style={{ backgroundImage: `url(${assetUrl('images/shrine-najaf.png')})` }}
       />
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 

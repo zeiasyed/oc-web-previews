@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { UserPlus } from 'lucide-react';
+import { assetUrl } from '../utils/assets';
 
 export function Register() {
   const [name, setName] = useState('');
@@ -42,7 +43,7 @@ export function Register() {
     <div className="min-h-screen relative flex flex-col items-center justify-center px-6">
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: 'url(/images/shrine-najaf.png)' }}
+        style={{ backgroundImage: `url(${assetUrl('images/shrine-najaf.png')})` }}
       />
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
 

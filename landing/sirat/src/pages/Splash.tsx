@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { assetUrl } from '../utils/assets';
 
 export function Splash() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ export function Splash() {
     <div className="min-h-screen relative flex flex-col items-center justify-center overflow-hidden">
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: 'url(/images/shrine-karbala.png)' }}
+        style={{ backgroundImage: `url(${assetUrl('images/shrine-karbala.png')})` }}
       />
       <div className="absolute inset-0 bg-black/60" />
 

@@ -5,6 +5,7 @@ import { MosqueCard } from '../components/MosqueCard';
 import { BottomNav } from '../components/BottomNav';
 import { mosques } from '../data/mosques';
 import { LogOut, ChevronRight, RefreshCw } from 'lucide-react';
+import { assetUrl } from '../utils/assets';
 
 export function Home() {
   const { user, logout } = useAuth();
@@ -32,7 +33,7 @@ export function Home() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: 'url(/images/shrine-karbala.png)',
+            backgroundImage: `url(${assetUrl('images/shrine-karbala.png')})`,
             opacity: hasLastMosque ? 0.4 : 0.2,
           }}
         />
