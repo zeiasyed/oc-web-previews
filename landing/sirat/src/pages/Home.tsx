@@ -35,10 +35,10 @@ export function Home() {
           className="absolute inset-0 bg-cover bg-center"
           style={{
             backgroundImage: `url(${assetUrl('images/shrine-karbala.png')})`,
-            opacity: hasLastMosque ? 0.4 : 0.2,
+            opacity: hasLastMosque ? 0.65 : 0.45,
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-charcoal/20 via-transparent to-charcoal/90" />
+        <div className="absolute inset-0 bg-gradient-to-b from-charcoal/10 via-transparent to-charcoal/60" />
 
         <div className="relative z-10 px-5 pt-12 pb-6 flex flex-col" style={{ minHeight: hasLastMosque ? '82vh' : undefined }}>
           <div className="flex items-center justify-between mb-4">
