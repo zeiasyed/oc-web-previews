@@ -6,6 +6,7 @@ on:
     paths:
       - "landing/nexa-direct-demo/**"
       - "render.yaml"
+      - ".github/workflows/build-nexadirect.yml"
   workflow_dispatch:
 
 permissions:
