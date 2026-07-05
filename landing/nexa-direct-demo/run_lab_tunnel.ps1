@@ -1,4 +1,5 @@
 #Requires -Version 5.1
+# DEPRECATED — PC tunnel (not 24/7). Use deploy-nexadirect-cloud.ps1 instead.
 # Expose NexaDirect locally via Cloudflare Tunnel (demo-direct.nexa-trials.com).
 # Keep this window open while you need public access — traffic routes to this PC.
 
