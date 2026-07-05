@@ -38,13 +38,16 @@ jobs:
   deploy:
     needs: docker
     runs-on: ubuntu-latest
-    if: ${{ secrets.RENDER_API_KEY != '' && secrets.RENDER_SERVICE_ID != '' }}
     steps:
       - name: Trigger Render deploy
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
         run: |
+          if [ -z "${RENDER_API_KEY:-}" ] || [ -z "${RENDER_SERVICE_ID:-}" ]; then
+            echo "RENDER_API_KEY or RENDER_SERVICE_ID not configured — skipping."
+            exit 0
+          fi
           curl -fsS -X POST "https://api.render.com/v1/services/${RENDER_SERVICE_ID}/deploys" \
             -H "Authorization: Bearer ${RENDER_API_KEY}" \
             -H "Content-Type: application/json" \
