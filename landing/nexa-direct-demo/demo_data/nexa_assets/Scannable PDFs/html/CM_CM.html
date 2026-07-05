@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<title>Concomitant Medications - Repeating (CM)</title>
+<style>
+  @page { size: letter; margin: 0.55in; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 10.5pt; color: #111; }
+  header { border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 14px; }
+  h1 { font-size: 16pt; margin: 0 0 4px; }
+  .sub { color: #444; font-size: 9pt; }
+  .field { margin: 0 0 11px; page-break-inside: avoid; }
+  .label { font-weight: 700; margin-bottom: 2px; }
+  .meta { font-size: 8pt; color: #666; margin-bottom: 3px; }
+  .hint { font-size: 8.5pt; color: #555; margin-bottom: 4px; max-width: 95%; }
+  .line { border-bottom: 1px solid #333; height: 18px; }
+  .line.wide { width: 100%; }
+  .checks { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 2px; }
+  .cb { display: flex; align-items: center; gap: 5px; font-size: 9.5pt; }
+  .box { width: 11px; height: 11px; border: 1px solid #333; display: inline-block; flex-shrink: 0; }
+  .repeat-banner { background: #eee; border: 1px solid #999; padding: 6px 8px; font-size: 9pt; font-weight: 700; margin: 10px 0; }
+  footer { margin-top: 18px; font-size: 8pt; color: #666; border-top: 1px solid #ccc; padding-top: 6px; }
+</style></head>
+<body>
+<header>
+  <h1>Concomitant Medications - Repeating</h1>
+  <div class="sub">CDASH-style CRF · Form ID: CM · Generated from OpenClinica template for NexaDirect demo</div>
+  <div class="sub">Subject ID: _________________________ &nbsp;&nbsp; Site ID: _________________________ &nbsp;&nbsp; Visit: _________________________</div>
+</header>
+
+    <div class="field">
+      <div class="label">CM Number</div>
+      <div class="meta">CM_CMSPID</div>
+      
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Medication/Therapy</div>
+      <div class="meta">CM_CMTRT</div>
+      <div class="hint">Record only 1 medication/therapy per line. Provide the full trade or proprietary name of the medication/therapy; otherwise the generic name may be recorded.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Indication</div>
+      <div class="meta">CM_CMINDC</div>
+      <div class="hint">Record the reason the medication/therapy was taken based on clinical investigator&#x27;s evaluation. If taken to treat a condition, and a diagnosis was made, the indication should be the diagnosis. If taken to treat a condition, and no diagnosis was made, the indication should be the signs and symptoms. If taken as prophylaxis, report as &quot;Prophylaxis for&quot; and include a description of the condition(s).</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Dose</div>
+      <div class="meta">CM_CMDSTXT</div>
+      <div class="hint">Record the dose of medication/therapy taken per administration (e.g., 200).</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Unit</div>
+      <div class="meta">CM_CMDOSU</div>
+      <div class="hint">Record the dose unit of the dose of concomitant medication/therapy taken (e.g., mg.).</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Percent Volume per Volume</label><label class="cb"><span class="box"></span>Capsule</label><label class="cb"><span class="box"></span>Gram</label><label class="cb"><span class="box"></span>Inhalation</label><label class="cb"><span class="box"></span>International Dosing Unit</label><label class="cb"><span class="box"></span>Liter per Hour</label><label class="cb"><span class="box"></span>Liter per Minute</label><label class="cb"><span class="box"></span>Milligram</label><label class="cb"><span class="box"></span>Milligram per Kilogram</label><label class="cb"><span class="box"></span>Milliliter</label><label class="cb"><span class="box"></span>Milliliter per Hour</label><label class="cb"><span class="box"></span>Milliliter per Kilogram</label><label class="cb"><span class="box"></span>Puff</label><label class="cb"><span class="box"></span>Spray</label><label class="cb"><span class="box"></span>Tablet</label><label class="cb"><span class="box"></span>Microgram</label><label class="cb"><span class="box"></span>Microgram per Kilogram</label><label class="cb"><span class="box"></span>Other</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Other, Specify</div>
+      <div class="meta">CM_CMDOSUO</div>
+      
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Dose Form</div>
+      <div class="meta">CM_CMDOSFRM</div>
+      <div class="hint">Record the pharmaceutical dosage form (e.g., Capsule, Cream) of delivery for the concomitant medication/therapy taken.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Aerosol</label><label class="cb"><span class="box"></span>Capsule</label><label class="cb"><span class="box"></span>Cream</label><label class="cb"><span class="box"></span>Gas</label><label class="cb"><span class="box"></span>Gel</label><label class="cb"><span class="box"></span>Inhalant</label><label class="cb"><span class="box"></span>Injectable</label><label class="cb"><span class="box"></span>Liquid</label><label class="cb"><span class="box"></span>Ointment</label><label class="cb"><span class="box"></span>Patch</label><label class="cb"><span class="box"></span>Powder</label><label class="cb"><span class="box"></span>Spray</label><label class="cb"><span class="box"></span>Suppository</label><label class="cb"><span class="box"></span>Suspension</label><label class="cb"><span class="box"></span>Tablet</label><label class="cb"><span class="box"></span>Other</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Other, Specify</div>
+      <div class="meta">CM_CMDOSFRMO</div>
+      
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Frequency</div>
+      <div class="meta">CM_CMDOSFRQ</div>
+      <div class="hint">Record how often the  medication/therapy was taken (e.g., BID, PRN).</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Twice Daily</label><label class="cb"><span class="box"></span>Once</label><label class="cb"><span class="box"></span>As Needed</label><label class="cb"><span class="box"></span>Daily</label><label class="cb"><span class="box"></span>Every Other Day</label><label class="cb"><span class="box"></span>Three Times Daily</label><label class="cb"><span class="box"></span>Unknown</label><label class="cb"><span class="box"></span>Other</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Dose Frequency Other, Specify</div>
+      <div class="meta">CM_CMDOSFRQO</div>
+      
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Route</div>
+      <div class="meta">CM_CMROUTE</div>
+      <div class="hint">Provide the route of administration for the  medication/therapy.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Intralesional</label><label class="cb"><span class="box"></span>Intramuscular</label><label class="cb"><span class="box"></span>Intraocular</label><label class="cb"><span class="box"></span>Intraperitoneal</label><label class="cb"><span class="box"></span>Nasal</label><label class="cb"><span class="box"></span>Oral</label><label class="cb"><span class="box"></span>Rectal</label><label class="cb"><span class="box"></span>Inhalation</label><label class="cb"><span class="box"></span>Subcutaneous</label><label class="cb"><span class="box"></span>Topical</label><label class="cb"><span class="box"></span>Transdermal</label><label class="cb"><span class="box"></span>Vaginal</label><label class="cb"><span class="box"></span>Other</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Other, Specify</div>
+      <div class="meta">CM_CMROUTEO</div>
+      
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Start Day</div>
+      <div class="meta">CM_CMSTDD</div>
+      
+      <div class="checks"><label class="cb"><span class="box"></span>01</label><label class="cb"><span class="box"></span>02</label><label class="cb"><span class="box"></span>03</label><label class="cb"><span class="box"></span>04</label><label class="cb"><span class="box"></span>05</label><label class="cb"><span class="box"></span>06</label><label class="cb"><span class="box"></span>07</label><label class="cb"><span class="box"></span>08</label><label class="cb"><span class="box"></span>09</label><label class="cb"><span class="box"></span>10</label><label class="cb"><span class="box"></span>11</label><label class="cb"><span class="box"></span>12</label><label class="cb"><span class="box"></span>13</label><label class="cb"><span class="box"></span>14</label><label class="cb"><span class="box"></span>15</label><label class="cb"><span class="box"></span>16</label><label class="cb"><span class="box"></span>17</label><label class="cb"><span class="box"></span>18</label><label class="cb"><span class="box"></span>19</label><label class="cb"><span class="box"></span>20</label><label class="cb"><span class="box"></span>21</label><label class="cb"><span class="box"></span>22</label><label class="cb"><span class="box"></span>23</label><label class="cb"><span class="box"></span>24</label><label class="cb"><span class="box"></span>25</label><label class="cb"><span class="box"></span>26</label><label class="cb"><span class="box"></span>27</label><label class="cb"><span class="box"></span>28</label><label class="cb"><span class="box"></span>29</label><label class="cb"><span class="box"></span>30</label><label class="cb"><span class="box"></span>31</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Start Month</div>
+      <div class="meta">CM_CMSTMO</div>
+      
+      <div class="checks"><label class="cb"><span class="box"></span>January</label><label class="cb"><span class="box"></span>February</label><label class="cb"><span class="box"></span>March</label><label class="cb"><span class="box"></span>April</label><label class="cb"><span class="box"></span>May</label><label class="cb"><span class="box"></span>June</label><label class="cb"><span class="box"></span>July</label><label class="cb"><span class="box"></span>August</label><label class="cb"><span class="box"></span>September</label><label class="cb"><span class="box"></span>October</label><label class="cb"><span class="box"></span>November</label><label class="cb"><span class="box"></span>December</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Start Year</div>
+      <div class="meta">CM_CMSTYY</div>
+      
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Ongoing</div>
+      <div class="meta">CM_CMONGO</div>
+      <div class="hint">Record the concomitant medication/therapy as ongoing if the subject has not stopped taking the concomitant medication/therapy at [the timepoint defined by the study]. If the concomitant medication is ongoing, the end date should be left blank.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>No</label><label class="cb"><span class="box"></span>Yes</label></div>
+    </div>
+    <div class="field">
+      <div class="label">End Date</div>
+      <div class="meta">CM_CMENDAT</div>
+      <div class="hint">Record the date the concomitant medication/therapy was stopped.</div>
+      <div class="line wide"></div>
+    </div>
+<footer>OpenClinica CDASH template · Not for regulatory submission · Field names shown for EDC mapping</footer>
+</body></html>

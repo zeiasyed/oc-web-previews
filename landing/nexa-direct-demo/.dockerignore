@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+.git/
+*.md
+run_*.ps1
+setup.ps1

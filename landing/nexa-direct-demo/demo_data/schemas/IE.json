@@ -1,0 +1,79 @@
+{
+  "form_id": "IE",
+  "title": "Case Report Form",
+  "source": "C:\\Users\\zeias\\OneDrive\\Documents\\NexaDirect Demo\\Visit\\IE Inclusion Exclusion Criteria.xls",
+  "fields": [
+    {
+      "name": "IE_IEYN",
+      "label": "Were all eligibility criteria met?",
+      "type": "select_one NY",
+      "required": false,
+      "choices": [
+        {
+          "code": "N",
+          "label": "No"
+        },
+        {
+          "code": "Y",
+          "label": "Yes"
+        }
+      ]
+    },
+    {
+      "name": "IE_IEDAT",
+      "label": "What was the date the eligibility criteria assessment was performed?",
+      "type": "date",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "IE_IECAT",
+      "label": "What was the category of the criterion?",
+      "type": "select_one CL_IECAT",
+      "required": false,
+      "choices": [
+        {
+          "code": "INCLUSION",
+          "label": "Inclusion"
+        },
+        {
+          "code": "EXCLUSION",
+          "label": "Exclusion"
+        }
+      ]
+    },
+    {
+      "name": "IE_IETESTCD",
+      "label": "What was the identifier of the inclusion criterion the subject did not meet or the exclusion criterion the subject met?",
+      "type": "select_multiple CL_IETESTCD",
+      "required": false,
+      "choices": [
+        {
+          "code": "INCL01",
+          "label": "Inclusion 1"
+        },
+        {
+          "code": "INCL02",
+          "label": "Inclusion 2"
+        },
+        {
+          "code": "INCL03",
+          "label": "Inclusion 3"
+        },
+        {
+          "code": "EXCL01",
+          "label": "Exclusion 1"
+        },
+        {
+          "code": "EXCL02",
+          "label": "Exclusion 2"
+        },
+        {
+          "code": "EXCL03",
+          "label": "Exclusion 3"
+        }
+      ]
+    }
+  ],
+  "form_code": "IE"
+}

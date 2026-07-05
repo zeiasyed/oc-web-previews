@@ -1,0 +1,18 @@
+{
+  "subject_id": "0103",
+  "form_code": "DS",
+  "fields": {
+    "DS_DSDECOD": {
+      "value": "SCREEN FAILURE",
+      "confidence": 0.82
+    },
+    "DS_DSTERM": {
+      "value": "Did not meet eligibility",
+      "confidence": 0.82
+    },
+    "DS_DSSTDAT": {
+      "value": "2026-06-08",
+      "confidence": 0.82
+    }
+  }
+}

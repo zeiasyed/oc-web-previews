@@ -1,0 +1,26 @@
+{
+  "subject_id": "0101",
+  "form_code": "CM",
+  "fields": {
+    "CM_CMSPID": {
+      "value": "1",
+      "confidence": 0.96
+    },
+    "CM_CMTRT": {
+      "value": "Ibuprofen",
+      "confidence": 0.96
+    },
+    "CM_CMINDC": {
+      "value": "Pain relief",
+      "confidence": 0.96
+    },
+    "CM_CMSTYY": {
+      "value": "2026-05-15",
+      "confidence": 0.96
+    },
+    "CM_CMONGO": {
+      "value": "N",
+      "confidence": 0.96
+    }
+  }
+}

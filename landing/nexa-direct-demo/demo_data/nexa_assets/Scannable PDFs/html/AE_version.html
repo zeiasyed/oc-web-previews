@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<title>form_id (version)</title>
+<style>
+  @page { size: letter; margin: 0.55in; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 10.5pt; color: #111; }
+  header { border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 14px; }
+  h1 { font-size: 16pt; margin: 0 0 4px; }
+  .sub { color: #444; font-size: 9pt; }
+  .field { margin: 0 0 11px; page-break-inside: avoid; }
+  .label { font-weight: 700; margin-bottom: 2px; }
+  .meta { font-size: 8pt; color: #666; margin-bottom: 3px; }
+  .hint { font-size: 8.5pt; color: #555; margin-bottom: 4px; max-width: 95%; }
+  .line { border-bottom: 1px solid #333; height: 18px; }
+  .line.wide { width: 100%; }
+  .checks { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 2px; }
+  .cb { display: flex; align-items: center; gap: 5px; font-size: 9.5pt; }
+  .box { width: 11px; height: 11px; border: 1px solid #333; display: inline-block; flex-shrink: 0; }
+  .repeat-banner { background: #eee; border: 1px solid #999; padding: 6px 8px; font-size: 9pt; font-weight: 700; margin: 10px 0; }
+  footer { margin-top: 18px; font-size: 8pt; color: #666; border-top: 1px solid #ccc; padding-top: 6px; }
+</style></head>
+<body>
+<header>
+  <h1>form_id</h1>
+  <div class="sub">CDASH-style CRF · Form ID: version · Generated from OpenClinica template for NexaDirect demo</div>
+  <div class="sub">Subject ID: _________________________ &nbsp;&nbsp; Site ID: _________________________ &nbsp;&nbsp; Visit: _________________________</div>
+</header>
+
+    <div class="field">
+      <div class="label">AE Number</div>
+      <div class="meta">AE_AESPID</div>
+      <div class="hint">AE Sponsor-Defined Identifier</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">What is the adverse event term?</div>
+      <div class="meta">AE_AETERM</div>
+      <div class="hint">Record only one diagnosis, sign, or symptom per line. Using accepted medical terminology, enter the diagnosis (if known); otherwise, enter a sign or symptom.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Start Date</div>
+      <div class="meta">AE_AESTDAT</div>
+      <div class="hint">Record the start date of the AE using this format (YYYY-MM-DD). </div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Ongoing</div>
+      <div class="meta">AE_AEONGO</div>
+      <div class="hint">Indicate if the adverse event has not resolved at the time of data collection</div>
+      <div class="checks"><label class="cb"><span class="box"></span>No</label><label class="cb"><span class="box"></span>Yes</label></div>
+    </div>
+    <div class="field">
+      <div class="label">End Date</div>
+      <div class="meta">AE_AEENDAT</div>
+      <div class="hint">Record the date that the AE resolved/ended using this format (YYYY-MM-DD).</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Severity</div>
+      <div class="meta">AE_AESEV</div>
+      <div class="hint">The reporting physician/healthcare professional will assess the severity of the event using the sponsor-defined categories. Note: Severity is not equivalent to seriousness.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Mild</label><label class="cb"><span class="box"></span>Moderate</label><label class="cb"><span class="box"></span>Severe</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Was the adverse event serious?</div>
+      <div class="meta">AE_AESER</div>
+      <div class="hint">Assess if an adverse event should be classified as serious based on the serious criteria defined in the protocol. </div>
+      <div class="checks"><label class="cb"><span class="box"></span>No</label><label class="cb"><span class="box"></span>Yes</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Did the adverse event result in death?</div>
+      <div class="meta">AE_AESDTH</div>
+      <div class="hint">Record whether the serious adverse event resulted in death. </div>
+      <div class="checks"><label class="cb"><span class="box"></span>No</label><label class="cb"><span class="box"></span>Yes</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Was the adverse event life threatening?</div>
+      <div class="meta">AE_AESLIFE</div>
+      <div class="hint">Record whether the serious adverse event is life threatening. </div>
+      <div class="checks"><label class="cb"><span class="box"></span>No</label><label class="cb"><span class="box"></span>Yes</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Did the adverse event result in initial or prolonged hospitalization for the subject?</div>
+      <div class="meta">AE_AESHOSP</div>
+      <div class="hint">Record whether the serious adverse event resulted in an initial or prolonged hospitalization. </div>
+      <div class="checks"><label class="cb"><span class="box"></span>No</label><label class="cb"><span class="box"></span>Yes</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Did the adverse event result in disability or permanent damage?</div>
+      <div class="meta">AE_AESDISAB</div>
+      <div class="hint">Record whether the SAE resulted in a persistent or significant disability or incapacity.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>No</label><label class="cb"><span class="box"></span>Yes</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Was the adverse event associated with a congenital anomaly or birth defect?</div>
+      <div class="meta">AE_AESCONG</div>
+      <div class="hint">Record whether the SAE was associated with congenital anomaly or birth defect.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>No</label><label class="cb"><span class="box"></span>Yes</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Was the adverse event a medically important event not covered by other serious criteria?</div>
+      <div class="meta">AE_AESMIE</div>
+      <div class="hint">Record whether the SAE is an important medical event, defined by the protocol or Investigator Brochure.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>No</label><label class="cb"><span class="box"></span>Yes</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Relationship to Study Treatment</div>
+      <div class="meta">AE_AEREL</div>
+      <div class="hint">Indicate if the cause of the AE is related to the study treatment and cannot be reasonably explained by other factors.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>No</label><label class="cb"><span class="box"></span>Yes</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Action taken with Study Treatment</div>
+      <div class="meta">AE_AEACN</div>
+      <div class="hint">Record changes made to the study treatment resulting from the AE.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Dose Increased</label><label class="cb"><span class="box"></span>Dose Not Changed</label><label class="cb"><span class="box"></span>Dose Rate Reduced</label><label class="cb"><span class="box"></span>Dose Reduced</label><label class="cb"><span class="box"></span>Drug Interrupted</label><label class="cb"><span class="box"></span>Drug Withdrawn</label><label class="cb"><span class="box"></span>Not Applicable</label><label class="cb"><span class="box"></span>Unknown</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Other Action Taken</div>
+      <div class="meta">AE_AEACNOTH</div>
+      
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Outcome</div>
+      <div class="meta">AE_AEOUT</div>
+      <div class="hint">Record the appropriate outcome of the event in relation to the subject&#x27;s status.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Fatal</label><label class="cb"><span class="box"></span>Not Recovered or Not Resolved</label><label class="cb"><span class="box"></span>Recovered or Resolved</label><label class="cb"><span class="box"></span>Recovered or Resolved with Sequelae</label><label class="cb"><span class="box"></span>Recovering or Resolving</label><label class="cb"><span class="box"></span>Unknown</label></div>
+    </div>
+<footer>OpenClinica CDASH template · Not for regulatory submission · Field names shown for EDC mapping</footer>
+</body></html>

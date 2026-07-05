@@ -1,0 +1,59 @@
+{
+  "form_id": "MH",
+  "title": "Medical History - Repeating",
+  "source": "C:\\Users\\zeias\\OneDrive\\Documents\\NexaDirect Demo\\Common Repeating\\MH Medical History.xlsx",
+  "fields": [
+    {
+      "name": "MH_MHSPID",
+      "label": "MH Number",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "MH_MHDAT",
+      "label": "Collection Date",
+      "type": "date",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "MH_MHTERM",
+      "label": "Medical History Term",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "MH_MHSTDAT",
+      "label": "Start Date",
+      "type": "date",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "MH_MHONGO",
+      "label": "Ongoing",
+      "type": "select_one NY",
+      "required": false,
+      "choices": [
+        {
+          "code": "N",
+          "label": "No"
+        },
+        {
+          "code": "Y",
+          "label": "Yes"
+        }
+      ]
+    },
+    {
+      "name": "MH_MHENDAT",
+      "label": "End Date",
+      "type": "date",
+      "required": false,
+      "choices": []
+    }
+  ],
+  "form_code": "MH"
+}

@@ -1,0 +1,27 @@
+{
+  "subject_id": "0102",
+  "form_code": "AE",
+  "fields": {
+    "AE_AESPID": {
+      "value": "1",
+      "confidence": 0.88
+    },
+    "AE_AETERM": {
+      "value": "Nausea",
+      "confidence": 0.68,
+      "force_review": true
+    },
+    "AE_AESTDAT": {
+      "value": "2026-06-03",
+      "confidence": 0.88
+    },
+    "AE_AEONGO": {
+      "value": "Y",
+      "confidence": 0.88
+    },
+    "AE_AESEV": {
+      "value": "MODERATE",
+      "confidence": 0.88
+    }
+  }
+}

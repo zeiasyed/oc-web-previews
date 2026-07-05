@@ -1,0 +1,26 @@
+{
+  "subject_id": "0103",
+  "form_code": "CM",
+  "fields": {
+    "CM_CMSPID": {
+      "value": "1",
+      "confidence": 0.82
+    },
+    "CM_CMTRT": {
+      "value": "Multivitamin",
+      "confidence": 0.82
+    },
+    "CM_CMINDC": {
+      "value": "Supplement",
+      "confidence": 0.82
+    },
+    "CM_CMSTYY": {
+      "value": "2026-01-10",
+      "confidence": 0.82
+    },
+    "CM_CMONGO": {
+      "value": "Y",
+      "confidence": 0.82
+    }
+  }
+}

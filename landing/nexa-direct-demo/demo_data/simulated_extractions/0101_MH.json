@@ -1,0 +1,22 @@
+{
+  "subject_id": "0101",
+  "form_code": "MH",
+  "fields": {
+    "MH_MHSPID": {
+      "value": "1",
+      "confidence": 0.96
+    },
+    "MH_MHTERM": {
+      "value": "Seasonal allergies",
+      "confidence": 0.96
+    },
+    "MH_MHSTDAT": {
+      "value": "2010-03-01",
+      "confidence": 0.96
+    },
+    "MH_MHONGO": {
+      "value": "Y",
+      "confidence": 0.96
+    }
+  }
+}

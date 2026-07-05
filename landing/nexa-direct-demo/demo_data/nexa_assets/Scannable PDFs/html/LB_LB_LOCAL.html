@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<title>Case Report Form (LB_LOCAL)</title>
+<style>
+  @page { size: letter; margin: 0.55in; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 10.5pt; color: #111; }
+  header { border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 14px; }
+  h1 { font-size: 16pt; margin: 0 0 4px; }
+  .sub { color: #444; font-size: 9pt; }
+  .field { margin: 0 0 11px; page-break-inside: avoid; }
+  .label { font-weight: 700; margin-bottom: 2px; }
+  .meta { font-size: 8pt; color: #666; margin-bottom: 3px; }
+  .hint { font-size: 8.5pt; color: #555; margin-bottom: 4px; max-width: 95%; }
+  .line { border-bottom: 1px solid #333; height: 18px; }
+  .line.wide { width: 100%; }
+  .checks { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 2px; }
+  .cb { display: flex; align-items: center; gap: 5px; font-size: 9.5pt; }
+  .box { width: 11px; height: 11px; border: 1px solid #333; display: inline-block; flex-shrink: 0; }
+  .repeat-banner { background: #eee; border: 1px solid #999; padding: 6px 8px; font-size: 9pt; font-weight: 700; margin: 10px 0; }
+  footer { margin-top: 18px; font-size: 8pt; color: #666; border-top: 1px solid #ccc; padding-top: 6px; }
+</style></head>
+<body>
+<header>
+  <h1>Case Report Form</h1>
+  <div class="sub">CDASH-style CRF · Form ID: LB_LOCAL · Generated from OpenClinica template for NexaDirect demo</div>
+  <div class="sub">Subject ID: _________________________ &nbsp;&nbsp; Site ID: _________________________ &nbsp;&nbsp; Visit: _________________________</div>
+</header>
+
+    <div class="field">
+      <div class="label">Laboratory Name</div>
+      <div class="meta">LB_LOCAL_LBNAM</div>
+      <div class="hint">Record the laboratory name.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Was the sample collected?</div>
+      <div class="meta">LB_LOCAL_LBPERF</div>
+      <div class="hint">Indicate whether or not lab specimen was collected or measurement performed.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>No</label><label class="cb"><span class="box"></span>Yes</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Collection Date</div>
+      <div class="meta">LB_LOCAL_LBDAT</div>
+      <div class="hint">Record the date when specimen collection was done.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Collection Time</div>
+      <div class="meta">LB_LOCAL_LBTIM</div>
+      <div class="hint">Record time of collection (as complete as possible).</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Was the subject fasting?</div>
+      <div class="meta">LB_LOCAL_LBFAST</div>
+      <div class="hint">Record whether the subject was fasting prior to the test being performed.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>No</label><label class="cb"><span class="box"></span>Yes</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Alkaline Phosphatase</div>
+      <div class="meta">LB_LOCAL_ALP_LBORRES</div>
+      <div class="hint">Record the laboratory test result.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Alkaline Phosphatase Units</div>
+      <div class="meta">LB_LOCAL_ALP_LBORRESU</div>
+      <div class="hint">Record or select the original unit in which these data were collected, if not pre-printed on CRF.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>IU/L</label><label class="cb"><span class="box"></span>U/L</label><label class="cb"><span class="box"></span>ukat/L</label><label class="cb"><span class="box"></span>umol/s/L</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Alkaline Phosphatase Normal Range Lower Limit</div>
+      <div class="meta">LB_LOCAL_ALP_LBORNRLO</div>
+      <div class="hint">Record the lower limit of the reference range of the lab test.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Alkaline Phosphatase Normal Range Upper Limit</div>
+      <div class="meta">LB_LOCAL_ALP_LBORNRHI</div>
+      <div class="hint">Record the upper limit of the reference range of the lab test.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Was the Alkaline Phosphatase result clinically significant?</div>
+      <div class="meta">LB_LOCAL_ALP_LBCLSIG</div>
+      <div class="hint">Record whether laboratory test result was clinically significant.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>No</label><label class="cb"><span class="box"></span>Yes</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Calcium</div>
+      <div class="meta">LB_LOCAL_CA_LBORRES</div>
+      <div class="hint">Record the laboratory test result.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Calcium Units</div>
+      <div class="meta">LB_LOCAL_CA_LBORRESU</div>
+      <div class="hint">Record or select the original unit in which these data were collected, if not pre-printed on CRF.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>mg/dL</label><label class="cb"><span class="box"></span>mEq/L</label><label class="cb"><span class="box"></span>mg/L</label><label class="cb"><span class="box"></span>mmol/L</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Calcium Normal Range Lower Limit</div>
+      <div class="meta">LB_LOCAL_CA_LBORNRLO</div>
+      <div class="hint">Record the lower limit of the reference range of the lab test.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Calcium Normal Range Upper Limit</div>
+      <div class="meta">LB_LOCAL_CA_LBORNRHI</div>
+      <div class="hint">Record the upper limit of the reference range of the lab test.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Was the Calcium result clinically significant?</div>
+      <div class="meta">LB_LOCAL_CA_LBCLSIG</div>
+      <div class="hint">Record whether laboratory test result was clinically significant.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>No</label><label class="cb"><span class="box"></span>Yes</label></div>
+    </div>
+<footer>OpenClinica CDASH template · Not for regulatory submission · Field names shown for EDC mapping</footer>
+</body></html>

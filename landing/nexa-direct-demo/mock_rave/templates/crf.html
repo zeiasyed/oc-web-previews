@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>{{ form }} — Subject {{ subject }} — Medidata Rave</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='rave.css') }}"/>
+<style>
+.crf-table tr.synced td.field-value { background: #ecfdf5; color: #047857; font-weight: 600; }
+.crf-table tr.synced td.field-label { border-left: 3px solid #10b981; }
+</style>
+</head>
+<body>
+{% include 'rave_header.html' %}
+{% include 'rave_nav.html' %}
+{% include 'rave_tabs.html' %}
+<div class="content layout">
+  <aside class="nav">
+    <h3>Forms — {{ visit }}</h3>
+    {% for i in range(form_codes|length) %}
+    <a class="nav-form {{ 'active' if form_codes[i] == form_code else '' }}"
+       href="{{ url_for('crf', subject=subject, visit=visit, form=form_codes[i]) }}">{{ visit_forms[i] }}</a>
+    {% endfor %}
+  </aside>
+  <section class="crf-panel">
+    <h2 class="page-title">{{ form }}</h2>
+    <p style="font-size:.82rem;color:#64748b;margin-bottom:12px">CDASH fields synced from NexaDirect appear highlighted in green.</p>
+    <table class="crf-table">
+      <thead><tr><th>Field</th><th>Value</th></tr></thead>
+      <tbody>
+        {% if fields %}
+          {% for row in fields %}
+          <tr class="{{ 'synced' if row.synced else '' }}">
+            <td class="field-label">{{ row.label }}</td>
+            <td class="field-value">{{ row.value or '—' }}</td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td colspan="2" class="empty-msg">No data synced yet. Process Scanner Inbox in NexaDirect console.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </section>
+</div>
+{% include 'rave_footer.html' %}
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<title>Medical History - Repeating (MH)</title>
+<style>
+  @page { size: letter; margin: 0.55in; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 10.5pt; color: #111; }
+  header { border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 14px; }
+  h1 { font-size: 16pt; margin: 0 0 4px; }
+  .sub { color: #444; font-size: 9pt; }
+  .field { margin: 0 0 11px; page-break-inside: avoid; }
+  .label { font-weight: 700; margin-bottom: 2px; }
+  .meta { font-size: 8pt; color: #666; margin-bottom: 3px; }
+  .hint { font-size: 8.5pt; color: #555; margin-bottom: 4px; max-width: 95%; }
+  .line { border-bottom: 1px solid #333; height: 18px; }
+  .line.wide { width: 100%; }
+  .checks { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 2px; }
+  .cb { display: flex; align-items: center; gap: 5px; font-size: 9.5pt; }
+  .box { width: 11px; height: 11px; border: 1px solid #333; display: inline-block; flex-shrink: 0; }
+  .repeat-banner { background: #eee; border: 1px solid #999; padding: 6px 8px; font-size: 9pt; font-weight: 700; margin: 10px 0; }
+  footer { margin-top: 18px; font-size: 8pt; color: #666; border-top: 1px solid #ccc; padding-top: 6px; }
+</style></head>
+<body>
+<header>
+  <h1>Medical History - Repeating</h1>
+  <div class="sub">CDASH-style CRF · Form ID: MH · Generated from OpenClinica template for NexaDirect demo</div>
+  <div class="sub">Subject ID: _________________________ &nbsp;&nbsp; Site ID: _________________________ &nbsp;&nbsp; Visit: _________________________</div>
+</header>
+
+    <div class="field">
+      <div class="label">MH Number</div>
+      <div class="meta">MH_MHSPID</div>
+      
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Collection Date</div>
+      <div class="meta">MH_MHDAT</div>
+      <div class="hint">Record the date on which the Medical History was collected.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Medical History Term</div>
+      <div class="meta">MH_MHTERM</div>
+      <div class="hint">Record all relevant medical conditions or events, as defined in the protocol. Record only 1 medical condition or event per line. Ensure that the medical conditions or events listed on the Medical History page do not meet any of the exclusion criteria.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Start Date</div>
+      <div class="meta">MH_MHSTDAT</div>
+      <div class="hint">Record the start date of the medical event or condition.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Ongoing</div>
+      <div class="meta">MH_MHONGO</div>
+      <div class="hint">Record the medical condition or event as ongoing (&quot;Y&quot;) if it has not ended at the time of data collection.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>No</label><label class="cb"><span class="box"></span>Yes</label></div>
+    </div>
+    <div class="field">
+      <div class="label">End Date</div>
+      <div class="meta">MH_MHENDAT</div>
+      <div class="hint">Record the end date of the medical event or condition.</div>
+      <div class="line wide"></div>
+    </div>
+<footer>OpenClinica CDASH template · Not for regulatory submission · Field names shown for EDC mapping</footer>
+</body></html>

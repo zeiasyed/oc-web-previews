@@ -1,0 +1,22 @@
+{
+  "subject_id": "0101",
+  "form_code": "IE",
+  "fields": {
+    "IE_IEYN": {
+      "value": "Y",
+      "confidence": 0.96
+    },
+    "IE_IEDAT": {
+      "value": "2026-06-10",
+      "confidence": 0.96
+    },
+    "IE_IECAT": {
+      "value": "INCLUSION",
+      "confidence": 0.96
+    },
+    "IE_IETESTCD": {
+      "value": "INCL01",
+      "confidence": 0.96
+    }
+  }
+}

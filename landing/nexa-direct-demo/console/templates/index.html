@@ -1,0 +1,872 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>NexaDirect — Scan manual source forms to EDC</title>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#071528; --navy-mid:#0c2547; --teal:#0a9e8f; --teal-dark:#067a6f;
+  --teal-light:#12c4b3; --teal-soft:#b2f5ea; --bg:#dce6f2; --surface:#fff;
+  --line:#c5d3e3; --muted:#475569; --green:#047857; --green-soft:#d1fae5;
+  --amber:#b45309; --amber-soft:#fef3c7; --radius:14px; --shadow:0 4px 24px rgb(7 21 40 / 12%);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,sans-serif;color:var(--navy);background:var(--bg)}
+header{background:linear-gradient(120deg,#05101f,var(--navy),#103a6b);color:#fff;padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--teal-dark);flex-shrink:0}
+.brand-row{display:flex;align-items:center;gap:12px}
+.header-right{display:flex;align-items:center;gap:14px;height:100%}
+.brand-mark{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#2dd4bf,var(--teal-dark));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.72rem}
+.brand-title{font-size:1.15rem;font-weight:700}
+.brand-tag{font-size:.72rem;color:#5eead4;margin-left:6px}
+.meta{font-size:.75rem;color:rgb(255 255 255 / 75%);margin-top:2px}
+.status-pill{font-size:.75rem;padding:7px 16px;border-radius:999px;background:rgb(255 255 255 / 12%);border:1px solid rgb(255 255 255 / 22%)}
+.status-pill.running{border-color:rgb(45 212 191 / 45%);background:rgb(10 158 143 / 22%);color:#ccfbf1}
+.status-pill.done{background:rgb(4 120 87 / 35%);border-color:#34d399;color:#ecfdf5}
+main{display:grid;grid-template-columns:1fr 340px;height:calc(100vh - 64px);min-height:0;overflow:hidden}
+.left{padding:20px 24px 48px;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:16px;min-height:0;-webkit-overflow-scrolling:touch}
+.right{background:var(--navy);color:#e2e8f0;display:flex;flex-direction:column;border-left:1px solid rgb(255 255 255 / 8%);min-height:0;overflow:hidden}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.card-pad{padding:18px 20px}
+.card h2{font-size:.92rem;font-weight:700;margin-bottom:10px}
+.intro{border-left:4px solid var(--teal);background:linear-gradient(135deg,#fff,#f0fdfa)}
+.intro p,.intro ol{font-size:.85rem;color:#334155;line-height:1.55;margin:0}
+.intro ol{padding-left:1.25rem;margin-top:4px}
+.intro li{margin-bottom:4px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.btn{padding:10px 16px;border-radius:10px;border:none;font-family:inherit;font-weight:600;font-size:.84rem;cursor:pointer}
+.btn-primary{background:linear-gradient(135deg,var(--teal-light),var(--teal-dark));color:#fff;box-shadow:0 4px 14px rgb(10 158 143 / 35%)}
+.btn-secondary{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.progress-wrap{margin-top:10px;display:none}
+.progress-wrap.visible{display:block}
+.progress-bar{height:8px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--teal-light));transition:width .3s}
+.progress-meta{font-size:.75rem;color:var(--muted);margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:.8rem}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:#f8fafc}
+.status-badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.7rem;font-weight:600}
+.status-new{background:#e0f2fe;color:#0369a1}
+.status-processing{background:#fef3c7;color:#b45309}
+.status-done{background:var(--green-soft);color:var(--green)}
+.status-flagged{background:#fee2e2;color:#b91c1c}
+.log-head{padding:14px 16px;border-bottom:1px solid rgb(255 255 255 / 10%);font-size:.82rem;font-weight:600}
+.log-body{flex:1;overflow-y:auto;padding:12px 14px;font-family:"JetBrains Mono",monospace;font-size:.72rem;line-height:1.55}
+.log-line{margin-bottom:4px;color:#cbd5e1}
+.review-empty{font-size:.82rem;color:var(--muted);padding:8px 0}
+.review-scroll{overflow:auto;max-height:min(52vh,560px);margin-top:4px;border:1px solid var(--line);border-radius:10px}
+.inbox-scroll{overflow:auto;max-height:min(28vh,280px);margin-top:4px;border:1px solid var(--line);border-radius:10px}
+.inbox-card-flash{animation:inbox-flash 1.2s ease}
+@keyframes inbox-flash{0%,100%{box-shadow:var(--shadow)}40%{box-shadow:0 0 0 3px rgb(10 158 143 / 45%),var(--shadow)}}
+.inbox-hint{font-size:.76rem;color:var(--muted);margin:0 0 10px;line-height:1.45}
+.inbox-link{background:none;border:none;padding:0;font:inherit;color:var(--teal-dark);font-weight:600;cursor:pointer;text-decoration:underline;text-decoration-color:rgb(10 158 143 / 45%);text-underline-offset:2px}
+.inbox-link:hover{color:var(--teal)}
+.pdf-modal-backdrop{cursor:pointer}
+.pdf-modal-panel{cursor:default}
+.review-scroll table{margin:0}
+.review-row td input{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px;font-size:.8rem}
+.review-row .conf{color:var(--amber);font-weight:600}
+.review-row.row-staged td{background:#f0fdf4}
+.review-row.row-staged td input{background:#f0fdf4;border-color:#86efac;color:var(--green)}
+.review-row.row-saved td{background:#ecfdf5}
+.review-row.row-saved td input{background:#ecfdf5;border-color:#bbf7d0;color:var(--navy);font-weight:600}
+.saved-label{font-size:.72rem;font-weight:600;color:var(--green)}
+.btn-sm{padding:5px 10px;font-size:.75rem;border-radius:6px;border:none;background:var(--teal);color:#fff;cursor:pointer}
+.btn-view{background:#fff;color:var(--navy-mid);border:1px solid var(--line);margin-right:4px}
+.btn-view:hover{background:#f0fdfa;border-color:var(--teal)}
+.btn-undo{background:#fff;color:#b91c1c;border:1px solid #fca5a5;font-size:.7rem;padding:4px 8px;border-radius:5px;cursor:pointer}
+.btn-undo:hover{background:#fef2f2;border-color:#f87171}
+.review-actions{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.issue{font-size:.7rem;color:#b91c1c}
+.review-banner{font-size:.78rem;color:#b45309;background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:8px 12px;text-align:center;line-height:1.4}
+.review-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px}
+.review-foot-top{margin-top:0;margin-bottom:10px}
+.review-foot .review-banner{flex:1;text-align:left}
+.review-save-btn{padding:9px 20px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--teal-light),var(--teal-dark));color:#fff;font-weight:600;font-size:.84rem;cursor:pointer;white-space:nowrap;box-shadow:0 4px 14px rgb(10 158 143 / 35%)}
+.review-save-btn:disabled{opacity:.5;cursor:not-allowed}
+.review-saved-msg{color:var(--green);font-weight:600;font-size:.78rem}
+.staged-label{font-size:.7rem;font-weight:600;color:var(--green)}
+.pdf-modal{position:fixed;inset:0;z-index:1000;background:rgb(7 21 40 / 72%);display:flex;align-items:center;justify-content:center;padding:24px}
+.pdf-modal.hidden{display:none}
+.pdf-modal-panel{background:#fff;border-radius:var(--radius);box-shadow:0 24px 64px rgb(7 21 40 / 35%);width:min(920px,96vw);height:min(88vh,900px);display:flex;flex-direction:column;overflow:hidden}
+.pdf-modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:14px 18px;border-bottom:1px solid var(--line);background:linear-gradient(135deg,#f8fafc,#f0fdfa);flex-shrink:0}
+.pdf-modal-head strong{font-size:.95rem;color:var(--navy)}
+.pdf-modal-meta{font-size:.78rem;color:var(--muted);margin-top:4px;line-height:1.4}
+.pdf-modal-actions{display:flex;gap:8px;flex-shrink:0}
+.pdf-modal-actions .btn{margin:0;padding:8px 14px;font-size:.8rem}
+#pdf-frame{flex:1;width:100%;border:none;background:#525659}
+.config-row{display:grid;grid-template-columns:1fr;gap:14px}
+@media (max-width:720px){.config-row{grid-template-columns:1fr}}
+.field-label{font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--navy-mid);margin-bottom:8px}
+select{width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:10px;font-size:.92rem;font-family:inherit;color:var(--navy);background:#fff;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+select:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgb(10 158 143 / 28%)}
+select:disabled{opacity:.65;background:#f8fafc;cursor:not-allowed}
+input[type=text],input[type=number]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:.88rem;font-family:inherit;color:var(--navy)}
+input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgb(10 158 143 / 28%)}
+.setup-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.setup-tab{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:.78rem;font-weight:600;cursor:pointer;color:var(--muted)}
+.setup-tab.on{background:linear-gradient(135deg,var(--teal-light),var(--teal-dark));color:#fff;border-color:transparent}
+.setup-pane{display:none}
+.setup-pane.on{display:block}
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:900px){.setup-grid{grid-template-columns:1fr}}
+.setup-hint{font-size:.76rem;color:var(--muted);margin-top:4px;line-height:1.4}
+.setup-msg{font-size:.8rem;margin-top:10px;padding:8px 12px;border-radius:8px;display:none}
+.setup-msg.ok{display:block;background:var(--green-soft);color:var(--green)}
+.setup-msg.warn{display:block;background:var(--amber-soft);color:var(--amber)}
+.setup-msg.err{display:block;background:#fee2e2;color:#b91c1c}
+.form-setup-scroll{overflow:auto;max-height:min(42vh,480px);margin-top:8px;border:1px solid var(--line);border-radius:10px}
+.form-setup-scroll table{margin:0}
+.form-fields{display:none;background:#f8fafc}
+.form-fields.open{display:table-row}
+.form-fields td{padding:12px 10px}
+.field-grid{display:grid;grid-template-columns:140px 1fr;gap:8px 12px;align-items:center;font-size:.78rem}
+.field-grid label{color:var(--muted);font-size:.72rem}
+.import-row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.import-row input[type=file]{font-size:.78rem;max-width:100%}
+.setup-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.setup-head h2{margin:0}
+.toggle-setup{font-size:.78rem;color:var(--teal-dark);background:none;border:none;cursor:pointer;font-weight:600;text-decoration:underline;text-underline-offset:2px}
+.setup-body{display:none}
+.setup-body.open{display:block}
+.cb-inline{display:flex;align-items:center;gap:6px;font-size:.8rem}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand-row">
+    <div class="brand-mark">ND</div>
+    <div>
+      <div class="brand-title">NexaDirect <span class="brand-tag">Scan manual source forms to EDC</span></div>
+      <div class="meta" id="header-study-meta">{{ study_id }} · {{ study_name }} · build {{ build }}</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div id="status-pill" class="status-pill">Idle</div>
+  </div>
+</header>
+<main>
+  <div class="left">
+    <div class="card card-pad config-card">
+      <div class="config-row">
+        <div>
+          <div class="field-label">Study</div>
+          <select id="study">
+            {% for s in studies %}
+            <option value="{{ s.id }}"{% if s.get('disabled') %} disabled{% endif %}{% if s.id == study_id %} selected{% endif %}>{{ s.label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-pad" id="setup-card">
+      <div class="setup-head">
+        <h2>Study Setup</h2>
+        <button type="button" class="toggle-setup" id="btn-toggle-setup">Show settings</button>
+      </div>
+      <div class="setup-body" id="setup-body">
+        <div class="setup-tabs" role="tablist">
+          <button type="button" class="setup-tab on" data-setup-tab="site">Site &amp; inbox</button>
+          <button type="button" class="setup-tab" data-setup-tab="forms">Forms &amp; fields</button>
+        </div>
+
+        <div class="setup-pane on" id="setup-site">
+          <div class="setup-grid">
+            <div>
+              <div class="field-label">Study name</div>
+              <input type="text" id="cfg-name" placeholder="Protocol title">
+            </div>
+            <div>
+              <div class="field-label">Default visit</div>
+              <input type="text" id="cfg-visit" placeholder="Screening">
+            </div>
+            <div>
+              <div class="field-label">Site ID</div>
+              <input type="text" id="cfg-site-id" placeholder="001">
+            </div>
+            <div>
+              <div class="field-label">Site name</div>
+              <input type="text" id="cfg-site-name" value="{{ demo_site_name }}" readonly title="Demo site — fixed for Northgate Hospital">
+            </div>
+            <div style="grid-column:1/-1">
+              <div class="field-label">Scanner inbox folder</div>
+              <input type="text" id="cfg-inbox" placeholder="C:\ClinicalData\ACT\Scanner Inbox">
+              <p class="setup-hint">Folder where the scanner saves PDFs. NexaDirect watches this path for new files.</p>
+            </div>
+            <div style="grid-column:1/-1">
+              <div class="field-label">Display path (optional)</div>
+              <input type="text" id="cfg-display-inbox" placeholder="Shown in UI only — leave blank to use inbox path">
+            </div>
+            <div>
+              <div class="field-label">Auto-write confidence threshold</div>
+              <input type="number" id="cfg-threshold" min="0.1" max="1" step="0.01" value="0.85">
+              <p class="setup-hint">Fields at or above this score auto-write to EDC; lower scores go to review.</p>
+            </div>
+          </div>
+          <div class="actions" style="margin-top:14px">
+            <button type="button" class="btn btn-primary" id="btn-save-site">Save site settings</button>
+            <button type="button" class="btn btn-secondary" id="btn-test-inbox">Test inbox folder</button>
+          </div>
+          <div class="setup-msg" id="site-setup-msg"></div>
+        </div>
+
+        <div class="setup-pane" id="setup-forms">
+          <p class="setup-hint" style="margin-bottom:8px">Enable forms for this study, edit display labels, and map PDF filename suffixes (<code>0102_DM.pdf</code> → file code <strong>DM</strong>).</p>
+          <div class="form-setup-scroll">
+            <table id="forms-setup-table">
+              <thead><tr><th>On</th><th>Code</th><th>Title</th><th>File code</th><th>Fields</th><th></th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="import-row">
+            <div>
+              <div class="field-label">Import CDASH form (Excel)</div>
+              <input type="file" id="import-excel" accept=".xlsx,.xls">
+            </div>
+            <div>
+              <div class="field-label">Form code</div>
+              <input type="text" id="import-form-code" placeholder="DM" style="width:88px">
+            </div>
+            <div>
+              <div class="field-label">File code</div>
+              <input type="text" id="import-file-code" placeholder="DM" style="width:120px">
+            </div>
+            <button type="button" class="btn btn-secondary" id="btn-import-form">Import</button>
+          </div>
+          <div class="setup-msg" id="forms-setup-msg"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-pad intro">
+      <h2>EDC Write Workflow</h2>
+      <ol>
+        <li>Open <strong>Scanned Inbox Folder</strong> or click a filename in the inbox list to preview source PDFs.</li>
+        <li>Click <strong>Write to EDC</strong> to extract fields, validate confidence, and auto-write high-confidence values to EDC.</li>
+        <li>Resolve any flagged fields in the <strong>Review queue</strong> below (view scan, edit, approve).</li>
+        <li>Click <strong>Open EDC to verify</strong> to confirm CDASH data in mock Rave.</li>
+      </ol>
+      <div class="actions">
+        <button class="btn btn-secondary" id="btn-reveal" title="Opens the Scanner Inbox folder in Windows Explorer">Scanned Inbox Folder</button>
+        <button class="btn btn-primary" id="btn-process">Write to EDC</button>
+        <button class="btn btn-secondary" id="btn-edc">Open EDC to verify</button>
+        <button class="btn btn-secondary" id="btn-reset">Reset</button>
+      </div>
+      <div class="progress-wrap" id="progress-wrap">
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+        <div class="progress-meta" id="progress-meta">Starting…</div>
+      </div>
+    </div>
+
+    <div class="card card-pad" id="inbox-card">
+      <h2>Scanner Inbox <span id="inbox-count" style="font-weight:500;color:var(--muted)"></span></h2>
+      <p class="inbox-hint">Click a filename below to preview the scan here — stay in NexaDirect without opening PDFs in Explorer.</p>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:10px" id="inbox-path-label">{{ inbox_path }}</p>
+      <div class="inbox-scroll">
+        <table id="inbox-table">
+          <thead><tr><th>File</th><th>Subject</th><th>Form</th><th>Status</th><th>Auto</th><th>Flagged</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card card-pad">
+      <h2>Review queue</h2>
+      <div id="review-empty" class="review-empty">No flagged fields — run Write to EDC first.</div>
+      <div id="review-head" class="review-foot review-foot-top" style="display:none">
+        <div class="review-banner" id="review-banner-top">Changes are staged only — values will <strong>not</strong> be written to EDC until you click Save to EDC.</div>
+        <button type="button" class="review-save-btn" id="review-save-btn-top" disabled>Save to EDC</button>
+      </div>
+      <div class="review-scroll" id="review-scroll" style="display:none">
+        <table id="review-table" style="display:none">
+          <thead><tr><th>Subject</th><th>Form</th><th>Field</th><th>Value</th><th>Conf.</th><th>Issue</th><th>Actions</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div id="review-foot" class="review-foot" style="display:none">
+        <div class="review-banner" id="review-banner-bottom">Changes are staged only — values will <strong>not</strong> be written to EDC until you click Save to EDC.</div>
+        <button type="button" class="review-save-btn" id="review-save-btn" disabled>Save to EDC</button>
+      </div>
+    </div>
+  </div>
+
+  <aside class="right">
+    <div class="log-head">Activity log</div>
+    <div class="log-body" id="log"></div>
+  </aside>
+</main>
+
+<div id="pdf-modal" class="pdf-modal hidden" role="dialog" aria-modal="true" aria-labelledby="pdf-modal-title">
+  <div class="pdf-modal-panel">
+    <div class="pdf-modal-head">
+      <div>
+        <strong id="pdf-modal-title">Source scan</strong>
+        <div id="pdf-modal-meta" class="pdf-modal-meta"></div>
+      </div>
+      <div class="pdf-modal-actions">
+        <button type="button" class="btn btn-secondary" id="pdf-print">Print</button>
+        <button type="button" class="btn btn-primary" id="pdf-close">Close</button>
+      </div>
+    </div>
+    <iframe id="pdf-frame" title="Scanned form PDF"></iframe>
+  </div>
+</div>
+<script>
+const DEMO_SITE_NAME = {{ demo_site_name|tojson }};
+const BUILD_LABEL = {{ build|tojson }};
+const DEFAULT_VISIT = {{ default_visit|tojson }};
+const EDC_PORT = {{ edc_port }};
+const EDC_BASE = {{ edc_base|tojson }};
+const statusPill = document.getElementById('status-pill');
+const logEl = document.getElementById('log');
+const progressWrap = document.getElementById('progress-wrap');
+const progressFill = document.getElementById('progress-fill');
+const progressMeta = document.getElementById('progress-meta');
+let edcToken = null;
+let selectedStudy = document.getElementById('study').value;
+let eventSource = null;
+let setupFormsCache = [];
+
+function showSetupMsg(elId, text, kind) {
+  const el = document.getElementById(elId);
+  el.textContent = text;
+  el.className = 'setup-msg ' + (kind || 'ok');
+}
+
+function clearSetupMsg(elId) {
+  const el = document.getElementById(elId);
+  el.textContent = '';
+  el.className = 'setup-msg';
+}
+
+function connectStream() {
+  if (eventSource) eventSource.close();
+  eventSource = new EventSource(`/api/stream?study=${encodeURIComponent(selectedStudy)}`);
+  eventSource.addEventListener('line', e => appendLog(e.data));
+  eventSource.addEventListener('progress', e => {
+    const p = JSON.parse(e.data);
+    if (p.overall_pct != null) {
+      progressWrap.classList.add('visible');
+      progressFill.style.width = p.overall_pct + '%';
+      progressMeta.textContent = (p.stage || '') + (p.file_index ? ` (${p.file_index}/${p.file_total||'?'})` : '');
+    }
+  });
+  eventSource.addEventListener('status', e => {
+    const s = JSON.parse(e.data);
+    statusPill.className = 'status-pill ' + (s.state === 'running' ? 'running' : s.state === 'done' ? 'done' : '');
+    statusPill.textContent = s.state === 'running' ? 'Processing…' : s.state === 'done' ? 'Complete' : 'Idle';
+    if (s.state === 'done') {
+      loadReview();
+      fetch('/api/status').then(r=>r.json()).then(d => { edcToken = d.token; });
+    }
+  });
+  eventSource.addEventListener('inbox', e => renderInbox(JSON.parse(e.data)));
+}
+
+async function selectStudy(studyId) {
+  selectedStudy = studyId;
+  const r = await fetch('/api/study/select', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ study: studyId }),
+  });
+  const d = await r.json();
+  if (d.ok && d.study) {
+    document.getElementById('inbox-path-label').textContent = d.study.display_inbox_path || d.study.inbox_path;
+    await loadSettings(studyId);
+  }
+  connectStream();
+  fetch('/api/inbox?study=' + encodeURIComponent(studyId)).then(r=>r.json()).then(x => renderInbox(x.files||[]));
+}
+
+function selectedStudyLabel() {
+  const sel = document.getElementById('study');
+  return sel.options[sel.selectedIndex].text;
+}
+
+function updateStudyMeta() {
+  const studySel = document.getElementById('study');
+  selectedStudy = studySel.value;
+  document.getElementById('header-study-meta').textContent =
+    `${selectedStudyLabel()} · build ${BUILD_LABEL}`;
+  const processBtn = document.getElementById('btn-process');
+  const disabled = studySel.selectedOptions[0]?.disabled;
+  processBtn.disabled = !!disabled;
+  processBtn.title = disabled ? 'This study is not available in the demo' : '';
+  selectStudy(selectedStudy);
+}
+
+document.getElementById('study').addEventListener('change', updateStudyMeta);
+
+document.getElementById('btn-toggle-setup').addEventListener('click', () => {
+  const body = document.getElementById('setup-body');
+  const open = body.classList.toggle('open');
+  document.getElementById('btn-toggle-setup').textContent = open ? 'Hide settings' : 'Show settings';
+  if (open) loadSettings(selectedStudy);
+});
+
+document.querySelectorAll('.setup-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.setup-tab').forEach(t => t.classList.remove('on'));
+    document.querySelectorAll('.setup-pane').forEach(p => p.classList.remove('on'));
+    tab.classList.add('on');
+    document.getElementById('setup-' + tab.dataset.setupTab).classList.add('on');
+  });
+});
+
+async function loadSettings(studyId) {
+  clearSetupMsg('site-setup-msg');
+  clearSetupMsg('forms-setup-msg');
+  const r = await fetch('/api/settings/' + encodeURIComponent(studyId));
+  const d = await r.json();
+  if (!d.ok) return;
+  const s = d.study;
+  document.getElementById('cfg-name').value = s.name || '';
+  document.getElementById('cfg-visit').value = s.default_visit || '';
+  document.getElementById('cfg-site-id').value = s.site_id || '';
+  document.getElementById('cfg-site-name').value = DEMO_SITE_NAME;
+  document.getElementById('cfg-inbox').value = s.inbox_path || '';
+  document.getElementById('cfg-display-inbox').value = s.display_inbox_path || '';
+  document.getElementById('cfg-threshold').value = s.auto_write_threshold ?? 0.85;
+  document.getElementById('inbox-path-label').textContent = s.display_inbox_path || s.inbox_path || '';
+  setupFormsCache = d.forms || [];
+  renderFormsSetup(setupFormsCache);
+}
+
+function renderFormsSetup(forms) {
+  const tb = document.querySelector('#forms-setup-table tbody');
+  tb.innerHTML = '';
+  forms.forEach(form => {
+    const tr = document.createElement('tr');
+    tr.dataset.formCode = form.form_code;
+    tr.innerHTML = `
+      <td><label class="cb-inline"><input type="checkbox" data-f-enabled="${esc(form.form_code)}" ${form.enabled ? 'checked' : ''}></label></td>
+      <td><code>${esc(form.form_code)}</code></td>
+      <td><input type="text" data-f-title="${esc(form.form_code)}" value="${esc(form.title)}"></td>
+      <td><input type="text" data-f-filecode="${esc(form.form_code)}" value="${esc(form.file_code)}" style="width:110px"></td>
+      <td>${form.field_count}</td>
+      <td><button type="button" class="btn-sm btn-view" data-toggle-fields="${esc(form.form_code)}">Fields</button>
+          <button type="button" class="btn-sm" data-save-form="${esc(form.form_code)}">Save</button></td>`;
+    tb.appendChild(tr);
+
+    const fieldRow = document.createElement('tr');
+    fieldRow.className = 'form-fields';
+    fieldRow.dataset.fieldsFor = form.form_code;
+    const cells = form.fields.map(f => `
+      <div class="field-grid" style="margin-bottom:6px">
+        <label title="${esc(f.name)}">${esc(f.name)}</label>
+        <input type="text" data-flabel="${esc(form.form_code)}:${esc(f.name)}" value="${esc(f.label)}" placeholder="${esc(f.base_label)}">
+      </div>`).join('');
+    fieldRow.innerHTML = `<td colspan="6">${cells || '<span class="setup-hint">No fields — import an Excel form definition.</span>'}</td>`;
+    tb.appendChild(fieldRow);
+  });
+
+  tb.querySelectorAll('[data-toggle-fields]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const row = tb.querySelector(`tr.form-fields[data-fields-for="${btn.dataset.toggleFields}"]`);
+      row?.classList.toggle('open');
+    });
+  });
+  tb.querySelectorAll('[data-save-form]').forEach(btn => {
+    btn.addEventListener('click', () => saveForm(btn.dataset.saveForm));
+  });
+}
+
+async function saveForm(formCode) {
+  const enabled = document.querySelector(`input[data-f-enabled="${formCode}"]`)?.checked;
+  const title = document.querySelector(`input[data-f-title="${formCode}"]`)?.value;
+  const file_code = document.querySelector(`input[data-f-filecode="${formCode}"]`)?.value;
+  const field_labels = {};
+  document.querySelectorAll(`input[data-flabel^="${formCode}:"]`).forEach(inp => {
+    const name = inp.dataset.flabel.split(':').slice(1).join(':');
+    if (inp.value.trim()) field_labels[name] = inp.value.trim();
+  });
+  const r = await fetch(`/api/settings/${encodeURIComponent(selectedStudy)}/forms/${encodeURIComponent(formCode)}`, {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ enabled, title, file_code, field_labels }),
+  });
+  const d = await r.json();
+  if (d.ok) {
+    setupFormsCache = d.forms;
+    renderFormsSetup(setupFormsCache);
+    showSetupMsg('forms-setup-msg', `Saved ${formCode}.`, 'ok');
+    fetch('/api/inbox?study=' + encodeURIComponent(selectedStudy)).then(x=>x.json()).then(x => renderInbox(x.files||[]));
+  } else {
+    showSetupMsg('forms-setup-msg', d.error || 'Save failed', 'err');
+  }
+}
+
+document.getElementById('btn-save-site').addEventListener('click', async () => {
+  const body = {
+    name: document.getElementById('cfg-name').value,
+    site_id: document.getElementById('cfg-site-id').value,
+    site_name: document.getElementById('cfg-site-name').value,
+    default_visit: document.getElementById('cfg-visit').value,
+    inbox_path: document.getElementById('cfg-inbox').value,
+    display_inbox_path: document.getElementById('cfg-display-inbox').value,
+    auto_write_threshold: parseFloat(document.getElementById('cfg-threshold').value),
+  };
+  const r = await fetch(`/api/settings/${encodeURIComponent(selectedStudy)}/site`, {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(body),
+  });
+  const d = await r.json();
+  if (!d.ok) {
+    showSetupMsg('site-setup-msg', d.error || 'Save failed', 'err');
+    return;
+  }
+  document.getElementById('inbox-path-label').textContent = d.study.display_inbox_path || d.study.inbox_path;
+  document.getElementById('header-study-meta').textContent = `${selectedStudy} — ${d.study.name} · build ${BUILD_LABEL}`;
+  const kind = d.inbox_valid ? 'ok' : 'warn';
+  showSetupMsg('site-setup-msg', d.inbox_valid ? 'Site settings saved.' : `Saved, but inbox: ${d.inbox_message}`, kind);
+  fetch('/api/inbox?study=' + encodeURIComponent(selectedStudy)).then(x=>x.json()).then(x => renderInbox(x.files||[]));
+});
+
+document.getElementById('btn-test-inbox').addEventListener('click', async () => {
+  const path = document.getElementById('cfg-inbox').value;
+  const r = await fetch(`/api/settings/${encodeURIComponent(selectedStudy)}/site`, {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ inbox_path: path }),
+  });
+  const d = await r.json();
+  if (d.ok) {
+    const kind = d.inbox_valid ? 'ok' : 'warn';
+    showSetupMsg('site-setup-msg', d.inbox_message || (d.inbox_valid ? 'Folder OK' : 'Folder not found'), kind);
+    if (d.inbox_valid) {
+      document.getElementById('inbox-path-label').textContent = d.study.display_inbox_path || d.study.inbox_path;
+      fetch('/api/inbox?study=' + encodeURIComponent(selectedStudy)).then(x=>x.json()).then(x => renderInbox(x.files||[]));
+    }
+  }
+});
+
+document.getElementById('btn-import-form').addEventListener('click', async () => {
+  const fileInput = document.getElementById('import-excel');
+  if (!fileInput.files?.length) {
+    showSetupMsg('forms-setup-msg', 'Choose an Excel file first.', 'err');
+    return;
+  }
+  const fd = new FormData();
+  fd.append('file', fileInput.files[0]);
+  fd.append('form_code', document.getElementById('import-form-code').value);
+  fd.append('file_code', document.getElementById('import-file-code').value);
+  const r = await fetch(`/api/settings/${encodeURIComponent(selectedStudy)}/forms/import`, { method: 'POST', body: fd });
+  const d = await r.json();
+  if (d.ok) {
+    setupFormsCache = d.forms;
+    renderFormsSetup(setupFormsCache);
+    showSetupMsg('forms-setup-msg', `Imported ${d.imported.form_code} (${d.imported.fields} fields).`, 'ok');
+    fileInput.value = '';
+  } else {
+    showSetupMsg('forms-setup-msg', d.error || 'Import failed', 'err');
+  }
+});
+
+updateStudyMeta();
+
+const pdfModal = document.getElementById('pdf-modal');
+const pdfFrame = document.getElementById('pdf-frame');
+const pdfModalTitle = document.getElementById('pdf-modal-title');
+const pdfModalMeta = document.getElementById('pdf-modal-meta');
+
+function openScanPdf(filename, subjectId, formCode, detail) {
+  pdfModalTitle.textContent = filename;
+  pdfModalMeta.textContent = detail
+    ? `Subject ${subjectId} · ${formCode} · ${detail}`
+    : `Subject ${subjectId} · ${formCode}`;
+  pdfFrame.src = `/api/scan/${encodeURIComponent(filename)}`;
+  pdfModal.classList.remove('hidden');
+}
+
+function openInboxPdf(filename, subjectId, formCode) {
+  openScanPdf(filename, subjectId, formCode || '—', 'Scanner Inbox preview');
+}
+
+function closeScanPdf() {
+  pdfModal.classList.add('hidden');
+  pdfFrame.src = 'about:blank';
+}
+
+document.getElementById('pdf-close').addEventListener('click', closeScanPdf);
+pdfModal.addEventListener('click', (e) => {
+  if (e.target === pdfModal) closeScanPdf();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !pdfModal.classList.contains('hidden')) closeScanPdf();
+});
+document.getElementById('pdf-print').addEventListener('click', () => {
+  try {
+    pdfFrame.contentWindow.focus();
+    pdfFrame.contentWindow.print();
+  } catch (e) {
+    window.open(pdfFrame.src, '_blank');
+  }
+});
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+}
+
+function appendLog(line) {
+  const d = document.createElement('div');
+  d.className = 'log-line';
+  d.textContent = line;
+  logEl.appendChild(d);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function statusClass(s) {
+  return {new:'status-new',processing:'status-processing',done:'status-done',flagged:'status-flagged'}[s] || 'status-new';
+}
+
+function renderInbox(files) {
+  const tb = document.querySelector('#inbox-table tbody');
+  tb.innerHTML = '';
+  document.getElementById('inbox-count').textContent = `(${files.length} PDFs)`;
+  files.forEach(f => {
+    const tr = document.createElement('tr');
+    const fn = esc(f.filename);
+    const subj = esc(f.subject_id);
+    const form = esc(f.form_code || '—');
+    tr.innerHTML = `<td><button type="button" class="inbox-link" data-inbox-file="${fn}" data-inbox-subject="${subj}" data-inbox-form="${form}">${fn}</button></td>
+      <td>${subj}</td><td>${form}</td>
+      <td><span class="status-badge ${statusClass(f.status)}">${f.status}</span></td>
+      <td>${f.auto_fields||0}</td><td>${f.flagged_fields||0}</td>
+      <td><button type="button" class="btn-sm btn-view" data-inbox-file="${fn}" data-inbox-subject="${subj}" data-inbox-form="${form}">View</button></td>`;
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll('[data-inbox-file]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      openInboxPdf(btn.dataset.inboxFile, btn.dataset.inboxSubject, btn.dataset.inboxForm);
+    });
+  });
+}
+
+const stagedApprovals = new Map();
+
+function updateReviewChrome() {
+  const head = document.getElementById('review-head');
+  const foot = document.getElementById('review-foot');
+  const saveBtns = document.querySelectorAll('.review-save-btn');
+  const bannerTop = document.getElementById('review-banner-top');
+  const bannerBottom = document.getElementById('review-banner-bottom');
+  const table = document.getElementById('review-table');
+  const hasRows = table.style.display === 'table';
+  const stagedCount = stagedApprovals.size;
+  const savedCount = document.querySelectorAll('#review-table tbody tr.row-saved').length;
+  const pendingCount = document.querySelectorAll('#review-table tbody tr.review-row:not(.row-saved)').length;
+
+  if (!hasRows) {
+    head.style.display = 'none';
+    foot.style.display = 'none';
+    return;
+  }
+
+  head.style.display = 'flex';
+  foot.style.display = 'flex';
+  saveBtns.forEach(btn => { btn.disabled = stagedCount === 0; });
+
+  let msg;
+  if (stagedCount > 0) {
+    msg = `${stagedCount} change${stagedCount > 1 ? 's' : ''} staged — values will <strong>not</strong> be written to EDC until you click Save to EDC.`;
+  } else if (savedCount > 0 && pendingCount === 0) {
+    msg = '<span class="review-saved-msg">✓ All changes saved to EDC.</span>';
+  } else if (savedCount > 0 && pendingCount > 0) {
+    msg = `${pendingCount} item${pendingCount > 1 ? 's' : ''} still need review. Saved rows remain below for reference.`;
+  } else {
+    msg = 'Changes are staged only — values will <strong>not</strong> be written to EDC until you click Save to EDC.';
+  }
+  bannerTop.innerHTML = msg;
+  bannerBottom.innerHTML = msg;
+}
+
+function bindViewScanBtn(btn) {
+  btn.addEventListener('click', () => {
+    openScanPdf(btn.dataset.viewScan, btn.dataset.subject, btn.dataset.form, `reviewing: ${btn.dataset.field}`);
+  });
+}
+
+function bindPendingRow(tr, item) {
+  const id = item.id;
+  tr.querySelector('[data-approve]')?.addEventListener('click', () => {
+    const row = tr;
+    const input = row.querySelector(`input[data-id="${id}"]`);
+    const value = input.value;
+    const viewBtn = row.querySelector('[data-view-scan]');
+    const viewData = viewBtn ? {
+      scan: viewBtn.dataset.viewScan,
+      subject: viewBtn.dataset.subject,
+      form: viewBtn.dataset.form,
+      field: viewBtn.dataset.field,
+    } : {};
+
+    stagedApprovals.set(id, value);
+    row.classList.add('row-staged');
+    input.readOnly = true;
+
+    const actionsCell = row.querySelector('.review-actions');
+    actionsCell.innerHTML = `
+      <span class="staged-label">✓ Staged</span>
+      <button type="button" class="btn-undo" data-undo="${esc(id)}">Undo</button>`;
+
+    actionsCell.querySelector('[data-undo]').addEventListener('click', () => {
+      stagedApprovals.delete(id);
+      row.classList.remove('row-staged');
+      input.readOnly = false;
+      actionsCell.innerHTML = `
+        <button type="button" class="btn-sm btn-view" data-view-scan="${esc(viewData.scan||'')}" data-subject="${esc(viewData.subject||'')}" data-form="${esc(viewData.form||'')}" data-field="${esc(viewData.field||'')}">View scan</button>
+        <button type="button" class="btn-sm" data-approve="${esc(id)}">Approve</button>`;
+      bindViewScanBtn(actionsCell.querySelector('[data-view-scan]'));
+      bindPendingRow(row, item);
+      updateReviewChrome();
+    });
+
+    updateReviewChrome();
+  });
+}
+
+async function loadReview() {
+  const r = await fetch('/api/review');
+  const data = await r.json();
+  const items = data.items || [];
+  const empty = document.getElementById('review-empty');
+  const scroll = document.getElementById('review-scroll');
+  const table = document.getElementById('review-table');
+  const tb = table.querySelector('tbody');
+  tb.innerHTML = '';
+  stagedApprovals.clear();
+  if (!items.length) {
+    empty.style.display = 'block';
+    scroll.style.display = 'none';
+    table.style.display = 'none';
+    updateReviewChrome();
+    return;
+  }
+  empty.style.display = 'none';
+  scroll.style.display = 'block';
+  table.style.display = 'table';
+  items.forEach(item => {
+    const isSaved = item.status === 'approved';
+    const tr = document.createElement('tr');
+    tr.className = 'review-row' + (isSaved ? ' row-saved' : '');
+    tr.dataset.reviewId = item.id;
+    if (isSaved) {
+      tr.innerHTML = `<td>${esc(item.subject_id)}</td><td>${esc(item.form_code)}</td><td>${esc(item.field_label)}</td>
+        <td><input type="text" value="${esc(item.extracted_value)}" data-id="${esc(item.id)}" readonly></td>
+        <td class="conf">${item.confidence}</td><td><span class="issue">${esc(item.issue)}</span></td>
+        <td class="review-actions">
+          <button type="button" class="btn-sm btn-view" data-view-scan="${esc(item.filename)}" data-subject="${esc(item.subject_id)}" data-form="${esc(item.form_code)}" data-field="${esc(item.field_label)}">View scan</button>
+          <span class="saved-label">✓ Saved to EDC</span>
+        </td>`;
+    } else {
+      tr.innerHTML = `<td>${esc(item.subject_id)}</td><td>${esc(item.form_code)}</td><td>${esc(item.field_label)}</td>
+        <td><input type="text" value="${esc(item.extracted_value)}" data-id="${esc(item.id)}"></td>
+        <td class="conf">${item.confidence}</td><td><span class="issue">${esc(item.issue)}</span></td>
+        <td class="review-actions">
+          <button type="button" class="btn-sm btn-view" data-view-scan="${esc(item.filename)}" data-subject="${esc(item.subject_id)}" data-form="${esc(item.form_code)}" data-field="${esc(item.field_label)}">View scan</button>
+          <button type="button" class="btn-sm" data-approve="${esc(item.id)}">Approve</button>
+        </td>`;
+    }
+    tb.appendChild(tr);
+    tr.querySelectorAll('[data-view-scan]').forEach(bindViewScanBtn);
+    if (!isSaved) bindPendingRow(tr, item);
+  });
+  updateReviewChrome();
+}
+
+async function saveReviewToEdc() {
+  if (stagedApprovals.size === 0) return;
+  const saveBtns = document.querySelectorAll('.review-save-btn');
+  saveBtns.forEach(btn => {
+    btn.disabled = true;
+    btn.textContent = 'Saving\u2026';
+  });
+
+  const promises = [];
+  for (const [id, value] of stagedApprovals) {
+    promises.push(
+      fetch(`/api/review/${id}/approve`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ value }),
+      })
+    );
+  }
+  await Promise.all(promises);
+
+  saveBtns.forEach(btn => { btn.textContent = 'Save to EDC'; });
+  stagedApprovals.clear();
+  await loadReview();
+}
+
+document.querySelectorAll('.review-save-btn').forEach(btn => {
+  btn.addEventListener('click', saveReviewToEdc);
+});
+
+document.getElementById('btn-process').addEventListener('click', async () => {
+  const study = document.getElementById('study').value;
+  const r = await fetch('/api/process', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ study }),
+  });
+  const d = await r.json();
+  if (!d.ok) alert(d.error || 'Already running');
+});
+
+document.getElementById('btn-edc').addEventListener('click', () => {
+  const study = document.getElementById('study').value;
+  const visit = document.getElementById('cfg-visit')?.value || DEFAULT_VISIT;
+  const params = new URLSearchParams();
+  if (edcToken) params.set('token', edcToken);
+  params.set('study', study);
+  params.set('visit', DEFAULT_VISIT);
+  window.open(`${EDC_BASE}/login?${params}`, '_blank');
+});
+
+document.getElementById('btn-reveal').addEventListener('click', async () => {
+  const card = document.getElementById('inbox-card');
+  card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  card.classList.remove('inbox-card-flash');
+  void card.offsetWidth;
+  card.classList.add('inbox-card-flash');
+  appendLog('Opening Scanner Inbox in Explorer…');
+  try {
+    const r = await fetch('/api/reveal-inbox', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'X-Study-Id': selectedStudy},
+      body: JSON.stringify({ study: selectedStudy }),
+    });
+    const d = await r.json();
+    if (d.ok) {
+      if (d.path && navigator.clipboard) {
+        try { await navigator.clipboard.writeText(d.path); } catch (_) {}
+      }
+      appendLog(`Opened folder: ${d.path}`);
+      appendLog('If Explorer stays behind this window, click the folder icon on the taskbar.');
+      appendLog('Path copied to clipboard — or click a filename below to preview here.');
+    } else {
+      appendLog(`Could not open folder: ${d.error || 'unknown error'}`);
+    }
+  } catch (e) {
+    appendLog('Could not open folder — click filenames in the inbox list below to preview PDFs.');
+  }
+});
+document.getElementById('btn-reset').addEventListener('click', async () => {
+  if (!confirm('Reset EDC, review queue, and inbox statuses?')) return;
+  await fetch('/api/reset', {method:'POST'});
+  logEl.innerHTML = '';
+  await loadReview();
+});
+
+connectStream();
+fetch('/api/status').then(r=>r.json()).then(d => { edcToken = d.token; });
+loadReview();
+</script>
+</body>
+</html>

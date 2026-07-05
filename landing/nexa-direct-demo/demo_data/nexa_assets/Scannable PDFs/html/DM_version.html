@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<title>form_id (version)</title>
+<style>
+  @page { size: letter; margin: 0.55in; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 10.5pt; color: #111; }
+  header { border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 14px; }
+  h1 { font-size: 16pt; margin: 0 0 4px; }
+  .sub { color: #444; font-size: 9pt; }
+  .field { margin: 0 0 11px; page-break-inside: avoid; }
+  .label { font-weight: 700; margin-bottom: 2px; }
+  .meta { font-size: 8pt; color: #666; margin-bottom: 3px; }
+  .hint { font-size: 8.5pt; color: #555; margin-bottom: 4px; max-width: 95%; }
+  .line { border-bottom: 1px solid #333; height: 18px; }
+  .line.wide { width: 100%; }
+  .checks { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 2px; }
+  .cb { display: flex; align-items: center; gap: 5px; font-size: 9.5pt; }
+  .box { width: 11px; height: 11px; border: 1px solid #333; display: inline-block; flex-shrink: 0; }
+  .repeat-banner { background: #eee; border: 1px solid #999; padding: 6px 8px; font-size: 9pt; font-weight: 700; margin: 10px 0; }
+  footer { margin-top: 18px; font-size: 8pt; color: #666; border-top: 1px solid #ccc; padding-top: 6px; }
+</style></head>
+<body>
+<header>
+  <h1>form_id</h1>
+  <div class="sub">CDASH-style CRF · Form ID: version · Generated from OpenClinica template for NexaDirect demo</div>
+  <div class="sub">Subject ID: _________________________ &nbsp;&nbsp; Site ID: _________________________ &nbsp;&nbsp; Visit: _________________________</div>
+</header>
+
+    <div class="field">
+      <div class="label">Birth Date</div>
+      <div class="meta">DM_BRTHDAT</div>
+      <div class="hint">Record the date of birth to the level of precision known (e.g., day/month/year, year, month/year, etc.).</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Age</div>
+      <div class="meta">DM_AGE</div>
+      <div class="hint">Record age of the subject.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">What is the age unit used?</div>
+      <div class="meta">DM_AGEU</div>
+      <div class="hint">Record the appropriate age unit (e.g., YEARS, MONTHS, WEEKS, etc.).</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Sex</div>
+      <div class="meta">DM_SEX</div>
+      <div class="hint">Record the appropriate sex.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Female</label><label class="cb"><span class="box"></span>Male</label><label class="cb"><span class="box"></span>Unknown</label><label class="cb"><span class="box"></span>Undifferentiated</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Ethnicity</div>
+      <div class="meta">DM_ETHNIC</div>
+      <div class="hint">Study participants should self-report ethnicity, with ethnicity being asked about before race.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Hispanic or Latino</label><label class="cb"><span class="box"></span>Not Hispanic or Latino</label><label class="cb"><span class="box"></span>Not Reported</label><label class="cb"><span class="box"></span>Unknown</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Race (more than one choice is acceptable)</div>
+      <div class="meta">DM_RACE</div>
+      <div class="hint">Study participants should self-report race, with race being asked about after ethnicity.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>American Indian or Alaska Native</label><label class="cb"><span class="box"></span>Asian</label><label class="cb"><span class="box"></span>Black or African American</label><label class="cb"><span class="box"></span>Native Hawaiian or Other Pacific Islander</label><label class="cb"><span class="box"></span>White</label><label class="cb"><span class="box"></span>Not Reported</label><label class="cb"><span class="box"></span>Unknown</label><label class="cb"><span class="box"></span>Other</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Specify Other Race</div>
+      <div class="meta">DM_RACEOTH</div>
+      <div class="hint">If none of the pre-printed values for RACE are applicable or if another, unprinted selection should be added to those pre-printed values, record the value in this free text field.</div>
+      <div class="line wide"></div>
+    </div>
+<footer>OpenClinica CDASH template · Not for regulatory submission · Field names shown for EDC mapping</footer>
+</body></html>

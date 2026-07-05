@@ -1,0 +1,183 @@
+{
+  "form_id": "LB_LOCAL",
+  "title": "Case Report Form",
+  "source": "C:\\Users\\zeias\\OneDrive\\Documents\\NexaDirect Demo\\Visit\\LB_LOCAL Laboratory Test Results- Local Processing.xls",
+  "fields": [
+    {
+      "name": "LB_LOCAL_LBNAM",
+      "label": "Laboratory Name",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "LB_LOCAL_LBPERF",
+      "label": "Was the sample collected?",
+      "type": "select_one NY",
+      "required": false,
+      "choices": [
+        {
+          "code": "N",
+          "label": "No"
+        },
+        {
+          "code": "Y",
+          "label": "Yes"
+        }
+      ]
+    },
+    {
+      "name": "LB_LOCAL_LBDAT",
+      "label": "Collection Date",
+      "type": "date",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "LB_LOCAL_LBTIM",
+      "label": "Collection Time",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "LB_LOCAL_LBFAST",
+      "label": "Was the subject fasting?",
+      "type": "select_one NY",
+      "required": false,
+      "choices": [
+        {
+          "code": "N",
+          "label": "No"
+        },
+        {
+          "code": "Y",
+          "label": "Yes"
+        }
+      ]
+    },
+    {
+      "name": "LB_LOCAL_ALP_LBORRES",
+      "label": "Alkaline Phosphatase",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "LB_LOCAL_ALP_LBORRESU",
+      "label": "Alkaline Phosphatase Units",
+      "type": "select_one LBTEST_ALP",
+      "required": false,
+      "choices": [
+        {
+          "code": "IU/L",
+          "label": "IU/L"
+        },
+        {
+          "code": "U/L",
+          "label": "U/L"
+        },
+        {
+          "code": "ukat/L",
+          "label": "ukat/L"
+        },
+        {
+          "code": "umol/s/L",
+          "label": "umol/s/L"
+        }
+      ]
+    },
+    {
+      "name": "LB_LOCAL_ALP_LBORNRLO",
+      "label": "Alkaline Phosphatase Normal Range Lower Limit",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "LB_LOCAL_ALP_LBORNRHI",
+      "label": "Alkaline Phosphatase Normal Range Upper Limit",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "LB_LOCAL_ALP_LBCLSIG",
+      "label": "Was the Alkaline Phosphatase result clinically significant?",
+      "type": "select_one NY",
+      "required": false,
+      "choices": [
+        {
+          "code": "N",
+          "label": "No"
+        },
+        {
+          "code": "Y",
+          "label": "Yes"
+        }
+      ]
+    },
+    {
+      "name": "LB_LOCAL_CA_LBORRES",
+      "label": "Calcium",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "LB_LOCAL_CA_LBORRESU",
+      "label": "Calcium Units",
+      "type": "select_one LBTEST_CA",
+      "required": false,
+      "choices": [
+        {
+          "code": "mg/dL",
+          "label": "mg/dL"
+        },
+        {
+          "code": "mEq/L",
+          "label": "mEq/L"
+        },
+        {
+          "code": "mg/L",
+          "label": "mg/L"
+        },
+        {
+          "code": "mmol/L",
+          "label": "mmol/L"
+        }
+      ]
+    },
+    {
+      "name": "LB_LOCAL_CA_LBORNRLO",
+      "label": "Calcium Normal Range Lower Limit",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "LB_LOCAL_CA_LBORNRHI",
+      "label": "Calcium Normal Range Upper Limit",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "LB_LOCAL_CA_LBCLSIG",
+      "label": "Was the Calcium result clinically significant?",
+      "type": "select_one NY",
+      "required": false,
+      "choices": [
+        {
+          "code": "N",
+          "label": "No"
+        },
+        {
+          "code": "Y",
+          "label": "Yes"
+        }
+      ]
+    }
+  ],
+  "form_code": "LB"
+}

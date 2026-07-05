@@ -1,0 +1,22 @@
+{
+  "subject_id": "0102",
+  "form_code": "MH",
+  "fields": {
+    "MH_MHSPID": {
+      "value": "1",
+      "confidence": 0.88
+    },
+    "MH_MHTERM": {
+      "value": "Hypertension",
+      "confidence": 0.88
+    },
+    "MH_MHSTDAT": {
+      "value": "2015-06-15",
+      "confidence": 0.88
+    },
+    "MH_MHONGO": {
+      "value": "Y",
+      "confidence": 0.88
+    }
+  }
+}

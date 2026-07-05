@@ -1,0 +1,36 @@
+<div class="rave-nav-bar">
+  <div class="rave-nav-group">
+    <label for="subject-select">Subject</label>
+    <select id="subject-select" aria-label="Select subject">
+      {% for s in all_subjects %}
+      <option value="{{ s }}" {% if s == nav_subject %}selected{% endif %}>{{ s }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="rave-nav-group">
+    <label for="visit-select">Visit</label>
+    <select id="visit-select" aria-label="Select visit">
+      {% for v in all_visits %}
+      <option value="{{ v }}" {% if v == nav_visit %}selected{% endif %}>{{ v }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <a class="rave-nav-link" href="{{ url_for('subjects') }}">All subjects</a>
+  {% if nav_subject %}
+  <a class="rave-nav-link" href="{{ url_for('subject_detail', subject_id=nav_subject) }}">Subject folder</a>
+  {% endif %}
+</div>
+<script>
+(function () {
+  const form = {{ nav_form | tojson }};
+  function goCrf() {
+    const subj = document.getElementById('subject-select').value;
+    const visit = document.getElementById('visit-select').value;
+    const params = new URLSearchParams({ subject: subj, visit: visit });
+    if (form) params.set('form', form);
+    window.location = '/crf?' + params.toString();
+  }
+  document.getElementById('subject-select')?.addEventListener('change', goCrf);
+  document.getElementById('visit-select')?.addEventListener('change', goCrf);
+})();
+</script>

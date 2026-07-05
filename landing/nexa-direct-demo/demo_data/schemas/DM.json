@@ -1,0 +1,124 @@
+{
+  "form_id": "DM",
+  "title": "Demographics",
+  "source": "C:\\Users\\zeias\\OneDrive\\Documents\\NexaDirect Demo\\Visit\\DM Demographics.xlsx",
+  "fields": [
+    {
+      "name": "DM_BRTHDAT",
+      "label": "Birth Date",
+      "type": "date",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "DM_AGE",
+      "label": "Age",
+      "type": "integer",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "DM_AGEU",
+      "label": "What is the age unit used?",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "DM_SEX",
+      "label": "Sex",
+      "type": "select_one SEX",
+      "required": false,
+      "choices": [
+        {
+          "code": "F",
+          "label": "Female"
+        },
+        {
+          "code": "M",
+          "label": "Male"
+        },
+        {
+          "code": "U",
+          "label": "Unknown"
+        },
+        {
+          "code": "UNDIFFERENTIATED",
+          "label": "Undifferentiated"
+        }
+      ]
+    },
+    {
+      "name": "DM_ETHNIC",
+      "label": "Ethnicity",
+      "type": "select_one ETHNIC",
+      "required": false,
+      "choices": [
+        {
+          "code": "HISPANIC  OR  LATINO",
+          "label": "Hispanic or Latino"
+        },
+        {
+          "code": "NOT  HISPANIC  OR  LATINO",
+          "label": "Not Hispanic or Latino"
+        },
+        {
+          "code": "NOT  REPORTED",
+          "label": "Not Reported"
+        },
+        {
+          "code": "UNKNOWN",
+          "label": "Unknown"
+        }
+      ]
+    },
+    {
+      "name": "DM_RACE",
+      "label": "Race (more than one choice is acceptable)",
+      "type": "select_multiple RACE",
+      "required": false,
+      "choices": [
+        {
+          "code": "AMERICAN_INDIAN_OR_ALASKA_NATIVE",
+          "label": "American Indian or Alaska Native"
+        },
+        {
+          "code": "ASIAN",
+          "label": "Asian"
+        },
+        {
+          "code": "BLACK_OR_AFRICAN_AMERICAN",
+          "label": "Black or African American"
+        },
+        {
+          "code": "NATIVE_HAWAIIAN_OR_OTHER_PACIFIC_ISLANDER",
+          "label": "Native Hawaiian or Other Pacific Islander"
+        },
+        {
+          "code": "WHITE",
+          "label": "White"
+        },
+        {
+          "code": "NOT_REPORTED",
+          "label": "Not Reported"
+        },
+        {
+          "code": "UNKNOWN",
+          "label": "Unknown"
+        },
+        {
+          "code": "OTHER",
+          "label": "Other"
+        }
+      ]
+    },
+    {
+      "name": "DM_RACEOTH",
+      "label": "Specify Other Race",
+      "type": "text",
+      "required": false,
+      "choices": []
+    }
+  ],
+  "form_code": "DM"
+}

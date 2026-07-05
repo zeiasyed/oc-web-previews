@@ -1,0 +1,30 @@
+{
+  "subject_id": "0101",
+  "form_code": "DM",
+  "fields": {
+    "DM_BRTHDAT": {
+      "value": "1970-01-15",
+      "confidence": 0.96
+    },
+    "DM_AGE": {
+      "value": "56",
+      "confidence": 0.96
+    },
+    "DM_AGEU": {
+      "value": "YEARS",
+      "confidence": 0.96
+    },
+    "DM_SEX": {
+      "value": "F",
+      "confidence": 0.96
+    },
+    "DM_ETHNIC": {
+      "value": "NOT  HISPANIC  OR  LATINO",
+      "confidence": 0.96
+    },
+    "DM_RACE": {
+      "value": "WHITE",
+      "confidence": 0.96
+    }
+  }
+}

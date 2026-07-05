@@ -1,0 +1,22 @@
+{
+  "subject_id": "0103",
+  "form_code": "MH",
+  "fields": {
+    "MH_MHSPID": {
+      "value": "1",
+      "confidence": 0.82
+    },
+    "MH_MHTERM": {
+      "value": "Asthma",
+      "confidence": 0.82
+    },
+    "MH_MHSTDAT": {
+      "value": "2005-09-20",
+      "confidence": 0.82
+    },
+    "MH_MHONGO": {
+      "value": "Y",
+      "confidence": 0.82
+    }
+  }
+}

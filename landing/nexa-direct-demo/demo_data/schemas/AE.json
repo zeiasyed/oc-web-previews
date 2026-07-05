@@ -1,0 +1,279 @@
+{
+  "form_id": "AE",
+  "title": "Adverse Events - Repeating",
+  "source": "C:\\Users\\zeias\\OneDrive\\Documents\\NexaDirect Demo\\Common Repeating\\AE Adverse Events.xlsx",
+  "fields": [
+    {
+      "name": "AE_AESPID",
+      "label": "AE Number",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "AE_AETERM",
+      "label": "What is the adverse event term?",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "AE_AESTDAT",
+      "label": "Start Date",
+      "type": "date",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "AE_AEONGO",
+      "label": "Ongoing",
+      "type": "select_one NY",
+      "required": false,
+      "choices": [
+        {
+          "code": "N",
+          "label": "No"
+        },
+        {
+          "code": "Y",
+          "label": "Yes"
+        }
+      ]
+    },
+    {
+      "name": "AE_AEENDAT",
+      "label": "End Date",
+      "type": "date",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "AE_AESEV",
+      "label": "Severity",
+      "type": "select_one AESEV",
+      "required": false,
+      "choices": [
+        {
+          "code": "MILD",
+          "label": "Mild"
+        },
+        {
+          "code": "MODERATE",
+          "label": "Moderate"
+        },
+        {
+          "code": "SEVERE",
+          "label": "Severe"
+        }
+      ]
+    },
+    {
+      "name": "AE_AESER",
+      "label": "Was the adverse event serious?",
+      "type": "select_one NY",
+      "required": false,
+      "choices": [
+        {
+          "code": "N",
+          "label": "No"
+        },
+        {
+          "code": "Y",
+          "label": "Yes"
+        }
+      ]
+    },
+    {
+      "name": "AE_AESDTH",
+      "label": "Did the adverse event result in death?",
+      "type": "select_one NY",
+      "required": false,
+      "choices": [
+        {
+          "code": "N",
+          "label": "No"
+        },
+        {
+          "code": "Y",
+          "label": "Yes"
+        }
+      ]
+    },
+    {
+      "name": "AE_AESLIFE",
+      "label": "Was the adverse event life threatening?",
+      "type": "select_one NY",
+      "required": false,
+      "choices": [
+        {
+          "code": "N",
+          "label": "No"
+        },
+        {
+          "code": "Y",
+          "label": "Yes"
+        }
+      ]
+    },
+    {
+      "name": "AE_AESHOSP",
+      "label": "Did the adverse event result in initial or prolonged hospitalization for the subject?",
+      "type": "select_one NY",
+      "required": false,
+      "choices": [
+        {
+          "code": "N",
+          "label": "No"
+        },
+        {
+          "code": "Y",
+          "label": "Yes"
+        }
+      ]
+    },
+    {
+      "name": "AE_AESDISAB",
+      "label": "Did the adverse event result in disability or permanent damage?",
+      "type": "select_one NY",
+      "required": false,
+      "choices": [
+        {
+          "code": "N",
+          "label": "No"
+        },
+        {
+          "code": "Y",
+          "label": "Yes"
+        }
+      ]
+    },
+    {
+      "name": "AE_AESCONG",
+      "label": "Was the adverse event associated with a congenital anomaly or birth defect?",
+      "type": "select_one NY",
+      "required": false,
+      "choices": [
+        {
+          "code": "N",
+          "label": "No"
+        },
+        {
+          "code": "Y",
+          "label": "Yes"
+        }
+      ]
+    },
+    {
+      "name": "AE_AESMIE",
+      "label": "Was the adverse event a medically important event not covered by other serious criteria?",
+      "type": "select_one NY",
+      "required": false,
+      "choices": [
+        {
+          "code": "N",
+          "label": "No"
+        },
+        {
+          "code": "Y",
+          "label": "Yes"
+        }
+      ]
+    },
+    {
+      "name": "AE_AEREL",
+      "label": "Relationship to Study Treatment",
+      "type": "select_one NY",
+      "required": false,
+      "choices": [
+        {
+          "code": "N",
+          "label": "No"
+        },
+        {
+          "code": "Y",
+          "label": "Yes"
+        }
+      ]
+    },
+    {
+      "name": "AE_AEACN",
+      "label": "Action taken with Study Treatment",
+      "type": "select_one AEACN",
+      "required": false,
+      "choices": [
+        {
+          "code": "DOSE INCREASED",
+          "label": "Dose Increased"
+        },
+        {
+          "code": "DOSE NOT CHANGED",
+          "label": "Dose Not Changed"
+        },
+        {
+          "code": "DOSE RATE REDUCED",
+          "label": "Dose Rate Reduced"
+        },
+        {
+          "code": "DOSE REDUCED",
+          "label": "Dose Reduced"
+        },
+        {
+          "code": "DRUG INTERRUPTED",
+          "label": "Drug Interrupted"
+        },
+        {
+          "code": "DRUG WITHDRAWN",
+          "label": "Drug Withdrawn"
+        },
+        {
+          "code": "NOT APPLICABLE",
+          "label": "Not Applicable"
+        },
+        {
+          "code": "UNKNOWN",
+          "label": "Unknown"
+        }
+      ]
+    },
+    {
+      "name": "AE_AEACNOTH",
+      "label": "Other Action Taken",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "AE_AEOUT",
+      "label": "Outcome",
+      "type": "select_one OUT",
+      "required": false,
+      "choices": [
+        {
+          "code": "FATAL",
+          "label": "Fatal"
+        },
+        {
+          "code": "NOT RECOVERED/NOT RESOLVED",
+          "label": "Not Recovered or Not Resolved"
+        },
+        {
+          "code": "RECOVERED/RESOLVED",
+          "label": "Recovered or Resolved"
+        },
+        {
+          "code": "RECOVERED/RESOLVED WITH SEQUELAE",
+          "label": "Recovered or Resolved with Sequelae"
+        },
+        {
+          "code": "RECOVERING/RESOLVING",
+          "label": "Recovering or Resolving"
+        },
+        {
+          "code": "UNKNOWN",
+          "label": "Unknown"
+        }
+      ]
+    }
+  ],
+  "form_code": "AE"
+}

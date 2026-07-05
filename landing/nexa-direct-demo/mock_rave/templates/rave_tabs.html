@@ -1,0 +1,11 @@
+<div class="tabs">
+  <a class="tab" href="{{ url_for('subjects') }}">Home</a>
+  <a class="tab" href="{{ url_for('subjects') }}">Study {{ study_id }}</a>
+  <a class="tab" href="{{ url_for('subjects') }}">{{ site_name }}</a>
+  <a class="tab {% if nav_subject %}active{% endif %}" href="{{ url_for('subject_detail', subject_id=nav_subject) }}">{{ nav_subject }}</a>
+  <a class="tab {% if nav_visit %}active{% endif %}"
+     href="{{ url_for('crf', subject=nav_subject, visit=nav_visit, form=nav_form or visit_forms[0]) }}">{{ nav_visit }}</a>
+  {% if nav_form %}
+  <span class="tab active crf">{{ nav_form }}</span>
+  {% endif %}
+</div>

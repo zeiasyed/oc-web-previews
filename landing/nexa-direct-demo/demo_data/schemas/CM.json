@@ -1,0 +1,534 @@
+{
+  "form_id": "CM",
+  "title": "Concomitant Medications - Repeating",
+  "source": "C:\\Users\\zeias\\OneDrive\\Documents\\NexaDirect Demo\\Common Repeating\\CM Concomitant Medications.xlsx",
+  "fields": [
+    {
+      "name": "CM_CMSPID",
+      "label": "CM Number",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "CM_CMTRT",
+      "label": "Medication/Therapy",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "CM_CMINDC",
+      "label": "Indication",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "CM_CMDSTXT",
+      "label": "Dose",
+      "type": "integer",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "CM_CMDOSU",
+      "label": "Unit",
+      "type": "select_one UNIT",
+      "required": false,
+      "choices": [
+        {
+          "code": "%(v/v)",
+          "label": "Percent Volume per Volume"
+        },
+        {
+          "code": "CAPSULE",
+          "label": "Capsule"
+        },
+        {
+          "code": "g",
+          "label": "Gram"
+        },
+        {
+          "code": "INHALATION",
+          "label": "Inhalation"
+        },
+        {
+          "code": "IU",
+          "label": "International Dosing Unit"
+        },
+        {
+          "code": "L/h",
+          "label": "Liter per Hour"
+        },
+        {
+          "code": "L/min",
+          "label": "Liter per Minute"
+        },
+        {
+          "code": "mg",
+          "label": "Milligram"
+        },
+        {
+          "code": "mg/kg",
+          "label": "Milligram per Kilogram"
+        },
+        {
+          "code": "mL",
+          "label": "Milliliter"
+        },
+        {
+          "code": "mL/h",
+          "label": "Milliliter per Hour"
+        },
+        {
+          "code": "mL/kg",
+          "label": "Milliliter per Kilogram"
+        },
+        {
+          "code": "PUFF",
+          "label": "Puff"
+        },
+        {
+          "code": "SPRAY",
+          "label": "Spray"
+        },
+        {
+          "code": "TABLET",
+          "label": "Tablet"
+        },
+        {
+          "code": "ug",
+          "label": "Microgram"
+        },
+        {
+          "code": "ug/kg",
+          "label": "Microgram per Kilogram"
+        },
+        {
+          "code": "OTHER",
+          "label": "Other"
+        }
+      ]
+    },
+    {
+      "name": "CM_CMDOSUO",
+      "label": "Other, Specify",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "CM_CMDOSFRM",
+      "label": "Dose Form",
+      "type": "select_one DOSE",
+      "required": false,
+      "choices": [
+        {
+          "code": "AEROSOL",
+          "label": "Aerosol"
+        },
+        {
+          "code": "CAPSULE",
+          "label": "Capsule"
+        },
+        {
+          "code": "CREAM",
+          "label": "Cream"
+        },
+        {
+          "code": "GAS",
+          "label": "Gas"
+        },
+        {
+          "code": "GEL",
+          "label": "Gel"
+        },
+        {
+          "code": "INHALANT",
+          "label": "Inhalant"
+        },
+        {
+          "code": "INJECTABLE",
+          "label": "Injectable"
+        },
+        {
+          "code": "LIQUID",
+          "label": "Liquid"
+        },
+        {
+          "code": "OINTMENT",
+          "label": "Ointment"
+        },
+        {
+          "code": "PATCH",
+          "label": "Patch"
+        },
+        {
+          "code": "POWDER",
+          "label": "Powder"
+        },
+        {
+          "code": "SPRAY",
+          "label": "Spray"
+        },
+        {
+          "code": "SUPPOSITORY",
+          "label": "Suppository"
+        },
+        {
+          "code": "SUSPENSION",
+          "label": "Suspension"
+        },
+        {
+          "code": "TABLET",
+          "label": "Tablet"
+        },
+        {
+          "code": "OTHER",
+          "label": "Other"
+        }
+      ]
+    },
+    {
+      "name": "CM_CMDOSFRMO",
+      "label": "Other, Specify",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "CM_CMDOSFRQ",
+      "label": "Frequency",
+      "type": "select_one FREQ",
+      "required": false,
+      "choices": [
+        {
+          "code": "BID",
+          "label": "Twice Daily"
+        },
+        {
+          "code": "ONCE",
+          "label": "Once"
+        },
+        {
+          "code": "PRN",
+          "label": "As Needed"
+        },
+        {
+          "code": "QD",
+          "label": "Daily"
+        },
+        {
+          "code": "QOD",
+          "label": "Every Other Day"
+        },
+        {
+          "code": "TID",
+          "label": "Three Times Daily"
+        },
+        {
+          "code": "UNKNOWN",
+          "label": "Unknown"
+        },
+        {
+          "code": "OTHER",
+          "label": "Other"
+        }
+      ]
+    },
+    {
+      "name": "CM_CMDOSFRQO",
+      "label": "Dose Frequency Other, Specify",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "CM_CMROUTE",
+      "label": "Route",
+      "type": "select_one ROUTE",
+      "required": false,
+      "choices": [
+        {
+          "code": "INTRALESIONAL",
+          "label": "Intralesional"
+        },
+        {
+          "code": "INTRAMUSCULAR",
+          "label": "Intramuscular"
+        },
+        {
+          "code": "INTRAOCULAR",
+          "label": "Intraocular"
+        },
+        {
+          "code": "INTRAPERITONEAL",
+          "label": "Intraperitoneal"
+        },
+        {
+          "code": "NASAL",
+          "label": "Nasal"
+        },
+        {
+          "code": "ORAL",
+          "label": "Oral"
+        },
+        {
+          "code": "RECTAL",
+          "label": "Rectal"
+        },
+        {
+          "code": "RESPIRATORY (INHALATION)",
+          "label": "Inhalation"
+        },
+        {
+          "code": "SUBCUTANEOUS",
+          "label": "Subcutaneous"
+        },
+        {
+          "code": "TOPICAL",
+          "label": "Topical"
+        },
+        {
+          "code": "TRANSDERMAL",
+          "label": "Transdermal"
+        },
+        {
+          "code": "VAGINAL",
+          "label": "Vaginal"
+        },
+        {
+          "code": "OTHER",
+          "label": "Other"
+        }
+      ]
+    },
+    {
+      "name": "CM_CMROUTEO",
+      "label": "Other, Specify",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "CM_CMSTDD",
+      "label": "Start Day",
+      "type": "select_one CL_DAY",
+      "required": false,
+      "choices": [
+        {
+          "code": "01",
+          "label": "01"
+        },
+        {
+          "code": "02",
+          "label": "02"
+        },
+        {
+          "code": "03",
+          "label": "03"
+        },
+        {
+          "code": "04",
+          "label": "04"
+        },
+        {
+          "code": "05",
+          "label": "05"
+        },
+        {
+          "code": "06",
+          "label": "06"
+        },
+        {
+          "code": "07",
+          "label": "07"
+        },
+        {
+          "code": "08",
+          "label": "08"
+        },
+        {
+          "code": "09",
+          "label": "09"
+        },
+        {
+          "code": "10",
+          "label": "10"
+        },
+        {
+          "code": "11",
+          "label": "11"
+        },
+        {
+          "code": "12",
+          "label": "12"
+        },
+        {
+          "code": "13",
+          "label": "13"
+        },
+        {
+          "code": "14",
+          "label": "14"
+        },
+        {
+          "code": "15",
+          "label": "15"
+        },
+        {
+          "code": "16",
+          "label": "16"
+        },
+        {
+          "code": "17",
+          "label": "17"
+        },
+        {
+          "code": "18",
+          "label": "18"
+        },
+        {
+          "code": "19",
+          "label": "19"
+        },
+        {
+          "code": "20",
+          "label": "20"
+        },
+        {
+          "code": "21",
+          "label": "21"
+        },
+        {
+          "code": "22",
+          "label": "22"
+        },
+        {
+          "code": "23",
+          "label": "23"
+        },
+        {
+          "code": "24",
+          "label": "24"
+        },
+        {
+          "code": "25",
+          "label": "25"
+        },
+        {
+          "code": "26",
+          "label": "26"
+        },
+        {
+          "code": "27",
+          "label": "27"
+        },
+        {
+          "code": "28",
+          "label": "28"
+        },
+        {
+          "code": "29",
+          "label": "29"
+        },
+        {
+          "code": "30",
+          "label": "30"
+        },
+        {
+          "code": "31",
+          "label": "31"
+        }
+      ]
+    },
+    {
+      "name": "CM_CMSTMO",
+      "label": "Start Month",
+      "type": "select_one CL_MONTH",
+      "required": false,
+      "choices": [
+        {
+          "code": "JAN",
+          "label": "January"
+        },
+        {
+          "code": "FEB",
+          "label": "February"
+        },
+        {
+          "code": "MAR",
+          "label": "March"
+        },
+        {
+          "code": "APR",
+          "label": "April"
+        },
+        {
+          "code": "MAY",
+          "label": "May"
+        },
+        {
+          "code": "JUN",
+          "label": "June"
+        },
+        {
+          "code": "JUL",
+          "label": "July"
+        },
+        {
+          "code": "AUG",
+          "label": "August"
+        },
+        {
+          "code": "SEP",
+          "label": "September"
+        },
+        {
+          "code": "OCT",
+          "label": "October"
+        },
+        {
+          "code": "NOV",
+          "label": "November"
+        },
+        {
+          "code": "DEC",
+          "label": "December"
+        }
+      ]
+    },
+    {
+      "name": "CM_CMSTYY",
+      "label": "Start Year",
+      "type": "date",
+      "required": true,
+      "choices": []
+    },
+    {
+      "name": "CM_CMONGO",
+      "label": "Ongoing",
+      "type": "select_one NY",
+      "required": false,
+      "choices": [
+        {
+          "code": "N",
+          "label": "No"
+        },
+        {
+          "code": "Y",
+          "label": "Yes"
+        }
+      ]
+    },
+    {
+      "name": "CM_CMENDAT",
+      "label": "End Date",
+      "type": "date",
+      "required": false,
+      "choices": []
+    }
+  ],
+  "form_code": "CM"
+}

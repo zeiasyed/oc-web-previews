@@ -1,0 +1,24 @@
+{
+  "subject_id": "0103",
+  "form_code": "AE",
+  "fields": {
+    "AE_AESPID": {
+      "value": "1",
+      "confidence": 0.82
+    },
+    "AE_AETERM": {
+      "value": "",
+      "confidence": 0.55,
+      "force_review": true
+    },
+    "AE_AESTDAT": {
+      "value": "",
+      "confidence": 0.5,
+      "force_review": true
+    },
+    "AE_AEONGO": {
+      "value": "N",
+      "confidence": 0.82
+    }
+  }
+}

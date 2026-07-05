@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<title>form_id (version)</title>
+<style>
+  @page { size: letter; margin: 0.55in; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 10.5pt; color: #111; }
+  header { border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 14px; }
+  h1 { font-size: 16pt; margin: 0 0 4px; }
+  .sub { color: #444; font-size: 9pt; }
+  .field { margin: 0 0 11px; page-break-inside: avoid; }
+  .label { font-weight: 700; margin-bottom: 2px; }
+  .meta { font-size: 8pt; color: #666; margin-bottom: 3px; }
+  .hint { font-size: 8.5pt; color: #555; margin-bottom: 4px; max-width: 95%; }
+  .line { border-bottom: 1px solid #333; height: 18px; }
+  .line.wide { width: 100%; }
+  .checks { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 2px; }
+  .cb { display: flex; align-items: center; gap: 5px; font-size: 9.5pt; }
+  .box { width: 11px; height: 11px; border: 1px solid #333; display: inline-block; flex-shrink: 0; }
+  .repeat-banner { background: #eee; border: 1px solid #999; padding: 6px 8px; font-size: 9pt; font-weight: 700; margin: 10px 0; }
+  footer { margin-top: 18px; font-size: 8pt; color: #666; border-top: 1px solid #ccc; padding-top: 6px; }
+</style></head>
+<body>
+<header>
+  <h1>form_id</h1>
+  <div class="sub">CDASH-style CRF · Form ID: version · Generated from OpenClinica template for NexaDirect demo</div>
+  <div class="sub">Subject ID: _________________________ &nbsp;&nbsp; Site ID: _________________________ &nbsp;&nbsp; Visit: _________________________</div>
+</header>
+
+    <div class="field">
+      <div class="label">Were vital signs performed?</div>
+      <div class="meta">VS_HORIZONTAL_VSPERF</div>
+      <div class="hint">Indicate if the vital signs were collected. If yes, include the appropriate details where indicated on the CRF.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>No</label><label class="cb"><span class="box"></span>Yes</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Date</div>
+      <div class="meta">VS_HORIZONTAL_VSDAT</div>
+      <div class="hint">Record date of measurements.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Systolic Blood Pressure</div>
+      <div class="meta">VS_HORIZONTAL_SYSBP_VSORRES</div>
+      <div class="hint">Record the vital sign results.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Systolic Blood Pressure Unit</div>
+      <div class="meta">VS_HORIZONTAL_SYSBP_VSORRESU</div>
+      <div class="hint">Record or select the original unit in which these data were collected, if not preprinted on CRF.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Diastolic Blood Pressure</div>
+      <div class="meta">VS_HORIZONTAL_DIABP_VSORRES</div>
+      <div class="hint">Record the vital sign results.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Diastolic Blood Pressure Unit</div>
+      <div class="meta">VS_HORIZONTAL_DIABP_VSORRESU</div>
+      <div class="hint">Record or select the original unit in which these data were collected, if not preprinted on CRF.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Blood Pressure Position</div>
+      <div class="meta">VS_HORIZONTAL_BP_VSPOS</div>
+      <div class="hint">Record the position of subject at time of test (e.g. SITTING).</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Prone</label><label class="cb"><span class="box"></span>Semi-Recumbent</label><label class="cb"><span class="box"></span>Sitting</label><label class="cb"><span class="box"></span>Standing</label><label class="cb"><span class="box"></span>Supine</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Blood Pressure Location</div>
+      <div class="meta">VS_HORIZONTAL_BP_VSLOC</div>
+      <div class="hint">Record or select location on body where measurement was performed, if not preprinted on CRF.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Brachial Artery</label><label class="cb"><span class="box"></span>Finger</label><label class="cb"><span class="box"></span>Peripheral Artery</label><label class="cb"><span class="box"></span>Radial Artery</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Height</div>
+      <div class="meta">VS_HORIZONTAL_HEIGHT_VSORRES</div>
+      <div class="hint">Record the vital sign results.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Height Unit</div>
+      <div class="meta">VS_HORIZONTAL_HEIGHT_VSORRESU</div>
+      <div class="hint">Record or select the original unit in which these data were collected, if not preprinted on CRF.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Centimeter</label><label class="cb"><span class="box"></span>Inch</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Weight</div>
+      <div class="meta">VS_HORIZONTAL_WEIGHT_VSORRES</div>
+      <div class="hint">Record the vital sign results.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Weight Unit</div>
+      <div class="meta">VS_HORIZONTAL_WEIGHT_VSORRESU</div>
+      <div class="hint">Record or select the original unit in which these data were collected, if not preprinted on CRF.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Kilogram</label><label class="cb"><span class="box"></span>Pound</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Pulse</div>
+      <div class="meta">VS_HORIZONTAL_PULSE_VSORRES</div>
+      <div class="hint">Record the vital sign results.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Pulse Unit</div>
+      <div class="meta">VS_HORIZONTAL_PULSE_VSORRESU</div>
+      <div class="hint">Record or select the original unit in which these data were collected, if not preprinted on CRF.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Pulse Location</div>
+      <div class="meta">VS_HORIZONTAL_PULSE_VSLOC</div>
+      <div class="hint">Record or select location on body where measurement was performed, if not preprinted on CRF.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Brachial Artery</label><label class="cb"><span class="box"></span>Carotid Artery</label><label class="cb"><span class="box"></span>Cerebral Artery</label><label class="cb"><span class="box"></span>Dorsalis Pedis Artery</label><label class="cb"><span class="box"></span>Femoral Artery</label><label class="cb"><span class="box"></span>Peripheral Artery</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Respiratory Rate</div>
+      <div class="meta">VS_HORIZONTAL_RESP_VSORRES</div>
+      <div class="hint">Record the vital sign results.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Respiratory Rate Unit</div>
+      <div class="meta">VS_HORIZONTAL_RESP_VSORRESU</div>
+      <div class="hint">Record or select the original unit in which these data were collected, if not preprinted on CRF.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Temperature</div>
+      <div class="meta">VS_HORIZONTAL_TEMP_VSORRES</div>
+      <div class="hint">Record the vital sign results.</div>
+      <div class="line wide"></div>
+    </div>
+    <div class="field">
+      <div class="label">Temperature Unit</div>
+      <div class="meta">VS_HORIZONTAL_TEMP_VSORRESU</div>
+      <div class="hint">Record or select the original unit in which these data were collected, if not preprinted on CRF.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Celsius</label><label class="cb"><span class="box"></span>Fahrenheit</label></div>
+    </div>
+    <div class="field">
+      <div class="label">Temperature Location</div>
+      <div class="meta">VS_HORIZONTAL_TEMP_VSLOC</div>
+      <div class="hint">Record or select location on body where measurement was performed, if not preprinted on CRF.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Axilla</label><label class="cb"><span class="box"></span>Ear</label><label class="cb"><span class="box"></span>Forehead</label><label class="cb"><span class="box"></span>Oral Cavity</label></div>
+    </div>
+<footer>OpenClinica CDASH template · Not for regulatory submission · Field names shown for EDC mapping</footer>
+</body></html>

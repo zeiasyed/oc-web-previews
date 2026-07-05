@@ -1,0 +1,29 @@
+{
+  "study_id": "NEXA-DEMO-001",
+  "study_name": "NexaDirect CDASH Demo Study",
+  "protocol": "20250012",
+  "site_id": "001",
+  "default_visit": "Screening",
+  "visits": ["Screening", "Baseline", "Week 4"],
+  "subjects": [
+    {
+      "subject_id": "0101",
+      "label": "Subject A — clean handwriting",
+      "handwriting_style": "neat"
+    },
+    {
+      "subject_id": "0102",
+      "label": "Subject B — messy handwriting",
+      "handwriting_style": "messy"
+    },
+    {
+      "subject_id": "0103",
+      "label": "Subject C — partial / ambiguous fill",
+      "handwriting_style": "partial"
+    }
+  ],
+  "core_forms": ["DM", "VS", "AE", "IE", "DS"],
+  "extended_forms": ["CM", "MH", "LB"],
+  "edc_target": "mock-rave",
+  "notes": "Use same subject_id on every filled scan for a given test case. Ground truth JSON filename: {subject_id}_{form_code}.json"
+}

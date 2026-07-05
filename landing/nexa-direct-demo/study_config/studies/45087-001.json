@@ -1,0 +1,79 @@
+{
+  "id": "45087-001",
+  "name": "Crestova Therapeutics CRX-45087-001",
+  "site_id": "001",
+  "site_name": "Northgate Hospital",
+  "default_visit": "Screening",
+  "disabled": true,
+  "inbox_path": "C:\\Users\\zeias\\OneDrive\\Documents\\NexaDirect Demo\\Scanner Inbox",
+  "display_inbox_path": "C:\\ClinicalData\\Demo\\Studies\\20260428\\Scanner Inbox",
+  "auto_write_threshold": 0.85,
+  "form_order": [
+    "IE",
+    "DM",
+    "MH",
+    "CM",
+    "VS",
+    "LB",
+    "AE",
+    "DS"
+  ],
+  "forms": {
+    "DM": {
+      "enabled": true,
+      "title": "Demographics",
+      "form_id": "DM",
+      "file_code": "DM",
+      "field_labels": {}
+    },
+    "VS": {
+      "enabled": true,
+      "title": "Vital Signs",
+      "form_id": "VS_HORIZONTAL",
+      "file_code": "VS_HORIZONTAL",
+      "field_labels": {}
+    },
+    "AE": {
+      "enabled": true,
+      "title": "Adverse Events",
+      "form_id": "AE",
+      "file_code": "AE",
+      "field_labels": {}
+    },
+    "CM": {
+      "enabled": true,
+      "title": "Concomitant Medications",
+      "form_id": "CM",
+      "file_code": "CM",
+      "field_labels": {}
+    },
+    "MH": {
+      "enabled": true,
+      "title": "Medical History",
+      "form_id": "MH",
+      "file_code": "MH",
+      "field_labels": {}
+    },
+    "IE": {
+      "enabled": true,
+      "title": "Inclusion/Exclusion Criteria",
+      "form_id": "IE",
+      "file_code": "IE",
+      "field_labels": {}
+    },
+    "DS": {
+      "enabled": true,
+      "title": "Disposition",
+      "form_id": "DS",
+      "file_code": "DS",
+      "field_labels": {}
+    },
+    "LB": {
+      "enabled": true,
+      "title": "Laboratory — Local",
+      "form_id": "LB_LOCAL",
+      "file_code": "LB_LOCAL",
+      "field_labels": {}
+    }
+  }
+}

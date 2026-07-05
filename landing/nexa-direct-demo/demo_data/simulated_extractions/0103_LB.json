@@ -1,0 +1,22 @@
+{
+  "subject_id": "0103",
+  "form_code": "LB",
+  "fields": {
+    "LB_LOCAL_LBPERF": {
+      "value": "Y",
+      "confidence": 0.82
+    },
+    "LB_LOCAL_LBDAT": {
+      "value": "2026-06-09",
+      "confidence": 0.82
+    },
+    "LB_LOCAL_ALP_LBORRES": {
+      "value": "22",
+      "confidence": 0.82
+    },
+    "LB_LOCAL_ALP_LBORRESU": {
+      "value": "U/L",
+      "confidence": 0.82
+    }
+  }
+}

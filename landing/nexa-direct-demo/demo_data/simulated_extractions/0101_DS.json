@@ -1,0 +1,18 @@
+{
+  "subject_id": "0101",
+  "form_code": "DS",
+  "fields": {
+    "DS_DSDECOD": {
+      "value": "COMPLETED",
+      "confidence": 0.96
+    },
+    "DS_DSTERM": {
+      "value": "Completed screening",
+      "confidence": 0.96
+    },
+    "DS_DSSTDAT": {
+      "value": "2026-06-10",
+      "confidence": 0.96
+    }
+  }
+}

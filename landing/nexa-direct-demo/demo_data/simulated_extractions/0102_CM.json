@@ -1,0 +1,26 @@
+{
+  "subject_id": "0102",
+  "form_code": "CM",
+  "fields": {
+    "CM_CMSPID": {
+      "value": "1",
+      "confidence": 0.88
+    },
+    "CM_CMTRT": {
+      "value": "Omeprazole",
+      "confidence": 0.88
+    },
+    "CM_CMINDC": {
+      "value": "GERD",
+      "confidence": 0.88
+    },
+    "CM_CMSTYY": {
+      "value": "2026-04-01",
+      "confidence": 0.88
+    },
+    "CM_CMONGO": {
+      "value": "Y",
+      "confidence": 0.88
+    }
+  }
+}

@@ -1,0 +1,23 @@
+# NexaDirect demo — always-on cloud hosting (Render)
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: nexadirect-demo
+    runtime: docker
+    rootDir: landing/nexa-direct-demo
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: LAB_AUTH_USER
+        sync: false
+      - key: LAB_AUTH_PASSWORD
+        sync: false
+      - key: EDC_PUBLIC_BASE
+        value: /edc
+      - key: SCRIPT_ROOT
+        value: /edc
+      - key: NEXA_ASSETS_DIR
+        value: /app/demo_data/nexa_assets

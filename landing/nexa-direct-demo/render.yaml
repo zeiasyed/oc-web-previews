@@ -1,0 +1,23 @@
+# Render Blueprint — always-on NexaDirect lab demo
+# Deploy: https://render.com/deploy?repo=https://github.com/zeiasyed/oc-web-previews
+services:
+  - type: web
+    name: nexadirect-demo
+    runtime: docker
+    rootDir: landing/nexa-direct-demo
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: starter
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: LAB_AUTH_USER
+        sync: false
+      - key: LAB_AUTH_PASSWORD
+        sync: false
+      - key: EDC_PUBLIC_BASE
+        value: /edc
+      - key: SCRIPT_ROOT
+        value: /edc
+      - key: NEXA_ASSETS_DIR
+        value: /app/demo_data/nexa_assets

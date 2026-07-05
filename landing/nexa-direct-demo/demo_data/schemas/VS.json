@@ -1,0 +1,264 @@
+{
+  "form_id": "VS_HORIZONTAL",
+  "title": "Vital Signs",
+  "source": "C:\\Users\\zeias\\OneDrive\\Documents\\NexaDirect Demo\\Visit\\VS_HORIZONTAL Vital Signs.xlsx",
+  "fields": [
+    {
+      "name": "VS_HORIZONTAL_VSPERF",
+      "label": "Were vital signs performed?",
+      "type": "select_one NY",
+      "required": false,
+      "choices": [
+        {
+          "code": "N",
+          "label": "No"
+        },
+        {
+          "code": "Y",
+          "label": "Yes"
+        }
+      ]
+    },
+    {
+      "name": "VS_HORIZONTAL_VSDAT",
+      "label": "Date",
+      "type": "date",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "VS_HORIZONTAL_SYSBP_VSORRES",
+      "label": "Systolic Blood Pressure",
+      "type": "integer",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "VS_HORIZONTAL_SYSBP_VSORRESU",
+      "label": "Systolic Blood Pressure Unit",
+      "type": "text",
+      "required": true,
+      "choices": []
+    },
+    {
+      "name": "VS_HORIZONTAL_DIABP_VSORRES",
+      "label": "Diastolic Blood Pressure",
+      "type": "integer",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "VS_HORIZONTAL_DIABP_VSORRESU",
+      "label": "Diastolic Blood Pressure Unit",
+      "type": "text",
+      "required": true,
+      "choices": []
+    },
+    {
+      "name": "VS_HORIZONTAL_BP_VSPOS",
+      "label": "Blood Pressure Position",
+      "type": "select_one BPPOS",
+      "required": false,
+      "choices": [
+        {
+          "code": "PRONE",
+          "label": "Prone"
+        },
+        {
+          "code": "SEMI-RECUMBENT",
+          "label": "Semi-Recumbent"
+        },
+        {
+          "code": "SITTING",
+          "label": "Sitting"
+        },
+        {
+          "code": "STANDING",
+          "label": "Standing"
+        },
+        {
+          "code": "SUPINE",
+          "label": "Supine"
+        }
+      ]
+    },
+    {
+      "name": "VS_HORIZONTAL_BP_VSLOC",
+      "label": "Blood Pressure Location",
+      "type": "select_one BPLOC",
+      "required": false,
+      "choices": [
+        {
+          "code": "BRACHIAL ARTERY",
+          "label": "Brachial Artery"
+        },
+        {
+          "code": "FINGER",
+          "label": "Finger"
+        },
+        {
+          "code": "PERIPHERAL ARTERY",
+          "label": "Peripheral Artery"
+        },
+        {
+          "code": "RADIAL ARTERY",
+          "label": "Radial Artery"
+        }
+      ]
+    },
+    {
+      "name": "VS_HORIZONTAL_HEIGHT_VSORRES",
+      "label": "Height",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "VS_HORIZONTAL_HEIGHT_VSORRESU",
+      "label": "Height Unit",
+      "type": "select_one HUNIT",
+      "required": false,
+      "choices": [
+        {
+          "code": "cm",
+          "label": "Centimeter"
+        },
+        {
+          "code": "in",
+          "label": "Inch"
+        }
+      ]
+    },
+    {
+      "name": "VS_HORIZONTAL_WEIGHT_VSORRES",
+      "label": "Weight",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "VS_HORIZONTAL_WEIGHT_VSORRESU",
+      "label": "Weight Unit",
+      "type": "select_one WUNIT",
+      "required": false,
+      "choices": [
+        {
+          "code": "kg",
+          "label": "Kilogram"
+        },
+        {
+          "code": "LB",
+          "label": "Pound"
+        }
+      ]
+    },
+    {
+      "name": "VS_HORIZONTAL_PULSE_VSORRES",
+      "label": "Pulse",
+      "type": "integer",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "VS_HORIZONTAL_PULSE_VSORRESU",
+      "label": "Pulse Unit",
+      "type": "text",
+      "required": true,
+      "choices": []
+    },
+    {
+      "name": "VS_HORIZONTAL_PULSE_VSLOC",
+      "label": "Pulse Location",
+      "type": "select_one PULSELOC",
+      "required": true,
+      "choices": [
+        {
+          "code": "BRACHIAL ARTERY",
+          "label": "Brachial Artery"
+        },
+        {
+          "code": "CAROTID ARTERY",
+          "label": "Carotid Artery"
+        },
+        {
+          "code": "CEREBRAL ARTERY",
+          "label": "Cerebral Artery"
+        },
+        {
+          "code": "DORSALIS PEDIS ARTERY",
+          "label": "Dorsalis Pedis Artery"
+        },
+        {
+          "code": "FEMORAL ARTERY",
+          "label": "Femoral Artery"
+        },
+        {
+          "code": "PERIPHERAL ARTERY",
+          "label": "Peripheral Artery"
+        }
+      ]
+    },
+    {
+      "name": "VS_HORIZONTAL_RESP_VSORRES",
+      "label": "Respiratory Rate",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "VS_HORIZONTAL_RESP_VSORRESU",
+      "label": "Respiratory Rate Unit",
+      "type": "text",
+      "required": true,
+      "choices": []
+    },
+    {
+      "name": "VS_HORIZONTAL_TEMP_VSORRES",
+      "label": "Temperature",
+      "type": "decimal",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "VS_HORIZONTAL_TEMP_VSORRESU",
+      "label": "Temperature Unit",
+      "type": "select_one TUNIT",
+      "required": false,
+      "choices": [
+        {
+          "code": "C",
+          "label": "Celsius"
+        },
+        {
+          "code": "F",
+          "label": "Fahrenheit"
+        }
+      ]
+    },
+    {
+      "name": "VS_HORIZONTAL_TEMP_VSLOC",
+      "label": "Temperature Location",
+      "type": "select_one TLOC",
+      "required": false,
+      "choices": [
+        {
+          "code": "AXILLA",
+          "label": "Axilla"
+        },
+        {
+          "code": "EAR",
+          "label": "Ear"
+        },
+        {
+          "code": "FOREHEAD",
+          "label": "Forehead"
+        },
+        {
+          "code": "ORAL CAVITY",
+          "label": "Oral Cavity"
+        }
+      ]
+    }
+  ],
+  "form_code": "VS"
+}

@@ -1,0 +1,47 @@
+{
+  "subject_id": "0103",
+  "form_code": "VS",
+  "fields": {
+    "VS_HORIZONTAL_VSPERF": {
+      "value": "Y",
+      "confidence": 0.82
+    },
+    "VS_HORIZONTAL_VSDAT": {
+      "value": "2026-06-09",
+      "confidence": 0.82
+    },
+    "VS_HORIZONTAL_SYSBP_VSORRES": {
+      "value": "105",
+      "confidence": 0.82
+    },
+    "VS_HORIZONTAL_SYSBP_VSORRESU": {
+      "value": "mmHg",
+      "confidence": 0.82
+    },
+    "VS_HORIZONTAL_DIABP_VSORRES": {
+      "value": "68",
+      "confidence": 0.82
+    },
+    "VS_HORIZONTAL_DIABP_VSORRESU": {
+      "value": "mmHg",
+      "confidence": 0.82
+    },
+    "VS_HORIZONTAL_PULSE_VSORRES": {
+      "value": "65",
+      "confidence": 0.82
+    },
+    "VS_HORIZONTAL_PULSE_VSORRESU": {
+      "value": "beats/min",
+      "confidence": 0.82
+    },
+    "VS_HORIZONTAL_TEMP_VSORRES": {
+      "value": "",
+      "confidence": 0.55,
+      "force_review": true
+    },
+    "VS_HORIZONTAL_TEMP_VSORRESU": {
+      "value": "C",
+      "confidence": 0.82
+    }
+  }
+}

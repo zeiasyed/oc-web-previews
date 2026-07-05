@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<title>Case Report Form (IE)</title>
+<style>
+  @page { size: letter; margin: 0.55in; }
+  body { font-family: Arial, Helvetica, sans-serif; font-size: 10.5pt; color: #111; }
+  header { border-bottom: 2px solid #333; padding-bottom: 8px; margin-bottom: 14px; }
+  h1 { font-size: 16pt; margin: 0 0 4px; }
+  .sub { color: #444; font-size: 9pt; }
+  .field { margin: 0 0 11px; page-break-inside: avoid; }
+  .label { font-weight: 700; margin-bottom: 2px; }
+  .meta { font-size: 8pt; color: #666; margin-bottom: 3px; }
+  .hint { font-size: 8.5pt; color: #555; margin-bottom: 4px; max-width: 95%; }
+  .line { border-bottom: 1px solid #333; height: 18px; }
+  .line.wide { width: 100%; }
+  .checks { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 2px; }
+  .cb { display: flex; align-items: center; gap: 5px; font-size: 9.5pt; }
+  .box { width: 11px; height: 11px; border: 1px solid #333; display: inline-block; flex-shrink: 0; }
+  .repeat-banner { background: #eee; border: 1px solid #999; padding: 6px 8px; font-size: 9pt; font-weight: 700; margin: 10px 0; }
+  footer { margin-top: 18px; font-size: 8pt; color: #666; border-top: 1px solid #ccc; padding-top: 6px; }
+</style></head>
+<body>
+<header>
+  <h1>Case Report Form</h1>
+  <div class="sub">CDASH-style CRF · Form ID: IE · Generated from OpenClinica template for NexaDirect demo</div>
+  <div class="sub">Subject ID: _________________________ &nbsp;&nbsp; Site ID: _________________________ &nbsp;&nbsp; Visit: _________________________</div>
+</header>
+
+    <div class="field">
+      <div class="label">Were all eligibility criteria met?</div>
+      <div class="meta">IE_IEYN</div>
+      <div class="hint">Record Yes if all eligibility criteria were met at the time the subject was enrolled. Record No if subject did not meet all criteria at the time the subject was enrolled.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>No</label><label class="cb"><span class="box"></span>Yes</label></div>
+    </div>
+    <div class="field">
+      <div class="label">What was the date the eligibility criteria assessment was performed?</div>
+      <div class="meta">IE_IEDAT</div>
+      <div class="hint">Record complete date when the eligibility assessment was performed.</div>
+      <div class="line wide"></div>
+    </div><div class="repeat-banner">Repeating section — record below (copy section for additional rows)</div>
+    <div class="field" data-repeat="1">
+      <div class="label">What was the category of the criterion?</div>
+      <div class="meta">IE_IECAT</div>
+      <div class="hint">Record whether the criterion exception was Inclusion or Exclusion.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Inclusion</label><label class="cb"><span class="box"></span>Exclusion</label></div>
+    </div>
+    <div class="field" data-repeat="1">
+      <div class="label">What was the identifier of the inclusion criterion the subject did not meet or the exclusion criterion the subject met?</div>
+      <div class="meta">IE_IETESTCD</div>
+      <div class="hint">If the subject was not eligible, Record the identifying code for each criterion that was an exception.</div>
+      <div class="checks"><label class="cb"><span class="box"></span>Inclusion 1</label><label class="cb"><span class="box"></span>Inclusion 2</label><label class="cb"><span class="box"></span>Inclusion 3</label><label class="cb"><span class="box"></span>Exclusion 1</label><label class="cb"><span class="box"></span>Exclusion 2</label><label class="cb"><span class="box"></span>Exclusion 3</label></div>
+    </div>
+<footer>OpenClinica CDASH template · Not for regulatory submission · Field names shown for EDC mapping</footer>
+</body></html>

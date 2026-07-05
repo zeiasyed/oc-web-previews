@@ -1,0 +1,74 @@
+[
+  {
+    "code": "DM",
+    "form_id": "DM",
+    "title": "Demographics",
+    "source_excel": "Visit\\DM Demographics.xlsx",
+    "html": "Scannable PDFs\\html\\DM_DM.html",
+    "fields": 7,
+    "pdf": "Scannable PDFs\\DM_DM.pdf"
+  },
+  {
+    "code": "VS",
+    "form_id": "VS_HORIZONTAL",
+    "title": "Vital Signs",
+    "source_excel": "Visit\\VS_HORIZONTAL Vital Signs.xlsx",
+    "html": "Scannable PDFs\\html\\VS_VS_HORIZONTAL.html",
+    "fields": 20,
+    "pdf": "Scannable PDFs\\VS_VS_HORIZONTAL.pdf"
+  },
+  {
+    "code": "AE",
+    "form_id": "AE",
+    "title": "Adverse Events - Repeating",
+    "source_excel": "Common Repeating\\AE Adverse Events.xlsx",
+    "html": "Scannable PDFs\\html\\AE_AE.html",
+    "fields": 17,
+    "pdf": "Scannable PDFs\\AE_AE.pdf"
+  },
+  {
+    "code": "CM",
+    "form_id": "CM",
+    "title": "Concomitant Medications - Repeating",
+    "source_excel": "Common Repeating\\CM Concomitant Medications.xlsx",
+    "html": "Scannable PDFs\\html\\CM_CM.html",
+    "fields": 17,
+    "pdf": "Scannable PDFs\\CM_CM.pdf"
+  },
+  {
+    "code": "MH",
+    "form_id": "MH",
+    "title": "Medical History - Repeating",
+    "source_excel": "Common Repeating\\MH Medical History.xlsx",
+    "html": "Scannable PDFs\\html\\MH_MH.html",
+    "fields": 6,
+    "pdf": "Scannable PDFs\\MH_MH.pdf"
+  },
+  {
+    "code": "IE",
+    "form_id": "IE",
+    "title": "Case Report Form",
+    "source_excel": "Visit\\IE Inclusion Exclusion Criteria.xls",
+    "html": "Scannable PDFs\\html\\IE_IE.html",
+    "fields": 4,
+    "pdf": "Scannable PDFs\\IE_IE.pdf"
+  },
+  {
+    "code": "DS",
+    "form_id": "DS",
+    "title": "Disposition",
+    "source_excel": "Visit\\DS Disposition.xlsx",
+    "html": "Scannable PDFs\\html\\DS_DS.html",
+    "fields": 3,
+    "pdf": "Scannable PDFs\\DS_DS.pdf"
+  },
+  {
+    "code": "LB",
+    "form_id": "LB_LOCAL",
+    "title": "Case Report Form",
+    "source_excel": "Visit\\LB_LOCAL Laboratory Test Results- Local Processing.xls",
+    "html": "Scannable PDFs\\html\\LB_LB_LOCAL.html",
+    "fields": 15,
+    "pdf": "Scannable PDFs\\LB_LB_LOCAL.pdf"
+  }
+]

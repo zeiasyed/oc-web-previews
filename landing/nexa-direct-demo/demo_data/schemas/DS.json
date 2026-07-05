@@ -1,0 +1,78 @@
+{
+  "form_id": "DS",
+  "title": "Disposition",
+  "source": "C:\\Users\\zeias\\OneDrive\\Documents\\NexaDirect Demo\\Visit\\DS Disposition.xlsx",
+  "fields": [
+    {
+      "name": "DS_DSDECOD",
+      "label": "What was the subject's status at the end of the study?",
+      "type": "select_one DSDECOD",
+      "required": false,
+      "choices": [
+        {
+          "code": "COMPLETED",
+          "label": "Completed"
+        },
+        {
+          "code": "ADVERSE EVENT",
+          "label": "Adverse Event"
+        },
+        {
+          "code": "DEATH",
+          "label": "Death"
+        },
+        {
+          "code": "LOST TO FOLLOW-UP",
+          "label": "Lost To Follow-Up"
+        },
+        {
+          "code": "PREGNANCY",
+          "label": "Pregnancy"
+        },
+        {
+          "code": "PROGRESSIVE DISEASE",
+          "label": "Progressive Disease"
+        },
+        {
+          "code": "PROTOCOL DEVIATION",
+          "label": "Protocol Deviation"
+        },
+        {
+          "code": "SCREEN FAILURE",
+          "label": "Screen Failure"
+        },
+        {
+          "code": "SITE TERMINATED BY SPONSOR",
+          "label": "Site Terminated by Sponsor"
+        },
+        {
+          "code": "STUDY TERMINATED BY SPONSOR",
+          "label": "Study Terminated by Sponsor"
+        },
+        {
+          "code": "WITHDRAWAL BY SUBJECT",
+          "label": "Withdrawal by Subject"
+        },
+        {
+          "code": "OTHER",
+          "label": "Other"
+        }
+      ]
+    },
+    {
+      "name": "DS_DSTERM",
+      "label": "Specify",
+      "type": "text",
+      "required": false,
+      "choices": []
+    },
+    {
+      "name": "DS_DSSTDAT",
+      "label": "What was the study discontinuation or completion date?",
+      "type": "date",
+      "required": false,
+      "choices": []
+    }
+  ],
+  "form_code": "DS"
+}
