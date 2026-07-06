@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<title>NexaDirect — Scan manual source forms to EDC</title>
+<title>NexaDirect — Paper source to EDC</title>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -16,7 +16,7 @@
 html,body{height:100%;overflow:hidden;font-family:Inter,system-ui,sans-serif;color:var(--navy);background:var(--bg)}
 header{background:linear-gradient(120deg,#05101f,var(--navy),#103a6b);color:#fff;padding:0 28px;height:64px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--teal-dark);flex-shrink:0}
 .brand-row{display:flex;align-items:center;gap:12px}
-.header-right{display:flex;align-items:center;gap:14px;height:100%}
+.header-right{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;gap:12px;flex-shrink:0}
 .brand-mark{width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#2dd4bf,var(--teal-dark));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.72rem}
 .brand-title{font-size:1.15rem;font-weight:700}
 .brand-tag{font-size:.72rem;color:#5eead4;margin-left:6px}
@@ -66,7 +66,11 @@ th{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mu
 .pdf-modal-backdrop{cursor:pointer}
 .pdf-modal-panel{cursor:default}
 .review-scroll table{margin:0}
-.review-row td input{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:6px;font-size:.8rem}
+.review-row td:nth-child(4){min-width:140px}
+.review-row td:nth-child(6){max-width:220px}
+.review-row td input{width:100%;min-width:120px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;font-size:.8rem;background:#fff;cursor:text}
+.review-row td input:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 2px rgb(10 158 143 / 25%)}
+.review-row td input[readonly]{cursor:default;background:#f8fafc}
 .review-row .conf{color:var(--amber);font-weight:600}
 .review-row.row-staged td{background:#f0fdf4}
 .review-row.row-staged td input{background:#f0fdf4;border-color:#86efac;color:var(--green)}
@@ -86,6 +90,11 @@ th{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mu
 .review-foot .review-banner{flex:1;text-align:left}
 .review-save-btn{padding:9px 20px;border-radius:8px;border:none;background:linear-gradient(135deg,var(--teal-light),var(--teal-dark));color:#fff;font-weight:600;font-size:.84rem;cursor:pointer;white-space:nowrap;box-shadow:0 4px 14px rgb(10 158 143 / 35%)}
 .review-save-btn:disabled{opacity:.5;cursor:not-allowed}
+.review-save-btn.is-saved{display:none}
+.review-verify-row{margin-top:12px;display:none}
+.review-verify-row.show{display:block}
+.review-verify-btn{width:100%;padding:12px 20px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--teal-light),var(--teal-dark));color:#fff;font-weight:600;font-size:.9rem;cursor:pointer;box-shadow:0 4px 14px rgb(10 158 143 / 35%)}
+.review-verify-btn:hover{filter:brightness(1.05)}
 .review-saved-msg{color:var(--green);font-weight:600;font-size:.78rem}
 .staged-label{font-size:.7rem;font-weight:600;color:var(--green)}
 .pdf-modal{position:fixed;inset:0;z-index:1000;background:rgb(7 21 40 / 72%);display:flex;align-items:center;justify-content:center;padding:24px}
@@ -96,6 +105,7 @@ th{font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--mu
 .pdf-modal-meta{font-size:.78rem;color:var(--muted);margin-top:4px;line-height:1.4}
 .pdf-modal-actions{display:flex;gap:8px;flex-shrink:0}
 .pdf-modal-actions .btn{margin:0;padding:8px 14px;font-size:.8rem}
+.pdf-frame-wrap{flex:1;display:flex;flex-direction:column;min-height:0;position:relative}
 #pdf-frame{flex:1;width:100%;border:none;background:#525659}
 .config-row{display:grid;grid-template-columns:1fr;gap:14px}
 @media (max-width:720px){.config-row{grid-template-columns:1fr}}
@@ -126,24 +136,38 @@ input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--
 .field-grid label{color:var(--muted);font-size:.72rem}
 .import-row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
 .import-row input[type=file]{font-size:.78rem;max-width:100%}
-.setup-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
-.setup-head h2{margin:0}
-.toggle-setup{font-size:.78rem;color:var(--teal-dark);background:none;border:none;cursor:pointer;font-weight:600;text-decoration:underline;text-underline-offset:2px}
-.setup-body{display:none}
-.setup-body.open{display:block}
+.setup-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.setup-head h2,.collapse-head h2{margin:0;font-size:.92rem;font-weight:700}
+.collapse-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.collapse-head-right{display:flex;align-items:center;gap:8px}
+.collapse-toggle{
+  width:2rem;height:2rem;border-radius:50%;border:1px solid var(--line);background:#fff;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;
+  color:var(--teal-dark);transition:transform .25s ease,background-color .2s,border-color .2s;
+}
+.collapse-toggle:hover{background:#f0fdfa;border-color:var(--teal)}
+.collapse-toggle.is-open{transform:rotate(180deg);background:#f0fdfa;border-color:var(--teal)}
+.collapse-toggle svg{width:14px;height:14px;display:block}
+.setup-body,.collapse-body{display:none}
+.setup-body.open,.collapse-body.open{display:block;margin-top:12px}
 .cb-inline{display:flex;align-items:center;gap:6px;font-size:.8rem}
+{% if ad_mode %}{% include 'partials/ad_mode_assets.html' %}{% endif %}
 </style>
 </head>
-<body>
+<body{% if ad_mode %} class="ad-mode ad-pre-upload"{% endif %}>
 <header>
   <div class="brand-row">
     <div class="brand-mark">ND</div>
     <div>
-      <div class="brand-title">NexaDirect <span class="brand-tag">Scan manual source forms to EDC</span></div>
+      <div class="brand-title">NexaDirect <span class="brand-tag">Paper source to EDC</span></div>
       <div class="meta" id="header-study-meta">{{ study_id }} · {{ study_name }} · build {{ build }}</div>
     </div>
   </div>
   <div class="header-right">
+    <button type="button" class="header-help-btn" id="btn-help" aria-haspopup="dialog" aria-controls="help-guide">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.5 9.5a2.5 2.5 0 1 1 4.2 1.8c-.8.7-1.2 1.2-1.2 2.2"/><circle cx="12" cy="17" r=".8" fill="currentColor" stroke="none"/></svg>
+      Help
+    </button>
     <div id="status-pill" class="status-pill">Idle</div>
   </div>
 </header>
@@ -163,9 +187,11 @@ input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--
     </div>
 
     <div class="card card-pad" id="setup-card">
-      <div class="setup-head">
+      <div class="collapse-head setup-head">
         <h2>Study Setup</h2>
-        <button type="button" class="toggle-setup" id="btn-toggle-setup">Show settings</button>
+        <button type="button" class="collapse-toggle" id="btn-toggle-setup" aria-expanded="false" aria-controls="setup-body" aria-label="Expand Study Setup">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
       <div class="setup-body" id="setup-body">
         <div class="setup-tabs" role="tablist">
@@ -181,7 +207,11 @@ input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--
             </div>
             <div>
               <div class="field-label">Default visit</div>
-              <input type="text" id="cfg-visit" placeholder="Screening">
+              <select id="cfg-visit">
+                {% for v in visits %}
+                <option value="{{ v }}"{% if v == default_visit %} selected{% endif %}>{{ v }}</option>
+                {% endfor %}
+              </select>
             </div>
             <div>
               <div class="field-label">Site ID</div>
@@ -194,11 +224,12 @@ input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--
             <div style="grid-column:1/-1">
               <div class="field-label">Scanner inbox folder</div>
               <input type="text" id="cfg-inbox" placeholder="C:\ClinicalData\ACT\Scanner Inbox">
-              <p class="setup-hint">Folder where the scanner saves PDFs. NexaDirect watches this path for new files.</p>
+              <p class="setup-hint">Real folder NexaDirect watches for new scan PDFs. Use <strong>Check folder access</strong> to verify the path before saving.</p>
             </div>
             <div style="grid-column:1/-1">
               <div class="field-label">Display path (optional)</div>
               <input type="text" id="cfg-display-inbox" placeholder="Shown in UI only — leave blank to use inbox path">
+              <p class="setup-hint">Label shown in the inbox header for coordinators — does not change where files are read from.</p>
             </div>
             <div>
               <div class="field-label">Auto-write confidence threshold</div>
@@ -208,7 +239,7 @@ input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--
           </div>
           <div class="actions" style="margin-top:14px">
             <button type="button" class="btn btn-primary" id="btn-save-site">Save site settings</button>
-            <button type="button" class="btn btn-secondary" id="btn-test-inbox">Test inbox folder</button>
+            <button type="button" class="btn btn-secondary" id="btn-test-inbox" title="Verify the inbox folder exists and count PDFs — does not save settings">Check folder access</button>
           </div>
           <div class="setup-msg" id="site-setup-msg"></div>
         </div>
@@ -246,7 +277,7 @@ input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--
       <ol>
         <li>Open <strong>Scanned Inbox Folder</strong> or click a filename in the inbox list to preview source PDFs.</li>
         <li>Click <strong>Write to EDC</strong> to extract fields, validate confidence, and auto-write high-confidence values to EDC.</li>
-        <li>Resolve any flagged fields in the <strong>Review queue</strong> below (view scan, edit, approve).</li>
+        <li>Resolve any flagged fields in <strong>Review flagged items</strong> below (view scan, edit, approve).</li>
         <li>Click <strong>Open EDC to verify</strong> to confirm CDASH data in mock Rave.</li>
       </ol>
       <div class="actions">
@@ -261,24 +292,36 @@ input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--
       </div>
     </div>
 
+    {% set enterprise_app = "NexaDirect" %}
+    {% include 'partials/enterprise_panel.html' %}
+
     <div class="card card-pad" id="inbox-card">
+      <div class="ad-dropzone ad-only" id="ad-dropzone" role="button" tabindex="0">
+        <div class="ad-dropzone-icon">📄</div>
+        <strong>Drop scan or photo</strong>
+        <span>Upload or scan a handwritten CRF</span>
+      </div>
       <h2>Scanner Inbox <span id="inbox-count" style="font-weight:500;color:var(--muted)"></span></h2>
       <p class="inbox-hint">Click a filename below to preview the scan here — stay in NexaDirect without opening PDFs in Explorer.</p>
       <p style="font-size:.78rem;color:var(--muted);margin-bottom:10px" id="inbox-path-label">{{ inbox_path }}</p>
       <div class="inbox-scroll">
         <table id="inbox-table">
-          <thead><tr><th>File</th><th>Subject</th><th>Form</th><th>Status</th><th>Auto</th><th>Flagged</th><th></th></tr></thead>
+          <thead><tr><th>File</th><th>Subject</th><th>Form</th><th>Status</th><th>Written</th><th>Flagged</th><th></th></tr></thead>
           <tbody></tbody>
         </table>
       </div>
     </div>
 
     <div class="card card-pad">
-      <h2>Review queue</h2>
+      <h2>Review flagged items</h2>
+      <div class="ad-auto-summary ad-only" id="ad-auto-summary">
+        <p id="ad-auto-summary-text">4 fields auto-mapped with high confidence</p>
+        <button type="button" class="btn-accept-all ad-only" id="btn-accept-all">One-Click Accept</button>
+      </div>
       <div id="review-empty" class="review-empty">No flagged fields — run Write to EDC first.</div>
       <div id="review-head" class="review-foot review-foot-top" style="display:none">
-        <div class="review-banner" id="review-banner-top">Changes are staged only — values will <strong>not</strong> be written to EDC until you click Save to EDC.</div>
-        <button type="button" class="review-save-btn" id="review-save-btn-top" disabled>Save to EDC</button>
+        <div class="review-banner" id="review-banner-top">Changes are staged only — values will <strong>not</strong> be written to EDC until you click Write to EDC.</div>
+        <button type="button" class="review-save-btn" id="review-save-btn-top" disabled>Write to EDC</button>
       </div>
       <div class="review-scroll" id="review-scroll" style="display:none">
         <table id="review-table" style="display:none">
@@ -287,8 +330,11 @@ input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--
         </table>
       </div>
       <div id="review-foot" class="review-foot" style="display:none">
-        <div class="review-banner" id="review-banner-bottom">Changes are staged only — values will <strong>not</strong> be written to EDC until you click Save to EDC.</div>
-        <button type="button" class="review-save-btn" id="review-save-btn" disabled>Save to EDC</button>
+        <div class="review-banner" id="review-banner-bottom">Changes are staged only — values will <strong>not</strong> be written to EDC until you click Write to EDC.</div>
+        <button type="button" class="review-save-btn" id="review-save-btn" disabled>Write to EDC</button>
+      </div>
+      <div class="review-verify-row" id="review-verify-row">
+        <button type="button" class="review-verify-btn" id="review-verify-edc">Open EDC to verify →</button>
       </div>
     </div>
   </div>
@@ -311,13 +357,25 @@ input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--
         <button type="button" class="btn btn-primary" id="pdf-close">Close</button>
       </div>
     </div>
-    <iframe id="pdf-frame" title="Scanned form PDF"></iframe>
+    <div class="pdf-frame-wrap" id="pdf-frame-wrap">
+      <iframe id="pdf-frame" title="Scanned form PDF"></iframe>
+      <div class="pdf-overlays ad-only" id="pdf-overlays"></div>
+    </div>
   </div>
 </div>
+
+{% include 'partials/help_guide.html' %}
+{% include 'partials/help_modal_assets.html' %}
+
 <script>
 const DEMO_SITE_NAME = {{ demo_site_name|tojson }};
+const AD_MODE = {{ ad_mode|tojson }};
+const AD_QUERY = AD_MODE ? '?ad=1' : '';
+const AD_BODY = () => (AD_MODE ? { ad: true } : {});
 const BUILD_LABEL = {{ build|tojson }};
 const DEFAULT_VISIT = {{ default_visit|tojson }};
+const PROTOCOL_VISITS = {{ visits|tojson }};
+let activeDefaultVisit = DEFAULT_VISIT;
 const EDC_PORT = {{ edc_port }};
 const EDC_BASE = {{ edc_base|tojson }};
 const statusPill = document.getElementById('status-pill');
@@ -344,7 +402,7 @@ function clearSetupMsg(elId) {
 
 function connectStream() {
   if (eventSource) eventSource.close();
-  eventSource = new EventSource(`/api/stream?study=${encodeURIComponent(selectedStudy)}`);
+  eventSource = new EventSource(`/api/stream?study=${encodeURIComponent(selectedStudy)}${AD_MODE ? '&ad=1' : ''}`);
   eventSource.addEventListener('line', e => appendLog(e.data));
   eventSource.addEventListener('progress', e => {
     const p = JSON.parse(e.data);
@@ -361,6 +419,8 @@ function connectStream() {
     if (s.state === 'done') {
       loadReview();
       fetch('/api/status').then(r=>r.json()).then(d => { edcToken = d.token; });
+      if (window.refreshEnterprisePanels) window.refreshEnterprisePanels();
+      if (AD_MODE) onAdProcessComplete();
     }
   });
   eventSource.addEventListener('inbox', e => renderInbox(JSON.parse(e.data)));
@@ -403,8 +463,11 @@ document.getElementById('study').addEventListener('change', updateStudyMeta);
 
 document.getElementById('btn-toggle-setup').addEventListener('click', () => {
   const body = document.getElementById('setup-body');
+  const btn = document.getElementById('btn-toggle-setup');
   const open = body.classList.toggle('open');
-  document.getElementById('btn-toggle-setup').textContent = open ? 'Hide settings' : 'Show settings';
+  btn.classList.toggle('is-open', open);
+  btn.setAttribute('aria-expanded', open);
+  btn.setAttribute('aria-label', open ? 'Collapse Study Setup' : 'Expand Study Setup');
   if (open) loadSettings(selectedStudy);
 });
 
@@ -425,7 +488,13 @@ async function loadSettings(studyId) {
   if (!d.ok) return;
   const s = d.study;
   document.getElementById('cfg-name').value = s.name || '';
-  document.getElementById('cfg-visit').value = s.default_visit || '';
+  const visitSel = document.getElementById('cfg-visit');
+  const visits = s.visits?.length ? s.visits : PROTOCOL_VISITS;
+  visitSel.innerHTML = visits.map(v =>
+    `<option value="${v.replace(/"/g, '&quot;')}">${v.replace(/</g, '&lt;')}</option>`
+  ).join('');
+  visitSel.value = visits.includes(s.default_visit) ? s.default_visit : (visits[0] || '');
+  activeDefaultVisit = visitSel.value;
   document.getElementById('cfg-site-id').value = s.site_id || '';
   document.getElementById('cfg-site-name').value = DEMO_SITE_NAME;
   document.getElementById('cfg-inbox').value = s.inbox_path || '';
@@ -522,26 +591,39 @@ document.getElementById('btn-save-site').addEventListener('click', async () => {
   }
   document.getElementById('inbox-path-label').textContent = d.study.display_inbox_path || d.study.inbox_path;
   document.getElementById('header-study-meta').textContent = `${selectedStudy} — ${d.study.name} · build ${BUILD_LABEL}`;
+  activeDefaultVisit = d.study.default_visit || activeDefaultVisit;
   const kind = d.inbox_valid ? 'ok' : 'warn';
-  showSetupMsg('site-setup-msg', d.inbox_valid ? 'Site settings saved.' : `Saved, but inbox: ${d.inbox_message}`, kind);
+  const saveNote = d.inbox_valid
+    ? `Site settings saved. ${d.inbox_message}`
+    : `Site settings saved, but inbox check failed: ${d.inbox_message}`;
+  showSetupMsg('site-setup-msg', saveNote, kind);
   fetch('/api/inbox?study=' + encodeURIComponent(selectedStudy)).then(x=>x.json()).then(x => renderInbox(x.files||[]));
 });
 
 document.getElementById('btn-test-inbox').addEventListener('click', async () => {
-  const path = document.getElementById('cfg-inbox').value;
-  const r = await fetch(`/api/settings/${encodeURIComponent(selectedStudy)}/site`, {
-    method: 'PUT',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ inbox_path: path }),
-  });
-  const d = await r.json();
-  if (d.ok) {
-    const kind = d.inbox_valid ? 'ok' : 'warn';
-    showSetupMsg('site-setup-msg', d.inbox_message || (d.inbox_valid ? 'Folder OK' : 'Folder not found'), kind);
-    if (d.inbox_valid) {
-      document.getElementById('inbox-path-label').textContent = d.study.display_inbox_path || d.study.inbox_path;
-      fetch('/api/inbox?study=' + encodeURIComponent(selectedStudy)).then(x=>x.json()).then(x => renderInbox(x.files||[]));
+  const path = document.getElementById('cfg-inbox').value.trim();
+  if (!path) {
+    showSetupMsg('site-setup-msg', 'Enter the scanner inbox folder path first.', 'warn');
+    return;
+  }
+  const btn = document.getElementById('btn-test-inbox');
+  btn.disabled = true;
+  btn.textContent = 'Checking…';
+  try {
+    const r = await fetch(`/api/settings/${encodeURIComponent(selectedStudy)}/inbox/test`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ inbox_path: path }),
+    });
+    const d = await r.json();
+    if (!d.ok) {
+      showSetupMsg('site-setup-msg', d.error || 'Check failed', 'err');
+      return;
     }
+    showSetupMsg('site-setup-msg', d.message, d.valid ? 'ok' : 'warn');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Check folder access';
   }
 });
 
@@ -567,7 +649,28 @@ document.getElementById('btn-import-form').addEventListener('click', async () =>
   }
 });
 
-updateStudyMeta();
+async function resetDemoToFresh() {
+  await fetch('/api/reset', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(AD_BODY()) });
+  logEl.innerHTML = '';
+  edcToken = null;
+  progressWrap.classList.remove('visible');
+  progressFill.style.width = '0%';
+  progressMeta.textContent = '';
+  statusPill.className = 'status-pill';
+  statusPill.textContent = 'Idle';
+  stagedApprovals.clear();
+  await loadReview();
+}
+
+async function bootDemo() {
+  await resetDemoToFresh();
+  if (AD_MODE) {
+    document.body.classList.add('ad-pre-upload');
+    showAdCaption('Upload or scan');
+  }
+  updateStudyMeta();
+  if (window.refreshEnterprisePanels) window.refreshEnterprisePanels();
+}
 
 const pdfModal = document.getElementById('pdf-modal');
 const pdfFrame = document.getElementById('pdf-frame');
@@ -656,6 +759,7 @@ function updateReviewChrome() {
   const bannerTop = document.getElementById('review-banner-top');
   const bannerBottom = document.getElementById('review-banner-bottom');
   const table = document.getElementById('review-table');
+  const verifyRow = document.getElementById('review-verify-row');
   const hasRows = table.style.display === 'table';
   const stagedCount = stagedApprovals.size;
   const savedCount = document.querySelectorAll('#review-table tbody tr.row-saved').length;
@@ -664,22 +768,43 @@ function updateReviewChrome() {
   if (!hasRows) {
     head.style.display = 'none';
     foot.style.display = 'none';
+    if (verifyRow) verifyRow.classList.remove('show');
     return;
   }
 
+  if (verifyRow) verifyRow.classList.add('show');
+
   head.style.display = 'flex';
   foot.style.display = 'flex';
-  saveBtns.forEach(btn => { btn.disabled = stagedCount === 0; });
 
   let msg;
   if (stagedCount > 0) {
-    msg = `${stagedCount} change${stagedCount > 1 ? 's' : ''} staged — values will <strong>not</strong> be written to EDC until you click Save to EDC.`;
+    saveBtns.forEach(btn => {
+      btn.classList.remove('is-saved');
+      btn.disabled = false;
+      btn.textContent = 'Write to EDC';
+    });
+    msg = `${stagedCount} change${stagedCount > 1 ? 's' : ''} staged — values will <strong>not</strong> be written to EDC until you click Write to EDC.`;
   } else if (savedCount > 0 && pendingCount === 0) {
-    msg = '<span class="review-saved-msg">✓ All changes saved to EDC.</span>';
+    saveBtns.forEach(btn => {
+      btn.disabled = true;
+      btn.classList.add('is-saved');
+    });
+    msg = '<span class="review-saved-msg">✓ All changes written to EDC.</span>';
   } else if (savedCount > 0 && pendingCount > 0) {
-    msg = `${pendingCount} item${pendingCount > 1 ? 's' : ''} still need review. Saved rows remain below for reference.`;
+    saveBtns.forEach(btn => {
+      btn.classList.remove('is-saved');
+      btn.disabled = true;
+      btn.textContent = 'Write to EDC';
+    });
+    msg = `${pendingCount} item${pendingCount > 1 ? 's' : ''} still need review. Written rows remain below for reference.`;
   } else {
-    msg = 'Changes are staged only — values will <strong>not</strong> be written to EDC until you click Save to EDC.';
+    saveBtns.forEach(btn => {
+      btn.classList.remove('is-saved');
+      btn.disabled = true;
+      btn.textContent = 'Write to EDC';
+    });
+    msg = 'Changes are staged only — values will <strong>not</strong> be written to EDC until you click Write to EDC.';
   }
   bannerTop.innerHTML = msg;
   bannerBottom.innerHTML = msg;
@@ -691,11 +816,22 @@ function bindViewScanBtn(btn) {
   });
 }
 
+function bindReviewValueInput(input, id) {
+  input.addEventListener('input', () => {
+    const row = input.closest('tr');
+    if (row?.classList.contains('row-staged')) {
+      stagedApprovals.set(id, input.value);
+    }
+  });
+}
+
 function bindPendingRow(tr, item) {
   const id = item.id;
+  const input = tr.querySelector(`input[data-id="${id}"]`);
+  if (input) bindReviewValueInput(input, id);
+
   tr.querySelector('[data-approve]')?.addEventListener('click', () => {
     const row = tr;
-    const input = row.querySelector(`input[data-id="${id}"]`);
     const value = input.value;
     const viewBtn = row.querySelector('[data-view-scan]');
     const viewData = viewBtn ? {
@@ -707,7 +843,6 @@ function bindPendingRow(tr, item) {
 
     stagedApprovals.set(id, value);
     row.classList.add('row-staged');
-    input.readOnly = true;
 
     const actionsCell = row.querySelector('.review-actions');
     actionsCell.innerHTML = `
@@ -717,7 +852,6 @@ function bindPendingRow(tr, item) {
     actionsCell.querySelector('[data-undo]').addEventListener('click', () => {
       stagedApprovals.delete(id);
       row.classList.remove('row-staged');
-      input.readOnly = false;
       actionsCell.innerHTML = `
         <button type="button" class="btn-sm btn-view" data-view-scan="${esc(viewData.scan||'')}" data-subject="${esc(viewData.subject||'')}" data-form="${esc(viewData.form||'')}" data-field="${esc(viewData.field||'')}">View scan</button>
         <button type="button" class="btn-sm" data-approve="${esc(id)}">Approve</button>`;
@@ -730,7 +864,94 @@ function bindPendingRow(tr, item) {
   });
 }
 
+function createReviewValueInput(item, { readonly = false } = {}) {
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.value = item.extracted_value ?? '';
+  input.dataset.id = item.id;
+  input.placeholder = readonly ? '' : 'Edit value…';
+  if (readonly) input.readOnly = true;
+  else bindReviewValueInput(input, item.id);
+  return input;
+}
+
+function appendReviewRow(tb, item, { stagedId, draftValue } = {}) {
+  const isSaved = item.status === 'approved';
+  const isStaged = !isSaved && (stagedId === item.id || stagedApprovals.has(item.id));
+  const tr = document.createElement('tr');
+  tr.className = 'review-row' + (isSaved ? ' row-saved' : '') + (isStaged ? ' row-staged' : '');
+  tr.dataset.reviewId = item.id;
+
+  tr.appendChild(Object.assign(document.createElement('td'), { textContent: item.subject_id }));
+  const formTd = document.createElement('td');
+  formTd.innerHTML = formCell(item);
+  tr.appendChild(formTd);
+  tr.appendChild(Object.assign(document.createElement('td'), { textContent: item.field_label }));
+
+  const valueTd = document.createElement('td');
+  const input = createReviewValueInput(item, { readonly: isSaved });
+  if (draftValue != null && !isSaved) input.value = draftValue;
+  valueTd.appendChild(input);
+  tr.appendChild(valueTd);
+
+  const confTd = document.createElement('td');
+  confTd.className = 'conf';
+  confTd.textContent = item.confidence;
+  tr.appendChild(confTd);
+
+  const issueTd = document.createElement('td');
+  issueTd.innerHTML = `<span class="issue">${esc(item.issue_text || item.issue)}</span>`;
+  tr.appendChild(issueTd);
+
+  const actionsTd = document.createElement('td');
+  actionsTd.className = 'review-actions';
+  if (isSaved) {
+    actionsTd.innerHTML = `
+      <button type="button" class="btn-sm btn-view" data-view-scan="${esc(item.filename)}" data-subject="${esc(item.subject_id)}" data-form="${esc(item.form_code)}" data-field="${esc(item.field_label)}">View scan</button>
+      <span class="saved-label">✓ Written to EDC</span>`;
+  } else if (isStaged) {
+    stagedApprovals.set(item.id, input.value);
+    actionsTd.innerHTML = `
+      <span class="staged-label">✓ Staged</span>
+      <button type="button" class="btn-undo" data-undo="${esc(item.id)}">Undo</button>`;
+    actionsTd.querySelector('[data-undo]')?.addEventListener('click', () => {
+      stagedApprovals.delete(item.id);
+      tr.classList.remove('row-staged');
+      actionsTd.innerHTML = `
+        <button type="button" class="btn-sm btn-view" data-view-scan="${esc(item.filename)}" data-subject="${esc(item.subject_id)}" data-form="${esc(item.form_code)}" data-field="${esc(item.field_label)}">View scan</button>
+        <button type="button" class="btn-sm" data-approve="${esc(item.id)}">Approve</button>`;
+      bindViewScanBtn(actionsTd.querySelector('[data-view-scan]'));
+      bindPendingRow(tr, item);
+      updateReviewChrome();
+    });
+  } else {
+    actionsTd.innerHTML = `
+      <button type="button" class="btn-sm btn-view" data-view-scan="${esc(item.filename)}" data-subject="${esc(item.subject_id)}" data-form="${esc(item.form_code)}" data-field="${esc(item.field_label)}">View scan</button>
+      <button type="button" class="btn-sm" data-approve="${esc(item.id)}">Approve</button>`;
+  }
+  tr.appendChild(actionsTd);
+
+  tb.appendChild(tr);
+  tr.querySelectorAll('[data-view-scan]').forEach(bindViewScanBtn);
+  if (!isSaved) bindPendingRow(tr, item);
+  return tr;
+}
+
+function formCell(item) {
+  const title = esc(item.form_title || item.form_code);
+  const code = esc(item.form_code);
+  return item.form_title && item.form_title !== item.form_code
+    ? `<span title="${code}">${title}</span>`
+    : title;
+}
+
 async function loadReview() {
+  const drafts = new Map();
+  document.querySelectorAll('#review-table input[data-id]').forEach(inp => {
+    if (!inp.readOnly) drafts.set(inp.dataset.id, inp.value);
+  });
+  const stagedSnapshot = new Map(stagedApprovals);
+
   const r = await fetch('/api/review');
   const data = await r.json();
   const items = data.items || [];
@@ -740,6 +961,8 @@ async function loadReview() {
   const tb = table.querySelector('tbody');
   tb.innerHTML = '';
   stagedApprovals.clear();
+  stagedSnapshot.forEach((v, k) => stagedApprovals.set(k, v));
+
   if (!items.length) {
     empty.style.display = 'block';
     scroll.style.display = 'none';
@@ -751,40 +974,23 @@ async function loadReview() {
   scroll.style.display = 'block';
   table.style.display = 'table';
   items.forEach(item => {
-    const isSaved = item.status === 'approved';
-    const tr = document.createElement('tr');
-    tr.className = 'review-row' + (isSaved ? ' row-saved' : '');
-    tr.dataset.reviewId = item.id;
-    if (isSaved) {
-      tr.innerHTML = `<td>${esc(item.subject_id)}</td><td>${esc(item.form_code)}</td><td>${esc(item.field_label)}</td>
-        <td><input type="text" value="${esc(item.extracted_value)}" data-id="${esc(item.id)}" readonly></td>
-        <td class="conf">${item.confidence}</td><td><span class="issue">${esc(item.issue)}</span></td>
-        <td class="review-actions">
-          <button type="button" class="btn-sm btn-view" data-view-scan="${esc(item.filename)}" data-subject="${esc(item.subject_id)}" data-form="${esc(item.form_code)}" data-field="${esc(item.field_label)}">View scan</button>
-          <span class="saved-label">✓ Saved to EDC</span>
-        </td>`;
-    } else {
-      tr.innerHTML = `<td>${esc(item.subject_id)}</td><td>${esc(item.form_code)}</td><td>${esc(item.field_label)}</td>
-        <td><input type="text" value="${esc(item.extracted_value)}" data-id="${esc(item.id)}"></td>
-        <td class="conf">${item.confidence}</td><td><span class="issue">${esc(item.issue)}</span></td>
-        <td class="review-actions">
-          <button type="button" class="btn-sm btn-view" data-view-scan="${esc(item.filename)}" data-subject="${esc(item.subject_id)}" data-form="${esc(item.form_code)}" data-field="${esc(item.field_label)}">View scan</button>
-          <button type="button" class="btn-sm" data-approve="${esc(item.id)}">Approve</button>
-        </td>`;
-    }
-    tb.appendChild(tr);
-    tr.querySelectorAll('[data-view-scan]').forEach(bindViewScanBtn);
-    if (!isSaved) bindPendingRow(tr, item);
+    appendReviewRow(tb, item, {
+      stagedId: stagedSnapshot.has(item.id) ? item.id : null,
+      draftValue: drafts.get(item.id) ?? stagedSnapshot.get(item.id),
+    });
   });
   updateReviewChrome();
 }
 
 async function saveReviewToEdc() {
   if (stagedApprovals.size === 0) return;
+  document.querySelectorAll('#review-table tr.row-staged input[data-id]').forEach(inp => {
+    stagedApprovals.set(inp.dataset.id, inp.value);
+  });
   const saveBtns = document.querySelectorAll('.review-save-btn');
   saveBtns.forEach(btn => {
     btn.disabled = true;
-    btn.textContent = 'Saving\u2026';
+    btn.textContent = 'Writing\u2026';
   });
 
   const promises = [];
@@ -799,9 +1005,9 @@ async function saveReviewToEdc() {
   }
   await Promise.all(promises);
 
-  saveBtns.forEach(btn => { btn.textContent = 'Save to EDC'; });
   stagedApprovals.clear();
   await loadReview();
+  if (AD_MODE) showAdToast('Signed data pushed to EDC');
 }
 
 document.querySelectorAll('.review-save-btn').forEach(btn => {
@@ -810,24 +1016,38 @@ document.querySelectorAll('.review-save-btn').forEach(btn => {
 
 document.getElementById('btn-process').addEventListener('click', async () => {
   const study = document.getElementById('study').value;
+  if (AD_MODE) {
+    showAdCaption('NexaDirect extracts and maps fields');
+    const inboxFiles = document.querySelectorAll('#inbox-table tbody tr');
+    if (inboxFiles.length) {
+      const btn = document.querySelector('#inbox-table [data-inbox-file]');
+      if (btn) await startAdOverlayDemo(btn.dataset.inboxFile, btn.dataset.inboxSubject, btn.dataset.inboxForm);
+    }
+  }
   const r = await fetch('/api/process', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ study }),
+    body: JSON.stringify({ study, ...(AD_MODE ? { ad: true } : {}) }),
   });
   const d = await r.json();
   if (!d.ok) alert(d.error || 'Already running');
 });
 
-document.getElementById('btn-edc').addEventListener('click', () => {
+function edcLaunchBase() {
+  return EDC_BASE.replace(/\/$/, '');
+}
+
+function openEdcVerify() {
   const study = document.getElementById('study').value;
-  const visit = document.getElementById('cfg-visit')?.value || DEFAULT_VISIT;
   const params = new URLSearchParams();
   if (edcToken) params.set('token', edcToken);
   params.set('study', study);
-  params.set('visit', DEFAULT_VISIT);
-  window.open(`${EDC_BASE}/login?${params}`, '_blank');
-});
+  params.set('visit', activeDefaultVisit);
+  window.open(`${edcLaunchBase()}/login?${params}`, '_blank');
+}
+
+document.getElementById('btn-edc').addEventListener('click', openEdcVerify);
+document.getElementById('review-verify-edc').addEventListener('click', openEdcVerify);
 
 document.getElementById('btn-reveal').addEventListener('click', async () => {
   const card = document.getElementById('inbox-card');
@@ -859,14 +1079,114 @@ document.getElementById('btn-reveal').addEventListener('click', async () => {
 });
 document.getElementById('btn-reset').addEventListener('click', async () => {
   if (!confirm('Reset EDC, review queue, and inbox statuses?')) return;
-  await fetch('/api/reset', {method:'POST'});
-  logEl.innerHTML = '';
-  await loadReview();
+  await resetDemoToFresh();
+  updateStudyMeta();
 });
 
-connectStream();
-fetch('/api/status').then(r=>r.json()).then(d => { edcToken = d.token; });
-loadReview();
+bootDemo();
+
+/* —— Ad recording mode (?ad=1) —— */
+function showAdCaption(text) {
+  if (!AD_MODE) return;
+  const el = document.getElementById('ad-caption');
+  if (!el) return;
+  el.textContent = text;
+  el.classList.add('show');
+}
+
+function hideAdCaption() {
+  document.getElementById('ad-caption')?.classList.remove('show');
+}
+
+function showAdToast(msg) {
+  if (!AD_MODE) return;
+  const el = document.getElementById('ad-toast');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 3200);
+  revealAdAudit();
+}
+
+async function adSimulateUpload() {
+  const r = await fetch('/api/ad/simulate-upload', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ ad: true }) });
+  const d = await r.json();
+  if (d.ok) {
+    document.body.classList.remove('ad-pre-upload');
+    renderInbox(d.files || []);
+    const card = document.getElementById('inbox-card');
+    card.classList.remove('inbox-card-flash');
+    void card.offsetWidth;
+    card.classList.add('inbox-card-flash');
+    showAdCaption('Upload or scan');
+  }
+}
+
+async function startAdOverlayDemo(filename, subjectId, formCode) {
+  openScanPdf(filename, subjectId, formCode, 'Extracting fields…');
+  const overlayRoot = document.getElementById('pdf-overlays');
+  if (!overlayRoot) return;
+  overlayRoot.innerHTML = '';
+  try {
+    const r = await fetch(`/api/ad/overlays/${encodeURIComponent(filename)}`);
+    const d = await r.json();
+    if (!d.ok || !d.overlay?.fields) return;
+    d.overlay.fields.forEach((field, i) => {
+      const box = document.createElement('div');
+      const conf = field.confidence ?? 0.85;
+      box.className = 'pdf-overlay-box ' + (conf >= 0.85 ? 'conf-high' : conf >= 0.7 ? 'conf-mid' : 'conf-low');
+      box.style.left = field.left;
+      box.style.top = field.top;
+      box.style.width = field.width;
+      box.style.height = field.height;
+      box.title = field.label || field.name;
+      overlayRoot.appendChild(box);
+      setTimeout(() => box.classList.add('show'), 400 + i * 700);
+    });
+  } catch (_) {}
+}
+
+function onAdProcessComplete() {
+  closeScanPdf();
+  showAdCaption('Review only low-confidence items');
+  fetch('/api/ad/status').then(r => r.json()).then(d => {
+    const n = d.auto_count || 4;
+    const txt = document.getElementById('ad-auto-summary-text');
+    if (txt) txt.textContent = `${n} field${n === 1 ? '' : 's'} auto-mapped with high confidence`;
+    document.getElementById('ad-auto-summary')?.classList.add('visible');
+  });
+  document.querySelectorAll('#review-table tbody tr.review-row:not(.row-saved)').forEach(tr => {
+    tr.classList.add('ad-pulse');
+  });
+  document.getElementById('review-scroll')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function revealAdAudit() {
+  const card = document.getElementById('enterprise-card');
+  const body = document.getElementById('enterprise-body');
+  const btn = document.getElementById('btn-toggle-enterprise');
+  if (body && !body.classList.contains('open')) {
+    body.classList.add('open');
+    btn?.classList.add('is-open');
+    btn?.setAttribute('aria-expanded', 'true');
+  }
+  document.querySelector('.ent-tab[data-ent-tab="audit"]')?.click();
+  card?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  if (window.refreshEnterprisePanels) window.refreshEnterprisePanels();
+}
+
+if (AD_MODE) {
+  const dropzone = document.getElementById('ad-dropzone');
+  dropzone?.addEventListener('click', adSimulateUpload);
+  dropzone?.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); adSimulateUpload(); } });
+  document.getElementById('btn-accept-all')?.addEventListener('click', () => {
+    document.getElementById('ad-auto-summary')?.classList.remove('visible');
+    showAdCaption('One-Click Accept → Push to EDC');
+    document.querySelectorAll('#review-table tbody tr.review-row:not(.row-saved)').forEach(tr => {
+      tr.classList.add('ad-pulse');
+    });
+  });
+}
 </script>
 </body>
 </html>
