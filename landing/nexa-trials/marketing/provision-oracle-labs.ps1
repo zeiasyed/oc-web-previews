@@ -164,7 +164,7 @@ Then re-run: .\provision-oracle-labs.ps1
   }
 }
 
-if (-not $VpsIp) { throw "No VPS IP — provision failed or pass -VpsIp" }
+if (-not $VpsIp) { throw "No VPS IP - provision failed or pass -VpsIp" }
 
 Write-Step "Waiting for SSH on $VpsIp"
 $sshArgs = @("-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=accept-new", "-i", $SshKey)
