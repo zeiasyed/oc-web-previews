@@ -1,9 +1,9 @@
 #Requires -Version 5.1
-# Deploy NexaDirect to Render (always-on) and point demo-direct.nexa-trials.com at it.
+# Deploy NexaSource to Render (always-on) and point demo-source.nexa-trials.com at it.
 # Usage:
-#   .\deploy-nexadirect-cloud.ps1
-#   .\deploy-nexadirect-cloud.ps1 -RenderServiceUrl "https://nexadirect-demo.onrender.com"
-#   .\deploy-nexadirect-cloud.ps1 -RenderApiKey "rnd_..."
+#   .\deploy-nexasource-cloud.ps1
+#   .\deploy-nexasource-cloud.ps1 -RenderServiceUrl "https://nexasource-demo.onrender.com"
+#   .\deploy-nexasource-cloud.ps1 -RenderApiKey "rnd_..."
 
 param(
   [string]$RenderApiKey,
@@ -20,9 +20,9 @@ $CredsFile = Join-Path $TrialsRoot ".cloudflare-credentials.json"
 $LabFile = Join-Path $TrialsRoot ".lab-access.local.json"
 $RenderKeyFile = Join-Path $TrialsRoot ".render-api-key.local"
 $ZoneName = "nexa-trials.com"
-$DemoHost = "demo-direct.nexa-trials.com"
-$EdcHost = "demo-edc.nexa-trials.com"
-$ServiceName = "nexadirect-demo"
+$DemoHost = "demo-source.nexa-trials.com"
+$EdcHost = "demo-source-edc.nexa-trials.com"
+$ServiceName = "nexasource-demo"
 
 function Write-Step([string]$Msg) { Write-Host "`n>> $Msg" -ForegroundColor Cyan }
 function Write-Ok([string]$Msg) { Write-Host "   OK  $Msg" -ForegroundColor Green }
@@ -84,7 +84,6 @@ function Set-CfCname {
   }
 }
 
-# --- credentials ---
 if (-not $RenderApiKey -and $env:RENDER_API_KEY) { $RenderApiKey = $env:RENDER_API_KEY }
 if (-not $RenderApiKey -and (Test-Path $RenderKeyFile)) {
   $RenderApiKey = (Get-Content $RenderKeyFile -Raw).Trim()
@@ -111,7 +110,7 @@ if (-not $DnsOnly) {
     Write-Host "   https://render.com/deploy?repo=$([uri]::EscapeDataString($Repo))" -ForegroundColor Yellow
     Write-Host ""
     Write-Warn "After Render finishes, re-run with:"
-    Write-Host "   .\deploy-nexadirect-cloud.ps1 -RenderServiceUrl https://$ServiceName.onrender.com" -ForegroundColor Yellow
+    Write-Host "   .\deploy-nexasource-cloud.ps1 -RenderServiceUrl https://$ServiceName.onrender.com" -ForegroundColor Yellow
     if (-not $RenderServiceUrl) { exit 1 }
   } else {
     Write-Step "Render: locate or create $ServiceName"
@@ -126,22 +125,21 @@ if (-not $DnsOnly) {
     if (-not $service) {
       Write-Host "   Creating web service..." -ForegroundColor Gray
       $created = Invoke-RenderApi POST "/services" @{
-        type    = "web_service"
-        name    = $ServiceName
-        ownerId = $ownerId
-        repo    = $Repo
-        branch  = $Branch
-        rootDir = "landing/nexa-direct-demo"
-        runtime = "docker"
-        plan    = "starter"
+        type       = "web_service"
+        name       = $ServiceName
+        ownerId    = $ownerId
+        repo       = $Repo
+        branch     = $Branch
+        rootDir    = "landing/nexa-source-flow-demo"
+        runtime    = "docker"
+        plan       = "starter"
         autoDeploy = "yes"
-        envVars = @(
+        envVars    = @(
           @{ key = "LAB_AUTH_USER"; value = $labUser }
           @{ key = "LAB_AUTH_PASSWORD"; value = $labPass }
           @{ key = "LAB_AUTH_EDC"; value = "1" }
           @{ key = "EDC_PUBLIC_BASE"; value = "/edc" }
           @{ key = "SCRIPT_ROOT"; value = "/edc" }
-          @{ key = "NEXA_ASSETS_DIR"; value = "/app/demo_data/nexa_assets" }
         )
       }
       $service = $created
@@ -165,8 +163,8 @@ if (-not $DnsOnly) {
     Wait-RenderDeploy $serviceId | Out-Null
     Write-Ok "Deploy is live"
 
-    Write-Step "Render: attach custom domains"
     foreach ($hostName in @($DemoHost, $EdcHost)) {
+      Write-Step "Render: attach custom domain $hostName"
       try {
         Invoke-RenderApi POST "/services/$serviceId/custom-domains" @{ name = $hostName } | Out-Null
         Write-Ok "Custom domain registered: $hostName"
@@ -181,12 +179,12 @@ if (-not $serviceUrl) {
   $serviceUrl = if ($RenderServiceUrl) { $RenderServiceUrl.TrimEnd('/') } else { "https://$ServiceName.onrender.com" }
 }
 
-Write-Step "Cloudflare DNS: $DemoHost + $EdcHost -> Render"
 $target = ($serviceUrl -replace '^https?://', '').TrimEnd('/')
-Set-CfCname -RecordName "demo-direct" -Target $target -Headers $cfHeaders -Zone $zoneId
-Set-CfCname -RecordName "demo-edc" -Target $target -Headers $cfHeaders -Zone $zoneId
+Write-Step "Cloudflare DNS: $DemoHost + $EdcHost -> Render"
+Set-CfCname -RecordName "demo-source" -Target $target -Headers $cfHeaders -Zone $zoneId
+Set-CfCname -RecordName "demo-source-edc" -Target $target -Headers $cfHeaders -Zone $zoneId
 
-Write-Step "Verify health (unauthenticated /health)"
+Write-Step "Verify health"
 Start-Sleep -Seconds 5
 foreach ($url in @("https://$DemoHost/health", "$serviceUrl/health")) {
   try {
@@ -201,10 +199,8 @@ foreach ($url in @("https://$DemoHost/health", "$serviceUrl/health")) {
 }
 
 Write-Host ""
-Write-Host "NexaDirect lab (24/7 on Render starter):" -ForegroundColor Green
+Write-Host "NexaSource lab (24/7 on Render starter):" -ForegroundColor Green
 Write-Host "  https://$DemoHost/" -ForegroundColor Green
 Write-Host "  Mock EDC: https://$DemoHost/edc/  (legacy: https://$EdcHost/)" -ForegroundColor Green
-Write-Host "  Gateway:  https://nexa-trials.com/lab/direct.html" -ForegroundColor Green
+Write-Host "  Gateway:  https://nexa-trials.com/lab/" -ForegroundColor Green
 Write-Host "  Auth:     $labUser / (from .lab-access.local.json)" -ForegroundColor Green
-Write-Host ""
-Write-Warn "Retire PC tunnel: stop run_lab_tunnel.ps1 and cloudflared — DNS no longer points at your PC."
