@@ -1,0 +1,22 @@
+#cloud-config
+# Optional: paste into Oracle "Cloud init" when creating the Ubuntu instance.
+# Still run deploy-labs-vps.ps1 from your PC for .env + Cloudflare DNS.
+
+package_update: true
+packages:
+  - git
+  - nginx
+  - ca-certificates
+  - curl
+
+runcmd:
+  - curl -fsSL https://get.docker.com | sh
+  - systemctl enable docker
+  - systemctl start docker
+  - mkdir -p /opt/nexa-labs
+  - chown ubuntu:ubuntu /opt/nexa-labs
+
+write_files:
+  - path: /etc/motd
+    content: |
+      Nexa labs VPS — run deploy-labs-vps.ps1 from your PC to finish setup.

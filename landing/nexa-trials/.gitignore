@@ -3,3 +3,5 @@
 .cloudflare-credentials.json
 .resend-api-key.local
 .render-api-key.local
+.oracle-oci.local.json
+.nexa-labs-vps-state.json

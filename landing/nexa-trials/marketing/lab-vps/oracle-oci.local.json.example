@@ -1,0 +1,8 @@
+{
+  "region": "us-phoenix-1",
+  "compartmentId": "ocid1.compartment.oc1..aaaa...",
+  "availabilityDomain": "Uocm:PHX-AD-1",
+  "subnetId": "ocid1.subnet.oc1.phx.aaaa...",
+  "imageId": "ocid1.image.oc1.phx.aaaa...",
+  "sshPublicKeyPath": "%USERPROFILE%\\.ssh\\nexa-labs_ed25519.pub"
+}

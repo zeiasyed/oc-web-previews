@@ -1,0 +1,34 @@
+# NexaDirect + NexaSource on one VPS (Oracle free tier, etc.)
+# Run from this directory after setup-vps.sh seeds data volumes.
+
+services:
+  nexadirect:
+    build:
+      context: ../../../nexa-direct-demo
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      LAB_AUTH_EDC: "1"
+      EDC_PUBLIC_BASE: /edc
+      SCRIPT_ROOT: /edc
+      NEXA_ASSETS_DIR: /app/demo_data/nexa_assets
+    ports:
+      - "127.0.0.1:8070:8080"
+    volumes:
+      - ${NEXA_LABS_DATA:-/opt/nexa-labs/data}/nexadirect:/app/demo_data
+
+  nexasource:
+    build:
+      context: ../../../nexa-source-flow-demo
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      LAB_AUTH_EDC: "1"
+      EDC_PUBLIC_BASE: /edc
+      SCRIPT_ROOT: /edc
+    ports:
+      - "127.0.0.1:8071:8080"
+    volumes:
+      - ${NEXA_LABS_DATA:-/opt/nexa-labs/data}/nexasource:/app/demo_data
