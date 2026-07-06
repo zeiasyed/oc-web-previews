@@ -2,254 +2,769 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<title>Nexa Source Flow — Sync Console</title>
+<title>NexaFlow — Sync Console</title>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --navy: #0b1f3a;
-  --navy-light: #132d52;
-  --teal: #0d9488;
-  --teal-dark: #0f766e;
-  --teal-soft: #ccfbf1;
-  --bg: #f8fafc;
-  --card: #ffffff;
-  --line: #e2e8f0;
-  --text: #0f172a;
-  --dim: #64748b;
-  --green: #059669;
+  --navy: #071528;
+  --navy-mid: #0c2547;
+  --teal: #0a9e8f;
+  --teal-dark: #067a6f;
+  --teal-light: #12c4b3;
+  --teal-soft: #b2f5ea;
+  --teal-glow: rgba(10, 158, 143, 0.28);
+  --bg: #dce6f2;
+  --surface: #ffffff;
+  --line: #c5d3e3;
+  --line-soft: #e8eef6;
+  --text: #071528;
+  --muted: #475569;
+  --green: #047857;
+  --green-soft: #d1fae5;
+  --shadow-sm: 0 1px 3px rgb(7 21 40 / 10%);
+  --shadow: 0 4px 24px rgb(7 21 40 / 12%);
+  --shadow-lg: 0 16px 48px rgb(7 21 40 / 14%);
+  --radius: 14px;
+  --radius-sm: 10px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html, body { height: 100%; overflow: hidden; font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--text); }
-header {
-  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
-  color: #fff; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
-  flex-shrink: 0;
+html, body {
+  height: 100%; overflow: hidden;
+  font-family: Inter, system-ui, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
 }
-.brand { font-size: 1.35rem; font-weight: 700; }
-.brand span { color: var(--teal-soft); font-weight: 500; font-size: 0.85rem; margin-left: 8px; }
-.meta { font-size: 0.8rem; opacity: 0.85; margin-top: 2px; }
-.status-pill {
-  font-size: 0.75rem; font-weight: 500; padding: 8px 16px; border-radius: 999px;
-  background: rgba(255,255,255,0.12); display: flex; align-items: center; gap: 8px;
-}
-.status-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; }
-.status-pill.running .dot { background: #34d399; animation: pulse 1.5s infinite; }
-.status-pill.done .dot { background: #34d399; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
+/* ── Header ── */
+header {
+  background: linear-gradient(120deg, #05101f 0%, var(--navy) 40%, #103a6b 100%);
+  color: #fff;
+  padding: 0 32px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  border-bottom: 2px solid var(--teal-dark);
+  box-shadow: 0 6px 28px rgb(5 16 31 / 40%);
+}
+.brand-mark {
+  width: 40px; height: 40px; border-radius: 11px;
+  background: linear-gradient(135deg, #2dd4bf, var(--teal-dark));
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 0.72rem; letter-spacing: -0.02em;
+  box-shadow: 0 4px 18px rgb(10 158 143 / 55%);
+  border: 1px solid rgb(255 255 255 / 20%);
+}
+.brand-row { display: flex; align-items: center; gap: 14px; }
+.brand-title { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.02em; }
+.brand-tag {
+  display: inline-block; margin-left: 8px;
+  font-size: 0.72rem; font-weight: 600; color: #5eead4;
+  vertical-align: middle;
+}
+.meta { font-size: 0.78rem; color: rgb(255 255 255 / 78%); margin-top: 2px; }
+.status-pill {
+  font-size: 0.75rem; font-weight: 600; padding: 8px 18px;
+  border-radius: 999px; background: rgb(255 255 255 / 14%);
+  border: 1px solid rgb(255 255 255 / 22%);
+  display: flex; align-items: center; gap: 8px;
+  backdrop-filter: blur(8px);
+}
+.status-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1; }
+.status-pill.idle { border-color: rgb(255 255 255 / 22%); background: rgb(255 255 255 / 12%); color: #e2e8f0; }
+.status-pill.idle .dot { background: #94a3b8; }
+.status-pill.running .dot { background: #2dd4bf; box-shadow: 0 0 10px #2dd4bf; animation: pulse 1.4s infinite; }
+.status-pill.running { border-color: rgb(45 212 191 / 45%); background: rgb(10 158 143 / 22%); color: #ccfbf1; }
+.status-pill.done { background: rgb(4 120 87 / 35%); border-color: #34d399; color: #ecfdf5; }
+.status-pill.done .dot { background: #10b981; box-shadow: 0 0 8px #10b981; }
+@keyframes pulse { 0%,100%{opacity:1; transform:scale(1)} 50%{opacity:.5; transform:scale(0.85)} }
+
+/* ── Layout ── */
 main {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 24%);
-  height: calc(100vh - 62px);
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 17%);
+  height: calc(100vh - 64px);
 }
-
-/* ── Primary control panel (dominant) ── */
 .panel-left {
-  background: var(--card);
-  border-right: 1px solid var(--line);
-  padding: 28px 36px 32px;
+  padding: 24px 28px 28px 32px;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  overflow: hidden;
+  gap: 18px;
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(circle at 1px 1px, rgb(7 21 40 / 7%) 1px, transparent 0),
+    radial-gradient(ellipse at top right, rgb(10 158 143 / 14%) 0%, transparent 52%),
+    radial-gradient(ellipse at bottom left, rgb(7 21 40 / 8%) 0%, transparent 48%);
+  background-size: 22px 22px, auto, auto;
 }
-.section { margin-bottom: 20px; flex-shrink: 0; }
-.section.subjects-block {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  margin-bottom: 16px;
+.workspace { max-width: none; width: 100%; display: flex; flex-direction: column; gap: 18px; flex: 1; min-height: 0; }
+
+/* ── Cards ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.label {
-  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em;
-  text-transform: uppercase; color: var(--dim); margin-bottom: 10px;
+.card:hover { transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+.subjects-card:hover,
+.footer-card:hover { transform: none; box-shadow: var(--shadow); }
+.card-pad { padding: 20px 22px; }
+
+.intro-card {
+  display: flex; gap: 16px; align-items: flex-start;
+  background: linear-gradient(135deg, #fff 0%, #f0fdfa 100%);
+  border-left: 5px solid var(--teal);
+  border-color: var(--line) var(--line) var(--line) var(--teal);
+  box-shadow: var(--shadow), inset 0 1px 0 rgb(255 255 255 / 80%);
+}
+.intro-icon {
+  width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px;
+  background: linear-gradient(135deg, var(--teal-soft), #99f6e4);
+  color: var(--teal-dark);
+  display: flex; align-items: center; justify-content: center; font-size: 1.25rem;
+  box-shadow: 0 3px 14px rgb(10 158 143 / 28%);
+}
+.intro-steps { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+.intro-step {
+  font-size: 0.72rem; font-weight: 700; color: #fff;
+  padding: 5px 12px; border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 22%);
+}
+/* Light → dark teal progression across the workflow */
+.intro-step:nth-child(1) {
+  background: linear-gradient(135deg, #5eead4, var(--teal));
+  box-shadow: 0 2px 8px rgb(10 158 143 / 28%);
+}
+.intro-step:nth-child(2) {
+  background: linear-gradient(135deg, var(--teal-light), var(--teal));
+  box-shadow: 0 2px 8px rgb(10 158 143 / 32%);
+}
+.intro-step:nth-child(3) {
+  background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+  box-shadow: 0 2px 8px rgb(10 158 143 / 35%);
+}
+.intro-step:nth-child(4) {
+  background: linear-gradient(135deg, var(--teal-dark), #055a52);
+  box-shadow: 0 2px 8px rgb(6 122 111 / 38%);
+}
+.intro-text h2 { font-size: 0.95rem; font-weight: 700; margin-bottom: 4px; color: var(--navy); }
+.intro-text p { font-size: 0.88rem; color: #334155; line-height: 1.55; }
+
+.upload-section {
+  padding-top: 16px; margin-top: 4px;
+  border-top: 1px solid var(--line-soft);
+}
+.upload-row {
+  display: flex; align-items: center; justify-content: flex-start;
+  gap: 16px; flex-wrap: wrap;
+}
+.upload-copy h3 { font-size: 0.88rem; font-weight: 700; color: var(--navy); margin-bottom: 2px; }
+.upload-copy p { font-size: 0.8rem; color: var(--muted); line-height: 1.45; max-width: 520px; }
+.upload-actions { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.upload-done-msg {
+  display: none; font-size: 0.78rem; font-weight: 600; color: var(--green);
+  background: var(--green-soft); border: 1px solid #a7f3d0;
+  padding: 6px 12px; border-radius: 999px; white-space: nowrap;
+}
+.upload-section.done .upload-copy p { display: none; }
+.upload-section.done .upload-done-msg { display: inline-flex; align-items: center; gap: 6px; }
+.upload-section.done #upload-subjects-btn { display: none; }
+.btn-upload {
+  padding: 10px 18px; font-size: 0.85rem;
+  background: linear-gradient(135deg, var(--teal-light), var(--teal-dark));
+  color: #fff; border: none; border-radius: var(--radius-sm);
+  font-family: inherit; font-weight: 600; cursor: pointer;
+  box-shadow: 0 4px 16px rgb(10 158 143 / 35%);
+  border: 1px solid rgb(255 255 255 / 18%);
+  transition: transform 0.15s, box-shadow 0.15s;
+  white-space: nowrap;
+}
+.btn-upload:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 20px rgb(10 158 143 / 45%); }
+.btn-upload:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.subjects-card.pending-upload .subjects-body { display: none; }
+.subjects-card.pending-upload .subjects-head .chip-actions { display: none; }
+.subjects-card.pending-upload .subjects-locked {
+  display: flex; align-items: center; justify-content: center;
+  flex: 1; min-height: 140px;
+  background: var(--line-soft); border: 1px dashed #b8c9dc; border-radius: var(--radius-sm);
+  color: var(--muted); font-size: 0.85rem; text-align: center; padding: 20px;
+}
+.subjects-locked { display: none; }
+.subjects-body {
+  display: flex; flex-direction: column;
+}
+.subjects-toolbar {
+  display: contents;
+}
+.groups-hint { font-size: 0.65rem; color: var(--muted); margin: 8px 0 0; line-height: 1.4; }
+
+.config-row { display: grid; grid-template-columns: 1.4fr 0.6fr; gap: 14px; }
+@media (max-width: 720px) { .config-row { grid-template-columns: 1fr; } }
+.config-card .config-row { margin-bottom: 0; }
+
+.field-label {
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--navy-mid); margin-bottom: 8px;
 }
 select {
-  width: 100%; max-width: 560px; padding: 12px 14px; border: 1px solid var(--line);
-  border-radius: 10px; font-size: 0.95rem; background: #fff;
+  width: 100%; padding: 11px 14px;
+  border: 1px solid var(--line); border-radius: var(--radius-sm);
+  font-size: 0.92rem; font-family: inherit; color: var(--text);
+  background: #fff; transition: border-color 0.15s, box-shadow 0.15s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
+  padding-right: 36px;
 }
-select#study { font-size: 0.9rem; }
-.chip-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-.chip-action {
-  font-size: 0.78rem; font-weight: 500; padding: 7px 14px; border: 1px solid var(--line);
-  border-radius: 8px; background: #fff; cursor: pointer; color: var(--dim);
+select:focus {
+  outline: none; border-color: var(--teal);
+  box-shadow: 0 0 0 3px var(--teal-glow);
 }
-.chip-action:hover { border-color: var(--teal); color: var(--teal-dark); }
-.chip-action.active { border-color: var(--navy); color: var(--navy); background: #f1f5f9; }
-.chips-wrap {
-  flex: 1; min-height: 120px; overflow-y: auto; border: 1px solid var(--line);
-  border-radius: 12px; padding: 16px; background: var(--bg);
-}
-.chips { display: flex; flex-wrap: wrap; gap: 8px; align-content: flex-start; }
-.chip {
-  font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; padding: 10px 16px;
-  border: 1px solid var(--line); border-radius: 8px; cursor: pointer;
-  background: #fff; color: var(--dim); transition: all 0.12s;
-}
-.chip:hover { border-color: var(--teal); color: var(--text); }
-.chip.selected { background: var(--teal); border-color: var(--teal); color: #fff; font-weight: 500; }
 
-.actions { flex-shrink: 0; max-width: 480px; }
-.btn-primary {
-  width: 100%; padding: 16px 20px; border: none; border-radius: 10px;
-  background: var(--teal); color: #fff; font-weight: 600; font-size: 1.05rem; cursor: pointer;
+.subjects-card {
+  flex: 0 0 auto; display: flex; flex-direction: column;
 }
-.btn-primary:hover:not(:disabled) { background: var(--teal-dark); }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-secondary {
-  width: 100%; margin-top: 10px; padding: 12px; border: 1px solid var(--line);
-  border-radius: 10px; background: #fff; color: var(--navy); font-weight: 500; cursor: pointer;
+.subjects-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-bottom: 12px; flex-shrink: 0; flex-wrap: wrap;
 }
-.btn-secondary:hover { border-color: var(--teal); color: var(--teal-dark); }
-.btn-edc-main {
-  display: none; width: 100%; margin-top: 12px; padding: 16px 20px; border: none;
-  border-radius: 10px; background: var(--navy); color: #fff; font-weight: 600;
-  font-size: 1.05rem; cursor: pointer;
+.subjects-head-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.subjects-meta { margin-bottom: 12px; flex-shrink: 0; }
+.count-badge {
+  font-size: 0.75rem; font-weight: 700; color: var(--muted);
+  background: #fff;
+  border: 1px solid var(--line);
+  padding: 5px 13px; border-radius: 999px;
+  box-shadow: var(--shadow-sm);
 }
-.btn-edc-main.show { display: block; }
-.btn-edc-main:hover { background: var(--navy-light); }
-.summary { font-size: 0.85rem; color: var(--dim); line-height: 1.5; }
-.summary-top {
-  margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--line);
-  font-size: 0.9rem; color: var(--text);
+.count-badge.has-selection {
+  color: #fff;
+  background: linear-gradient(135deg, var(--teal-light), var(--teal-dark));
+  border-color: var(--teal-dark);
+  box-shadow: 0 2px 12px rgb(10 158 143 / 35%);
 }
+.chip-actions { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.chip-actions-groups {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+  margin-top: 8px; padding-top: 10px;
+  border-top: 1px dashed #b8c9dc;
+}
+.groups-label {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--muted); margin-right: 4px;
+}
+.saved-groups-list { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+.chip-action {
+  font-size: 0.75rem; font-weight: 600; padding: 6px 14px;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: #fff; cursor: pointer; color: var(--muted);
+  transition: all 0.15s;
+}
+.chip-action:hover { border-color: var(--teal); color: var(--teal-dark); background: var(--teal-soft); font-weight: 700; }
+.chip-action-save {
+  border-color: rgb(10 158 143 / 40%); color: var(--teal-dark); background: var(--teal-soft);
+}
+.chip-action-save:hover:not(:disabled) {
+  border-color: var(--teal); background: linear-gradient(135deg, var(--teal-soft), #ccfbf1);
+  box-shadow: 0 2px 10px rgb(10 158 143 / 20%);
+}
+.chip-action-save:disabled {
+  opacity: 0.45; cursor: not-allowed; background: #fff; color: var(--muted); border-color: var(--line);
+}
+.chip-action.group-btn {
+  border-color: rgb(10 158 143 / 35%); color: var(--teal-dark); background: #fff;
+}
+.chip-action.group-btn:hover {
+  border-color: var(--teal); color: var(--teal-dark); background: var(--teal-soft);
+}
+.chip-action.group-btn.active {
+  background: linear-gradient(135deg, var(--teal-light), var(--teal-dark));
+  color: #fff; border-color: var(--teal-dark);
+  box-shadow: 0 2px 10px rgb(10 158 143 / 30%);
+}
+.chip-action.group-btn .group-count {
+  font-size: 0.65rem; opacity: 0.85; margin-left: 4px;
+}
+
+.chips-wrap {
+  flex: 0 0 auto; overflow: visible;
+  background: #e4ecf5; border-radius: var(--radius-sm);
+  padding: 14px; border: 1px solid #b8c9dc;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+  gap: 8px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.chip {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.85rem;
+  padding: 10px 8px; text-align: center;
+  border: 1px solid transparent; border-radius: var(--radius-sm);
+  cursor: pointer; background: #fff; color: var(--muted);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.15s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.chip:hover { border-color: var(--teal); color: var(--text); transform: translateY(-2px); box-shadow: 0 6px 16px rgb(7 21 40 / 10%); }
+.chip.selected {
+  background: linear-gradient(135deg, var(--teal-light), var(--teal-dark));
+  color: #fff; font-weight: 700;
+  border-color: var(--teal-dark);
+  box-shadow: 0 4px 16px rgb(10 158 143 / 45%);
+  transform: translateY(-2px);
+}
+
+.footer-card { margin-top: auto; }
+.progress-inline { display: none; margin-bottom: 16px; }
+.progress-inline.show { display: block; }
+.progress-inline .stage { font-size: 0.88rem; font-weight: 600; color: var(--navy); margin-bottom: 10px; }
+.progress-row { display: flex; align-items: center; gap: 14px; }
+.progress-track {
+  flex: 1; height: 10px; background: #c5d3e3;
+  border-radius: 999px; overflow: hidden;
+  box-shadow: inset 0 1px 3px rgb(7 21 40 / 12%);
+}
+.progress-fill {
+  height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--teal-dark), var(--teal-light));
+  border-radius: 999px; transition: width 0.35s ease;
+  box-shadow: 0 0 14px rgb(18 196 179 / 55%);
+}
+.progress-fill.indeterminate {
+  width: 38% !important;
+  margin-left: 0 !important;
+  transform: none;
+  animation: slide 1.1s ease-in-out infinite;
+}
+@keyframes slide {
+  0% { margin-left: 0; }
+  50% { margin-left: 62%; }
+  100% { margin-left: 0; }
+}
+.pct { font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; font-weight: 600; color: var(--teal-dark); min-width: 3em; text-align: right; }
 
 .success-card {
-  display: none; margin-bottom: 16px; padding: 16px 18px; border-radius: 10px;
-  background: #ecfdf5; border: 1px solid #a7f3d0; max-width: 480px;
+  display: none; margin-bottom: 18px; padding: 18px 20px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--green-soft) 0%, #ecfdf5 100%);
+  border: 2px solid #34d399;
+  box-shadow: 0 4px 16px rgb(4 120 87 / 15%);
 }
-.success-card.show { display: block; }
-.success-card strong { color: var(--green); font-size: 1rem; }
-.success-card p { font-size: 0.88rem; color: var(--dim); margin-top: 4px; }
-
-.progress-inline {
-  display: none; margin-bottom: 16px; max-width: 480px;
+.success-card.show { display: flex; align-items: flex-start; gap: 14px; }
+.success-icon {
+  width: 36px; height: 36px; flex-shrink: 0; border-radius: 50%;
+  background: var(--green); color: #fff;
+  display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
 }
-.progress-inline.show { display: block; }
-.progress-inline .stage { font-size: 0.88rem; font-weight: 500; margin-bottom: 8px; color: var(--navy); }
-.progress-row { display: flex; align-items: center; gap: 12px; }
-.progress-track { flex: 1; height: 10px; background: var(--line); border-radius: 5px; overflow: hidden; }
-.progress-fill { height: 100%; width: 0; background: var(--teal); transition: width 0.3s; }
-.progress-fill.indeterminate { width: 35% !important; animation: slide 1.2s infinite ease-in-out; }
-@keyframes slide { 0%{margin-left:0} 50%{margin-left:65%} 100%{margin-left:0} }
-.pct { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; color: var(--dim); min-width: 3em; text-align: right; }
+.success-card strong { color: var(--green); font-size: 1rem; display: block; margin-bottom: 4px; }
+.success-card p { font-size: 0.85rem; color: var(--muted); }
+.stat-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.stat-pill {
+  font-size: 0.72rem; font-weight: 700; padding: 5px 11px;
+  border-radius: 6px; background: #fff; border: 1px solid #34d399; color: var(--green);
+}
+.stat-pill.conflicts {
+  border-color: #94a3b8; color: var(--navy-mid); background: var(--line-soft);
+}
+.stat-pill.conflicts.clickable {
+  cursor: pointer;
+  border-color: var(--navy-mid);
+  box-shadow: 0 2px 8px rgb(7 21 40 / 12%);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.stat-pill.conflicts.clickable:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgb(7 21 40 / 18%);
+  background: #fff;
+}
 
-/* ── Compact status / log strip (minimal) ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; z-index: 1000;
+  background: rgb(7 21 40 / 45%); backdrop-filter: blur(4px);
+  align-items: center; justify-content: center; padding: 24px;
+}
+.modal-overlay.show { display: flex; }
+.modal-overlay.minimized {
+  display: block; background: transparent; backdrop-filter: none;
+  pointer-events: none; padding: 0;
+}
+.modal-overlay.minimized .modal {
+  pointer-events: auto;
+  position: fixed; bottom: 20px; right: 20px; left: auto; top: auto;
+  width: min(380px, calc(100vw - 40px)); max-height: none;
+  box-shadow: 0 12px 40px rgb(7 21 40 / 28%);
+  border: 1px solid var(--line);
+}
+.modal-overlay.minimized .modal-body,
+.modal-overlay.minimized .modal-foot,
+.modal-overlay.minimized .modal-head p { display: none; }
+.modal-overlay.minimized .modal-head {
+  padding: 12px 14px; border-bottom: none; cursor: pointer;
+}
+.modal-overlay.minimized .modal-head h3 { margin: 0; font-size: 0.88rem; }
+.modal-overlay.minimized .modal-head-text { flex: 1; min-width: 0; }
+.modal {
+  width: min(920px, calc(100vw - 40px)); max-height: min(80vh, 560px);
+  background: #fff; border-radius: var(--radius);
+  border: 1px solid var(--line); box-shadow: var(--shadow-lg);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.modal-head {
+  padding: 16px 18px; border-bottom: 1px solid var(--line);
+  background: linear-gradient(180deg, #f8fafc 0%, #fff 100%);
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+}
+.modal-head-text { flex: 1; min-width: 0; }
+.modal-head h3 { font-size: 1rem; color: var(--navy); margin-bottom: 4px; }
+.modal-head p { font-size: 0.82rem; color: var(--muted); }
+.modal-head-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.modal-icon-btn {
+  width: 40px; height: 40px; padding: 0; border: 1px solid var(--line);
+  border-radius: 10px; background: #fff; color: var(--navy-mid);
+  font-size: 1.15rem; line-height: 1; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+.modal-icon-btn:hover { background: var(--line-soft); border-color: #94a3b8; color: var(--navy); }
+.modal-icon-btn.close:hover { background: #fef2f2; border-color: #fca5a5; color: #b91c1c; }
+.modal-body { padding: 0; overflow-y: auto; flex: 1; }
+.conflicts-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+.conflicts-table th {
+  text-align: left; padding: 8px 10px; font-size: 0.68rem;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted);
+  background: var(--line-soft); border-bottom: 1px solid var(--line);
+  position: sticky; top: 0;
+}
+.conflicts-table td {
+  padding: 8px 10px; border-bottom: 1px solid var(--line-soft);
+  vertical-align: top;
+}
+.conflicts-table tr.row-conflict td { background: #fef2f2; }
+.conflicts-table tr.row-conflict:hover td { background: #fee2e2; }
+.conflicts-table tr.row-matched td { background: #f0fdf4; }
+.conflicts-table tr.row-matched:hover td { background: #dcfce7; }
+.conflicts-table .status-icon {
+  font-weight: 700; font-size: 1rem; width: 28px; text-align: center;
+}
+.conflicts-table .status-icon.ok { color: var(--green); }
+.conflicts-table .status-icon.bad { color: #dc2626; }
+.review-legend {
+  display: flex; gap: 16px; padding: 12px 14px; font-size: 0.75rem; color: var(--muted);
+  border-bottom: 1px solid var(--line-soft); background: #fafbfc;
+}
+.review-legend span { display: flex; align-items: center; gap: 6px; }
+.conflicts-table .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; }
+.conflicts-empty { padding: 28px; text-align: center; color: var(--muted); font-size: 0.85rem; }
+.review-actions { display: flex; gap: 6px; }
+.review-btn {
+  font-size: 0.68rem; font-weight: 600; padding: 4px 8px; border-radius: 4px;
+  border: 1px solid var(--line); cursor: pointer; white-space: nowrap;
+  transition: all 0.15s ease;
+}
+.review-btn.accept { background: #f0fdf4; color: var(--green); border-color: #86efac; }
+.review-btn.accept:hover { background: #dcfce7; border-color: #4ade80; }
+.review-btn.keep { background: #f8fafc; color: var(--navy-mid); border-color: #cbd5e1; }
+.review-btn.keep:hover { background: #f1f5f9; border-color: #94a3b8; }
+.review-btn.edit { background: #eff6ff; color: #1d4ed8; border-color: #93c5fd; }
+.review-btn.edit:hover { background: #dbeafe; border-color: #60a5fa; }
+.review-btn:disabled { opacity: 0.5; cursor: default; pointer-events: none; }
+.conflicts-table tr.row-resolved td { background: #f0fdf4; }
+.conflicts-table tr.row-resolved:hover td { background: #dcfce7; }
+.conflicts-table tr.row-kept td { background: #f8fafc; }
+.conflicts-table tr.row-kept:hover td { background: #f1f5f9; }
+.conflicts-table tr.row-edited td { background: #eff6ff; }
+.conflicts-table tr.row-edited:hover td { background: #dbeafe; }
+.resolved-label, .kept-label, .edited-label { font-size: 0.72rem; font-weight: 600; }
+.resolved-label { color: var(--green); }
+.kept-label { color: var(--navy-mid); }
+.edited-label { color: #1d4ed8; }
+.resolved-wrap { display: flex; align-items: center; gap: 8px; }
+.undo-btn {
+  font-size: 0.65rem; color: var(--muted); cursor: pointer; border: none;
+  background: none; text-decoration: underline; padding: 0;
+}
+.undo-btn:hover { color: var(--navy); }
+.review-foot-note {
+  flex: 1; font-size: 0.75rem; color: var(--muted); font-style: italic;
+}
+#review-save-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.review-save-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.review-save-btn.is-saved { display: none; }
+.conflicts-table tr.row-saved td { background: #ecfdf5; }
+.saved-label { font-size: 0.72rem; font-weight: 600; color: var(--green); }
+.modal-foot-top {
+  border-top: none; border-bottom: 1px solid var(--line);
+  justify-content: space-between; align-items: center;
+}
+.modal-foot-top .review-foot-note { flex: 1; text-align: left; font-style: normal; color: #b45309; }
+.review-saved-msg {
+  font-size: 0.78rem; font-weight: 600; color: var(--green);
+  display: flex; align-items: center; gap: 6px;
+}
+.edit-inline {
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.edit-inline input {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+  padding: 3px 8px; border: 1px solid #93c5fd; border-radius: 4px;
+  width: 100px; outline: none; background: #fff;
+}
+.edit-inline input:focus { border-color: #3b82f6; box-shadow: 0 0 0 2px rgb(59 130 246 / 20%); }
+.edit-inline button {
+  font-size: 0.68rem; font-weight: 600; padding: 4px 8px; border-radius: 4px;
+  border: 1px solid #93c5fd; background: #1d4ed8; color: #fff; cursor: pointer;
+}
+.edit-inline button:hover { background: #1e40af; }
+.modal-foot {
+  padding: 14px 22px; border-top: 1px solid var(--line);
+  display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap;
+}
+.modal-foot .btn { width: auto; min-width: 100px; padding: 10px 18px; flex: 0 0 auto; }
+
+@media print {
+  body * { visibility: hidden; }
+  #conflicts-modal, #conflicts-modal * { visibility: visible; }
+  #conflicts-modal {
+    position: absolute; left: 0; top: 0; width: 100%; display: block !important;
+    background: #fff !important; padding: 0 !important;
+  }
+  #conflicts-modal .modal {
+    width: 100%; max-height: none; box-shadow: none; border: none;
+    position: static;
+  }
+  #conflicts-modal .modal-head-actions { display: none !important; }
+  #conflicts-modal .modal-body { overflow: visible; }
+  .conflicts-table tr.row-conflict td { background: #fee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .conflicts-table tr.row-matched td { background: #efe !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; }
+.btn {
+  flex: 1 1 160px; min-width: 140px; padding: 14px 20px; border: none; border-radius: var(--radius-sm);
+  font-family: inherit; font-size: 0.95rem; font-weight: 600; cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-primary {
+  flex: 2 1 220px;
+  background: linear-gradient(180deg, #2dd4bf 0%, var(--teal-dark) 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px rgb(10 158 143 / 42%), inset 0 1px 0 rgb(255 255 255 / 25%);
+  border: 1px solid rgb(255 255 255 / 15%);
+}
+.btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 28px rgb(10 158 143 / 50%), inset 0 1px 0 rgb(255 255 255 / 25%); }
+.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn-edc {
+  display: none;
+  flex: 2 1 220px;
+  background: linear-gradient(180deg, #2dd4bf 0%, var(--teal-dark) 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px rgb(10 158 143 / 42%), inset 0 1px 0 rgb(255 255 255 / 25%);
+  border: 1px solid rgb(255 255 255 / 15%);
+}
+.btn-edc.show { display: flex; }
+.btn-edc:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgb(10 158 143 / 50%), inset 0 1px 0 rgb(255 255 255 / 25%);
+}
+.btn-ghost {
+  flex: 0 1 auto;
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--line); padding: 11px 20px;
+}
+.btn-ghost:hover { border-color: var(--muted); color: var(--text); background: var(--line-soft); }
+
+/* ── Activity sidebar ── */
 .panel-right {
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  background: #f1f5f9;
-  border-left: 1px solid var(--line);
+  display: flex; flex-direction: column; min-height: 0;
+  background: #f4f7fb;
+  border-left: 2px solid #b8c9dc;
+  box-shadow: -6px 0 28px rgb(7 21 40 / 8%);
 }
 .panel-right-head {
-  padding: 12px 14px; background: #fff; border-bottom: 1px solid var(--line);
-  display: flex; align-items: center; justify-content: space-between; gap: 8px;
-  flex-shrink: 0;
+  padding: 16px 18px; border-bottom: 1px solid #b8c9dc;
+  background: linear-gradient(180deg, #edf2f9 0%, #e4ebf5 100%);
+  display: flex; align-items: center; justify-content: space-between;
 }
-.panel-right-head span { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--dim); }
+.panel-right-head span {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--navy-mid);
+}
 .log-toggle {
-  font-size: 0.72rem; padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px;
-  background: #fff; cursor: pointer; color: var(--dim);
+  font-size: 0.72rem; font-weight: 600; padding: 5px 12px;
+  border: 1px solid var(--line); border-radius: 999px;
+  background: #fff; cursor: pointer; color: var(--muted);
+  transition: all 0.15s;
 }
-.log-toggle:hover { border-color: var(--teal); color: var(--teal-dark); }
+.log-toggle:hover { border-color: var(--teal); color: var(--teal-dark); background: var(--teal-soft); }
 
 .console-wrap {
-  flex: 0 0 auto;
-  max-height: 72px;
-  overflow: hidden;
-  transition: max-height 0.25s ease;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
+  flex: 0 0 auto; max-height: 80px; overflow: hidden;
+  transition: max-height 0.3s ease; display: flex; flex-direction: column;
 }
 .console-wrap.expanded { flex: 1; max-height: none; }
-
 .console {
-  flex: 1; overflow-y: auto; padding: 8px 12px; background: #0f172a;
-  font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; line-height: 1.35;
+  flex: 1; overflow-y: auto; padding: 12px 14px;
+  background: #071528; font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem; line-height: 1.45;
+  border-top: 2px solid var(--teal-dark);
 }
-.console-line { padding: 1px 0; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.console-wrap.expanded .console-line { white-space: pre-wrap; overflow: visible; text-overflow: clip; }
+.console-line { padding: 2px 0; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.console-wrap.expanded .console-line { white-space: pre-wrap; overflow: visible; }
 .console-line.success { color: #6ee7b7; }
 .console-line.warning { color: #fcd34d; }
 .console-line.error { color: #fca5a5; }
 .console-line.info { color: #93c5fd; }
-.empty { color: #64748b; padding: 12px 8px; text-align: center; font-size: 0.72rem; }
+.empty { color: #64748b; padding: 16px; text-align: center; font-size: 0.75rem; line-height: 1.5; }
 
 .panel-right-foot {
-  padding: 8px 12px; font-size: 0.65rem; color: var(--dim); background: #fff;
-  border-top: 1px solid var(--line); flex-shrink: 0;
+  padding: 10px 16px; font-size: 0.68rem; color: var(--muted);
+  border-top: 1px solid var(--line); background: var(--line-soft);
 }
 
 @media (max-width: 900px) {
   main { grid-template-columns: 1fr; grid-template-rows: 1fr auto; }
-  .panel-right { max-height: 100px; }
-  .console-wrap.expanded { max-height: 200px; }
+  .panel-right { max-height: 120px; }
 }
 </style>
 </head>
 <body>
 <header>
-  <div>
-    <div class="brand">Nexa Source Flow™ <span>Clinical data sync</span></div>
-    <div class="meta">Demo environment</div>
+  <div class="brand-row">
+    <div class="brand-mark">NF</div>
+    <div>
+      <div class="brand-title">NexaFlow<span class="brand-tag">ClinSpark to EDC data transfer</span></div>
+      <div class="meta">Study operations</div>
+    </div>
   </div>
-  <div class="status-pill idle" id="status-pill"><span class="dot"></span><span id="status-text">Ready</span></div>
+  <div class="header-right">
+    <button type="button" class="header-help-btn" id="btn-help" aria-haspopup="dialog" aria-controls="help-guide">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.5 9.5a2.5 2.5 0 1 1 4.2 1.8c-.8.7-1.2 1.2-1.2 2.2"/><circle cx="12" cy="17" r=".8" fill="currentColor" stroke="none"/></svg>
+      Help
+    </button>
+    <div class="status-pill idle" id="status-pill"><span class="dot"></span><span id="status-text">Ready</span></div>
+  </div>
 </header>
+
 <main>
   <section class="panel-left">
-    <div class="summary summary-top">Select a study, visit, and subjects, then sync ClinSpark source into the mock EDC.</div>
-    <div class="section">
-      <div class="label">Study</div>
-      <select id="study">
-        {% for s in studies %}
-        <option value="{{ s.id }}">{{ s.label }}</option>
-        {% endfor %}
-      </select>
-    </div>
-    <div class="section">
-      <div class="label">Visit</div>
-      <select id="visit">
-        {% for v in visits %}<option value="{{ v }}">{{ v }}</option>{% endfor %}
-      </select>
-    </div>
-
-    <div class="section subjects-block">
-      <div class="label">Subjects <span id="sel-count">(0 selected)</span></div>
-      <div class="chip-actions">
-        <button type="button" class="chip-action" data-action="all">All</button>
-        <button type="button" class="chip-action" data-action="none">Clear</button>
-        <button type="button" class="chip-action" data-action="group1">Group 1</button>
-        <button type="button" class="chip-action" data-action="group2">Group 2</button>
-      </div>
-      <div class="chips-wrap">
-        <div class="chips" id="chips">
-          {% for s in subjects %}<div class="chip" data-id="{{ s }}">{{ s }}</div>{% endfor %}
+    <div class="workspace">
+      <div class="card card-pad intro-card">
+        <div class="intro-icon">↻</div>
+        <div class="intro-text">
+          <h2>Sync ClinSpark source into your EDC</h2>
+          <p>Upload subjects from ClinSpark, choose a visit and roster, then push mapped data to EDC.</p>
+          <div class="intro-steps">
+            <span class="intro-step">1 · Upload</span>
+            <span class="intro-step">2 · Select</span>
+            <span class="intro-step">3 · Write</span>
+            <span class="intro-step">4 · Verify</span>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="progress-inline" id="progress-box">
-      <div class="stage" id="stage">Awaiting sync</div>
-      <div class="progress-row">
-        <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
-        <div class="pct" id="pct">—</div>
+      <div class="card card-pad config-card">
+        <div class="config-row">
+          <div>
+            <div class="field-label">Study</div>
+            <select id="study">
+              {% for s in studies %}
+              <option value="{{ s.id }}"{% if s.get('disabled') %} disabled{% endif %}{% if loop.first %} selected{% endif %}>{{ s.label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <div class="field-label">Visit</div>
+            <select id="visit">
+              {% for v in visits %}<option value="{{ v }}">{{ v }}</option>{% endfor %}
+            </select>
+          </div>
+        </div>
+        <div class="upload-section" id="upload-card">
+          <div class="upload-row">
+            <div class="upload-actions">
+              <button type="button" class="btn-upload" id="upload-subjects-btn">Upload ClinSpark Subjects</button>
+              <div class="upload-done-msg" id="upload-done-msg">✓ {{ subjects|length }} subjects loaded</div>
+            </div>
+            <div class="upload-copy">
+              <h3>Upload ClinSpark subjects</h3>
+              <p>Pull the study subject roster from ClinSpark before selecting who to sync to the EDC.</p>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="success-card" id="success-card">
-      <strong id="result-msg">Sync complete</strong>
-      <p id="result-detail"></p>
-    </div>
+      <div class="card card-pad subjects-card pending-upload" id="subjects-card">
+        <div class="subjects-head">
+          <div class="subjects-head-left">
+            <div class="field-label" style="margin:0">Subjects</div>
+            <span class="count-badge" id="sel-count">0 selected</span>
+          </div>
+          <div class="subjects-toolbar">
+            <div class="chip-actions">
+              <button type="button" class="chip-action" data-action="all">All</button>
+              <button type="button" class="chip-action" data-action="none">Clear</button>
+              <button type="button" class="chip-action chip-action-save" id="save-group-btn" disabled title="Save current selection as a reusable cohort">+ Save cohort</button>
+            </div>
+          </div>
+        </div>
+        <div class="subjects-locked" id="subjects-locked">
+          No subjects loaded yet — click <strong>Upload ClinSpark Subjects</strong> above to pull the roster from ClinSpark.
+        </div>
+        <div class="subjects-body" id="subjects-body">
+          <div class="subjects-meta">
+            <div class="chip-actions chip-actions-groups">
+              <span class="groups-label">Cohorts</span>
+              <div class="saved-groups-list" id="saved-groups"></div>
+            </div>
+            <p class="groups-hint">Click to select · Shift+click a second subject to select the range · Save a cohort pill to reload later (right-click to delete).</p>
+          </div>
+          <div class="chips-wrap">
+            <div class="chips" id="chips"></div>
+          </div>
+        </div>
+      </div>
 
-    <div class="actions">
-      <button class="btn-primary" id="run-btn">Sync to EDC</button>
-      <button class="btn-edc-main" id="open-edc" type="button">Open EDC to verify →</button>
-      <button class="btn-secondary" id="reset-demo-btn" type="button">Reset demo (clear EDC)</button>
+      {% set enterprise_app = "NexaFlow" %}
+      {% include 'partials/enterprise_panel.html' %}
+
+      <div class="card card-pad footer-card">
+        <div class="progress-inline" id="progress-box">
+          <div class="stage" id="stage">Ready to write to EDC</div>
+          <div class="progress-row">
+            <div class="progress-track"><div class="progress-fill" id="progress"></div></div>
+            <div class="pct" id="pct">—</div>
+          </div>
+        </div>
+
+        <div class="success-card" id="success-card">
+          <div class="success-icon">✓</div>
+          <div>
+            <strong id="result-msg">EDC updated</strong>
+            <p id="result-detail"></p>
+            <div class="stat-pills" id="stat-pills"></div>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="run-btn" disabled title="Upload ClinSpark subjects and select at least one">Write to EDC</button>
+          <button class="btn btn-edc" id="open-edc" type="button">Open EDC to verify →</button>
+          <button class="btn btn-ghost" id="reset-demo-btn" type="button">Reset</button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -259,40 +774,794 @@ select#study { font-size: 0.9rem; }
       <button type="button" class="log-toggle" id="log-toggle">Expand</button>
     </div>
     <div class="console-wrap" id="console-wrap">
-      <div class="console" id="console"><div class="empty" id="empty">Log hidden — expand to view details</div></div>
+      <div class="console" id="console"><div class="empty" id="empty">Sync activity appears here.<br>Click Expand for full details.</div></div>
     </div>
     <div class="panel-right-foot"><span id="clock"></span></div>
   </section>
 </main>
+
+<div class="modal-overlay" id="conflicts-modal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-labelledby="conflicts-modal-title">
+    <div class="modal-head" id="conflicts-modal-head">
+      <div class="modal-head-text">
+        <h3 id="conflicts-modal-title">Review flagged items</h3>
+        <p id="conflicts-modal-sub">Fields flagged when source and EDC disagree — focus on rows marked with ✗.</p>
+      </div>
+      <div class="modal-head-actions">
+        <button type="button" class="modal-icon-btn" id="conflicts-modal-print" title="Print review table">⎙</button>
+        <button type="button" class="modal-icon-btn" id="conflicts-modal-minimize" title="Minimize — keep open while checking EDC">−</button>
+        <button type="button" class="modal-icon-btn close" id="conflicts-modal-close-x" title="Close">×</button>
+      </div>
+    </div>
+    <div class="modal-foot modal-foot-top" id="conflicts-modal-foot-top" style="display:none">
+      <span class="review-foot-note" id="review-foot-note-top">Changes are staged — values will not be updated in EDC until you write.</span>
+      <button type="button" class="btn btn-primary review-save-btn" id="review-save-btn-top" disabled>Write to EDC</button>
+    </div>
+    <div class="modal-body" id="conflicts-modal-body"></div>
+    <div class="modal-foot" id="conflicts-modal-foot" style="display:none">
+      <span class="review-foot-note" id="review-foot-note">Changes are staged — values will not be updated in EDC until you write.</span>
+      <button type="button" class="btn btn-primary review-save-btn" id="review-save-btn" disabled>Write to EDC</button>
+    </div>
+  </div>
+</div>
+
+{% include 'partials/help_guide.html' %}
+{% include 'partials/help_modal_assets.html' %}
+
 <script>
 const GROUP1 = {{ group1 | tojson }};
 const GROUP2 = {{ group2 | tojson }};
-const RAVE_PORT = {{ rave_port }};
+const EDC_PORT = {{ edc_port }};
+const EDC_BASE = {{ edc_base|tojson }};
+const ALL_SUBJECTS_LIST = {{ subjects | tojson }};
+const GROUPS_STORAGE_KEY = 'nsf_subject_groups_v1';
+const DEFAULT_GROUPS = [
+  { id: 'default-group-1', name: 'Cohort 1', subjects: GROUP1 },
+  { id: 'default-group-2', name: 'Cohort 2', subjects: GROUP2 },
+];
 let logExpanded = false;
 let autoScroll = true;
+let subjectGroups = [];
+let lastReviewDetails = [];
+let subjectsUploaded = false;
+let uploadRunId = 0;
+let uploadAbortController = null;
+let logEpoch = 0;
+let ignoreServerLogs = false;
+
+function cancelActiveUpload() {
+  uploadRunId += 1;
+  if (uploadAbortController) {
+    uploadAbortController.abort();
+    uploadAbortController = null;
+  }
+}
+
+function invalidateClientActivity() {
+  logEpoch += 1;
+  cancelActiveUpload();
+}
+
+function uploadStillActive(runId) {
+  return runId === uploadRunId;
+}
+
+async function waitForUpload(runId, ms) {
+  const step = 50;
+  let elapsed = 0;
+  while (elapsed < ms) {
+    if (!uploadStillActive(runId)) throw new Error('cancelled');
+    const chunk = Math.min(step, ms - elapsed);
+    await new Promise(r => setTimeout(r, chunk));
+    elapsed += chunk;
+  }
+}
+
+function currentSyncKey() {
+  const visit = document.getElementById('visit').value;
+  const study = document.getElementById('study').value;
+  return `${study}|${visit}|${[...selected()].sort().join(',')}`;
+}
+
+let lastWrittenSyncKey = null;
+
+function updateRunBtn() {
+  const runBtn = document.getElementById('run-btn');
+  const syncing = !!runBtn.dataset.syncing;
+  const hasSelection = subjectsUploaded && selected().length > 0;
+  const alreadyWritten = lastWrittenSyncKey && currentSyncKey() === lastWrittenSyncKey;
+  const canRun = hasSelection && !syncing && !alreadyWritten;
+  runBtn.disabled = !canRun;
+  runBtn.title = !subjectsUploaded
+    ? 'Upload ClinSpark subjects first'
+    : selected().length === 0
+      ? 'Select at least one subject'
+      : alreadyWritten
+        ? 'Already written — change visit or subjects, or Reset to run again'
+        : 'Write selected subjects to the mock EDC';
+}
+
+let chipAnchorIndex = null;
+
+function clearChips() {
+  const container = document.getElementById('chips');
+  if (container) container.innerHTML = '';
+  chipAnchorIndex = null;
+}
+
+function populateChips(subjectIds) {
+  const container = document.getElementById('chips');
+  if (!container || !subjectIds?.length) return;
+  container.innerHTML = subjectIds
+    .map(id => `<div class="chip" data-id="${id}">${id}</div>`)
+    .join('');
+  chipAnchorIndex = null;
+}
+
+function revealSubjectsAfterUpload(count) {
+  subjectsUploaded = true;
+  document.getElementById('upload-card').classList.add('done');
+  document.getElementById('subjects-card').classList.remove('pending-upload');
+  document.getElementById('upload-done-msg').textContent = `✓ ${count} subjects loaded`;
+  setStatus('idle', 'Ready');
+  updateRunBtn();
+}
+
+async function logUploadedSubjects(subjectIds, runId, epoch) {
+  for (const id of subjectIds) {
+    if (!uploadStillActive(runId)) return;
+    appendLine(`  · Subject ${id}`, epoch);
+    await waitForUpload(runId, 20);
+  }
+  if (!uploadStillActive(runId)) return;
+  appendLine('[Upload] ✓ Roster ready — select subjects to sync', epoch);
+  if (!logExpanded) document.getElementById('console-wrap').classList.add('expanded');
+}
+
+async function uploadClinSparkSubjects() {
+  cancelActiveUpload();
+  const runId = uploadRunId;
+  const epoch = logEpoch;
+  const btn = document.getElementById('upload-subjects-btn');
+  const study = document.getElementById('study').value;
+  btn.disabled = true;
+  setStatus('running', 'Uploading…');
+  document.getElementById('subjects-locked').textContent = 'Loading subject roster from ClinSpark…';
+  appendLine('[Upload] Connecting to ClinSpark export…', epoch);
+  try {
+    await waitForUpload(runId, 400);
+    if (!uploadStillActive(runId)) return;
+    appendLine(`[Upload] Study ${study} — requesting subject roster…`, epoch);
+    uploadAbortController = new AbortController();
+    const r = await fetch('/api/upload/subjects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ study }),
+      signal: uploadAbortController.signal,
+    });
+    if (!uploadStillActive(runId)) return;
+    const data = await r.json();
+    if (!data.ok) throw new Error(data.error || 'Upload failed');
+    if (!uploadStillActive(runId)) return;
+    populateChips(data.subjects || ALL_SUBJECTS_LIST);
+    revealSubjectsAfterUpload(data.count || (data.subjects || ALL_SUBJECTS_LIST).length);
+    appendLine(`[Upload] Received ${data.count} subject(s) from ClinSpark`, epoch);
+    await logUploadedSubjects(data.subjects || ALL_SUBJECTS_LIST, runId, epoch);
+  } catch (err) {
+    if (!uploadStillActive(runId) || err.name === 'AbortError' || err.message === 'cancelled') {
+      if (document.getElementById('subjects-card').classList.contains('pending-upload')) {
+        document.getElementById('subjects-locked').innerHTML =
+          'No subjects loaded yet — click <strong>Upload ClinSpark Subjects</strong> above to pull the roster from ClinSpark.';
+        btn.disabled = false;
+        setStatus('idle', 'Ready');
+      }
+      return;
+    }
+    appendLine('❌ Upload error: ' + err.message, epoch);
+    setStatus('idle', 'Error');
+    document.getElementById('subjects-locked').innerHTML =
+      'Upload failed — click <strong>Upload ClinSpark Subjects</strong> to try again.';
+    btn.disabled = false;
+  } finally {
+    if (uploadStillActive(runId)) uploadAbortController = null;
+  }
+}
+
+document.getElementById('upload-subjects-btn').addEventListener('click', uploadClinSparkSubjects);
+
+document.getElementById('visit').addEventListener('change', updateRunBtn);
+document.getElementById('study').addEventListener('change', updateRunBtn);
+
+function resetUploadState() {
+  subjectsUploaded = false;
+  document.getElementById('upload-card').classList.remove('done');
+  document.getElementById('subjects-card').classList.add('pending-upload');
+  document.getElementById('upload-subjects-btn').disabled = false;
+  document.getElementById('upload-done-msg').textContent = '';
+  document.getElementById('subjects-locked').innerHTML =
+    'No subjects loaded yet — click <strong>Upload ClinSpark Subjects</strong> above to pull the roster from ClinSpark.';
+  clearChips();
+  localStorage.removeItem(GROUPS_STORAGE_KEY);
+  subjectGroups = loadSubjectGroups();
+  renderSubjectGroups();
+  updateCount();
+  updateRunBtn();
+}
+
+function normalizeReviewRows(details) {
+  return (details || []).map(r => ({
+    ...r,
+    status: r.status || 'conflict',
+  }));
+}
+
+const REVIEW_PANEL_KEY = 'nsf_review_panel_v1';
+
+function loadReviewPanelState() {
+  try {
+    const raw = localStorage.getItem(REVIEW_PANEL_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function persistReviewPanel() {
+  const modal = document.getElementById('conflicts-modal');
+  if (!modal.classList.contains('show')) {
+    localStorage.removeItem(REVIEW_PANEL_KEY);
+    return;
+  }
+  localStorage.setItem(REVIEW_PANEL_KEY, JSON.stringify({
+    minimized: modal.classList.contains('minimized'),
+    details: lastReviewDetails,
+  }));
+}
+
+function renderConflictsModalContent(details) {
+  const body = document.getElementById('conflicts-modal-body');
+  const sub = document.getElementById('conflicts-modal-sub');
+  const rows = normalizeReviewRows(details);
+  const conflicts = rows.filter(r => r.status === 'conflict');
+  const matched = rows.filter(r => r.status === 'matched');
+
+  if (!rows.length) {
+    body.innerHTML = '<div class="conflicts-empty">No prior EDC data compared on this sync.<br>Re-sync the same visit to see matched vs flagged rows.</div>';
+    sub.textContent = 'All fields were newly entered.';
+  } else {
+    sub.textContent = `${conflicts.length} flagged item(s) need review · ${matched.length} already matched in EDC`;
+    const tableRows = rows.map((r, i) => {
+      const isConflict = r.status === 'conflict';
+      const icon = isConflict
+        ? '<span class="status-icon bad" title="Flagged — needs review">✗</span>'
+        : '<span class="status-icon ok" title="Already in EDC — matches source">✓</span>';
+      const actionCell = isConflict
+        ? `<td class="review-actions-cell" data-row="${i}">
+            <div class="review-actions">
+              <button type="button" class="review-btn accept" data-row="${i}" data-action="accept" title="Accept source value and overwrite EDC">Accept Source</button>
+              <button type="button" class="review-btn keep" data-row="${i}" data-action="keep" title="Keep the existing EDC value">Keep EDC</button>
+              <button type="button" class="review-btn edit" data-row="${i}" data-action="edit" title="Enter a corrected value">Edit</button>
+            </div>
+          </td>`
+        : '<td><span class="resolved-label">—</span></td>';
+      return `
+      <tr class="${isConflict ? 'row-conflict' : 'row-matched'}" data-row="${i}">
+        <td>${icon}</td>
+        <td class="mono">${r.subject}</td>
+        <td>${r.form}</td>
+        <td class="mono">${r.field}</td>
+        <td class="mono">${r.source_value}</td>
+        <td class="mono">${r.edc_value}</td>
+        ${actionCell}
+      </tr>`;
+    }).join('');
+    body.innerHTML = `
+      <div class="review-legend">
+        <span><span class="status-icon ok">✓</span> Matched — no action needed</span>
+        <span><span class="status-icon bad">✗</span> Flagged — review in EDC</span>
+      </div>
+      <table class="conflicts-table">
+        <thead>
+          <tr>
+            <th></th><th>Subject</th><th>Form</th><th>Field</th><th>Source</th><th>EDC</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody>${tableRows}</tbody>
+      </table>`;
+    const foot = document.getElementById('conflicts-modal-foot');
+    const footTop = document.getElementById('conflicts-modal-foot-top');
+    const saveBtns = document.querySelectorAll('.review-save-btn');
+    const footNotes = document.querySelectorAll('.review-foot-note');
+    let pendingActions = 0;
+    if (rows.some(r => r.status === 'conflict')) {
+      foot.style.display = '';
+      footTop.style.display = '';
+      saveBtns.forEach(btn => { btn.disabled = true; });
+      footNotes.forEach(n => {
+        n.textContent = 'Changes are staged — values will not be updated in EDC until you write.';
+      });
+    } else {
+      foot.style.display = 'none';
+      footTop.style.display = 'none';
+    }
+
+    function updateFooter() {
+      pendingActions = body.querySelectorAll('.resolved-wrap').length;
+      saveBtns.forEach(btn => {
+        btn.disabled = pendingActions === 0;
+        if (pendingActions > 0) {
+          btn.classList.remove('is-saved');
+          btn.textContent = 'Write to EDC';
+        }
+      });
+      const msg = pendingActions > 0
+        ? `${pendingActions} action(s) staged — values will not be updated in EDC until you write.`
+        : 'Changes are staged — values will not be updated in EDC until you write.';
+      footNotes.forEach(n => { n.textContent = msg; });
+    }
+
+    function markAllSaved() {
+      pendingActions = 0;
+      saveBtns.forEach(btn => {
+        btn.disabled = true;
+        btn.classList.add('is-saved');
+      });
+      footNotes.forEach(n => {
+        n.innerHTML = '<span class="review-saved-msg">✓ All changes written to EDC.</span>';
+      });
+      sub.textContent = 'All flagged items resolved.';
+    }
+
+    function refreshReviewFooterState() {
+      const remainingConflicts = body.querySelectorAll('tr.row-conflict').length;
+      pendingActions = body.querySelectorAll('.resolved-wrap').length;
+      if (remainingConflicts === 0 && pendingActions === 0) {
+        markAllSaved();
+        return;
+      }
+      saveBtns.forEach(btn => {
+        btn.classList.remove('is-saved');
+        btn.disabled = pendingActions === 0;
+        btn.textContent = 'Write to EDC';
+      });
+      const msg = pendingActions > 0
+        ? `${pendingActions} action(s) staged — values will not be updated in EDC until you write.`
+        : `${remainingConflicts} flagged item(s) still need review.`;
+      footNotes.forEach(n => { n.textContent = msg; });
+      sub.textContent = `${remainingConflicts} flagged item(s) need review · ${body.querySelectorAll('tr.row-matched, tr.row-saved, tr.row-kept').length} resolved or matched`;
+    }
+
+    function makeUndo(row, cell, origBtns, origClass, origIcon, origTitle, origEdc) {
+      const wrap = document.createElement('div');
+      wrap.className = 'resolved-wrap';
+      wrap.innerHTML = cell.innerHTML;
+      const undoBtn = document.createElement('button');
+      undoBtn.type = 'button';
+      undoBtn.className = 'undo-btn';
+      undoBtn.textContent = 'Undo';
+      undoBtn.addEventListener('click', () => {
+        row.className = origClass;
+        const icon = row.querySelector('.status-icon');
+        icon.className = 'status-icon bad';
+        icon.textContent = origIcon;
+        icon.title = origTitle;
+        const edcCell = row.querySelectorAll('td')[5];
+        if (edcCell && origEdc) edcCell.textContent = origEdc;
+        cell.innerHTML = origBtns;
+        bindRowButtons(cell);
+        updateFooter();
+      });
+      wrap.appendChild(undoBtn);
+      cell.innerHTML = '';
+      cell.appendChild(wrap);
+    }
+
+    function bindRowButtons(cell) {
+      cell.querySelectorAll('.review-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const row = btn.closest('tr');
+          const icon = row.querySelector('.status-icon');
+          const origBtns = cell.innerHTML;
+          const origClass = row.className;
+          const edcCell = row.querySelectorAll('td')[5];
+          const origEdc = edcCell?.textContent?.trim() || '';
+
+          if (btn.dataset.action === 'accept') {
+            const sourceCell = row.querySelectorAll('td')[4];
+            if (edcCell && sourceCell) edcCell.textContent = sourceCell.textContent.trim();
+            row.className = 'row-resolved';
+            icon.className = 'status-icon ok';
+            icon.textContent = '✓';
+            icon.title = 'Accepted — click Write to EDC to commit';
+            cell.innerHTML = '<span class="resolved-label">Accepted (not written yet)</span>';
+            makeUndo(row, cell, origBtns, origClass, '✗', 'Flagged — needs review', origEdc);
+          } else if (btn.dataset.action === 'keep') {
+            row.className = 'row-kept';
+            icon.className = 'status-icon ok';
+            icon.textContent = '—';
+            icon.title = 'EDC value kept';
+            cell.innerHTML = '<span class="kept-label">EDC Kept</span>';
+            makeUndo(row, cell, origBtns, origClass, '✗', 'Flagged — needs review', origEdc);
+          } else if (btn.dataset.action === 'edit') {
+            cell.innerHTML = `<div class="edit-inline">
+              <input type="text" value="${origEdc}" placeholder="New value">
+              <button type="button">Apply</button>
+            </div>`;
+            const input = cell.querySelector('input');
+            const applyBtn = cell.querySelector('button');
+            input.focus();
+            input.select();
+            const doApply = () => {
+              const newVal = input.value.trim();
+              if (!newVal) return;
+              if (edcCell) edcCell.textContent = newVal;
+              row.className = 'row-edited';
+              icon.className = 'status-icon ok';
+              icon.textContent = '✎';
+              icon.title = 'Manually corrected';
+              cell.innerHTML = '<span class="edited-label">Corrected (not written yet)</span>';
+              makeUndo(row, cell, origBtns, origClass, '✗', 'Flagged — needs review', origEdc);
+              updateFooter();
+            };
+            applyBtn.addEventListener('click', doApply);
+            input.addEventListener('keydown', e => { if (e.key === 'Enter') doApply(); });
+            return;
+          }
+          updateFooter();
+        });
+      });
+    }
+
+    body.querySelectorAll('.review-actions-cell').forEach(cell => bindRowButtons(cell));
+
+    async function saveConflictsToEdc() {
+      if (pendingActions === 0) return;
+      saveBtns.forEach(btn => {
+        btn.disabled = true;
+        btn.textContent = 'Writing…';
+      });
+      const updates = [];
+      const visit = document.getElementById('visit').value;
+      body.querySelectorAll('tr.row-resolved, tr.row-edited').forEach(row => {
+        const tds = row.querySelectorAll('td');
+        updates.push({
+          subject: tds[1]?.textContent?.trim(),
+          form: tds[2]?.textContent?.trim(),
+          field: tds[3]?.textContent?.trim(),
+          value: row.classList.contains('row-resolved')
+            ? tds[4]?.textContent?.trim()
+            : tds[5]?.textContent?.trim(),
+        });
+      });
+      let ok = true;
+      if (updates.length) {
+        const resp = await fetch('/api/resolve', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ visit, updates }),
+        });
+        const data = await resp.json();
+        ok = resp.ok && data.ok;
+        if (!ok) {
+          footNotes.forEach(n => { n.textContent = 'Write failed — try again.'; });
+          saveBtns.forEach(btn => {
+            btn.textContent = 'Write to EDC';
+            btn.disabled = false;
+          });
+          return;
+        }
+        const last = updates[updates.length - 1];
+        if (last?.subject) {
+          sessionStorage.setItem('nexa_edc_verify_subject', last.subject);
+          if (last.form) sessionStorage.setItem('nexa_edc_verify_form', last.form);
+        }
+      }
+      body.querySelectorAll('tr.row-resolved, tr.row-edited').forEach(row => {
+        row.classList.remove('row-resolved', 'row-edited');
+        row.classList.add('row-saved');
+        const actionCell = row.querySelector('.review-actions-cell');
+        if (actionCell) {
+          const viewBtn = actionCell.querySelector('[data-view-scan]');
+          const viewHtml = viewBtn ? viewBtn.outerHTML : '';
+          actionCell.innerHTML = `${viewHtml}<span class="saved-label">✓ Written to EDC</span>`;
+        }
+      });
+      body.querySelectorAll('.undo-btn').forEach(u => u.remove());
+      refreshReviewFooterState();
+    }
+
+    saveBtns.forEach(btn => { btn.onclick = saveConflictsToEdc; });
+  }
+  return conflicts.length;
+}
+
+function refreshConflictsModalIfOpen() {
+  const modal = document.getElementById('conflicts-modal');
+  if (!modal.classList.contains('show')) return;
+  const keepMinimized = modal.classList.contains('minimized');
+  const n = renderConflictsModalContent(lastReviewDetails);
+  if (keepMinimized) modal.classList.add('minimized');
+  updateConflictsModalChrome(n);
+  persistReviewPanel();
+}
+
+function restoreReviewPanelOnLoad() {
+  const saved = loadReviewPanelState();
+  if (!saved) return;
+  const details = lastReviewDetails.length ? lastReviewDetails : saved.details;
+  if (!details?.length) return;
+  lastReviewDetails = details;
+  const n = renderConflictsModalContent(lastReviewDetails);
+  const modal = document.getElementById('conflicts-modal');
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden', 'false');
+  if (saved.minimized) modal.classList.add('minimized');
+  else modal.classList.remove('minimized');
+  updateConflictsModalChrome(n);
+  persistReviewPanel();
+}
+
+function openConflictsModal(details) {
+  if (details) lastReviewDetails = details;
+  const modal = document.getElementById('conflicts-modal');
+  const keepMinimized =
+    modal.classList.contains('minimized') ||
+    loadReviewPanelState()?.minimized === true;
+  const n = renderConflictsModalContent(lastReviewDetails);
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden', 'false');
+  if (keepMinimized) modal.classList.add('minimized');
+  else modal.classList.remove('minimized');
+  updateConflictsModalChrome(n);
+  persistReviewPanel();
+}
+function updateConflictsModalChrome(conflictCount) {
+  const minBtn = document.getElementById('conflicts-modal-minimize');
+  const modal = document.getElementById('conflicts-modal');
+  const minimized = modal.classList.contains('minimized');
+  const title = minimized
+    ? 'Expand review panel'
+    : 'Minimize — keep open while checking EDC';
+  if (minBtn) { minBtn.textContent = minimized ? '□' : '−'; minBtn.title = title; }
+  if (minimized) {
+    document.getElementById('conflicts-modal-title').textContent =
+      conflictCount != null
+        ? `Review flagged items · ${conflictCount} open`
+        : 'Review flagged items';
+  } else {
+    document.getElementById('conflicts-modal-title').textContent = 'Review flagged items';
+  }
+}
+function minimizeConflictsModal() {
+  const modal = document.getElementById('conflicts-modal');
+  if (!modal.classList.contains('show')) return;
+  modal.classList.add('minimized');
+  const conflicts = normalizeReviewRows(lastReviewDetails).filter(r => r.status === 'conflict').length;
+  updateConflictsModalChrome(conflicts);
+  persistReviewPanel();
+}
+function expandConflictsModal() {
+  document.getElementById('conflicts-modal').classList.remove('minimized');
+  updateConflictsModalChrome(
+    normalizeReviewRows(lastReviewDetails).filter(r => r.status === 'conflict').length
+  );
+  persistReviewPanel();
+}
+function toggleMinimizeConflictsModal() {
+  const modal = document.getElementById('conflicts-modal');
+  if (modal.classList.contains('minimized')) expandConflictsModal();
+  else minimizeConflictsModal();
+}
+function printConflictsModal() {
+  const modal = document.getElementById('conflicts-modal');
+  if (!modal.classList.contains('show')) return;
+  const wasMinimized = modal.classList.contains('minimized');
+  if (wasMinimized) expandConflictsModal();
+  window.print();
+  if (wasMinimized) {
+    requestAnimationFrame(() => minimizeConflictsModal());
+  }
+}
+function closeConflictsModal() {
+  const modal = document.getElementById('conflicts-modal');
+  modal.classList.remove('show', 'minimized');
+  modal.setAttribute('aria-hidden', 'true');
+  document.getElementById('conflicts-modal-title').textContent = 'Review flagged items';
+  localStorage.removeItem(REVIEW_PANEL_KEY);
+}
+function renderStatPills(summary) {
+  const n = summary.conflicts || 0;
+  const m = summary.matched || 0;
+  lastReviewDetails = summary.review_details || summary.conflict_details || [];
+  const hasReview = lastReviewDetails.length > 0 || n > 0 || m > 0;
+  const conflictEl = hasReview
+    ? `<button type="button" class="stat-pill conflicts clickable" id="conflicts-pill" title="View flagged items">${n} flagged · ${m} matched →</button>`
+    : `<span class="stat-pill conflicts">${n} flagged</span>`;
+  document.getElementById('stat-pills').innerHTML =
+    `<span class="stat-pill">${summary.entered} entered</span>` +
+    `<span class="stat-pill">${summary.skipped} skipped</span>` +
+    conflictEl;
+  const pill = document.getElementById('conflicts-pill');
+  if (pill) pill.addEventListener('click', () => openConflictsModal(lastReviewDetails));
+  refreshConflictsModalIfOpen();
+}
+document.getElementById('conflicts-modal-close-x').addEventListener('click', e => {
+  e.stopPropagation();
+  closeConflictsModal();
+});
+document.getElementById('conflicts-modal-print').addEventListener('click', e => {
+  e.stopPropagation();
+  printConflictsModal();
+});
+document.getElementById('conflicts-modal-minimize').addEventListener('click', e => {
+  e.stopPropagation();
+  toggleMinimizeConflictsModal();
+});
+document.getElementById('conflicts-modal-head').addEventListener('click', () => {
+  if (document.getElementById('conflicts-modal').classList.contains('minimized')) {
+    expandConflictsModal();
+  }
+});
+document.getElementById('conflicts-modal').addEventListener('click', e => {
+  const modal = document.getElementById('conflicts-modal');
+  if (e.target.id === 'conflicts-modal' && !modal.classList.contains('minimized')) {
+    closeConflictsModal();
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  const modal = document.getElementById('conflicts-modal');
+  if (!modal.classList.contains('show')) return;
+  if (modal.classList.contains('minimized')) closeConflictsModal();
+  else minimizeConflictsModal();
+});
 
 function selected() {
   return [...document.querySelectorAll('#chips .chip.selected')].map(c => c.dataset.id);
 }
-function updateCount() {
-  document.getElementById('sel-count').textContent = `(${selected().length} selected)`;
+function chipElements() {
+  return [...document.querySelectorAll('#chips .chip')];
 }
-document.querySelectorAll('#chips .chip').forEach(c => {
-  c.addEventListener('click', () => { c.classList.toggle('selected'); updateCount(); });
+
+function applySelection(subjectIds) {
+  const set = new Set(subjectIds);
+  const chips = chipElements();
+  chips.forEach(c => {
+    c.classList.toggle('selected', set.has(c.dataset.id));
+  });
+  const first = chips.find(c => set.has(c.dataset.id));
+  chipAnchorIndex = first ? chips.indexOf(first) : null;
+  updateCount();
+}
+function sameSubjects(a, b) {
+  if (a.length !== b.length) return false;
+  const sa = [...a].sort().join(',');
+  const sb = [...b].sort().join(',');
+  return sa === sb;
+}
+function cohortDisplayName(name) {
+  return String(name).replace(/^Group\b/i, 'Cohort');
+}
+function loadSubjectGroups() {
+  try {
+    const raw = localStorage.getItem(GROUPS_STORAGE_KEY);
+    if (raw !== null) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        return parsed.map(g => ({ ...g, name: cohortDisplayName(g.name) }));
+      }
+    }
+  } catch (_) {}
+  return DEFAULT_GROUPS.map(g => ({ ...g, subjects: [...g.subjects] }));
+}
+function persistSubjectGroups() {
+  localStorage.setItem(GROUPS_STORAGE_KEY, JSON.stringify(subjectGroups));
+}
+function renderSubjectGroups() {
+  const container = document.getElementById('saved-groups');
+  container.innerHTML = '';
+  if (!subjectGroups.length) {
+    container.innerHTML = '<span class="groups-hint" style="margin:0">No cohorts yet — select subjects and save one.</span>';
+    return;
+  }
+  subjectGroups.forEach(group => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'chip-action group-btn';
+    btn.dataset.groupId = group.id;
+    btn.title = `${group.subjects.length} subjects · Right-click to delete`;
+    btn.innerHTML = `${group.name}<span class="group-count">(${group.subjects.length})</span>`;
+    btn.addEventListener('click', () => applySelection(group.subjects));
+    btn.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      if (!confirm(`Delete cohort "${group.name}"?`)) return;
+      subjectGroups = subjectGroups.filter(g => g.id !== group.id);
+      persistSubjectGroups();
+      renderSubjectGroups();
+      updateActiveGroupHighlight();
+    });
+    container.appendChild(btn);
+  });
+  updateActiveGroupHighlight();
+}
+function updateActiveGroupHighlight() {
+  const current = selected();
+  document.querySelectorAll('#saved-groups .group-btn').forEach(btn => {
+    const group = subjectGroups.find(g => g.id === btn.dataset.groupId);
+    btn.classList.toggle('active', !!(group && sameSubjects(current, group.subjects)));
+  });
+}
+function saveGroupFromSelection() {
+  const subjects = selected();
+  if (!subjects.length) {
+    alert('Select at least one subject before saving a cohort.');
+    return;
+  }
+  const defaultName = `Cohort ${subjectGroups.length + 1}`;
+  const name = prompt('Name this cohort:', defaultName);
+  if (!name) return;
+  const trimmed = name.trim();
+  if (!trimmed) return;
+  const existing = subjectGroups.find(g => g.name.toLowerCase() === trimmed.toLowerCase());
+  if (existing && !confirm(`Replace existing cohort "${existing.name}" with the current selection?`)) return;
+  const entry = {
+    id: existing?.id || `group-${Date.now()}`,
+    name: trimmed,
+    subjects: [...subjects].sort(),
+  };
+  if (existing) {
+    subjectGroups = subjectGroups.map(g => (g.id === existing.id ? entry : g));
+  } else {
+    subjectGroups.push(entry);
+  }
+  persistSubjectGroups();
+  renderSubjectGroups();
+}
+function updateCount() {
+  const n = selected().length;
+  const badge = document.getElementById('sel-count');
+  badge.textContent = n + (n === 1 ? ' selected' : ' selected');
+  badge.classList.toggle('has-selection', n > 0);
+  document.getElementById('save-group-btn').disabled = n === 0;
+  updateActiveGroupHighlight();
+  updateRunBtn();
+}
+document.getElementById('chips').addEventListener('mousedown', (e) => {
+  if (e.target.closest('.chip')) e.preventDefault();
 });
-document.querySelectorAll('.chip-action').forEach(btn => {
+document.getElementById('chips').addEventListener('click', (e) => {
+  const chip = e.target.closest('.chip');
+  if (!chip || !chip.closest('#chips')) return;
+  const chips = chipElements();
+  const index = chips.indexOf(chip);
+
+  if (e.shiftKey && chipAnchorIndex !== null && chipAnchorIndex !== -1) {
+    const start = Math.min(chipAnchorIndex, index);
+    const end = Math.max(chipAnchorIndex, index);
+    chips.forEach((c, j) => c.classList.toggle('selected', j >= start && j <= end));
+  } else {
+    chip.classList.toggle('selected');
+    chipAnchorIndex = index;
+  }
+  window.getSelection()?.removeAllRanges();
+  updateCount();
+});
+document.querySelectorAll('.chip-action[data-action]').forEach(btn => {
   btn.addEventListener('click', () => {
     const action = btn.dataset.action;
-    document.querySelectorAll('#chips .chip').forEach(c => {
-      const id = c.dataset.id;
-      if (action === 'all') c.classList.add('selected');
-      else if (action === 'none') c.classList.remove('selected');
-      else if (action === 'group1') c.classList.toggle('selected', GROUP1.includes(id));
-      else if (action === 'group2') c.classList.toggle('selected', GROUP2.includes(id));
-    });
+    if (action === 'all') {
+      chipElements().forEach(c => c.classList.add('selected'));
+      chipAnchorIndex = 0;
+    } else if (action === 'none') {
+      chipElements().forEach(c => c.classList.remove('selected'));
+      chipAnchorIndex = null;
+    }
     updateCount();
   });
 });
+document.getElementById('save-group-btn').addEventListener('click', saveGroupFromSelection);
+subjectGroups = loadSubjectGroups();
+renderSubjectGroups();
 updateCount();
 
 document.getElementById('log-toggle').addEventListener('click', () => {
@@ -308,7 +1577,9 @@ function classify(t) {
   if (/^\s*\[\d+\/\d+\]/.test(t)) return 'info';
   return '';
 }
-function appendLine(text) {
+function appendLine(text, epoch) {
+  if (ignoreServerLogs && epoch === undefined) return;
+  if (epoch !== undefined && epoch !== logEpoch) return;
   const el = document.getElementById('console');
   document.getElementById('empty')?.remove();
   const div = document.createElement('div');
@@ -320,9 +1591,12 @@ function appendLine(text) {
   if (autoScroll) el.scrollTop = el.scrollHeight;
 }
 function clearLog() {
-  document.getElementById('console').innerHTML = '<div class="empty" id="empty">Log hidden — expand to view details</div>';
+  document.getElementById('console').innerHTML = '<div class="empty" id="empty">Sync activity appears here.<br>Click Expand for full details.</div>';
   document.getElementById('success-card').classList.remove('show');
   document.getElementById('open-edc').classList.remove('show');
+  document.getElementById('stat-pills').innerHTML = '';
+  lastReviewDetails = [];
+  closeConflictsModal();
 }
 
 function setStatus(kind, text) {
@@ -331,19 +1605,133 @@ function setStatus(kind, text) {
   document.getElementById('status-text').textContent = text;
 }
 
+function setProgressIndeterminate() {
+  maxProgressPct = 0;
+  const fill = document.getElementById('progress');
+  fill.classList.add('indeterminate');
+  fill.style.width = '';
+  fill.style.marginLeft = '';
+  fill.style.transform = '';
+  document.getElementById('pct').textContent = '…';
+}
+
+function setProgressValue(pct) {
+  const fill = document.getElementById('progress');
+  fill.classList.remove('indeterminate');
+  fill.style.marginLeft = '0';
+  fill.style.transform = 'none';
+  const clamped = Math.min(100, Math.max(maxProgressPct, Math.max(0, pct)));
+  maxProgressPct = clamped;
+  fill.style.width = clamped + '%';
+  document.getElementById('pct').textContent = Math.round(clamped) + '%';
+}
+
+function resetProgressBar() {
+  maxProgressPct = 0;
+  setProgressValue(0);
+  document.getElementById('stage').textContent = 'Ready to write to EDC';
+}
+
+let syncPollTimer = null;
+let syncUiComplete = false;
+let maxProgressPct = 0;
+
+async function fetchStatus() {
+  const r = await fetch('/api/status');
+  return r.json();
+}
+
+function stopSyncPoll() {
+  if (syncPollTimer) {
+    clearInterval(syncPollTimer);
+    syncPollTimer = null;
+  }
+}
+
+function startSyncPoll() {
+  stopSyncPoll();
+  syncPollTimer = setInterval(async () => {
+    try {
+      const st = await fetchStatus();
+      if (!st.running) {
+        stopSyncPoll();
+        await tryCompleteSync(4);
+      }
+    } catch (_) {}
+  }, 750);
+}
+
+async function tryCompleteSync(retries = 3) {
+  if (syncUiComplete) return true;
+  for (let i = 0; i < retries; i++) {
+    try {
+      const st = await fetchStatus();
+      if (!st.running && st.summary && 'entered' in st.summary) {
+        completeSyncUI(st);
+        return true;
+      }
+    } catch (_) {}
+    await new Promise(r => setTimeout(r, 250));
+  }
+  if (document.getElementById('run-btn').dataset.syncing) {
+    setProgressValue(100);
+    setStatus('done', 'EDC updated');
+    document.getElementById('stage').textContent = 'EDC updated';
+    delete document.getElementById('run-btn').dataset.syncing;
+    syncUiComplete = true;
+    lastWrittenSyncKey = currentSyncKey();
+    updateRunBtn();
+    stopSyncPoll();
+  }
+  return false;
+}
+
+function completeSyncUI(st) {
+  if (!st?.summary || !('entered' in st.summary)) return;
+  if (syncUiComplete) return;
+  syncUiComplete = true;
+  stopSyncPoll();
+
+  const visit = st.visit || document.getElementById('visit').value;
+  const study = document.getElementById('study').value;
+  const subjects = st.subjects?.length ? st.subjects : selected();
+  lastWrittenSyncKey = `${study}|${visit}|${[...subjects].sort().join(',')}`;
+
+  setStatus('done', 'EDC updated');
+  delete document.getElementById('run-btn').dataset.syncing;
+  updateRunBtn();
+  setProgressValue(100);
+  document.getElementById('stage').textContent = 'EDC updated';
+  document.getElementById('progress-box').classList.add('show');
+  document.getElementById('success-card').classList.add('show');
+  document.getElementById('open-edc').classList.add('show');
+  document.getElementById('result-msg').textContent = 'EDC updated';
+  document.getElementById('result-detail').textContent = 'Data has been written to the mock EDC.';
+  renderStatPills(st.summary);
+  if (!logExpanded) document.getElementById('console-wrap').classList.remove('expanded');
+  requestAnimationFrame(() => {
+    document.getElementById('success-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+}
+
 document.getElementById('run-btn').addEventListener('click', async () => {
   const subjects = selected();
   const visit = document.getElementById('visit').value;
   const study = document.getElementById('study').value;
+  if (!subjectsUploaded) { alert('Upload ClinSpark subjects first.'); return; }
   if (!subjects.length) { alert('Select at least one subject.'); return; }
+  syncUiComplete = false;
+  lastWrittenSyncKey = null;
   clearLog();
   document.getElementById('success-card').classList.remove('show');
   document.getElementById('open-edc').classList.remove('show');
   document.getElementById('progress-box').classList.add('show');
-  document.getElementById('run-btn').disabled = true;
-  setStatus('running', 'Syncing…');
-  document.getElementById('progress').classList.add('indeterminate');
-  document.getElementById('stage').textContent = 'Starting sync…';
+  document.getElementById('run-btn').dataset.syncing = '1';
+  updateRunBtn();
+  setStatus('running', 'Writing to EDC…');
+  setProgressIndeterminate();
+  document.getElementById('stage').textContent = 'Writing to EDC…';
+  startSyncPoll();
   const r = await fetch('/api/run/sync', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -351,67 +1739,97 @@ document.getElementById('run-btn').addEventListener('click', async () => {
   });
   const data = await r.json();
   if (!data.ok) {
+    stopSyncPoll();
     appendLine('Error: ' + data.error);
     setStatus('idle', 'Error');
-    document.getElementById('run-btn').disabled = false;
+    setProgressValue(0);
+    delete document.getElementById('run-btn').dataset.syncing;
+    updateRunBtn();
   }
 });
 
 document.getElementById('reset-demo-btn').addEventListener('click', async () => {
   if (!confirm('Clear all data in the mock EDC?')) return;
-  await fetch('/api/reset', { method: 'POST' });
-  clearLog();
-  document.getElementById('progress-box').classList.remove('show');
-  setStatus('idle', 'Ready');
+  await resetDemoToFresh();
 });
 
+async function resetDemoToFresh() {
+  ignoreServerLogs = true;
+  try {
+    invalidateClientActivity();
+    stopSyncPoll();
+    syncUiComplete = false;
+    lastWrittenSyncKey = null;
+    lastReviewDetails = [];
+    localStorage.removeItem(REVIEW_PANEL_KEY);
+    const modal = document.getElementById('conflicts-modal');
+    modal.classList.remove('show', 'minimized');
+    modal.setAttribute('aria-hidden', 'true');
+    document.getElementById('progress-box').classList.remove('show');
+    document.getElementById('success-card').classList.remove('show');
+    document.getElementById('open-edc').classList.remove('show');
+    resetProgressBar();
+    delete document.getElementById('run-btn').dataset.syncing;
+    await fetch('/api/reset', { method: 'POST' });
+    clearLog();
+    resetUploadState();
+    setStatus('idle', 'Ready');
+  } finally {
+    ignoreServerLogs = false;
+  }
+}
+
+async function bootDemo() {
+  await resetDemoToFresh();
+  updateRunBtn();
+  if (window.refreshEnterprisePanels) window.refreshEnterprisePanels();
+}
+
+function edcLaunchBase() {
+  return EDC_BASE.replace(/\/$/, '');
+}
+
 document.getElementById('open-edc').addEventListener('click', async () => {
+  const w = window.open('', '_blank');
   const st = await (await fetch('/api/status')).json();
-  const subj = (st.subjects && st.subjects[0]) || '0103';
+  const subj = sessionStorage.getItem('nexa_edc_verify_subject')
+    || (st.subjects && st.subjects[0]) || '0103';
   const visit = encodeURIComponent(st.visit || document.getElementById('visit').value);
+  const form = sessionStorage.getItem('nexa_edc_verify_form') || '';
   const token = st.token || '';
-  window.open(`http://127.0.0.1:${RAVE_PORT}/login?token=${token}&subject=${subj}&visit=${visit}`, '_blank');
+  let url = `${edcLaunchBase()}/login?token=${encodeURIComponent(token)}&subject=${encodeURIComponent(subj)}&visit=${visit}`;
+  if (form) url += `&form=${encodeURIComponent(form)}`;
+  w.location = url;
 });
 
 const es = new EventSource('/api/stream');
-es.addEventListener('line', e => appendLine(e.data));
+es.addEventListener('line', e => {
+  appendLine(e.data);
+  if (/Done — .* entered/.test(e.data)) void tryCompleteSync(5);
+});
 es.addEventListener('progress', e => {
   const p = JSON.parse(e.data);
   if (p.stage) document.getElementById('stage').textContent = p.stage;
-  const fill = document.getElementById('progress');
   if (p.overall_pct != null) {
-    fill.classList.remove('indeterminate');
-    fill.style.width = p.overall_pct + '%';
-    document.getElementById('pct').textContent = Math.round(p.overall_pct) + '%';
+    setProgressValue(p.overall_pct);
+    if (p.overall_pct >= 100 || p.stage === 'EDC updated' || p.stage === 'Complete') void tryCompleteSync(3);
   }
 });
 es.addEventListener('status', e => {
   const s = JSON.parse(e.data);
   if (s.state === 'running') {
-    setStatus('running', 'Syncing…');
+    setStatus('running', 'Writing to EDC…');
     document.getElementById('progress-box').classList.add('show');
   }
-  if (s.state === 'done') {
-    setStatus('done', 'Complete');
-    document.getElementById('run-btn').disabled = false;
-    document.getElementById('progress').classList.remove('indeterminate');
-    document.getElementById('progress').style.width = '100%';
-    document.getElementById('pct').textContent = '100%';
-    document.getElementById('stage').textContent = 'Sync complete';
-    fetch('/api/status').then(r => r.json()).then(st => {
-      if (st.summary && st.summary.entered != null) {
-        document.getElementById('success-card').classList.add('show');
-        document.getElementById('open-edc').classList.add('show');
-        document.getElementById('result-msg').textContent = 'Sync complete';
-        document.getElementById('result-detail').textContent =
-          `${st.summary.entered} fields entered · ${st.summary.skipped} skipped · ${st.summary.conflicts} conflicts`;
-      }
-    });
-    if (logExpanded) return;
-    document.getElementById('console-wrap').classList.remove('expanded');
+  if (s.state === 'done') void tryCompleteSync(4);
+  if (s.state === 'idle') {
+    delete document.getElementById('run-btn').dataset.syncing;
+    updateRunBtn();
+    if (window.refreshEnterprisePanels) window.refreshEnterprisePanels();
   }
-  if (s.state === 'idle') document.getElementById('run-btn').disabled = false;
 });
+
+bootDemo();
 
 setInterval(() => {
   document.getElementById('clock').textContent = new Date().toLocaleString();

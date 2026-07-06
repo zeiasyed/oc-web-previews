@@ -7,14 +7,8 @@
 </head>
 <body>
 {% include 'rave_header.html' %}
-<div class="tabs">
-  <span class="tab">Home</span>
-  <span class="tab">Study {{ study_id }}</span>
-  <span class="tab">{{ site_name }}</span>
-  <span class="tab active">{{ subject }}</span>
-  <span class="tab active">{{ visit }}</span>
-  <span class="tab active crf">{{ form }}</span>
-</div>
+{% include 'rave_nav.html' %}
+{% include 'rave_tabs.html' %}
 <div class="content layout">
   <aside class="nav">
     <h3>Forms — {{ visit }}</h3>

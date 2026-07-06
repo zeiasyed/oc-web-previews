@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<title>Subject {{ subject_id }} — Medidata Rave (Demo)</title>
+<title>Subject {{ subject_id }} — Medidata Rave</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='rave.css') }}"/>
 </head>
 <body>
 {% include 'rave_header.html' %}
+{% set nav_subject = subject_id %}
+{% include 'rave_nav.html' %}
 <div class="content layout">
   <aside class="nav">
     <h3>Visits</h3>

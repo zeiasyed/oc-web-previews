@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<title>Subjects — Medidata Rave (Demo)</title>
+<title>Subjects — Medidata Rave</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='rave.css') }}"/>
 </head>
 <body>
 {% include 'rave_header.html' %}
+{% include 'rave_nav.html' %}
 <div class="content">
   <h2 class="page-title">Subjects — {{ site_name }}</h2>
-  <p class="hint">Green rows have data synced from Nexa Source Flow.</p>
+  <p class="hint">Green rows have synced data. Use the <strong>Subject</strong> dropdown above, or click Open on any row.</p>
   <table class="data-table">
     <thead><tr><th>Subject</th><th>Status</th><th>Fields in EDC</th><th></th></tr></thead>
     <tbody>
