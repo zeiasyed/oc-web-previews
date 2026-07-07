@@ -37,6 +37,10 @@ jobs:
           rsync -a landing/sirat/dist/ _site/landing/sirat/
           # Prospectus CRM
           rsync -a landing/prospectus-crm/ _site/landing/prospectus-crm/
+          # Plumber website previews (linked from connect.html?biz=SLUG)
+          if [ -d previews ]; then
+            rsync -a previews/ _site/previews/
+          fi
           # Existing published apps
           for dir in scan-dashboard connect.html pricing.html register.html payment.html assets; do
             if [ -e "landing/$dir" ]; then
