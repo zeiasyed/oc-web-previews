@@ -1,0 +1,28 @@
+name = "nexa-trials-api"
+main = "worker/index.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+CONTACT_TO = "info@nexa-trials.com"
+FROM_EMAIL = "noreply@nexa-trials.com"
+CORS_ORIGINS = "https://nexa-trials.com,https://www.nexa-trials.com,https://auctus-intl.com,https://www.auctus-intl.com"
+
+# Optional: add send_email binding after domain is verified in Cloudflare Email Sending
+# [[send_email]]
+# name = "EMAIL"
+
+# Set via: wrangler secret put RESEND_API_KEY
+# Set via: wrangler secret put VISIT_TRACKER_PASSWORD
+# Set via: wrangler secret put NEXADIRECT_LAB_USER
+# Set via: wrangler secret put NEXADIRECT_LAB_PASSWORD
+# Or run: .\marketing\setup-lab-access.ps1
+# Client demo videos: run .\marketing\manage-client-demos.ps1 -Action setup
+# Set via manage-client-demos.ps1: CLIENT_DEMO_SESSION_SECRET
+
+# [[kv_namespaces]]
+# binding = "CLIENT_DEMOS_KV"
+# id = "<from .client-demos-state.local.json>"
+
+# [[r2_buckets]]
+# binding = "DEMO_VIDEOS"
+# bucket_name = "nexa-client-demo-videos"

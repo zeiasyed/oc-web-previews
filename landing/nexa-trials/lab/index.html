@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Internal access | Nexa Trials</title>
+  <meta name="description" content="Internal lab access for authorized Nexa Trials users.">
+  <link rel="canonical" href="https://nexa-trials.com/lab/">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css?v=17">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <style>
+    .lab-grid {
+      display: grid;
+      gap: 1.25rem;
+      max-width: 42rem;
+      margin: 0 auto;
+    }
+    .lab-card {
+      padding: 1.75rem;
+      border: 1px solid var(--line, #dde3ea);
+      border-radius: 12px;
+      background: #fff;
+    }
+    .lab-card h2 { margin: 0 0 0.5rem; font-size: 1.25rem; }
+    .lab-card p { color: var(--ink-soft, #48566a); line-height: 1.6; margin: 0; }
+    .lab-card .btn { margin-top: 1.25rem; }
+    .lab-note {
+      margin-top: 2rem;
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      background: #f8fafc;
+      font-size: 0.875rem;
+      color: var(--ink-faint, #7c8aa0);
+      max-width: 42rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .lab-backup {
+      margin-top: 1rem;
+      padding: 1rem 1.1rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      background: #fff;
+      font-size: 0.875rem;
+      color: var(--ink-soft, #48566a);
+      max-width: 42rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .lab-backup h3 {
+      margin: 0 0 0.5rem;
+      font-size: 0.95rem;
+      color: var(--ink, #1a2332);
+    }
+    .lab-backup ul {
+      margin: 0.5rem 0 0;
+      padding-left: 1.2rem;
+      line-height: 1.7;
+    }
+    .lab-backup a { word-break: break-all; }
+    .lab-backup.is-down {
+      border-color: #f59e0b;
+      background: #fffbeb;
+    }
+    .lab-backup.is-down h3 { color: #92400e; }
+    .lab-status {
+      display: block;
+      margin-top: 0.35rem;
+      font-size: 0.8rem;
+      color: var(--ink-faint, #7c8aa0);
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="../index.html">
+        <img class="brand-mark" src="../assets/logo-mark.svg?v=4" alt="" width="44" height="44">
+        <span class="brand-lockup">
+          <span class="brand-title">
+            <span class="brand-name">NEXA</span>
+            <span class="brand-tag">TRIALS</span>
+          </span>
+          <span class="brand-sub">Clinical Technology Partner</span>
+        </span>
+      </a>
+      <nav class="nav-menu" id="nav-menu" aria-label="Main"></nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <h1>Internal access</h1>
+        <p>Password-protected lab demos for bids and internal review. All data is synthetic.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container legal-content">
+        <div class="lab-grid">
+          <div class="lab-card">
+            <h2>NexaDirect lab</h2>
+            <p>Scan-to-EDC workflow: process inbox PDFs, resolve extraction conflicts, and verify writes in mock Rave.</p>
+            <a class="btn btn-primary" id="lab-direct" href="https://demo-direct.nexa-trials.com/" rel="noopener">Launch NexaDirect</a>
+          </div>
+          <div class="lab-card">
+            <h2>NexaSource lab</h2>
+            <p>ClinSpark-to-EDC sync: upload subjects, push a visit roster, review field conflicts, and save to mock Rave.</p>
+            <a class="btn btn-primary" id="lab-source" href="https://demo-source.nexa-trials.com/" rel="noopener">Launch NexaSource</a>
+          </div>
+          <div class="lab-card">
+            <h2>Client demo videos</h2>
+            <p>Password-protected product walkthrough videos for prospects. Each client login expires after two weeks.</p>
+            <a class="btn btn-primary" href="/demos/">Client demo library</a>
+          </div>
+        </div>
+        <p class="lab-note">Use the same lab username and password if the browser asks again on the demo host. Mock EDC opens automatically from each console — no second sign-in during the walkthrough.</p>
+        <div class="lab-backup" id="lab-backup">
+          <h3>Backup URLs</h3>
+          <p>If the hosted demos return 502 or the tunnel is down, open these on the machine running the lab stack (<code>run-all-labs.ps1</code>):</p>
+          <ul>
+            <li>NexaDirect: <a id="lab-direct-backup" href="http://127.0.0.1:5070/" rel="noopener">http://127.0.0.1:5070/</a></li>
+            <li>NexaSource: <a id="lab-source-backup" href="http://127.0.0.1:5050/" rel="noopener">http://127.0.0.1:5050/</a></li>
+          </ul>
+          <span class="lab-status" id="lab-hosted-status">Same lab username and password apply to backup URLs.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; <span id="year"></span> Nexa Trials. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/config.js?v=4"></script>
+  <script src="../js/main.js?v=18"></script>
+  <script>
+    (function () {
+      var cfg = window.NEXA_TRIALS_CONFIG || {};
+      var direct = document.getElementById('lab-direct');
+      var source = document.getElementById('lab-source');
+      var directBackup = document.getElementById('lab-direct-backup');
+      var sourceBackup = document.getElementById('lab-source-backup');
+
+      var hostedDirect = cfg.NEXADIRECT_DEMO_URL || 'https://demo-direct.nexa-trials.com/';
+      var hostedSource = cfg.NEXASOURCE_DEMO_URL || 'https://demo-source.nexa-trials.com/';
+      var localDirect = cfg.NEXADIRECT_DEMO_BACKUP_URL || 'http://127.0.0.1:5070/';
+      var localSource = cfg.NEXASOURCE_DEMO_BACKUP_URL || 'http://127.0.0.1:5050/';
+
+      if (direct) direct.href = hostedDirect;
+      if (source) source.href = hostedSource;
+      if (directBackup) directBackup.href = localDirect;
+      if (sourceBackup) sourceBackup.href = localSource;
+    })();
+  </script>
+</body>
+</html>

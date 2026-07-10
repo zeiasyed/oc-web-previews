@@ -4,5 +4,7 @@
 .resend-api-key.local
 .render-api-key.local
 .oracle-oci.local.json
+.hetzner-api-token.local
 .nexa-labs-vps-state.json
+.client-demos-state.local.json
 marketing/lab-watchdog.log

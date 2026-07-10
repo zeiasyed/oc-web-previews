@@ -22,5 +22,18 @@ fi
 docker compose build
 docker compose up -d
 
+echo ">> Refreshing edge nginx (client demo videos)"
+mkdir -p "$INSTALL_ROOT/data/client-videos"
+if [ -f "$INSTALL_ROOT/.video-origin-secret" ]; then
+  SECRET="$(cat "$INSTALL_ROOT/.video-origin-secret")"
+  cat > /etc/nginx/nexa-video-auth.conf <<EOF
+if (\$arg_key != "$SECRET") {
+  return 403;
+}
+EOF
+fi
+cp "$LAB_VPS_DIR/nginx-edge.conf" /etc/nginx/sites-available/nexa-labs
+nginx -t && systemctl reload nginx
+
 echo "OK  Updated and restarted."
 docker compose ps

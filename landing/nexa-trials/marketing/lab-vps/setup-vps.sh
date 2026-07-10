@@ -99,6 +99,18 @@ echo ">> Starting containers"
 docker compose up -d
 
 echo ">> Installing edge nginx"
+mkdir -p "$DATA_ROOT/client-videos"
+VIDEO_SECRET_FILE="$INSTALL_ROOT/.video-origin-secret"
+if [ ! -f "$VIDEO_SECRET_FILE" ]; then
+  openssl rand -hex 10 > "$VIDEO_SECRET_FILE"
+  chmod 600 "$VIDEO_SECRET_FILE"
+fi
+SECRET="$(cat "$VIDEO_SECRET_FILE")"
+cat > /etc/nginx/nexa-video-auth.conf <<EOF
+if (\$arg_key != "$SECRET") {
+  return 403;
+}
+EOF
 cp "$LAB_VPS_DIR/nginx-edge.conf" /etc/nginx/sites-available/nexa-labs
 ln -sf /etc/nginx/sites-available/nexa-labs /etc/nginx/sites-enabled/nexa-labs
 rm -f /etc/nginx/sites-enabled/default

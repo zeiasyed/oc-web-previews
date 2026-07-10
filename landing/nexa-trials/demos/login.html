@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client demo videos | Nexa Trials</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css?v=17">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <style>
+    .demo-wrap { max-width: 28rem; margin: 0 auto; }
+    .demo-card {
+      padding: 2rem;
+      border: 1px solid var(--line, #dde3ea);
+      border-radius: 12px;
+      background: #fff;
+    }
+    .demo-card h1 { margin: 0 0 0.5rem; font-size: 1.5rem; }
+    .demo-card p { color: var(--ink-soft, #48566a); line-height: 1.6; margin: 0 0 1.25rem; }
+    .demo-field { margin-bottom: 1rem; }
+    .demo-field label { display: block; font-size: 0.875rem; font-weight: 500; margin-bottom: 0.35rem; }
+    .demo-field input {
+      width: 100%;
+      padding: 0.65rem 0.75rem;
+      border: 1px solid var(--line, #dde3ea);
+      border-radius: 8px;
+      font: inherit;
+    }
+    .demo-error {
+      display: none;
+      margin-top: 1rem;
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
+      background: #fef2f2;
+      color: #991b1b;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+    .demo-error.is-visible { display: block; }
+    .demo-note {
+      margin-top: 1.25rem;
+      font-size: 0.85rem;
+      color: var(--ink-faint, #7c8aa0);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="../index.html">
+        <img class="brand-mark" src="../assets/logo-mark.svg?v=4" alt="" width="44" height="44">
+        <span class="brand-lockup">
+          <span class="brand-title"><span class="brand-name">NEXA</span><span class="brand-tag">TRIALS</span></span>
+          <span class="brand-sub">Clinical Technology Partner</span>
+        </span>
+      </a>
+      <nav class="nav-menu" id="nav-menu" aria-label="Main"></nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section">
+      <div class="container demo-wrap">
+        <div class="demo-card">
+          <h1>Client demo videos</h1>
+          <p>Sign in with the username and password Nexa Trials sent you. Access expires after two weeks.</p>
+          <form id="login-form">
+            <div class="demo-field">
+              <label for="username">Username</label>
+              <input id="username" name="username" autocomplete="username" required>
+            </div>
+            <div class="demo-field">
+              <label for="password">Password</label>
+              <input id="password" name="password" type="password" autocomplete="current-password" required>
+            </div>
+            <button class="btn btn-primary" type="submit" style="width:100%">Sign in</button>
+          </form>
+          <div class="demo-error" id="login-error" role="alert"></div>
+          <p class="demo-note">Need access? Email <a href="mailto:info@nexa-trials.com">info@nexa-trials.com</a></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; <span id="year"></span> Nexa Trials. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/main.js?v=18"></script>
+  <script>
+    (async function () {
+      const err = document.getElementById('login-error');
+      function showError(msg) {
+        err.textContent = msg;
+        err.classList.add('is-visible');
+      }
+      try {
+        const me = await fetch('/api/demos/me', { credentials: 'same-origin' });
+        if (me.ok) {
+          location.href = '/demos/library.html';
+          return;
+        }
+        const data = await me.json().catch(() => ({}));
+        if (data.error === 'expired' && data.message) showError(data.message);
+      } catch (_) {}
+
+      document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        err.classList.remove('is-visible');
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        const res = await fetch('/api/demos/login', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (res.ok && data.ok) {
+          location.href = '/demos/library.html';
+          return;
+        }
+        if (data.error === 'expired' && data.message) {
+          showError(data.message);
+          return;
+        }
+        showError('Invalid username or password.');
+      });
+    })();
+  </script>
+</body>
+</html>

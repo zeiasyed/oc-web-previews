@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demo library | Nexa Trials</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css?v=17">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <style>
+    .lib-header {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+    .lib-meta { color: var(--ink-soft, #48566a); font-size: 0.9rem; margin: 0; }
+    .video-grid { display: grid; gap: 1.5rem; }
+    .video-card {
+      border: 1px solid var(--line, #dde3ea);
+      border-radius: 12px;
+      background: #fff;
+      overflow: hidden;
+    }
+    .video-card h2 { margin: 0; padding: 1rem 1.25rem 0.35rem; font-size: 1.1rem; }
+    .video-card p { margin: 0; padding: 0 1.25rem 1rem; color: var(--ink-soft, #48566a); font-size: 0.9rem; line-height: 1.5; }
+    .video-card video {
+      width: 100%;
+      display: block;
+      background: #0f172a;
+      max-height: 70vh;
+    }
+    .lib-empty, .lib-error {
+      padding: 1.25rem;
+      border-radius: 12px;
+      background: #f8fafc;
+      color: var(--ink-soft, #48566a);
+    }
+    .lib-error { background: #fef2f2; color: #991b1b; }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="../index.html">
+        <img class="brand-mark" src="../assets/logo-mark.svg?v=4" alt="" width="44" height="44">
+        <span class="brand-lockup">
+          <span class="brand-title"><span class="brand-name">NEXA</span><span class="brand-tag">TRIALS</span></span>
+          <span class="brand-sub">Clinical Technology Partner</span>
+        </span>
+      </a>
+      <nav class="nav-menu" id="nav-menu" aria-label="Main"></nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section">
+      <div class="container legal-content">
+        <div class="lib-header">
+          <div>
+            <h1>Your demo videos</h1>
+            <p class="lib-meta" id="client-meta">Loading…</p>
+          </div>
+          <button class="btn btn-ghost" type="button" id="logout-btn">Sign out</button>
+        </div>
+        <div id="video-grid" class="video-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; <span id="year"></span> Nexa Trials. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/main.js?v=18"></script>
+  <script>
+    (async function () {
+      const grid = document.getElementById('video-grid');
+      const meta = document.getElementById('client-meta');
+
+      function showError(msg) {
+        grid.innerHTML = `<div class="lib-error">${msg}</div>`;
+      }
+
+      async function ensureSession() {
+        const res = await fetch('/api/demos/me', { credentials: 'same-origin' });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          if (data.error === 'expired' && data.message) {
+            showError(data.message);
+          } else {
+            location.href = '/demos/login.html';
+          }
+          return null;
+        }
+        return data;
+      }
+
+      const session = await ensureSession();
+      if (!session) return;
+
+      const expiry = session.expiresAt ? new Date(session.expiresAt).toLocaleDateString() : '—';
+      meta.textContent = `${session.label || session.username} · access until ${expiry}`;
+
+      const res = await fetch('/api/demos/videos', { credentials: 'same-origin' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        if (data.error === 'expired' && data.message) showError(data.message);
+        else showError('Unable to load videos.');
+        return;
+      }
+
+      if (!data.videos || !data.videos.length) {
+        grid.innerHTML = '<div class="lib-empty">No videos assigned to your account yet.</div>';
+        return;
+      }
+
+      grid.innerHTML = data.videos.map((v) => `
+        <article class="video-card" data-id="${v.id}">
+          <h2>${escapeHtml(v.title)}</h2>
+          ${v.description ? `<p>${escapeHtml(v.description)}</p>` : ''}
+          <video controls playsinline preload="metadata" src="/api/demos/stream/${encodeURIComponent(v.id)}"></video>
+        </article>
+      `).join('');
+
+      document.getElementById('logout-btn').addEventListener('click', async () => {
+        await fetch('/api/demos/logout', { method: 'POST', credentials: 'same-origin' });
+        location.href = '/demos/login.html';
+      });
+
+      function escapeHtml(s) {
+        return String(s)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+    })();
+  </script>
+</body>
+</html>
