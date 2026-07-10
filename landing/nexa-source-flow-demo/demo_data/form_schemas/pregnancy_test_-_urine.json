@@ -1,0 +1,13 @@
+{
+  "form": "Pregnancy Test - Urine",
+  "fields": [
+    {
+      "name": "Assessment Date",
+      "label": "Assessment Date"
+    },
+    {
+      "name": "Result",
+      "label": "Result"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "form": "Randomization",
+  "fields": [
+    {
+      "name": "Randomization Number",
+      "label": "Randomization Number"
+    },
+    {
+      "name": "Was the subject randomized?",
+      "label": "Was the subject randomized?"
+    }
+  ]
+}

@@ -11,9 +11,10 @@
       "confidence": 0.88
     },
     "VS_HORIZONTAL_SYSBP_VSORRES": {
-      "value": "132",
+      "value": "138",
       "confidence": 0.68,
-      "force_review": true
+      "force_review": true,
+      "correct_value": "132"
     },
     "VS_HORIZONTAL_SYSBP_VSORRESU": {
       "value": "mmHg",

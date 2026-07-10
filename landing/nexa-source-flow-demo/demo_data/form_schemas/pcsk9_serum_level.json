@@ -1,0 +1,21 @@
+{
+  "form": "PCSK9 Serum Level",
+  "fields": [
+    {
+      "name": "Date of Sample Collection",
+      "label": "Date of Sample Collection"
+    },
+    {
+      "name": "Time of Sample Collection",
+      "label": "Time of Sample Collection"
+    },
+    {
+      "name": "Was sample collected?",
+      "label": "Was sample collected?"
+    },
+    {
+      "name": "Was the subject fasting?",
+      "label": "Was the subject fasting?"
+    }
+  ]
+}

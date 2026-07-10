@@ -107,7 +107,7 @@ $lab = if (Test-Path $LabFile) { Get-Content $LabFile -Raw | ConvertFrom-Json } 
 $labUser = if ($lab.user) { $lab.user } else { "test" }
 $labPass = if ($lab.password) { $lab.password } else { "" }
 if (-not $labPass -and -not $DnsOnly) {
-  Write-Warn "No password in $LabFile — set LAB_AUTH_PASSWORD on the VPS .env manually."
+  Write-Warn "No password in $LabFile - set LAB_AUTH_PASSWORD on the VPS .env manually."
 }
 
 if (-not $DnsOnly) {
@@ -118,20 +118,24 @@ if (-not $DnsOnly) {
     "LAB_AUTH_PASSWORD=$labPass"
     "LAB_AUTH_EDC=1"
     "NEXA_LABS_DATA=/opt/nexa-labs/data"
-  ) | Set-Content -Path $envPath -Encoding utf8NoBOM
+  ) | Set-Content -Path $envPath -Encoding UTF8
 
   Invoke-Scp $envPath "/tmp/nexa-labs.env"
 
   $setupLocal = Join-Path $LabVpsDir "setup-vps.sh"
-  Invoke-Scp $setupLocal "/tmp/nexa-setup-vps.sh"
-  Invoke-Ssh "sudo chmod +x /tmp/nexa-setup-vps.sh && sudo INSTALL_ROOT=$InstallRoot REPO_URL=$Repo BRANCH=$Branch bash /tmp/nexa-setup-vps.sh"
+  $setupUnix = Join-Path $env:TEMP "nexa-setup-vps.sh"
+  $setupContent = (Get-Content $setupLocal -Raw) -replace "`r`n", "`n" -replace "`r", "`n"
+  [System.IO.File]::WriteAllText($setupUnix, $setupContent, (New-Object System.Text.UTF8Encoding $false))
+  Invoke-Scp $setupUnix "/tmp/nexa-setup-vps.sh"
+  $remoteSetup = "chmod +x /tmp/nexa-setup-vps.sh; INSTALL_ROOT=$InstallRoot REPO_URL=$Repo BRANCH=$Branch bash /tmp/nexa-setup-vps.sh"
+  Invoke-Ssh $remoteSetup
 
   Remove-Item $envPath -Force -ErrorAction SilentlyContinue
   Write-Ok "VPS bootstrap complete"
 }
 
 if ($BootstrapOnly) {
-  Write-Warn "BootstrapOnly — skipped Cloudflare DNS. Re-run without -BootstrapOnly when ready."
+  Write-Warn "BootstrapOnly - skipped Cloudflare DNS. Re-run without -BootstrapOnly when ready."
   exit 0
 }
 
@@ -163,7 +167,7 @@ foreach ($hostName in @("demo-direct", "demo-source")) {
 }
 
 Write-Host ""
-Write-Host "Nexa labs (24/7 on VPS — free tier):" -ForegroundColor Green
+Write-Host 'Nexa labs (24-7 on VPS - Hetzner):' -ForegroundColor Green
 Write-Host "  https://demo-direct.$ZoneName/" -ForegroundColor Green
 Write-Host "  https://demo-source.$ZoneName/" -ForegroundColor Green
 Write-Host "  Mock EDC Direct: https://demo-direct.$ZoneName/edc/" -ForegroundColor Green
@@ -171,5 +175,5 @@ Write-Host "  Mock EDC Source: https://demo-source.$ZoneName/edc/" -ForegroundCo
 Write-Host "  Gateway:         https://$ZoneName/lab/" -ForegroundColor Green
 Write-Host "  Auth:            $labUser / (from .lab-access.local.json)" -ForegroundColor Green
 Write-Host ""
-Write-Warn "Stop run-all-labs.ps1 and cloudflared on your PC — DNS now points at the VPS."
+Write-Warn "Stop run-all-labs.ps1 and cloudflared on your PC - DNS now points at the VPS."
 Write-Host "Updates: git push main, then ssh and run update-labs.sh (or re-run this script)." -ForegroundColor Gray

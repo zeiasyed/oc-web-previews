@@ -87,7 +87,10 @@ def _demo_values(subject_id: str) -> dict[str, str]:
         data = json.loads(p.read_text(encoding="utf-8"))
         for name, meta in data.get("fields", {}).items():
             if isinstance(meta, dict):
-                out[name] = str(meta.get("value") or "")
+                if "correct_value" in meta:
+                    out[name] = str(meta.get("correct_value") or "")
+                else:
+                    out[name] = str(meta.get("value") or "")
             else:
                 out[name] = str(meta)
     return out

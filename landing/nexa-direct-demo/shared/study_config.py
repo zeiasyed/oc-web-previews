@@ -23,6 +23,7 @@ from shared.constants import (
     SITE_NAME,
     STUDY_ID,
     STUDY_NAME,
+    VISITS,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -229,6 +230,12 @@ def default_visit(study_id: str | None = None) -> str:
     return cfg.get("default_visit") or DEFAULT_VISIT
 
 
+def protocol_visits(study_id: str | None = None) -> list[str]:
+    """Visits defined for this study protocol (demo uses shared VISITS list)."""
+    _ = study_id
+    return list(VISITS)
+
+
 def _apply_label_overrides(schema: dict[str, Any], overrides: dict[str, str]) -> dict[str, Any]:
     if not overrides:
         return schema
@@ -336,29 +343,24 @@ def import_form_excel(
     return {"form_code": code, "title": form_meta["title"], "fields": len(parsed.get("fields", []))}
 
 
-def validate_inbox_path(path_str: str) -> tuple[bool, str]:
-    path = Path(path_str.strip())
-    if not path_str.strip():
-        return False, "Inbox path is required"
-    if not path.is_dir():
-        return False, f"Folder not found: {path}"
-    try:
-        next(path.glob("*"), None)
-    except OSError as e:
-        return False, f"Cannot read folder: {e}"
-    return True, "OK"
+def validate_inbox_path(path_str: str, study_id: str | None = None) -> tuple[bool, str]:
+    from shared.inbox_watcher import probe_inbox_folder
+
+    result = probe_inbox_folder(Path(path_str.strip()), study_id)
+    return result["valid"], result["message"]
 
 
 def public_summary(study_id: str | None = None) -> dict[str, Any]:
     sid = study_id or active_study_id()
     cfg = get_config(sid)
-    ok, inbox_msg = validate_inbox_path(cfg.get("inbox_path", ""))
+    ok, inbox_msg = validate_inbox_path(cfg.get("inbox_path", ""), sid)
     return {
         "id": sid,
         "name": cfg.get("name", sid),
         "site_id": cfg.get("site_id", ""),
         "site_name": SITE_NAME,
         "default_visit": cfg.get("default_visit", DEFAULT_VISIT),
+        "visits": protocol_visits(sid),
         "disabled": bool(cfg.get("disabled")),
         "inbox_path": cfg.get("inbox_path", ""),
         "display_inbox_path": display_inbox_path(sid),
@@ -391,6 +393,12 @@ def save_site_settings(study_id: str, body: dict[str, Any]) -> dict[str, Any]:
             patch["auto_write_threshold"] = round(val, 2)
         except (TypeError, ValueError):
             raise ValueError("Confidence threshold must be between 0 and 1") from None
+    if "default_visit" in patch:
+        visit = str(patch["default_visit"]).strip()
+        allowed = protocol_visits(study_id)
+        if visit not in allowed:
+            raise ValueError(f"Default visit must be one of: {', '.join(allowed)}")
+        patch["default_visit"] = visit
     patch["site_name"] = SITE_NAME
     return update_config(study_id, patch)
 

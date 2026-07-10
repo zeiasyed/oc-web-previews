@@ -1,0 +1,13 @@
+{
+  "form": "Disposition - Informed Consent",
+  "fields": [
+    {
+      "name": "Informed Consent Date",
+      "label": "Informed Consent Date"
+    },
+    {
+      "name": "Was informed consent obtained?",
+      "label": "Was informed consent obtained?"
+    }
+  ]
+}

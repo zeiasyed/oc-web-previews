@@ -18,21 +18,25 @@ from flask import Flask, Response, jsonify, render_template, request, send_from_
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from shared.constants import ALL_SUBJECTS, BUILD_VERSION, CONSOLE_PORT, RAVE_PORT, SITE_NAME, STUDY_ID
+from shared.constants import AD_DEMO_FILE, ALL_SUBJECTS, BUILD_VERSION, CONSOLE_PORT, FORMS, RAVE_PORT, SITE_NAME, STUDY_ID, VISITS
+from shared.ad_mode import AD, ad_requested, filter_inbox_files
+from shared import audit_store
 from shared.edc_store import reset as reset_edc
 from shared.lab_auth import check_lab_auth
 from shared.runtime_urls import console_bind_host, edc_public_base, listen_port
-from shared.inbox_watcher import INBOX, inbox_display_path, list_inbox, parse_filename, scan_inbox
+from shared.inbox_watcher import INBOX, inbox_display_path, list_inbox, parse_filename, probe_inbox_folder, scan_inbox
 from shared.job_state import JOB
 from shared.process_worker import approve_review, launch_process
 from shared.review_store import REVIEW
 from shared.study_config import (
     active_study_id,
     bootstrap_if_needed,
+    enabled_forms,
     get_config,
     import_form_excel,
     list_form_definitions,
     list_studies,
+    load_study_schema,
     public_summary,
     save_form_settings,
     save_site_settings,
@@ -74,6 +78,7 @@ def _study_from_request() -> str:
 def index():
     sid = active_study_id()
     summary = public_summary(sid)
+    ad_mode = request.args.get("ad") in ("1", "true", "yes")
     return render_template(
         "index.html",
         subjects=ALL_SUBJECTS,
@@ -81,12 +86,14 @@ def index():
         study_id=sid,
         study_name=summary["name"],
         default_visit=summary["default_visit"],
+        visits=VISITS,
         build=BUILD_VERSION,
         port=CONSOLE_PORT,
         edc_port=RAVE_PORT,
         edc_base=edc_public_base(),
         inbox_path=summary["display_inbox_path"],
         demo_site_name=SITE_NAME,
+        ad_mode=ad_mode,
     )
 
 
@@ -127,7 +134,7 @@ def api_settings_site(study_id: str):
     body = request.get_json(force=True) or {}
     try:
         cfg = save_site_settings(study_id, body)
-        ok, msg = validate_inbox_path(cfg.get("inbox_path", ""))
+        ok, msg = validate_inbox_path(cfg.get("inbox_path", ""), study_id)
         return jsonify(
             ok=True,
             study=public_summary(study_id),
@@ -138,6 +145,17 @@ def api_settings_site(study_id: str):
         return jsonify(ok=False, error=f"Unknown study: {study_id}"), 404
     except ValueError as e:
         return jsonify(ok=False, error=str(e)), 400
+
+
+@app.route("/api/settings/<study_id>/inbox/test", methods=["POST"])
+def api_test_inbox(study_id: str):
+    body = request.get_json(force=True) or {}
+    path = (body.get("inbox_path") or "").strip()
+    try:
+        result = probe_inbox_folder(Path(path), study_id)
+        return jsonify(ok=True, **result)
+    except KeyError:
+        return jsonify(ok=False, error=f"Unknown study: {study_id}"), 404
 
 
 @app.route("/api/settings/<study_id>/forms/<form_code>", methods=["PUT"])
@@ -186,12 +204,86 @@ def api_settings_import_form(study_id: str):
 @app.route("/api/inbox")
 def api_inbox():
     sid = _study_from_request()
-    return jsonify(files=list_inbox(sid), study=sid, inbox_path=inbox_display_path(sid))
+    ad = ad_requested()
+    files = filter_inbox_files(list_inbox(sid), ad)
+    return jsonify(files=files, study=sid, inbox_path=inbox_display_path(sid), ad=ad, pre_upload=AD.is_pre_upload() if ad else False)
+
+
+def _form_title(form_code: str, study_id: str | None = None) -> str:
+    sid = study_id or active_study_id()
+    cfg = enabled_forms(sid).get(form_code) or {}
+    return cfg.get("title") or FORMS.get(form_code, {}).get("title", form_code)
+
+
+def _field_label(form_code: str, field_name: str, study_id: str | None = None) -> str:
+    sid = study_id or active_study_id()
+    schema = load_study_schema(sid, form_code) or {"fields": []}
+    for field in schema.get("fields", []):
+        if field.get("name") == field_name:
+            return field.get("label", field_name)
+    return field_name
+
+
+def _flagged_issue_text(issue: str, confidence: float) -> str:
+    return f"Flagged item — extraction review required ({issue}) — confidence {confidence:.0%}"
+
+
+def _query_rank_map(study_id: str | None = None) -> dict[tuple[str, str, str], int]:
+    sid = study_id or active_study_id()
+    rank: dict[tuple[str, str, str], int] = {}
+    for query in audit_store.list_queries(limit=1000):
+        key = (query.get("subject") or "", query.get("form") or "", query.get("field") or "")
+        rank[key] = int(query.get("id") or 0)
+    return rank
+
+
+def _enrich_queries(queries: list[dict], study_id: str | None = None) -> list[dict]:
+    sid = study_id or active_study_id()
+    enriched: list[dict] = []
+    for query in queries:
+        form_code = query.get("form") or ""
+        field_name = query.get("field") or ""
+        row = dict(query)
+        row["form_title"] = _form_title(form_code, sid)
+        row["field_label"] = _field_label(form_code, field_name, sid)
+        enriched.append(row)
+    return sorted(enriched, key=lambda q: int(q.get("id") or 0))
+
+
+def _align_flagged_items(items: list[dict], study_id: str | None = None) -> list[dict]:
+    rank = _query_rank_map(study_id)
+    return sorted(
+        items,
+        key=lambda item: (
+            rank.get(
+                (item.get("subject_id") or item.get("subject") or "",
+                 item.get("form_code") or item.get("form") or "",
+                 item.get("field_name") or item.get("field") or ""),
+                10**9,
+            ),
+            item.get("subject_id") or item.get("subject") or "",
+            item.get("form_code") or item.get("form") or "",
+            item.get("field_name") or item.get("field") or "",
+        ),
+    )
+
+
+def _enrich_review_items(items: list[dict]) -> list[dict]:
+    sid = active_study_id()
+    for item in items:
+        code = item.get("form_code", "")
+        field_name = item.get("field_name", "")
+        item["form_title"] = _form_title(code, sid)
+        if not item.get("field_label"):
+            item["field_label"] = _field_label(code, field_name, sid)
+        conf = float(item.get("confidence") or 0)
+        item["issue_text"] = _flagged_issue_text(item.get("issue") or "review", conf)
+    return _align_flagged_items(items, sid)
 
 
 @app.route("/api/review")
 def api_review():
-    items = REVIEW.list_all()
+    items = _enrich_review_items(REVIEW.list_all())
     pending = sum(1 for i in items if i.get("status") == "pending")
     return jsonify(items=items, pending_count=pending, saved_count=len(items) - pending)
 
@@ -200,8 +292,9 @@ def api_review():
 def api_process():
     body = request.get_json(force=True) or {}
     study = body.get("study") or active_study_id()
+    ad = bool(body.get("ad")) or ad_requested()
     set_active_study(study)
-    ok, err = launch_process(study)
+    ok, err = launch_process(study, ad=ad)
     return jsonify(ok=ok, error=err)
 
 
@@ -236,12 +329,84 @@ def api_scan_pdf(filename: str):
 
 @app.route("/api/reset", methods=["POST"])
 def api_reset():
+    body = request.get_json(silent=True) or {}
+    ad = bool(body.get("ad")) or ad_requested()
     reset_edc()
     REVIEW.clear()
-    JOB.cancel_all()
+    JOB.reset_demo()
     with INBOX.lock:
         INBOX.reset_statuses()
-    return jsonify(ok=True)
+    if ad:
+        AD.reset()
+    return jsonify(ok=True, ad=ad)
+
+
+@app.route("/api/ad/simulate-upload", methods=["POST"])
+def api_ad_simulate_upload():
+    AD.simulate_upload()
+    sid = active_study_id()
+    scan_inbox(study_id=sid)
+    files = filter_inbox_files(list_inbox(sid), True)
+    return jsonify(ok=True, files=files)
+
+
+@app.route("/api/ad/overlays/<path:filename>")
+def api_ad_overlays(filename: str):
+    safe = Path(filename).name
+    candidates = [
+        ROOT / "demo_data" / "ad_overlays" / f"{Path(safe).stem}.json",
+        ROOT / "demo_data" / "ad_overlays" / "0102_DM.json",
+    ]
+    for path in candidates:
+        if path.is_file():
+            return jsonify(ok=True, overlay=json.loads(path.read_text(encoding="utf-8")))
+    return jsonify(ok=False, error="Overlay not found"), 404
+
+
+@app.route("/api/ad/status")
+def api_ad_status():
+    return jsonify(
+        ok=True,
+        pre_upload=AD.is_pre_upload(),
+        auto_count=AD.get_auto_count(),
+        demo_file=AD_DEMO_FILE,
+    )
+
+
+@app.route("/api/audit")
+def api_audit():
+    limit = min(int(request.args.get("limit", 200)), 500)
+    return jsonify(ok=True, events=audit_store.list_audit(limit), stats=audit_store.stats())
+
+
+@app.route("/api/queries")
+def api_queries():
+    status = request.args.get("status")
+    sid = active_study_id()
+    queries = _enrich_queries(audit_store.list_queries(status=status or None), sid)
+    return jsonify(ok=True, queries=queries)
+
+
+@app.route("/api/export/report")
+def api_export_report():
+    fmt = request.args.get("format", "csv")
+    section = request.args.get("section", "summary")
+    if section not in audit_store.EXPORT_SECTIONS:
+        return jsonify(ok=False, error="Invalid export section"), 400
+    with JOB.lock:
+        summary = dict(JOB.summary) if JOB.summary else None
+    if fmt == "json":
+        body = audit_store.export_section_json("NexaDirect", section, summary)
+        mimetype = "application/json"
+    else:
+        body = audit_store.export_section_csv("NexaDirect", section, summary)
+        mimetype = "text/csv; charset=utf-8"
+    filename = audit_store.export_filename("nexadirect", section, fmt)
+    return Response(
+        body,
+        mimetype=mimetype,
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 
 def _open_folder_in_explorer(folder: Path) -> bool:
@@ -353,7 +518,7 @@ def api_stream():
                 if st != last_status:
                     yield f"event: status\ndata: {json.dumps(st)}\n\n"
                     last_status = st
-                yield f"event: inbox\ndata: {json.dumps(list_inbox(sid))}\n\n"
+                yield f"event: inbox\ndata: {json.dumps(filter_inbox_files(list_inbox(sid), request.args.get('ad') in ('1', 'true', 'yes')))}\n\n"
         except GeneratorExit:
             with JOB.lock:
                 if q in JOB.subscribers:

@@ -18,9 +18,21 @@ def _expected_credentials() -> tuple[str, str] | None:
     return user, password
 
 
+def lab_auth_enabled_for_edc() -> bool:
+    """Mock EDC skips HTTP Basic Auth by default — console is already gated."""
+    return os.environ.get("LAB_AUTH_EDC", "").strip().lower() in ("1", "true", "yes")
+
+
+def edc_passthrough_launch(request: Request) -> bool:
+    """Console opens mock EDC with a session token — skip a second login gate."""
+    return bool(request.args.get("token") or request.args.get("study"))
+
+
 def check_lab_auth(request: Request) -> Response | None:
     """Return a 401 response when credentials are missing or invalid."""
     if request.path in PUBLIC_PATHS:
+        return None
+    if edc_passthrough_launch(request):
         return None
     expected = _expected_credentials()
     if expected is None:

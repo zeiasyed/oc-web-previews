@@ -1,0 +1,13 @@
+{
+  "form": "Anti-Nexavorin Antibody",
+  "fields": [
+    {
+      "name": "Assessment Date",
+      "label": "Assessment Date"
+    },
+    {
+      "name": "Result",
+      "label": "Result"
+    }
+  ]
+}

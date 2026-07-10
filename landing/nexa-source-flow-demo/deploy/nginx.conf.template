@@ -27,8 +27,8 @@ http {
   }
 
   server {
-    listen __PORT__;
-    server_name _;
+    listen __PORT__ default_server;
+    server_name demo-source.nexa-trials.com _;
 
     location /health {
       proxy_http_version 1.1;

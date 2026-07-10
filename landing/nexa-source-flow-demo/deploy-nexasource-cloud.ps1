@@ -137,7 +137,7 @@ if (-not $DnsOnly) {
         envVars    = @(
           @{ key = "LAB_AUTH_USER"; value = $labUser }
           @{ key = "LAB_AUTH_PASSWORD"; value = $labPass }
-          @{ key = "LAB_AUTH_EDC"; value = "1" }
+          @{ key = "LAB_AUTH_EDC"; value = "0" }
           @{ key = "EDC_PUBLIC_BASE"; value = "/edc" }
           @{ key = "SCRIPT_ROOT"; value = "/edc" }
         )
@@ -150,7 +150,7 @@ if (-not $DnsOnly) {
       Invoke-RenderApi POST "/services/$serviceId/env-vars" @(
         @{ key = "LAB_AUTH_USER"; value = $labUser }
         @{ key = "LAB_AUTH_PASSWORD"; value = $labPass }
-        @{ key = "LAB_AUTH_EDC"; value = "1" }
+        @{ key = "LAB_AUTH_EDC"; value = "0" }
       ) | Out-Null
       Invoke-RenderApi POST "/services/$serviceId/deploys" @{} | Out-Null
     }

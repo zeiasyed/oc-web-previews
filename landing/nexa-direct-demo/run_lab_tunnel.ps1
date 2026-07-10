@@ -26,6 +26,7 @@ $lab = if (Test-Path $labCredsFile) { Get-Content $labCredsFile -Raw | ConvertFr
 $env:LAB_AUTH_USER = if ($lab.user) { $lab.user } else { "test" }
 $env:LAB_AUTH_PASSWORD = if ($lab.password) { $lab.password } else { "" }
 $env:EDC_PUBLIC_BASE = "https://demo-edc.nexa-trials.com"
+$env:NEXA_ASSETS_DIR = Join-Path $root "demo_data\nexa_assets"
 $env:BIND_HOST = "127.0.0.1"
 $env:CONSOLE_PORT = "5070"
 $env:RAVE_PORT = "5071"
@@ -41,7 +42,9 @@ Stop-DemoPort 5070
 Get-Process cloudflared -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
 Start-Sleep -Seconds 2
 
-Write-Host "Starting Mock EDC on 5071..." -ForegroundColor Cyan
+Write-Host "Starting Mock EDC on 5071 (no second login prompt)..." -ForegroundColor Cyan
+Remove-Item Env:SCRIPT_ROOT -ErrorAction SilentlyContinue
+$env:EDC_PUBLIC_BASE = "https://demo-edc.nexa-trials.com"
 Start-Process -FilePath $py -ArgumentList "mock_rave\app.py" -WorkingDirectory $root -WindowStyle Minimized
 Start-Sleep -Seconds 1
 
@@ -51,7 +54,7 @@ Start-Sleep -Seconds 2
 
 Write-Host ""
 Write-Host "Console:  https://demo-direct.nexa-trials.com/" -ForegroundColor Green
-Write-Host "Mock EDC: https://demo-edc.nexa-trials.com/" -ForegroundColor Green
+Write-Host "Mock EDC: https://demo-edc.nexa-trials.com/ (opens straight into Rave — no extra auth)" -ForegroundColor Green
 Write-Host "Auth:     $($env:LAB_AUTH_USER) / (password from .lab-access.local.json)" -ForegroundColor Green
 Write-Host ""
 Write-Host "Starting Cloudflare tunnel (leave this running)..." -ForegroundColor Cyan

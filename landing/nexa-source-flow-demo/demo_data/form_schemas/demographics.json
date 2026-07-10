@@ -1,0 +1,29 @@
+{
+  "form": "Demographics",
+  "fields": [
+    {
+      "name": "Date of Birth",
+      "label": "Date of Birth"
+    },
+    {
+      "name": "Ethnicity",
+      "label": "Ethnicity"
+    },
+    {
+      "name": "Height (cm)",
+      "label": "Height (cm)"
+    },
+    {
+      "name": "Race",
+      "label": "Race"
+    },
+    {
+      "name": "Sex",
+      "label": "Sex"
+    },
+    {
+      "name": "Weight (kg)",
+      "label": "Weight (kg)"
+    }
+  ]
+}

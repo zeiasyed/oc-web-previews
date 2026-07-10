@@ -1,0 +1,33 @@
+{
+  "form": "Clinical Chemistry",
+  "fields": [
+    {
+      "name": "ALT (U/L)",
+      "label": "ALT (U/L)"
+    },
+    {
+      "name": "AST (U/L)",
+      "label": "AST (U/L)"
+    },
+    {
+      "name": "Collection Date",
+      "label": "Collection Date"
+    },
+    {
+      "name": "Creatinine (mg/dL)",
+      "label": "Creatinine (mg/dL)"
+    },
+    {
+      "name": "Glucose (mg/dL)",
+      "label": "Glucose (mg/dL)"
+    },
+    {
+      "name": "Potassium (mmol/L)",
+      "label": "Potassium (mmol/L)"
+    },
+    {
+      "name": "Sodium (mmol/L)",
+      "label": "Sodium (mmol/L)"
+    }
+  ]
+}

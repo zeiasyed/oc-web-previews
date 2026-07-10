@@ -3,36 +3,44 @@
   "form_code": "VS",
   "fields": {
     "VS_HORIZONTAL_VSPERF": {
-      "value": "Y",
-      "confidence": 0.82
+      "value": "N",
+      "confidence": 0.82,
+      "correct_value": "Y"
     },
     "VS_HORIZONTAL_VSDAT": {
-      "value": "2026-06-09",
-      "confidence": 0.82
+      "value": "2026-06-06",
+      "confidence": 0.82,
+      "correct_value": "2026-06-09"
     },
     "VS_HORIZONTAL_SYSBP_VSORRES": {
-      "value": "105",
-      "confidence": 0.82
+      "value": "108",
+      "confidence": 0.82,
+      "correct_value": "105"
     },
     "VS_HORIZONTAL_SYSBP_VSORRESU": {
-      "value": "mmHg",
-      "confidence": 0.82
+      "value": "cmHg",
+      "confidence": 0.82,
+      "correct_value": "mmHg"
     },
     "VS_HORIZONTAL_DIABP_VSORRES": {
-      "value": "68",
-      "confidence": 0.82
+      "value": "86",
+      "confidence": 0.82,
+      "correct_value": "68"
     },
     "VS_HORIZONTAL_DIABP_VSORRESU": {
-      "value": "mmHg",
-      "confidence": 0.82
+      "value": "mmHq",
+      "confidence": 0.82,
+      "correct_value": "mmHg"
     },
     "VS_HORIZONTAL_PULSE_VSORRES": {
-      "value": "65",
-      "confidence": 0.82
+      "value": "95",
+      "confidence": 0.82,
+      "correct_value": "65"
     },
     "VS_HORIZONTAL_PULSE_VSORRESU": {
-      "value": "beats/min",
-      "confidence": 0.82
+      "value": "beat/min",
+      "confidence": 0.82,
+      "correct_value": "beats/min"
     },
     "VS_HORIZONTAL_TEMP_VSORRES": {
       "value": "",
@@ -40,8 +48,9 @@
       "force_review": true
     },
     "VS_HORIZONTAL_TEMP_VSORRESU": {
-      "value": "C",
-      "confidence": 0.82
+      "value": "F",
+      "confidence": 0.82,
+      "correct_value": "C"
     }
   }
 }

@@ -70,7 +70,7 @@
     },
     "LB": {
       "enabled": true,
-      "title": "Laboratory — Local",
+      "title": "Laboratory \u2014 Local",
       "form_id": "LB_LOCAL",
       "file_code": "LB_LOCAL",
       "field_labels": {}

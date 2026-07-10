@@ -3,16 +3,19 @@
   "form_code": "DS",
   "fields": {
     "DS_DSDECOD": {
-      "value": "SCREEN FAILURE",
-      "confidence": 0.82
+      "value": "SCREEN FAILUR",
+      "confidence": 0.82,
+      "correct_value": "SCREEN FAILURE"
     },
     "DS_DSTERM": {
-      "value": "Did not meet eligibility",
-      "confidence": 0.82
+      "value": "Did not meat eligibility",
+      "confidence": 0.82,
+      "correct_value": "Did not meet eligibility"
     },
     "DS_DSSTDAT": {
-      "value": "2026-06-08",
-      "confidence": 0.82
+      "value": "2026-06-09",
+      "confidence": 0.82,
+      "correct_value": "2026-06-08"
     }
   }
 }

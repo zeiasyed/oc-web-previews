@@ -1,4 +1,4 @@
-"""Mock Medidata Rave EDC — CDASH forms, port 5071."""
+"""Mock Exxel EDC — CDASH forms, port 5071."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from flask import Flask, jsonify, redirect, render_template, request, session, u
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from shared.cdash_schemas import load_schema
+from shared.crf_render import build_crf_fields
 from shared.constants import (
     ALL_SUBJECTS,
     DEFAULT_VISIT,
@@ -26,7 +26,7 @@ from shared.constants import (
     study_by_id,
 )
 from shared.edc_store import get_form_fields, get_subject_summary, list_synced_subjects
-from shared.lab_auth import check_lab_auth
+from shared.lab_auth import check_lab_auth, lab_auth_enabled_for_edc
 from shared.runtime_urls import listen_port, rave_bind_host
 
 
@@ -46,9 +46,17 @@ class _ScriptRootMiddleware:
         return self.app(environ, start_response)
 
 
+def _script_root() -> str:
+    """Only prefix paths when EDC is mounted under a subpath on the same host."""
+    base = os.environ.get("EDC_PUBLIC_BASE", "").strip()
+    if base.startswith("/"):
+        return os.environ.get("SCRIPT_ROOT", "/edc").rstrip("/")
+    return ""
+
+
 app = Flask(__name__, template_folder="templates")
 app.secret_key = "nexa-direct-demo-local"
-app.wsgi_app = _ScriptRootMiddleware(app.wsgi_app, os.environ.get("SCRIPT_ROOT", "").rstrip("/"))
+app.wsgi_app = _ScriptRootMiddleware(app.wsgi_app, _script_root())
 
 SCHEMA_DIR = ROOT / "demo_data" / "schemas"
 
@@ -94,7 +102,31 @@ def _form_title(form_code: str) -> str:
 
 
 @app.before_request
+def demo_launch_auto_login():
+    """NexaDirect opens EDC with token/study in the URL — establish session on any route."""
+    if session.get("logged_in"):
+        return None
+    token = request.args.get("token")
+    study = request.args.get("study")
+    if not token and not study:
+        return None
+    if token:
+        session["demo_token"] = token
+    if study:
+        session["focus_study"] = study
+    for key in ("subject", "visit", "form"):
+        val = request.args.get(key)
+        if val:
+            session[f"focus_{key}"] = val
+    session["logged_in"] = True
+    session["user"] = "admin"
+    return None
+
+
+@app.before_request
 def require_lab_auth():
+    if not lab_auth_enabled_for_edc():
+        return None
     denied = check_lab_auth(request)
     if denied is not None:
         return denied
@@ -130,6 +162,15 @@ def login():
         session["focus_visit"] = visit
     if form:
         session["focus_form"] = form
+
+    # Launched from NexaDirect — skip the Rave sign-in screen during demos.
+    if request.method == "GET" and (token or study):
+        session["logged_in"] = True
+        session["user"] = "admin"
+        subj = session.get("focus_subject") or ALL_SUBJECTS[0]
+        vis = session.get("focus_visit") or DEFAULT_VISIT
+        frm = session.get("focus_form") or FORM_ORDER[0]
+        return redirect(url_for("crf", subject=subj, visit=vis, form=frm))
 
     if request.method == "POST":
         session["logged_in"] = True
@@ -204,16 +245,7 @@ def crf():
     visit = request.args.get("visit", DEFAULT_VISIT)
     form = request.args.get("form", FORM_ORDER[0])
     values = get_form_fields(subject, visit, form)
-    schema = load_schema(form, SCHEMA_DIR)
-    fields = []
-    if schema:
-        for f in schema.get("fields", []):
-            name = f.get("name", "")
-            label = f.get("label", name)
-            val = values.get(name, "")
-            fields.append({"name": name, "label": label, "value": val, "synced": bool(val)})
-    if not fields and values:
-        fields = [{"name": k, "label": k, "value": v, "synced": True} for k, v in sorted(values.items())]
+    fields = build_crf_fields(form, values, SCHEMA_DIR)
     session["focus_subject"] = subject
     session["focus_visit"] = visit
     visit_forms = [_form_title(c) for c in FORM_ORDER]
@@ -236,6 +268,6 @@ def crf():
 if __name__ == "__main__":
     host = rave_bind_host()
     port = listen_port(RAVE_PORT)
-    print("Mock Medidata Rave (CDASH)")
+    print("Mock Exxel EDC (CDASH)")
     print(f"  http://{host}:{port}/")
     app.run(host=host, port=port, debug=False, use_reloader=False)

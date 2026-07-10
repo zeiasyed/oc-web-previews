@@ -7,9 +7,10 @@
       "confidence": 0.88
     },
     "DM_AGE": {
-      "value": "50",
+      "value": "58",
       "confidence": 0.68,
-      "force_review": true
+      "force_review": true,
+      "correct_value": "50"
     },
     "DM_AGEU": {
       "value": "YEARS",
@@ -20,9 +21,10 @@
       "confidence": 0.88
     },
     "DM_ETHNIC": {
-      "value": "HISPANIC  OR  LATINO",
+      "value": "NOT  HISPANIC  OR  LATINO",
       "confidence": 0.68,
-      "force_review": true
+      "force_review": true,
+      "correct_value": "HISPANIC  OR  LATINO"
     },
     "DM_RACE": {
       "value": "ASIAN",

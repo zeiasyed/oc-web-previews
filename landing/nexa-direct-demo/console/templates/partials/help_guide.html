@@ -1,0 +1,206 @@
+<div id="help-guide" class="help-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="help-title" aria-hidden="true">
+  <div class="help-shell">
+    <aside class="help-sidebar">
+      <div class="help-sidebar-head">
+        <h2>NexaDirect Guide</h2>
+        <p>Scan-to-EDC workflow · lab demo</p>
+      </div>
+      <div class="help-search-wrap">
+        <input type="search" class="help-search" id="help-search" placeholder="Search help…" autocomplete="off">
+      </div>
+      <nav class="help-nav" aria-label="Help sections">
+        <a href="#help-overview" data-help-target="help-overview" class="active">Overview</a>
+        <a href="#help-quickstart" data-help-target="help-quickstart">Quick start</a>
+        <a href="#help-inbox" data-help-target="help-inbox">Scanner inbox</a>
+        <a href="#help-extract" data-help-target="help-extract">Write to EDC</a>
+        <a href="#help-review" data-help-target="help-review">Review flagged items</a>
+        <a href="#help-edc" data-help-target="help-edc">Mock EDC verification</a>
+        <a href="#help-setup" data-help-target="help-setup">Study setup</a>
+        <a href="#help-ui" data-help-target="help-ui">UI reference</a>
+        <a href="#help-demo" data-help-target="help-demo">Demo tips</a>
+        <a href="#help-faq" data-help-target="help-faq">FAQ</a>
+      </nav>
+      <div class="help-sidebar-foot">Synthetic data only · Nexa Trials lab environment</div>
+    </aside>
+    <div class="help-main">
+      <div class="help-main-head" id="help-main-head">
+        <h1 id="help-title">NexaDirect Help <span class="help-tag">Digital guide</span></h1>
+        <div class="help-head-actions">
+          <button type="button" class="help-icon-btn" id="help-minimize" title="Minimize — keep guide open while using the console" aria-label="Minimize help">−</button>
+          <button type="button" class="help-close" id="help-close">Close</button>
+        </div>
+      </div>
+      <div class="help-body" id="help-body">
+
+        <section class="help-section" id="help-overview">
+          <p class="help-lead">
+            <strong>NexaDirect</strong> automates the path from <em>scanned paper source</em> to your electronic data capture (EDC) system.
+            This lab console watches a scanner inbox folder, extracts CDASH-mapped fields from PDFs, auto-writes high-confidence values,
+            and routes uncertain extractions to a structured review queue — so coordinators spend less time on duplicate entry and more time with patients.
+          </p>
+          <div class="help-grid">
+            <div class="help-card">
+              <strong>What you’re seeing</strong>
+              <p>A fully interactive demo with synthetic study data, Exxel EDC demo, and a simulated scanner inbox of 24 PDFs.</p>
+            </div>
+            <div class="help-card">
+              <strong>What NexaDirect does in production</strong>
+              <p>OCR + field mapping, confidence scoring, audit trail, and direct writes to sponsor EDCs via Nexa Bus.</p>
+            </div>
+            <div class="help-card">
+              <strong>Fresh start every visit</strong>
+              <p>Each time you open this console, demo data resets automatically so you always begin with a clean inbox and empty EDC.</p>
+            </div>
+          </div>
+          <div class="help-flow">
+            <div class="help-flow-step">1 · Preview scans</div>
+            <span class="help-flow-arrow">→</span>
+            <div class="help-flow-step">2 · Write to EDC</div>
+            <span class="help-flow-arrow">→</span>
+            <div class="help-flow-step">3 · Review flagged</div>
+            <span class="help-flow-arrow">→</span>
+            <div class="help-flow-step">4 · Verify in EDC</div>
+          </div>
+        </section>
+
+        <section class="help-section" id="help-quickstart">
+          <h3><span class="help-num">1</span> Quick start — 5-minute walkthrough</h3>
+          <ol>
+            <li><strong>Confirm study</strong> — The study dropdown at the top selects the active protocol (demo: NovaPharm Phase 1).</li>
+            <li><strong>Preview source PDFs</strong> — Scroll to <em>Scanner Inbox</em> and click any filename (e.g. <code>0102_AE.pdf</code>) to open an in-app PDF preview. Or use <strong>Scanned Inbox Folder</strong> to reveal the folder in Windows Explorer.</li>
+            <li><strong>Run extraction</strong> — Click <strong>Write to EDC</strong> in the workflow card. NexaDirect processes all inbox PDFs sequentially. Watch the progress bar and activity log on the right.</li>
+            <li><strong>Review flagged fields</strong> — Fields below the confidence threshold appear in <em>Review flagged items</em>. Click <strong>View scan</strong> to compare against the PDF, edit values if needed, then <strong>Approve</strong> each row.</li>
+            <li><strong>Commit staged approvals</strong> — Approved values are <em>staged only</em> until you click <strong>Write to EDC</strong> in the review section (yellow banner explains this). That second write pushes approved values to the mock EDC.</li>
+            <li><strong>Verify</strong> — Click <strong>Open EDC to verify →</strong> at the bottom of the review section (or the header button) to open Exxel EDC with the synced subject and visit pre-selected.</li>
+          </ol>
+          <div class="help-callout tip">
+            <strong>Presenter tip:</strong> Start by clicking one inbox PDF so the audience sees the scanned form, then run <strong>Write to EDC</strong> to show automation vs. manual review in one pass.
+          </div>
+        </section>
+
+        <section class="help-section" id="help-inbox">
+          <h3><span class="help-num">2</span> Scanner inbox</h3>
+          <p>The inbox table lists every PDF NexaDirect detected in the configured scanner folder. Files follow the naming pattern <code>{SubjectID}_{FormCode}.pdf</code> — for example <code>0103_DM.pdf</code> is subject 0103, Demographics form.</p>
+          <table class="help-table">
+            <thead><tr><th>Column</th><th>Meaning</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Status</strong></td><td><em>new</em> = not processed · <em>processing</em> = in flight · <em>done</em> = auto-written with no flags · <em>flagged</em> = needs review</td></tr>
+              <tr><td><strong>Written</strong></td><td>Count of fields written to EDC automatically (confidence ≥ threshold)</td></tr>
+              <tr><td><strong>Flagged</strong></td><td>Count of fields sent to review (low confidence or validation issue)</td></tr>
+              <tr><td><strong>Preview</strong></td><td>Click the filename link to open the PDF in a modal without leaving the console</td></tr>
+            </tbody>
+          </table>
+          <div class="help-callout info">
+            <strong>Scanned Inbox Folder</strong> opens the physical inbox path in Explorer and copies the path to your clipboard — useful when demonstrating integration with a real scanner workflow.
+          </div>
+        </section>
+
+        <section class="help-section" id="help-extract">
+          <h3><span class="help-num">3</span> Write to EDC (main process)</h3>
+          <p>The primary <strong>Write to EDC</strong> button launches batch extraction across all inbox PDFs for the selected study. For each file, NexaDirect:</p>
+          <ul>
+            <li>Parses the PDF and maps extracted text to CDASH field definitions configured for that form</li>
+            <li>Scores each field for extraction confidence (0–1)</li>
+            <li><strong>Auto-writes</strong> fields at or above the confidence threshold (default 0.85 in Study Setup)</li>
+            <li><strong>Flags</strong> lower-confidence or ambiguous fields for human review</li>
+          </ul>
+          <p>The status pill in the header shows <em>Processing…</em> while running and <em>Complete</em> when finished. The activity log summarizes totals: files processed, auto-written field count, and flagged count.</p>
+          <div class="help-callout warn">
+            <strong>Two “Write to EDC” buttons:</strong> The top workflow button runs extraction. The review-section button commits <em>approved</em> flagged values after you’ve staged them — they are different steps in the pipeline.
+          </div>
+        </section>
+
+        <section class="help-section" id="help-review">
+          <h3><span class="help-num">4</span> Review flagged items</h3>
+          <p>When extraction confidence is below threshold, fields appear here with the issue type (e.g. <em>low_confidence</em>), extracted value, and confidence score.</p>
+          <ul>
+            <li><strong>View scan</strong> — Opens the source PDF side-by-side context so reviewers can validate against the paper form</li>
+            <li><strong>Approve</strong> — Accepts the extracted value (or your edited value) and stages it for EDC write</li>
+            <li><strong>Edit</strong> — Click the value cell to correct before approving</li>
+            <li><strong>Undo approve</strong> — Available on staged rows if you need to revert before committing</li>
+          </ul>
+          <p>Form names display in full in the review table (e.g. “Adverse Events” rather than “AE”) so clinical reviewers see familiar CRF language.</p>
+          <p>After all flagged rows are approved, click <strong>Write to EDC</strong> in the review banner to commit staged values. When everything is written, the review write button hides and <strong>Open EDC to verify →</strong> appears at full width.</p>
+          <div class="help-callout tip">
+            Rows turn green when staged. The yellow banner reminds you that staging ≠ EDC commit until you explicitly write.
+          </div>
+        </section>
+
+        <section class="help-section" id="help-edc">
+          <h3><span class="help-num">5</span> Mock EDC verification</h3>
+          <p><strong>Open EDC to verify</strong> launches Exxel EDC in a new tab, pre-authenticated with a session token. You land on the Case Report Form for the first synced subject and default visit.</p>
+          <ul>
+            <li>Navigate subjects and visits using the Exxel EDC shell</li>
+            <li>Confirm auto-written and approved fields appear in the correct forms</li>
+            <li>Empty forms indicate no data was synced for that subject/visit/form combination</li>
+          </ul>
+          <p>In production, NexaDirect writes through validated API connectors with full audit trail — this demo uses a local SQLite-backed mock for speed and safety.</p>
+        </section>
+
+        <section class="help-section" id="help-setup">
+          <h3><span class="help-num">6</span> Study setup (advanced)</h3>
+          <p>Expand <strong>Study Setup</strong> to configure site-level and form-level settings:</p>
+          <div class="help-grid">
+            <div class="help-card">
+              <strong>Site &amp; inbox</strong>
+              <p>Study name, default visit, site ID, scanner inbox path, and auto-write confidence threshold.</p>
+            </div>
+            <div class="help-card">
+              <strong>Forms &amp; fields</strong>
+              <p>Enable/disable CRFs, edit display titles, map PDF file codes, import CDASH Excel definitions.</p>
+            </div>
+          </div>
+          <p>Changes persist for the demo session. Use <strong>Reset</strong> to return EDC, inbox statuses, and review queue to a clean state without reloading the page.</p>
+        </section>
+
+        <section class="help-section" id="help-ui">
+          <h3><span class="help-num">7</span> UI reference</h3>
+          <table class="help-table">
+            <thead><tr><th>Control</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td>Study dropdown</td><td>Switch active protocol (demo study enabled; others shown as placeholders)</td></tr>
+              <tr><td>Scanned Inbox Folder</td><td>Open inbox in Explorer; copy path to clipboard</td></tr>
+              <tr><td>Write to EDC (workflow)</td><td>Run batch PDF extraction and auto-write</td></tr>
+              <tr><td>Open EDC to verify</td><td>Launch Exxel EDC CRF viewer</td></tr>
+              <tr><td>Reset</td><td>Clear EDC data, review queue, and inbox statuses</td></tr>
+              <tr><td>Activity log</td><td>Live SSE stream of processing events (right panel)</td></tr>
+              <tr><td>Status pill</td><td>Idle · Processing… · Complete</td></tr>
+              <tr><td>Help</td><td>This guide — search topics or use the sidebar</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="help-section" id="help-demo">
+          <h3><span class="help-num">8</span> Demo &amp; presentation tips</h3>
+          <ul>
+            <li><strong>Opening fresh:</strong> Reload the page — demo auto-resets so you never need to click Reset before a new audience.</li>
+            <li><strong>Highlight automation:</strong> After Write to EDC, point to Written column totals in the inbox — most fields write without touch.</li>
+            <li><strong>Highlight QA:</strong> Walk one flagged AE row: View scan → Approve → Write to EDC in review → verify in Exxel EDC.</li>
+            <li><strong>Confidence story:</strong> In Study Setup, mention threshold tuning — sites can balance speed vs. review load.</li>
+            <li><strong>Close with EDC:</strong> Always end on Exxel EDC so sponsors see data in the system they care about.</li>
+          </ul>
+          <div class="help-callout info">
+            Lab access: <a href="https://nexa-trials.com/lab/" target="_blank" rel="noopener">nexa-trials.com/lab</a> · All data is synthetic · No PHI
+          </div>
+        </section>
+
+        <section class="help-section" id="help-faq">
+          <h3><span class="help-num">9</span> Frequently asked questions</h3>
+          <dl class="help-faq">
+            <dt>Why does the review banner say values aren’t written yet?</dt>
+            <dd>Approving a flagged field only <em>stages</em> it. A separate Write to EDC in the review section commits staged values — mirroring production workflows where review and commit are distinct audit events.</dd>
+            <dt>Why is a form empty in mock EDC after sync?</dt>
+            <dd>No fields mapped to that form for that subject/visit, or all fields were flagged and not yet approved/committed. Check the activity log and review queue.</dd>
+            <dt>Can I re-run Write to EDC?</dt>
+            <dd>After a successful run, use Reset for a clean slate, or process again — already-done files retain status until reset.</dd>
+            <dt>Does this connect to a real EDC?</dt>
+            <dd>This lab uses Exxel EDC. Production NexaDirect connects via Nexa Bus to sponsor-configured EDC endpoints.</dd>
+            <dt>What EDCs are supported?</dt>
+            <dd>Major sponsor EDCs (Veeva, Oracle, Castor, and custom APIs) — scoped per deployment.</dd>
+          </dl>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>

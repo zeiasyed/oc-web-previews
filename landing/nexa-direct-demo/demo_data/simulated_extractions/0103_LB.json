@@ -3,20 +3,24 @@
   "form_code": "LB",
   "fields": {
     "LB_LOCAL_LBPERF": {
-      "value": "Y",
-      "confidence": 0.82
+      "value": "N",
+      "confidence": 0.82,
+      "correct_value": "Y"
     },
     "LB_LOCAL_LBDAT": {
-      "value": "2026-06-09",
-      "confidence": 0.82
+      "value": "2026-06-19",
+      "confidence": 0.82,
+      "correct_value": "2026-06-09"
     },
     "LB_LOCAL_ALP_LBORRES": {
-      "value": "22",
-      "confidence": 0.82
+      "value": "72",
+      "confidence": 0.82,
+      "correct_value": "22"
     },
     "LB_LOCAL_ALP_LBORRESU": {
-      "value": "U/L",
-      "confidence": 0.82
+      "value": "UI",
+      "confidence": 0.82,
+      "correct_value": "U/L"
     }
   }
 }

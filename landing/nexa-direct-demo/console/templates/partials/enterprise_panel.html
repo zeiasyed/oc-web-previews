@@ -1,0 +1,523 @@
+<style>
+
+.enterprise-card { margin-top: 0; align-self: flex-start; width: 100%; }
+
+.enterprise-card:hover { transform: none; box-shadow: var(--shadow); }
+
+.collapse-head {
+
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+
+}
+
+.collapse-head h2 { font-size: .92rem; font-weight: 700; margin: 0; }
+
+.collapse-head-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+.collapse-toggle {
+
+  width: 2rem; height: 2rem; border-radius: 50%; border: 1px solid var(--line); background: #fff;
+
+  cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 0;
+
+  color: var(--teal-dark); transition: transform .25s ease, background-color .2s, border-color .2s;
+
+}
+
+.collapse-toggle:hover { background: #f0fdfa; border-color: var(--teal); }
+
+.collapse-toggle.is-open { transform: rotate(180deg); background: #f0fdfa; border-color: var(--teal); }
+
+.collapse-toggle svg { width: 14px; height: 14px; display: block; }
+
+.collapse-body { display: none; }
+
+.collapse-body.open { display: block; margin-top: 10px; }
+
+.btn-sm-ent {
+
+  padding: 6px 12px; font-size: .72rem; font-weight: 600; border-radius: 8px;
+
+  border: 1px solid var(--line); background: #fff; cursor: pointer; font-family: inherit; color: var(--navy);
+
+}
+
+.btn-sm-ent:hover { border-color: var(--teal); background: #f0fdfa; }
+
+.enterprise-tabs { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+
+.ent-tab {
+
+  padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line);
+
+  background: #fff; font-size: .72rem; font-weight: 600; cursor: pointer; font-family: inherit; color: var(--muted);
+
+}
+
+.ent-tab.on { background: linear-gradient(135deg, var(--teal-light), var(--teal-dark)); color: #fff; border-color: transparent; }
+
+.ent-tab-panels {
+
+  display: grid;
+
+  grid-template-columns: 1fr;
+
+  min-height: 0;
+
+}
+
+.ent-tab-panels > .ent-pane {
+
+  grid-area: 1 / 1;
+
+  display: none;
+
+  min-height: 0;
+
+}
+
+.ent-tab-panels > .ent-pane.on {
+
+  display: block;
+
+}
+
+.ent-summary-grid {
+
+  display: grid;
+
+  grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+
+  gap: 8px;
+
+}
+
+.ent-stat {
+
+  background: linear-gradient(135deg, #f8fafc, #f0fdfa); border: 1px solid #cce8e4;
+
+  border-radius: 10px; padding: 10px 12px; text-align: center;
+
+}
+
+.ent-stat strong { display: block; font-size: 1.15rem; color: var(--teal-dark); line-height: 1.2; }
+
+.ent-stat span { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+
+.ent-empty { font-size: .8rem; color: var(--muted); padding: 8px 0 0; line-height: 1.5; margin: 0; }
+
+.ent-summary-grid:not(:empty) + .ent-empty { display: none; }
+
+.ent-scroll { overflow: auto; max-height: min(240px, 32vh); border: 1px solid var(--line); border-radius: 10px; }
+
+.ent-table { width: 100%; border-collapse: collapse; font-size: .72rem; }
+
+.ent-table th, .ent-table td { padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+
+.ent-table th { background: #f8fafc; font-size: .65rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); position: sticky; top: 0; }
+
+.ent-table tr:last-child td { border-bottom: none; }
+
+.ent-badge-open { color: #b45309; font-weight: 600; }
+
+.ent-badge-resolved { color: var(--green); font-weight: 600; }
+
+.ent-note { font-size: .72rem; color: var(--muted); margin-top: 8px; line-height: 1.45; }
+
+</style>
+
+
+
+<div class="card card-pad enterprise-card" id="enterprise-card">
+
+  <div class="collapse-head">
+
+    <h2>Run intelligence</h2>
+
+    <div class="collapse-head-right">
+
+      <button type="button" class="btn-sm-ent collapse-export" id="btn-export-csv">Export CSV</button>
+
+      <button type="button" class="collapse-toggle" id="btn-toggle-enterprise" aria-expanded="false" aria-controls="enterprise-body" aria-label="Expand Run intelligence">
+
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg>
+
+      </button>
+
+    </div>
+
+  </div>
+
+  <div class="collapse-body" id="enterprise-body">
+
+    <div class="enterprise-tabs" role="tablist">
+
+      <button type="button" class="ent-tab on" data-ent-tab="summary">Sync summary</button>
+
+      <button type="button" class="ent-tab" data-ent-tab="audit">Audit trail</button>
+
+      <button type="button" class="ent-tab" data-ent-tab="queries">Flagged items <span id="ent-query-count"></span></button>
+
+    </div>
+
+    <div class="ent-tab-panels">
+
+      <div class="ent-pane on" id="ent-pane-summary">
+
+        <div class="ent-summary-grid" id="ent-summary-grid"></div>
+
+        <p class="ent-empty" id="ent-summary-empty">Run a sync to see summary metrics here.</p>
+
+      </div>
+
+      <div class="ent-pane" id="ent-pane-audit" hidden>
+
+        <div class="ent-scroll">
+
+          <table class="ent-table">
+
+            <thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Detail</th></tr></thead>
+
+            <tbody id="ent-audit-body"><tr><td colspan="4" class="ent-empty">No audit events yet.</td></tr></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+      <div class="ent-pane" id="ent-pane-queries" hidden>
+
+        <div class="ent-scroll">
+
+          <table class="ent-table">
+
+            <thead><tr><th>Status</th><th>Subject</th><th>Form</th><th>Field</th><th>Issue</th></tr></thead>
+
+            <tbody id="ent-queries-body"><tr><td colspan="5" class="ent-empty">No flagged items.</td></tr></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<script>
+
+(function initEnterprisePanel() {
+
+  const APP = {{ enterprise_app|tojson }};
+
+  const exportBtn = document.getElementById('btn-export-csv');
+
+
+
+  document.getElementById('btn-toggle-enterprise')?.addEventListener('click', () => {
+
+    const body = document.getElementById('enterprise-body');
+
+    const btn = document.getElementById('btn-toggle-enterprise');
+
+    const open = body.classList.toggle('open');
+
+    btn.classList.toggle('is-open', open);
+
+    btn.setAttribute('aria-expanded', open);
+
+    btn.setAttribute('aria-label', open ? 'Collapse Run intelligence' : 'Expand Run intelligence');
+
+    if (exportBtn) exportBtn.hidden = !open;
+
+  });
+
+  if (exportBtn) exportBtn.hidden = true;
+
+
+
+  const tabs = document.querySelectorAll('[data-ent-tab]');
+
+  const panes = {
+
+    summary: document.getElementById('ent-pane-summary'),
+
+    audit: document.getElementById('ent-pane-audit'),
+
+    queries: document.getElementById('ent-pane-queries'),
+
+  };
+
+
+
+  function setActivePane(id) {
+
+    tabs.forEach(b => b.classList.toggle('on', b.dataset.entTab === id));
+
+    Object.entries(panes).forEach(([k, el]) => {
+
+      const active = k === id;
+
+      el?.classList.toggle('on', active);
+
+      if (active) el?.removeAttribute('hidden');
+
+      else el?.setAttribute('hidden', '');
+
+    });
+
+    updateExportButton();
+
+  }
+
+
+
+  function activeExportSection() {
+
+    const on = document.querySelector('[data-ent-tab].on');
+
+    return on?.dataset.entTab || 'summary';
+
+  }
+
+
+
+  function updateExportButton() {
+
+    if (!exportBtn) return;
+
+    const labels = { summary: 'sync summary', audit: 'audit trail', queries: 'flagged items' };
+
+    const section = activeExportSection();
+
+    exportBtn.title = `Export ${labels[section] || section} as CSV`;
+
+  }
+
+
+
+  tabs.forEach(btn => {
+
+    btn.addEventListener('click', () => setActivePane(btn.dataset.entTab));
+
+  });
+
+
+
+  function esc(s) {
+
+    return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+  }
+
+
+
+  function fmtTime(ts) {
+
+    if (!ts) return '—';
+
+    try { return new Date(ts).toLocaleString(); } catch (_) { return ts; }
+
+  }
+
+
+
+  function renderSummary(summary, stats) {
+
+    const grid = document.getElementById('ent-summary-grid');
+
+    const empty = document.getElementById('ent-summary-empty');
+
+    if (!grid) return;
+
+    grid.innerHTML = '';
+
+    if (!summary || !Object.keys(summary).length) {
+
+      if (empty) empty.style.display = '';
+
+      return;
+
+    }
+
+    if (empty) empty.style.display = 'none';
+
+    const items = [];
+
+    if (summary.files_processed != null) {
+
+      items.push(['Forms', summary.files_processed], ['Written fields', summary.auto_fields], ['Flagged', summary.flagged_fields], ['Pending review', summary.pending_review]);
+
+    }
+
+    if (summary.entered != null) {
+
+      items.push(['Entered', summary.entered], ['Matched', summary.matched], ['Flagged', summary.conflicts], ['Skipped', summary.skipped], ['Subjects', summary.subjects]);
+
+    }
+
+    if (stats) items.push(['Audit events', stats.audit_events], ['Open flagged', stats.open_queries]);
+
+    items.forEach(([label, val]) => {
+
+      const d = document.createElement('div');
+
+      d.className = 'ent-stat';
+
+      d.innerHTML = `<strong>${esc(val)}</strong><span>${esc(label)}</span>`;
+
+      grid.appendChild(d);
+
+    });
+
+  }
+
+
+
+  function actionLabel(action) {
+
+    const labels = {
+
+      query_opened: 'flagged_opened',
+
+      query_resolved: 'flagged_resolved',
+
+      discrepancy_opened: 'flagged_opened',
+
+      discrepancy_resolved: 'flagged_resolved',
+
+      flagged_opened: 'flagged_opened',
+
+      flagged_resolved: 'flagged_resolved',
+
+    };
+
+    return labels[action] || action;
+
+  }
+
+
+
+  function renderAudit(events) {
+
+    const tb = document.getElementById('ent-audit-body');
+
+    if (!tb) return;
+
+    if (!events?.length) {
+
+      tb.innerHTML = '<tr><td colspan="4" class="ent-empty">No audit events yet.</td></tr>';
+
+      return;
+
+    }
+
+    tb.innerHTML = events.slice(0, 100).map(ev => {
+
+      const detail = [ev.subject, ev.form, ev.field].filter(Boolean).join(' · ');
+
+      const extra = ev.detail || (ev.old_value != null ? `${ev.old_value} → ${ev.new_value}` : '');
+
+      return `<tr><td>${esc(fmtTime(ev.ts))}</td><td>${esc(ev.actor)}</td><td>${esc(actionLabel(ev.action))}</td><td>${esc(detail)} ${esc(extra)}</td></tr>`;
+
+    }).join('');
+
+  }
+
+
+
+  function renderQueries(queries) {
+
+    const tb = document.getElementById('ent-queries-body');
+
+    const badge = document.getElementById('ent-query-count');
+
+    const open = (queries || []).filter(q => q.status === 'open').length;
+
+    if (badge) badge.textContent = open ? `(${open})` : '';
+
+    if (!tb) return;
+
+    if (!queries?.length) {
+
+      tb.innerHTML = '<tr><td colspan="5" class="ent-empty">No flagged items.</td></tr>';
+
+      return;
+
+    }
+
+    tb.innerHTML = queries.slice(0, 80).map(q => {
+      const cls = q.status === 'open' ? 'ent-badge-open' : 'ent-badge-resolved';
+      const formTitle = esc(q.form_title || q.form);
+      const formCode = esc(q.form);
+      const formCell = q.form_title && q.form_title !== q.form
+        ? `<span title="${formCode}">${formTitle}</span>`
+        : formTitle;
+      const fieldLabel = esc(q.field_label || q.field);
+      const fieldCode = esc(q.field);
+      const fieldCell = q.field_label && q.field_label !== q.field
+        ? `<span title="${fieldCode}">${fieldLabel}</span>`
+        : fieldLabel;
+      return `<tr><td class="${cls}">${esc(q.status)}</td><td>${esc(q.subject)}</td><td>${formCell}</td><td>${fieldCell}</td><td>${esc(q.query_text)}</td></tr>`;
+    }).join('');
+
+  }
+
+
+
+  async function refreshEnterprisePanels() {
+
+    try {
+
+      const [st, aud, q] = await Promise.all([
+
+        fetch('/api/status').then(r => r.json()),
+
+        fetch('/api/audit').then(r => r.json()),
+
+        fetch('/api/queries').then(r => r.json()),
+
+      ]);
+
+      renderSummary(st.summary, aud.stats);
+
+      renderAudit(aud.events);
+
+      renderQueries(q.queries);
+
+    } catch (_) {}
+
+  }
+
+
+
+  window.refreshEnterprisePanels = refreshEnterprisePanels;
+
+
+
+  exportBtn?.addEventListener('click', () => {
+
+    const section = activeExportSection();
+
+    window.location.href = `/api/export/report?format=csv&section=${encodeURIComponent(section)}`;
+
+  });
+
+
+
+  refreshEnterprisePanels();
+
+  updateExportButton();
+
+  setInterval(refreshEnterprisePanels, 8000);
+
+})();
+
+</script>
+

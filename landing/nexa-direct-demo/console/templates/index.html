@@ -278,7 +278,7 @@ input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--
         <li>Open <strong>Scanned Inbox Folder</strong> or click a filename in the inbox list to preview source PDFs.</li>
         <li>Click <strong>Write to EDC</strong> to extract fields, validate confidence, and auto-write high-confidence values to EDC.</li>
         <li>Resolve any flagged fields in <strong>Review flagged items</strong> below (view scan, edit, approve).</li>
-        <li>Click <strong>Open EDC to verify</strong> to confirm CDASH data in mock Rave.</li>
+        <li>Click <strong>Open EDC to verify</strong> to confirm CDASH data in Exxel EDC.</li>
       </ol>
       <div class="actions">
         <button class="btn btn-secondary" id="btn-reveal" title="Opens the Scanner Inbox folder in Windows Explorer">Scanned Inbox Folder</button>
@@ -314,10 +314,6 @@ input[type=text]:focus,input[type=number]:focus{outline:none;border-color:var(--
 
     <div class="card card-pad">
       <h2>Review flagged items</h2>
-      <div class="ad-auto-summary ad-only" id="ad-auto-summary">
-        <p id="ad-auto-summary-text">4 fields auto-mapped with high confidence</p>
-        <button type="button" class="btn-accept-all ad-only" id="btn-accept-all">One-Click Accept</button>
-      </div>
       <div id="review-empty" class="review-empty">No flagged fields — run Write to EDC first.</div>
       <div id="review-head" class="review-foot review-foot-top" style="display:none">
         <div class="review-banner" id="review-banner-top">Changes are staged only — values will <strong>not</strong> be written to EDC until you click Write to EDC.</div>
@@ -1040,10 +1036,11 @@ function edcLaunchBase() {
 function openEdcVerify() {
   const study = document.getElementById('study').value;
   const params = new URLSearchParams();
-  if (edcToken) params.set('token', edcToken);
+  params.set('token', edcToken || `demo-${Date.now()}`);
   params.set('study', study);
   params.set('visit', activeDefaultVisit);
-  window.open(`${edcLaunchBase()}/login?${params}`, '_blank');
+  params.set('subject', '0101');
+  window.open(`${edcLaunchBase()}/crf?${params}`, '_blank');
 }
 
 document.getElementById('btn-edc').addEventListener('click', openEdcVerify);
@@ -1149,12 +1146,6 @@ async function startAdOverlayDemo(filename, subjectId, formCode) {
 function onAdProcessComplete() {
   closeScanPdf();
   showAdCaption('Review only low-confidence items');
-  fetch('/api/ad/status').then(r => r.json()).then(d => {
-    const n = d.auto_count || 4;
-    const txt = document.getElementById('ad-auto-summary-text');
-    if (txt) txt.textContent = `${n} field${n === 1 ? '' : 's'} auto-mapped with high confidence`;
-    document.getElementById('ad-auto-summary')?.classList.add('visible');
-  });
   document.querySelectorAll('#review-table tbody tr.review-row:not(.row-saved)').forEach(tr => {
     tr.classList.add('ad-pulse');
   });
@@ -1179,13 +1170,6 @@ if (AD_MODE) {
   const dropzone = document.getElementById('ad-dropzone');
   dropzone?.addEventListener('click', adSimulateUpload);
   dropzone?.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); adSimulateUpload(); } });
-  document.getElementById('btn-accept-all')?.addEventListener('click', () => {
-    document.getElementById('ad-auto-summary')?.classList.remove('visible');
-    showAdCaption('One-Click Accept → Push to EDC');
-    document.querySelectorAll('#review-table tbody tr.review-row:not(.row-saved)').forEach(tr => {
-      tr.classList.add('ad-pulse');
-    });
-  });
 }
 </script>
 </body>

@@ -12,6 +12,7 @@ sys.path.insert(0, str(ROOT))
 from shared.edc_store import count_all, get_form_fields, reset as reset_edc
 from shared.inbox_watcher import list_inbox, scan_inbox
 from shared.job_state import JOB
+from shared.extract_simulator import extract_from_filename, resolved_field_value
 from shared.process_worker import approve_review, launch_process
 from shared.review_store import REVIEW
 from shared.constants import DEFAULT_VISIT, FORM_ORDER, INBOX_PATH
@@ -24,6 +25,12 @@ def wait_for_job(timeout: float = 60.0) -> bool:
             return JOB.exit_code == 0
         time.sleep(0.2)
     return False
+
+
+def _approve_truth(item: dict) -> None:
+    result = extract_from_filename(item["filename"])
+    meta = result["fields"].get(item["field_name"], {})
+    approve_review(item["id"], resolved_field_value(meta))
 
 
 def main() -> int:
@@ -61,12 +68,12 @@ def main() -> int:
     else:
         print(f"OK: {len(pending)} review item(s) queued")
         for item in pending[:3]:
-            approve_review(item["id"], item["extracted_value"])
+            _approve_truth(item)
         print("OK: approved first review items")
 
     # Re-approve any remaining
     for item in REVIEW.list_pending():
-        approve_review(item["id"], item["extracted_value"])
+        _approve_truth(item)
 
     total = count_all()
     if total < 10:

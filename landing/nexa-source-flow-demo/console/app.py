@@ -1,8 +1,9 @@
-"""Nexa Source Flow demo console — port 5050."""
+"""NexaFlow demo console — port 5050."""
 
 from __future__ import annotations
 
 import json
+import os
 import queue
 import sys
 import threading
@@ -26,8 +27,11 @@ from shared.constants import (
     STUDY_ID,
     VISITS,
 )
-from shared.edc_store import reset as reset_edc
+from shared.edc_store import reset as reset_edc, write_field
+from shared import audit_store
 from shared.job_state import JOB
+from shared.lab_auth import check_lab_auth
+from shared.runtime_urls import console_bind_host, edc_public_base, listen_port
 from shared.sync_simulator import launch_sync
 
 app = Flask(__name__, template_folder="templates")
@@ -37,6 +41,19 @@ app = Flask(__name__, template_folder="templates")
 def no_cache(resp):
     resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     return resp
+
+
+@app.before_request
+def require_lab_auth():
+    denied = check_lab_auth(request)
+    if denied is not None:
+        return denied
+
+
+@app.route("/health")
+@app.route("/healthz")
+def health():
+    return jsonify(ok=True, build=BUILD_VERSION, service="nexasource-console")
 
 
 @app.route("/")
@@ -51,7 +68,21 @@ def index():
         study_id=STUDY_ID,
         build=BUILD_VERSION,
         port=CONSOLE_PORT,
-        rave_port=RAVE_PORT,
+        edc_port=RAVE_PORT,
+        edc_base=edc_public_base(),
+    )
+
+
+@app.route("/api/upload/subjects", methods=["POST"])
+def api_upload_subjects():
+    body = request.get_json(force=True) or {}
+    study = body.get("study") or STUDY_ID
+    time.sleep(0.6)
+    return jsonify(
+        ok=True,
+        study=study,
+        count=len(ALL_SUBJECTS),
+        subjects=ALL_SUBJECTS,
     )
 
 
@@ -68,7 +99,74 @@ def api_run_sync():
 @app.route("/api/reset", methods=["POST"])
 def api_reset():
     reset_edc()
+    JOB.reset_demo()
     return jsonify(ok=True)
+
+
+@app.route("/api/resolve", methods=["POST"])
+def api_resolve():
+    """Write resolved conflict values to the EDC store."""
+    body = request.get_json(force=True) or {}
+    updates = body.get("updates") or []
+    visit = body.get("visit") or ""
+    from datetime import datetime
+    ts = datetime.now().strftime("%Y-%m-%d %H:%M")
+    count = 0
+    for u in updates:
+        subj = u.get("subject", "")
+        form = u.get("form", "")
+        field = u.get("field", "")
+        value = u.get("value", "")
+        if subj and form and field and value:
+            write_field(
+                subj, visit, form, field, value, ts,
+                actor="Demo Coordinator", action="conflict_resolve",
+            )
+            for q in audit_store.list_queries(status="open"):
+                if (
+                    q["subject"] == subj
+                    and q["visit"] == visit
+                    and q["form"] == form
+                    and q["field"] == field
+                ):
+                    audit_store.resolve_query(q["id"], value)
+                    break
+            count += 1
+    return jsonify(ok=True, count=count)
+
+
+@app.route("/api/audit")
+def api_audit():
+    limit = min(int(request.args.get("limit", 200)), 500)
+    return jsonify(ok=True, events=audit_store.list_audit(limit), stats=audit_store.stats())
+
+
+@app.route("/api/queries")
+def api_queries():
+    status = request.args.get("status")
+    return jsonify(ok=True, queries=audit_store.list_queries(status=status or None))
+
+
+@app.route("/api/export/report")
+def api_export_report():
+    fmt = request.args.get("format", "csv")
+    section = request.args.get("section", "summary")
+    if section not in audit_store.EXPORT_SECTIONS:
+        return jsonify(ok=False, error="Invalid export section"), 400
+    with JOB.lock:
+        summary = dict(JOB.summary) if JOB.summary else None
+    if fmt == "json":
+        body = audit_store.export_section_json("NexaFlow", section, summary)
+        mimetype = "application/json"
+    else:
+        body = audit_store.export_section_csv("NexaFlow", section, summary)
+        mimetype = "text/csv; charset=utf-8"
+    filename = audit_store.export_filename("nexaflow", section, fmt)
+    return Response(
+        body,
+        mimetype=mimetype,
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
 
 
 @app.route("/api/build")
@@ -141,7 +239,13 @@ def open_browser():
 
 
 if __name__ == "__main__":
-    print("Nexa Source Flow demo console")
-    print(f"  http://127.0.0.1:{CONSOLE_PORT}/")
-    threading.Thread(target=open_browser, daemon=True).start()
-    app.run(host="127.0.0.1", port=CONSOLE_PORT, debug=False, use_reloader=False)
+    print("NexaSource demo console")
+    print(f"  http://{console_bind_host()}:{listen_port(CONSOLE_PORT)}/")
+    if os.environ.get("LAB_AUTH_USER"):
+        threading.Thread(target=open_browser, daemon=True).start()
+    app.run(
+        host=console_bind_host(),
+        port=listen_port(CONSOLE_PORT),
+        debug=False,
+        use_reloader=False,
+    )

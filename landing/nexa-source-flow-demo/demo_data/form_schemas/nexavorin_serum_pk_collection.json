@@ -1,0 +1,21 @@
+{
+  "form": "Nexavorin Serum PK Collection",
+  "fields": [
+    {
+      "name": "Date of Sample Collection",
+      "label": "Date of Sample Collection"
+    },
+    {
+      "name": "Time of Sample Collection",
+      "label": "Time of Sample Collection"
+    },
+    {
+      "name": "Timepoint",
+      "label": "Timepoint"
+    },
+    {
+      "name": "Was sample collected?",
+      "label": "Was sample collected?"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "form": "Inclusion/Exclusion Criteria",
+  "fields": [
+    {
+      "name": "Does the subject meet all inclusion criteria?",
+      "label": "Does the subject meet all inclusion criteria?"
+    },
+    {
+      "name": "Does the subject meet any exclusion criteria?",
+      "label": "Does the subject meet any exclusion criteria?"
+    }
+  ]
+}

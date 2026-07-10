@@ -1,0 +1,61 @@
+<style>
+.ad-only { display: none; }
+body.ad-mode .ad-only { display: block; }
+body.ad-mode .ad-hide { display: none !important; }
+body.ad-mode #setup-card,
+body.ad-mode .intro ol,
+body.ad-mode #btn-help,
+body.ad-mode #btn-reset,
+body.ad-mode #btn-reveal { display: none !important; }
+body.ad-mode #enterprise-card { order: -1; }
+.ad-dropzone {
+  display: none; position: absolute; inset: 0; z-index: 5;
+  background: linear-gradient(135deg, rgb(240 253 250 / 95%), rgb(255 255 255 / 92%));
+  border: 2px dashed var(--teal); border-radius: var(--radius);
+  flex-direction: column; align-items: center; justify-content: center; gap: 12px;
+  cursor: pointer; transition: opacity .4s, transform .4s;
+}
+body.ad-mode #inbox-card { position: relative; }
+body.ad-mode.ad-pre-upload .ad-dropzone { display: flex; }
+body.ad-mode.ad-pre-upload #inbox-table { visibility: hidden; }
+.ad-dropzone-icon { font-size: 2.4rem; }
+.ad-dropzone strong { font-size: 1.1rem; color: var(--navy); }
+.ad-dropzone span { font-size: .85rem; color: var(--muted); }
+.ad-caption {
+  position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
+  z-index: 2000; padding: 12px 28px; border-radius: 999px;
+  background: rgb(7 21 40 / 88); color: #fff; font-size: .95rem; font-weight: 600;
+  pointer-events: none; opacity: 0; transition: opacity .35s;
+  box-shadow: 0 8px 32px rgb(0 0 0 / 35%);
+}
+.ad-caption.show { opacity: 1; }
+.pdf-frame-wrap { position: relative; flex: 1; min-height: 0; }
+.pdf-frame-wrap iframe { width: 100%; height: 100%; border: none; background: #525659; }
+.pdf-overlays { position: absolute; inset: 0; pointer-events: none; }
+.pdf-overlay-box {
+  position: absolute; border: 2px solid; border-radius: 4px;
+  opacity: 0; transform: scale(.92); transition: opacity .35s, transform .35s;
+  box-shadow: 0 0 0 2px rgb(255 255 255 / 40%);
+}
+.pdf-overlay-box.show { opacity: 1; transform: scale(1); }
+.pdf-overlay-box.conf-high { border-color: #047857; background: rgb(4 120 87 / 22%); }
+.pdf-overlay-box.conf-mid { border-color: #b45309; background: rgb(180 83 9 / 22%); }
+.pdf-overlay-box.conf-low { border-color: #b91c1c; background: rgb(185 28 28 / 22%); }
+.review-row.ad-pulse td { animation: ad-pulse 1.2s ease 2; }
+@keyframes ad-pulse {
+  0%, 100% { background: inherit; }
+  50% { background: #fef3c7; }
+}
+.ad-toast {
+  position: fixed; top: 84px; right: 28px; z-index: 3000;
+  padding: 16px 22px; border-radius: 12px; background: var(--green);
+  color: #fff; font-weight: 600; font-size: .9rem;
+  box-shadow: 0 12px 40px rgb(4 120 87 / 45%);
+  opacity: 0; transform: translateY(-12px); transition: opacity .35s, transform .35s;
+  pointer-events: none;
+}
+.ad-toast.show { opacity: 1; transform: translateY(0); }
+</style>
+
+<div id="ad-caption" class="ad-caption ad-only" aria-live="polite"></div>
+<div id="ad-toast" class="ad-toast ad-only">Signed data pushed to EDC</div>

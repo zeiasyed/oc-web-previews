@@ -1,0 +1,33 @@
+{
+  "form": "Vital Signs (Body Measurement)",
+  "fields": [
+    {
+      "name": "Collection date/time",
+      "label": "Collection date/time"
+    },
+    {
+      "name": "Diastolic BP (mmHg)",
+      "label": "Diastolic BP (mmHg)"
+    },
+    {
+      "name": "Oral Temperature (\u00b0C)",
+      "label": "Oral Temperature (\u00b0C)"
+    },
+    {
+      "name": "Pulse Rate (bpm)",
+      "label": "Pulse Rate (bpm)"
+    },
+    {
+      "name": "Respiratory Rate (breaths/min)",
+      "label": "Respiratory Rate (breaths/min)"
+    },
+    {
+      "name": "Systolic BP (mmHg)",
+      "label": "Systolic BP (mmHg)"
+    },
+    {
+      "name": "Was vital signs collection performed?",
+      "label": "Was vital signs collection performed?"
+    }
+  ]
+}

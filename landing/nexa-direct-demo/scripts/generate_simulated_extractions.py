@@ -89,7 +89,7 @@ FORM_VALUES: dict[str, dict[str, dict[str, str]]] = {
         },
         "0102": {
             "AE_AESPID": "1",
-            "AE_AETERM": "Nausea",
+            "AE_AETERM": "Naustea",
             "AE_AESTDAT": "2026-06-03",
             "AE_AEONGO": "Y",
             "AE_AESEV": "MODERATE",
@@ -167,6 +167,59 @@ LOW_CONF: dict[str, list[str]] = {
     "0103": ["DM_AGE", "DM_ETHNIC", "VS_HORIZONTAL_TEMP_VSORRES", "AE_AETERM", "IE_IEYN"],
 }
 
+# Realistic OCR misreads for fields that land in the review queue (wrong guess → correct on scan).
+OCR_MISREADS: dict[tuple[str, str], str] = {
+    # 0102 — messy handwriting
+    ("0102", "DM_AGE"): "58",
+    ("0102", "DM_ETHNIC"): "NOT  HISPANIC  OR  LATINO",
+    ("0102", "VS_HORIZONTAL_SYSBP_VSORRES"): "138",
+    # 0103 — partial / low-confidence pass (all flagged for coordinator review)
+    ("0103", "AE_AESPID"): "7",
+    ("0103", "AE_AEONGO"): "Y",
+    ("0103", "CM_CMSPID"): "7",
+    ("0103", "CM_CMTRT"): "Multivitarnin",
+    ("0103", "CM_CMINDC"): "Suppiement",
+    ("0103", "CM_CMSTYY"): "2026-01-16",
+    ("0103", "CM_CMONGO"): "N",
+    ("0103", "DM_BRTHDAT"): "1980-12-28",
+    ("0103", "DM_AGEU"): "YERS",
+    ("0103", "DM_SEX"): "E",
+    ("0103", "DM_RACE"): "BLACK OR AFRICAN AMERlCAN",
+    ("0103", "DS_DSDECOD"): "SCREEN FAILUR",
+    ("0103", "DS_DSTERM"): "Did not meat eligibility",
+    ("0103", "DS_DSSTDAT"): "2026-06-09",
+    ("0103", "IE_IEYN"): "Y",
+    ("0103", "IE_IEDAT"): "2026-06-06",
+    ("0103", "IE_IECAT"): "INCLUSION",
+    ("0103", "IE_IETESTCD"): "INCL01",
+    ("0103", "LB_LOCAL_LBPERF"): "N",
+    ("0103", "LB_LOCAL_LBDAT"): "2026-06-19",
+    ("0103", "LB_LOCAL_ALP_LBORRES"): "72",
+    ("0103", "LB_LOCAL_ALP_LBORRESU"): "UI",
+    ("0103", "MH_MHSPID"): "7",
+    ("0103", "MH_MHTERM"): "Athsma",
+    ("0103", "MH_MHSTDAT"): "2005-09-26",
+    ("0103", "MH_MHONGO"): "N",
+    ("0103", "VS_HORIZONTAL_VSPERF"): "N",
+    ("0103", "VS_HORIZONTAL_VSDAT"): "2026-06-06",
+    ("0103", "VS_HORIZONTAL_SYSBP_VSORRES"): "108",
+    ("0103", "VS_HORIZONTAL_SYSBP_VSORRESU"): "cmHg",
+    ("0103", "VS_HORIZONTAL_DIABP_VSORRES"): "86",
+    ("0103", "VS_HORIZONTAL_DIABP_VSORRESU"): "mmHq",
+    ("0103", "VS_HORIZONTAL_PULSE_VSORRES"): "95",
+    ("0103", "VS_HORIZONTAL_PULSE_VSORRESU"): "beat/min",
+    ("0103", "VS_HORIZONTAL_TEMP_VSORRESU"): "F",
+}
+
+
+def _apply_ocr_misreads(subject_id: str, fields: dict[str, dict]) -> None:
+    for name, meta in fields.items():
+        guess = OCR_MISREADS.get((subject_id, name))
+        if guess is None:
+            continue
+        meta["correct_value"] = meta.get("value", "")
+        meta["value"] = guess
+
 
 def _build_fields(subject_id: str, form_code: str) -> dict[str, dict]:
     raw = FORM_VALUES.get(form_code, {}).get(subject_id, {})
@@ -187,6 +240,7 @@ def _build_fields(subject_id: str, form_code: str) -> dict[str, dict]:
             if not val:
                 meta["force_review"] = True
         out[name] = meta
+    _apply_ocr_misreads(subject_id, out)
     return out
 
 

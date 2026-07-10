@@ -1,0 +1,21 @@
+{
+  "form": "Urinalysis",
+  "fields": [
+    {
+      "name": "Blood",
+      "label": "Blood"
+    },
+    {
+      "name": "Collection Date",
+      "label": "Collection Date"
+    },
+    {
+      "name": "Glucose",
+      "label": "Glucose"
+    },
+    {
+      "name": "Protein",
+      "label": "Protein"
+    }
+  ]
+}

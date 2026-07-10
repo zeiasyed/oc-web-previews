@@ -1,0 +1,9 @@
+{
+  "form": "Study assignment",
+  "fields": [
+    {
+      "name": "Treatment Group",
+      "label": "Treatment Group"
+    }
+  ]
+}

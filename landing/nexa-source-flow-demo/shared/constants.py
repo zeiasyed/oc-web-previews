@@ -1,6 +1,6 @@
-"""Study constants for Nexa Source Flow demo (Amgen 20250012)."""
+"""Study constants for NexaFlow demo (NovaPharm 20250012)."""
 
-BUILD_VERSION = "2026.06.26-demo-a"
+BUILD_VERSION = "2026.06.27-demo-b"
 
 ALL_SUBJECTS = [
     "0103", "0104", "0105", "0106", "0107", "0108", "0109", "0110",
@@ -46,35 +46,35 @@ TARGET_CRFS_BY_VISIT = {
     ],
     "Day 1": [
         "Date of Visit", "Randomization", "Study assignment", "Vital Signs",
-        "Evolocumab Serum PK Collection", "Anti-Evolocumab Antibody",
-        "Complete Lipid Profile", "PCSK9 Serum Level", "Evolocumab Administration",
+        "Nexavorin Serum PK Collection", "Anti-Nexavorin Antibody",
+        "Complete Lipid Profile", "PCSK9 Serum Level", "Nexavorin Administration",
     ],
     "Day 2": [
-        "Date of Visit", "Vital Signs", "Evolocumab Serum PK Collection",
+        "Date of Visit", "Vital Signs", "Nexavorin Serum PK Collection",
         "Complete Lipid Profile", "PCSK9 Serum Level",
     ],
     "Day 3": [
-        "Date of Visit", "Vital Signs", "Evolocumab Serum PK Collection",
+        "Date of Visit", "Vital Signs", "Nexavorin Serum PK Collection",
         "Complete Lipid Profile", "PCSK9 Serum Level",
     ],
     "Day 4": [
-        "Date of Visit", "Vital Signs", "Evolocumab Serum PK Collection",
+        "Date of Visit", "Vital Signs", "Nexavorin Serum PK Collection",
         "Complete Lipid Profile", "PCSK9 Serum Level",
     ],
     "Day 5": [
-        "Date of Visit", "Vital Signs", "Evolocumab Serum PK Collection",
+        "Date of Visit", "Vital Signs", "Nexavorin Serum PK Collection",
         "Complete Lipid Profile", "PCSK9 Serum Level",
     ],
     "Day 6": [
-        "Date of Visit", "Vital Signs", "Evolocumab Serum PK Collection",
+        "Date of Visit", "Vital Signs", "Nexavorin Serum PK Collection",
         "Complete Lipid Profile", "PCSK9 Serum Level",
     ],
     "Day 7": [
-        "Date of Visit", "Vital Signs", "Evolocumab Serum PK Collection",
+        "Date of Visit", "Vital Signs", "Nexavorin Serum PK Collection",
         "Complete Lipid Profile", "PCSK9 Serum Level",
     ],
     "Day 8": [
-        "Date of Visit", "Vital Signs", "Evolocumab Serum PK Collection",
+        "Date of Visit", "Vital Signs", "Nexavorin Serum PK Collection",
         "Complete Lipid Profile", "PCSK9 Serum Level", "Disposition - End of Study",
     ],
 }
@@ -87,13 +87,23 @@ SUBJECT_LEVEL_FORMS = [
 ]
 
 STUDY_ID = "20250012"
-SITE_NAME = "Anaheim Clinical Trials (ACT)"
+SITE_NAME = "Westbridge Clinical Research Center"
 
-# Demo study list (single study for this demo)
+# Demo study list (NovaPharm active; others shown as unavailable)
 DEMO_STUDIES = [
     {
         "id": "20250012",
-        "label": "Amgen 20250012 — A Phase 1 Study of Evolocumab (COV-PH1)",
+        "label": "NovaPharm 20250012 — A Phase 1 Study of Nexavorin (NVA-PH1)",
+    },
+    {
+        "id": "45087-001",
+        "label": "Crestova Therapeutics CRX-45087-001",
+        "disabled": True,
+    },
+    {
+        "id": "568088-008",
+        "label": "Crestova Therapeutics CRX-568088-008",
+        "disabled": True,
     },
 ]
 

@@ -1,4 +1,4 @@
-"""Mock Medidata Rave EDC — port 5051."""
+"""Mock Exxel EDC — port 5051."""
 
 from __future__ import annotations
 
@@ -105,9 +105,10 @@ def login():
     if visit:
         session["focus_visit"] = visit
 
-    if request.method == "GET" and (token or subject or visit):
+    # Launched from NexaSource — skip the Rave sign-in screen during demos.
+    if request.method == "GET" and token:
         session["logged_in"] = True
-        session["user"] = "demo.coordinator"
+        session["user"] = "admin"
         subj = session.get("focus_subject") or ALL_SUBJECTS[0]
         vis = session.get("focus_visit") or "Day 3"
         forms = TARGET_CRFS_BY_VISIT.get(vis, ["Vital Signs"])
@@ -218,6 +219,6 @@ def crf():
 if __name__ == "__main__":
     port = listen_port(RAVE_PORT)
     host = rave_bind_host()
-    print("Mock Medidata Rave")
+    print("Mock Exxel EDC")
     print(f"  http://{host}:{port}/")
     app.run(host=host, port=port, debug=False, use_reloader=False)

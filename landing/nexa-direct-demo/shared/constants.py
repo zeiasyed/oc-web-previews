@@ -134,4 +134,7 @@ FORMS = {
 FORM_ORDER = ["IE", "DM", "MH", "CM", "VS", "LB", "AE", "DS"]
 
 AUTO_WRITE_THRESHOLD = 0.85
-DEMO_SPEED = 0.08  # seconds per file during demo processing
+DEMO_SPEED = float(os.environ.get("NEXA_DEMO_SPEED", "0.08"))  # seconds per file during demo processing
+AD_DEMO_SPEED = float(os.environ.get("NEXA_AD_DEMO_SPEED", "0.4"))
+AD_DEMO_FILE = "0102_DM.pdf"
+AD_DEMO_SUBJECT = "0102"

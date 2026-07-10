@@ -77,12 +77,23 @@ class JobState:
             return run_id
 
     def cancel_all(self) -> None:
+        self.reset_demo()
+
+    def reset_demo(self) -> None:
+        """Return console to idle demo state (EDC/inbox reset handled separately)."""
         with self.lock:
             self.run_id += 1
             self.running = False
-            self.finished_at = time.time()
+            self.started_at = None
+            self.finished_at = None
+            self.exit_code = None
             self.log_lines = []
-            self.progress = {"overall_pct": None, "stage": "Cancelled", "file_index": None, "file_total": None}
+            self.progress = {
+                "overall_pct": None,
+                "stage": None,
+                "file_index": None,
+                "file_total": None,
+            }
             self.summary = {}
             self.last_session_token = None
             self.last_study = None

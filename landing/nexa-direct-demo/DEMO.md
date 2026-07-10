@@ -17,6 +17,21 @@ cd nexa-direct-demo
 3. Resolve 2–3 items in **Review queue** (edit messy age, confirm ethnicity).
 4. Click **Open EDC to verify** — mock Rave shows CDASH forms with green highlighted synced fields.
 
+### Automated verification (no browser)
+
+```powershell
+$env:NEXA_DEMO_SPEED="0"
+.\.venv\Scripts\python.exe scripts\verify_edc_sync.py
+```
+
+Thorough test: 24 inbox PDFs → process → approve all review items → verify all **117 fields** in SQLite and CRF display.
+
+Legacy quick test:
+
+```powershell
+.\.venv\Scripts\python scripts\e2e_demo_test.py
+```
+
 ## Subjects
 
 | ID   | Style   | Behavior                                      |

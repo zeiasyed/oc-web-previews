@@ -1,0 +1,13 @@
+{
+  "form": "Alcohol Test",
+  "fields": [
+    {
+      "name": "Assessment Date",
+      "label": "Assessment Date"
+    },
+    {
+      "name": "Result",
+      "label": "Result"
+    }
+  ]
+}

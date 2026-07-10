@@ -3,8 +3,9 @@
   "form_code": "AE",
   "fields": {
     "AE_AESPID": {
-      "value": "1",
-      "confidence": 0.82
+      "value": "7",
+      "confidence": 0.82,
+      "correct_value": "1"
     },
     "AE_AETERM": {
       "value": "",
@@ -17,8 +18,9 @@
       "force_review": true
     },
     "AE_AEONGO": {
-      "value": "N",
-      "confidence": 0.82
+      "value": "Y",
+      "confidence": 0.82,
+      "correct_value": "N"
     }
   }
 }

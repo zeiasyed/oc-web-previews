@@ -1,6 +1,6 @@
-# Nexa Source Flow Demo
+# NexaFlow Demo
 
-Standalone local demo: **Nexa Source Flow** sync console + **mock Medidata Rave** EDC.
+Standalone local demo: **NexaFlow** sync console + **mock Medidata Rave** EDC.
 
 ## Quick start
 

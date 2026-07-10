@@ -1,0 +1,21 @@
+{
+  "form": "Hematology",
+  "fields": [
+    {
+      "name": "Collection Date",
+      "label": "Collection Date"
+    },
+    {
+      "name": "Hemoglobin (g/dL)",
+      "label": "Hemoglobin (g/dL)"
+    },
+    {
+      "name": "Platelet Count (10^9/L)",
+      "label": "Platelet Count (10^9/L)"
+    },
+    {
+      "name": "WBC (10^9/L)",
+      "label": "WBC (10^9/L)"
+    }
+  ]
+}

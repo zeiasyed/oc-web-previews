@@ -7,7 +7,7 @@ import threading
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 from shared.study_config import active_study_id, display_inbox_path, enabled_forms, inbox_path
 
@@ -139,3 +139,60 @@ def list_inbox(study_id: str | None = None) -> list[dict]:
 
 def inbox_display_path(study_id: str | None = None) -> str:
     return display_inbox_path(study_id or active_study_id())
+
+
+def probe_inbox_folder(folder: Path, study_id: str | None = None) -> dict[str, Any]:
+    """Check inbox folder access and summarize PDFs (for setup UI — does not save settings)."""
+    sid = study_id or active_study_id()
+    path_str = str(folder).strip()
+    empty = {"valid": False, "message": "Enter the scanner inbox folder path first.", "pdf_count": 0, "mapped_count": 0}
+    if not path_str:
+        return empty
+    if not folder.is_dir():
+        return {
+            "valid": False,
+            "message": "Cannot find that folder — check the path and try again.",
+            "pdf_count": 0,
+            "mapped_count": 0,
+        }
+    try:
+        list(folder.iterdir())
+    except OSError as exc:
+        return {
+            "valid": False,
+            "message": f"Folder exists but NexaDirect cannot read it: {exc}",
+            "pdf_count": 0,
+            "mapped_count": 0,
+        }
+
+    forms = enabled_forms(sid)
+    pdfs = sorted(folder.glob("*.pdf"))
+    mapped = sum(
+        1 for p in pdfs
+        if (parsed := parse_filename(p.name, sid)) and parsed[1] in forms
+    )
+    pdf_count = len(pdfs)
+
+    if pdf_count == 0:
+        return {
+            "valid": True,
+            "message": "Folder is reachable. No PDFs yet — new scans from the site scanner will appear in the inbox.",
+            "pdf_count": 0,
+            "mapped_count": 0,
+        }
+    if mapped == 0:
+        return {
+            "valid": True,
+            "message": (
+                f"Folder is reachable — {pdf_count} PDF(s) found, but none match enabled forms "
+                f"(expected names like 0102_DM.pdf)."
+            ),
+            "pdf_count": pdf_count,
+            "mapped_count": 0,
+        }
+    return {
+        "valid": True,
+        "message": f"Folder is reachable — {mapped} study PDF(s) ready to process ({pdf_count} PDF(s) in folder).",
+        "pdf_count": pdf_count,
+        "mapped_count": mapped,
+    }

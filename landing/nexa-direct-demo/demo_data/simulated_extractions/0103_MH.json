@@ -3,20 +3,24 @@
   "form_code": "MH",
   "fields": {
     "MH_MHSPID": {
-      "value": "1",
-      "confidence": 0.82
+      "value": "7",
+      "confidence": 0.82,
+      "correct_value": "1"
     },
     "MH_MHTERM": {
-      "value": "Asthma",
-      "confidence": 0.82
+      "value": "Athsma",
+      "confidence": 0.82,
+      "correct_value": "Asthma"
     },
     "MH_MHSTDAT": {
-      "value": "2005-09-20",
-      "confidence": 0.82
+      "value": "2005-09-26",
+      "confidence": 0.82,
+      "correct_value": "2005-09-20"
     },
     "MH_MHONGO": {
-      "value": "Y",
-      "confidence": 0.82
+      "value": "N",
+      "confidence": 0.82,
+      "correct_value": "Y"
     }
   }
 }

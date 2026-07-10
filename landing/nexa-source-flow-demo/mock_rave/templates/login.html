@@ -2,30 +2,30 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<title>iMedidata — Sign In</title>
+<title>Exxel EDC — Sign In</title>
 <style>
 body { font-family: Arial, sans-serif; background: #eef2f7; margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
 .card { background: #fff; width: 380px; padding: 32px; border-radius: 4px; box-shadow: 0 2px 12px rgba(0,0,0,.12); }
-h1 { font-size: 1.25rem; color: #336699; margin: 0 0 8px; }
+h1 { font-size: 1.25rem; color: #067a6f; margin: 0 0 8px; }
 .sub { color: #666; font-size: 0.85rem; margin-bottom: 24px; }
 label { display: block; font-size: 0.8rem; font-weight: bold; margin-bottom: 4px; color: #333; }
 input { width: 100%; padding: 10px; margin-bottom: 16px; border: 1px solid #ccc; border-radius: 3px; box-sizing: border-box; }
-button { width: 100%; padding: 12px; background: #336699; color: #fff; border: none; border-radius: 3px; font-weight: bold; cursor: pointer; }
-button:hover { background: #254a73; }
+button { width: 100%; padding: 12px; background: #0a9e8f; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+button:hover { background: #067a6f; }
 .note { margin-top: 16px; font-size: 0.75rem; color: #888; text-align: center; }
 .demo-badge { background: #fef3c7; color: #92400e; padding: 6px 10px; border-radius: 4px; font-size: 0.75rem; margin-bottom: 16px; }
 </style>
 </head>
 <body>
 <div class="card">
-  <div class="demo-badge">Not connected to live Medidata Rave</div>
-  <h1>Medidata Rave</h1>
+  <div class="demo-badge">Not connected to live Exxel EDC</div>
+  <h1>Exxel EDC</h1>
   <p class="sub">Study {{ study_id }} · {{ site_name }}</p>
   <form method="post">
     <label for="username">Username</label>
-    <input id="username" name="username" value="demo.coordinator" autocomplete="username"/>
+    <input id="username" name="username" value="admin" autocomplete="username"/>
     <label for="password">Password</label>
-    <input id="password" name="password" type="password" value="demo" autocomplete="current-password"/>
+    <input id="password" name="password" type="password" value="Academy123!" autocomplete="current-password"/>
     <button type="submit">Sign In</button>
   </form>
   <p class="note">Any credentials accepted.</p>

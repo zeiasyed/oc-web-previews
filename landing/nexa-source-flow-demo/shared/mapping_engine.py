@@ -90,15 +90,15 @@ def infer_forms_from_filename(name: str) -> list[str]:
         (["lipid profile scrn", "complete lipid profile scrn"], ["Complete Lipid Profile SCRN"]),
         (["randomization"], ["Randomization"]),
         (["study assignment", "study assign"], ["Study assignment"]),
-        (["evolocumab serum pk", "pk collection"], ["Evolocumab Serum PK Collection"]),
-        (["anti-evolocumab", "anti evolocumab"], ["Anti-Evolocumab Antibody"]),
+        (["nexavorin serum pk", "pk collection"], ["Nexavorin Serum PK Collection"]),
+        (["anti-nexavorin", "anti nexavorin"], ["Anti-Nexavorin Antibody"]),
         (["complete lipid profile"], ["Complete Lipid Profile"]),
         (["pcsk9"], ["PCSK9 Serum Level"]),
-        (["evolocumab admin"], ["Evolocumab Administration"]),
+        (["nexavorin admin"], ["Nexavorin Administration"]),
         (["adverse event"], ["Adverse Events Summary"]),
         (["concomitant", "cm_"], ["Prior and Concomitant Medications Summary", "Prior and Concomitant Medications"]),
         (["end of study", "disposition - end"], ["Disposition - End of Study"]),
-        (["lab_d2", "lab_day"], ["Evolocumab Serum PK Collection", "Complete Lipid Profile", "PCSK9 Serum Level"]),
+        (["lab_d2", "lab_day"], ["Nexavorin Serum PK Collection", "Complete Lipid Profile", "PCSK9 Serum Level"]),
     ]
     forms: list[str] = []
     for keys, targets in rules:

@@ -1,0 +1,211 @@
+<div id="help-guide" class="help-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="help-title" aria-hidden="true">
+  <div class="help-shell">
+    <aside class="help-sidebar">
+      <div class="help-sidebar-head">
+        <h2>NexaFlow Guide</h2>
+        <p>ClinSpark-to-EDC sync · lab demo</p>
+      </div>
+      <div class="help-search-wrap">
+        <input type="search" class="help-search" id="help-search" placeholder="Search help…" autocomplete="off">
+      </div>
+      <nav class="help-nav" aria-label="Help sections">
+        <a href="#help-overview" data-help-target="help-overview" class="active">Overview</a>
+        <a href="#help-quickstart" data-help-target="help-quickstart">Quick start</a>
+        <a href="#help-upload" data-help-target="help-upload">Upload subjects</a>
+        <a href="#help-select" data-help-target="help-select">Select &amp; cohorts</a>
+        <a href="#help-sync" data-help-target="help-sync">Write to EDC</a>
+        <a href="#help-review" data-help-target="help-review">Review flagged items</a>
+        <a href="#help-edc" data-help-target="help-edc">Mock EDC verification</a>
+        <a href="#help-ui" data-help-target="help-ui">UI reference</a>
+        <a href="#help-demo" data-help-target="help-demo">Demo tips</a>
+        <a href="#help-faq" data-help-target="help-faq">FAQ</a>
+      </nav>
+      <div class="help-sidebar-foot">Synthetic data only · Nexa Trials lab environment</div>
+    </aside>
+    <div class="help-main">
+      <div class="help-main-head" id="help-main-head">
+        <h1 id="help-title">NexaFlow Help <span class="help-tag">Digital guide</span></h1>
+        <div class="help-head-actions">
+          <button type="button" class="help-icon-btn" id="help-minimize" title="Minimize — keep guide open while using the console" aria-label="Minimize help">−</button>
+          <button type="button" class="help-close" id="help-close">Close</button>
+        </div>
+      </div>
+      <div class="help-body" id="help-body">
+
+        <section class="help-section" id="help-overview">
+          <p class="help-lead">
+            <strong>NexaFlow</strong> (NexaSource) moves structured eSource data from <em>ClinSpark</em> into your EDC without duplicate entry.
+            Coordinators upload a subject roster, pick a visit and roster subset, and push mapped fields to Exxel EDC (demo) — with intelligent flagging when EDC already holds different values.
+            This lab console demonstrates the full sync, review, and verification loop sponsors expect from modern eSource-to-EDC integration.
+          </p>
+          <div class="help-grid">
+            <div class="help-card">
+              <strong>Four-step workflow</strong>
+              <p>Upload → Select subjects → Write to EDC → Verify in Exxel EDC. Each step maps to a visible card in the console.</p>
+            </div>
+            <div class="help-card">
+              <strong>Flag-aware sync</strong>
+              <p>When EDC already has data, NexaFlow surfaces side-by-side comparison so coordinators accept, edit, or skip field-by-field.</p>
+            </div>
+            <div class="help-card">
+              <strong>Fresh demo every visit</strong>
+              <p>Opening this console resets mock EDC and clears prior sync state. Subjects are <em>not</em> pre-loaded — you start at step 1.</p>
+            </div>
+          </div>
+          <div class="help-flow">
+            <div class="help-flow-step">1 · Upload</div>
+            <span class="help-flow-arrow">→</span>
+            <div class="help-flow-step">2 · Select</div>
+            <span class="help-flow-arrow">→</span>
+            <div class="help-flow-step">3 · Write</div>
+            <span class="help-flow-arrow">→</span>
+            <div class="help-flow-step">4 · Verify</div>
+          </div>
+        </section>
+
+        <section class="help-section" id="help-quickstart">
+          <h3><span class="help-num">1</span> Quick start — 5-minute walkthrough</h3>
+          <ol>
+            <li><strong>Upload ClinSpark subjects</strong> — Click the teal <strong>Upload ClinSpark Subjects</strong> button. The activity log simulates an export pull; 45 synthetic subjects load into the roster grid.</li>
+            <li><strong>Choose study &amp; visit</strong> — Confirm the study dropdown (NovaPharm Phase 1) and select a visit (e.g. Screening).</li>
+            <li><strong>Select subjects</strong> — Click subject chips to select individuals, use <strong>All</strong>/<strong>Clear</strong>, or click a saved <strong>Cohort</strong> pill (Cohort 1 / Cohort 2) for quick roster picks.</li>
+            <li><strong>Write to EDC</strong> — Click the green <strong>Write to EDC</strong> button. Progress bar and log show per-subject sync steps.</li>
+            <li><strong>Review flagged items</strong> — If EDC already had values, the <em>Review flagged items</em> modal opens automatically. Accept or edit flagged rows, then click <strong>Write to EDC</strong> in the modal to commit resolutions.</li>
+            <li><strong>Verify</strong> — Click <strong>Open EDC to verify →</strong> to inspect synced CRFs in Exxel EDC.</li>
+          </ol>
+          <div class="help-callout tip">
+            <strong>Presenter tip:</strong> Deliberately mention that upload is manual step 1 — it mirrors real ClinSpark API/export integration and shows coordinators control <em>who</em> syncs before data moves.
+          </div>
+        </section>
+
+        <section class="help-section" id="help-upload">
+          <h3><span class="help-num">2</span> Upload ClinSpark subjects</h3>
+          <p>Before any sync, you must pull the subject roster from ClinSpark. Until upload completes:</p>
+          <ul>
+            <li>The subjects card shows a locked message — no chips visible</li>
+            <li><strong>Write to EDC</strong> stays disabled</li>
+            <li>The workflow step indicator highlights step 1 · Upload</li>
+          </ul>
+          <p>After upload, the button hides and a green badge shows the count (e.g. “✓ 45 subjects loaded”). The activity log lists each subject ID as it arrives — expand the log for full detail.</p>
+          <div class="help-callout info">
+            In production, NexaFlow connects to ClinSpark via sponsor-configured API or scheduled export. This demo simulates latency and log output for realism.
+          </div>
+        </section>
+
+        <section class="help-section" id="help-select">
+          <h3><span class="help-num">3</span> Subject selection &amp; cohorts</h3>
+          <p>Once loaded, every subject appears as a clickable chip. Selection tools:</p>
+          <table class="help-table">
+            <thead><tr><th>Action</th><th>How</th></tr></thead>
+            <tbody>
+              <tr><td>Select one</td><td>Click a subject chip</td></tr>
+              <tr><td>Range select</td><td>Click first subject, <strong>Shift+click</strong> last subject in range</td></tr>
+              <tr><td>Select all / clear</td><td><strong>All</strong> or <strong>Clear</strong> toolbar buttons</td></tr>
+              <tr><td>Save cohort</td><td>With subjects selected, click <strong>+ Save cohort</strong> and name it</td></tr>
+              <tr><td>Apply cohort</td><td>Click a cohort pill under <em>Cohorts</em></td></tr>
+              <tr><td>Delete cohort</td><td>Right-click a cohort pill and confirm</td></tr>
+            </tbody>
+          </table>
+          <p>Demo includes pre-defined <strong>Cohort 1</strong> and <strong>Cohort 2</strong> pills after upload for fast roster selection during presentations.</p>
+          <p>The badge next to “Subjects” shows how many are selected — at least one is required before Write to EDC enables.</p>
+        </section>
+
+        <section class="help-section" id="help-sync">
+          <h3><span class="help-num">4</span> Write to EDC (sync engine)</h3>
+          <p><strong>Write to EDC</strong> pushes ClinSpark-mapped values for the selected subjects and visit into Exxel EDC. During sync:</p>
+          <ul>
+            <li>Header status shows <em>Writing to EDC…</em></li>
+            <li>Progress bar advances per subject and form step</li>
+            <li>Activity log streams detailed steps (subject ID, form names, field counts)</li>
+          </ul>
+          <p>When sync completes without flagged items, a success card summarizes entered vs. skipped fields. The main Write button disables after a successful full write until you change visit/subjects or click <strong>Reset</strong>.</p>
+          <div class="help-callout warn">
+            Changing visit or subject selection after a write re-enables the button so you can sync a different roster slice.
+          </div>
+        </section>
+
+        <section class="help-section" id="help-review">
+          <h3><span class="help-num">5</span> Review flagged items</h3>
+          <p>When mock EDC already contains values that differ from ClinSpark source, NexaFlow opens the <strong>Review flagged items</strong> modal automatically. Each row shows:</p>
+          <ul>
+            <li>Subject, form, and field name</li>
+            <li>ClinSpark (source) value vs. current EDC value</li>
+            <li>Status indicator — focus on rows marked ✗</li>
+          </ul>
+          <p>For each flagged item you can:</p>
+          <ul>
+            <li><strong>Accept</strong> — Use the ClinSpark value (overwrites EDC on commit)</li>
+            <li><strong>Edit</strong> — Enter a corrected value before accepting</li>
+          </ul>
+          <p>Click <strong>Write to EDC</strong> in the modal footer to commit all accepted/edited resolutions. After a full write, the button hides and messaging confirms everything is synced.</p>
+          <p><strong>Minimize</strong> (−) keeps the review panel accessible while you check Exxel EDC side-by-side. <strong>Print</strong> exports the review table for audit discussions.</p>
+          <div class="help-callout tip">
+            Partial saves keep the Write button visible — only a complete resolution of all open flagged items counts as “all written.”
+          </div>
+        </section>
+
+        <section class="help-section" id="help-edc">
+          <h3><span class="help-num">6</span> Mock EDC verification</h3>
+          <p><strong>Open EDC to verify →</strong> opens Exxel EDC (demo) with session token, first synced subject, and selected visit pre-loaded.</p>
+          <ul>
+            <li>Browse forms in the EDC form navigation tree</li>
+            <li>Confirm field values match accepted ClinSpark data</li>
+            <li>Cross-check flagged fields you resolved in the review modal</li>
+          </ul>
+          <p>Empty forms mean no mapped data was written for that subject/visit/form — not a display bug if sync skipped those fields.</p>
+        </section>
+
+        <section class="help-section" id="help-ui">
+          <h3><span class="help-num">7</span> UI reference</h3>
+          <table class="help-table">
+            <thead><tr><th>Control</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td>Study / Visit dropdowns</td><td>Scope sync to protocol and timepoint</td></tr>
+              <tr><td>Upload ClinSpark Subjects</td><td>Step 1 — load roster from eSource</td></tr>
+              <tr><td>Subject chips &amp; cohorts</td><td>Step 2 — define who syncs</td></tr>
+              <tr><td>Write to EDC</td><td>Step 3 — run sync engine</td></tr>
+              <tr><td>Open EDC to verify</td><td>Step 4 — launch Exxel EDC CRF</td></tr>
+              <tr><td>Reset</td><td>Clear mock EDC and return to upload-ready state</td></tr>
+              <tr><td>Activity log · Expand</td><td>Full SSE stream of upload and sync events</td></tr>
+              <tr><td>Status pill</td><td>Ready · Uploading… · Writing to EDC… · EDC updated</td></tr>
+              <tr><td>Help</td><td>This guide</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="help-section" id="help-demo">
+          <h3><span class="help-num">8</span> Demo &amp; presentation tips</h3>
+          <ul>
+            <li><strong>Start at upload:</strong> Page load resets everything — narrate “coordinator pulls roster from ClinSpark” as you click Upload.</li>
+            <li><strong>Cohort shortcut:</strong> After upload, click Cohort 1 instead of selecting 23 chips manually — shows saved roster workflows.</li>
+            <li><strong>Flagged-item story:</strong> Run sync for Screening visit; review modal demonstrates eSource vs. EDC reconciliation.</li>
+            <li><strong>Minimize trick:</strong> Minimize review modal, open mock EDC, show same field in both windows.</li>
+            <li><strong>Scale message:</strong> 45 subjects demo full study roster; production handles concurrent trials via Nexa Bus architecture.</li>
+          </ul>
+          <div class="help-callout info">
+            Lab gateway: <a href="https://nexa-trials.com/lab/" target="_blank" rel="noopener">nexa-trials.com/lab</a> · NexaSource lab host · Synthetic data only
+          </div>
+        </section>
+
+        <section class="help-section" id="help-faq">
+          <h3><span class="help-num">9</span> Frequently asked questions</h3>
+          <dl class="help-faq">
+            <dt>Why aren’t subjects loaded when I first log in?</dt>
+            <dd>By design — upload is step 1 of the workflow demo. Each page load resets to a clean state so every presentation starts the same way.</dd>
+            <dt>What’s the difference between Save and Write to EDC in the review modal?</dt>
+            <dd>Accept/Edit stages your decisions locally. <strong>Write to EDC</strong> in the modal commits resolved values to Exxel EDC — matching production audit separation.</dd>
+            <dt>Why is Write to EDC disabled?</dt>
+            <dd>Upload subjects first, then select at least one subject chip. It also disables after a successful write until visit/subjects change or you Reset.</dd>
+            <dt>Why does mock EDC show empty fields I thought were synced?</dt>
+            <dd>Check visit/subject match, flagged-item review completion, and form mapping. Some demo flagged items are on specific forms (e.g. PK collection vs. labs).</dd>
+            <dt>Does NexaFlow replace ClinSpark?</dt>
+            <dd>No — it complements eSource. ClinSpark remains the capture UI; NexaFlow eliminates re-keying into EDC.</dd>
+            <dt>Which EDCs are supported?</dt>
+            <dd>Major sponsor EDCs (Veeva, Oracle, Castor, and others) via Nexa Bus — same automation layer as NexaDirect.</dd>
+          </dl>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>

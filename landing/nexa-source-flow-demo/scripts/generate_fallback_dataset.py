@@ -53,7 +53,7 @@ def pk_lipid_pcsk9(subj: str, visit: str) -> dict[str, dict]:
     d = visit_date(subj, visit)
     t = f"{9 + seed(subj, visit) % 3}:{seed(subj, 'time') % 60:02d}"
     return {
-        "Evolocumab Serum PK Collection": {
+        "Nexavorin Serum PK Collection": {
             "Date of Sample Collection": d,
             "Time of Sample Collection": t,
             "Was sample collected?": "Yes",
@@ -128,7 +128,7 @@ def build() -> dict:
                 elif form == "Vital Signs" or "Vital Signs" in form:
                     data[subj][visit][form] = vitals(subj)
                 elif form in (
-                    "Evolocumab Serum PK Collection",
+                    "Nexavorin Serum PK Collection",
                     "Complete Lipid Profile",
                     "PCSK9 Serum Level",
                 ):
@@ -146,7 +146,7 @@ def build() -> dict:
                             s for s in ALL_SUBJECTS if int(s) < 200 or subj.startswith("03")
                         ][:22] else "Group 2",
                     }
-                elif any(x in form for x in ("Chemistry", "Hematology", "Urinalysis", "Serology", "Drug Screen", "eGFR", "FSH", "Thyroid", "Lipid", "ECG", "Pregnancy", "Inclusion", "Medical", "Physical", "Consent", "Anti-Evolocumab", "Administration", "Alcohol", "Reproductive", "Disposition")):
+                elif any(x in form for x in ("Chemistry", "Hematology", "Urinalysis", "Serology", "Drug Screen", "eGFR", "FSH", "Thyroid", "Lipid", "ECG", "Pregnancy", "Inclusion", "Medical", "Physical", "Consent", "Anti-Nexavorin", "Administration", "Alcohol", "Reproductive", "Disposition")):
                     if "Chemistry" in form or "Hematology" in form or "Urinalysis" in form:
                         data[subj][visit][form] = lab_panel(subj, form)
                     elif "Consent" in form:

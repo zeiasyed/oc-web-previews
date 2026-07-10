@@ -3,8 +3,9 @@
   "form_code": "DM",
   "fields": {
     "DM_BRTHDAT": {
-      "value": "1980-12-25",
-      "confidence": 0.82
+      "value": "1980-12-28",
+      "confidence": 0.82,
+      "correct_value": "1980-12-25"
     },
     "DM_AGE": {
       "value": "",
@@ -12,12 +13,14 @@
       "force_review": true
     },
     "DM_AGEU": {
-      "value": "YEARS",
-      "confidence": 0.82
+      "value": "YERS",
+      "confidence": 0.82,
+      "correct_value": "YEARS"
     },
     "DM_SEX": {
-      "value": "F",
-      "confidence": 0.82
+      "value": "E",
+      "confidence": 0.82,
+      "correct_value": "F"
     },
     "DM_ETHNIC": {
       "value": "",
@@ -25,8 +28,9 @@
       "force_review": true
     },
     "DM_RACE": {
-      "value": "BLACK_OR_AFRICAN_AMERICAN",
-      "confidence": 0.82
+      "value": "BLACK OR AFRICAN AMERlCAN",
+      "confidence": 0.82,
+      "correct_value": "BLACK_OR_AFRICAN_AMERICAN"
     }
   }
 }
