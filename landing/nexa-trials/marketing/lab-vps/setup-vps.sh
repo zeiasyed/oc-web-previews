@@ -73,12 +73,27 @@ seed_demo_data() {
   docker compose run --rm --no-deps "$service" tar -C /app/demo_data -cf - . | tar -C "$dest" -xf -
 }
 
+# Volume seeds can be incomplete if an early image lacked demo_data files.
+ensure_nexasource_demo_files() {
+  local dest="$1"
+  local src="$INSTALL_ROOT/landing/nexa-source-flow-demo/demo_data"
+  if [ ! -f "$dest/source_values.json" ] && [ -f "$src/source_values.json" ]; then
+    echo "   Adding missing source_values.json to $dest"
+    cp "$src/source_values.json" "$dest/"
+  fi
+  if [ ! -d "$dest/form_schemas" ] && [ -d "$src/form_schemas" ]; then
+    echo "   Adding missing form_schemas to $dest"
+    cp -r "$src/form_schemas" "$dest/"
+  fi
+}
+
 echo ">> Building images (NexaSource may take several minutes on ARM)"
 docker compose build
 
 echo ">> Seeding persistent demo_data volumes"
 seed_demo_data nexadirect "$DATA_ROOT/nexadirect"
 seed_demo_data nexasource "$DATA_ROOT/nexasource"
+ensure_nexasource_demo_files "$DATA_ROOT/nexasource"
 
 echo ">> Starting containers"
 docker compose up -d
